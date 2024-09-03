@@ -40,8 +40,10 @@ class ChangePeriodAit extends React.Component {
         style: PropTypes.object,
         id: PropTypes.string,
         className: PropTypes.string,
+        // fromData-toDate sono le date ricalcolate in base alla decade in cui ricadono, vengono passare come parametri alle richeiste http
         fromData: PropTypes.instanceOf(Date),
         toData: PropTypes.instanceOf(Date),
+        // fromDataReal-toDateRealsono le date effettivamente selezionate dal form
         fromDataReal: PropTypes.instanceOf(Date),
         toDataReal: PropTypes.instanceOf(Date),
         onChangeYear: PropTypes.func,
@@ -99,7 +101,7 @@ class ChangePeriodAit extends React.Component {
     }
 
     render() {
-        if (!this.props.changePeriodAitActive ) {
+        if (!this.props.changePeriodAitActive || this.props.changePeriodAitActive) {
             return null;
         }
         return (
@@ -143,7 +145,7 @@ class ChangePeriodAit extends React.Component {
         // this.setState({originalSettings});
         this.props.onUpdateSettings(newParams);
         if (onUpdateNode) {
-            this.props.layers.flat.map((layers) => {
+            this.props.layers.flat.map((layer) => {
                 if ([
                     // "Variabili Meteo.Pioggia",
                     "Variabili Meteo.e2b72ce0-639f-11ef-be2b-777eaf553525",
@@ -153,10 +155,10 @@ class ChangePeriodAit extends React.Component {
                     "Variabili Meteo.SPI",
                     "Variabili Meteo.SPEI",
                     "Layer di Base"
-                ].includes(layers.groups)) {
+                ].includes(layer.group)) {
                     // funzione che aggiorna la mappa
                     this.props.onUpdateNode(
-                        layers.id,
+                        layer.id,
                         "layers",
                         assign({}, this.props.settings.props, newParams)
                     );
@@ -174,9 +176,10 @@ class ChangePeriodAit extends React.Component {
         this.props.onUpdateSettings(newParams);
         if (onUpdateNode) {
             this.props.layers.flat.map((layer) => {
-                if (layer.group === "Variabili Meteo.SPI" ||
-                    layer.group === "Variabili Meteo.SPEI" ||
-                    layer.group === "Layer di Base") {
+                if (["Variabili Meteo.SPI",
+                    "Variabili Meteo.SPEI",
+                    "Layer di Base"
+                ].includes(layer.group)) {
                 // if (layers.group === "Spazializzazioni" || layers.group === "Aree di allerta meteo" || layers.group === "Stazioni") {
                     this.props.onUpdateNode(
                         layer.id,
@@ -191,12 +194,12 @@ class ChangePeriodAit extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-        fromData: state.aithome && state.aithome.fromData || new Date('1995-01-01'),
-        toData: state.aithome && state.aithome.toData || new Date('1995-01-01'),
-        fromDataReal: state.aithome && state.aithome.fromDataReal || new Date('1995-01-01'),
-        toDataReal: state.aithome && state.aithome.toDataReal || new Date('1995-01-01'),
-        periodType: state.aithome && state.aithome.periodType || "1",
-        periodTypes: state.aithome?.periodTypes || [
+        fromData: state?.aithome?.fromData || new Date('1995-01-01'),
+        toData: state?.aithome?.toData || new Date('1995-01-01'),
+        fromDataReal: state?.aithome?.fromDataReal || new Date('1995-01-01'),
+        toDataReal: state?.aithome?.toDataReal || new Date('1995-01-01'),
+        periodType: state?.aithome?.periodType || "1",
+        periodTypes: state?.aithome?.periodTypes || [
             { key: "1", label: "1 Mese" },
             { key: "3", label: "3 Mesi" },
             { key: "4", label: "4 Mesi" },

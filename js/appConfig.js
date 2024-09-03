@@ -16,6 +16,10 @@ const aitHome = {
     toDataReal: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
     periodType: "1"
 };
+const geoclimahome = {
+    fromData: new Date(moment().subtract(1, 'day')._d),
+    toData: new Date(moment().subtract(1, 'day')._d)
+};
 /*
 const projectPages = [{
     name: 'mapViewerGC',
@@ -44,7 +48,8 @@ export default {
         ...appConfigMS.initialState,
         defaultState: {
             ...appConfigMS.initialState.defaultState,
-            aithome: aitHome
+            aithome: aitHome,
+            geoclimahome: geoclimahome
         }
     }
 };

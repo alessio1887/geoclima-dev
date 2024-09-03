@@ -1,0 +1,58 @@
+.ms-daterangepicker-action {
+  -webkit-box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  -moz-box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  position: absolute;
+  background-color: #FFFFFF;
+  /* overflow: hidden; */
+  display: flex;
+  left: 4px;
+  top: 60px;
+  /* height: 200px; */
+  flex-direction: column;
+  margin: 0;
+  border: none;
+  z-index: 10;
+}
+
+#mapstore-daterangepicker-map {
+    margin-top: 80px;
+}
+
+#mapstore-daterangepicker {
+    margin-top: 0px;
+    margin-right: auto;
+}
+
+@media (max-width: 1310px) {
+    .ms-changeperiodait-action {
+      -webkit-box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+      -moz-box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+      position: absolute;
+      background-color: #FFFFFF;
+      /* overflow: hidden; */
+      display: flex;
+      left: 4px;
+      top: 54px;
+      /* height: 200px; */
+      flex-direction: column;
+      margin: 0;
+      border: none;
+    }
+}
+
+@media (min-width: 769px) {
+    div#mapstore-daterangepicker {
+        /*width: 300px;*/
+        margin-left: auto;
+        margin-bottom: 40px;
+        /* visibility: hidden; */
+    }
+}
+@media (max-width: 768px) {
+    div#mapstore-daterangepicker {
+        width: 100%;
+        /* visibility: hidden; */
+    }
+}

@@ -380,6 +380,12 @@
             }
           },
           {
+            "name": "DateRangePicker",
+            "cfg" : {
+              "id": "mapstore-daterange-map"
+            }
+          },
+          {
             "name": "Map",
             "cfg": {
               "mapOptions": {
