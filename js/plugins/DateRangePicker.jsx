@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import { Label, FormGroup } from 'react-bootstrap';
 import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
-import { DateTimePicker } from 'react-widgets';
+import { DateTimePicker  } from 'react-widgets';
 import { compose } from 'redux';
 import DateAPI from '../utils/ManageDateUtils';
 import { connect } from 'react-redux';
@@ -98,7 +98,6 @@ class DateRangePicker extends React.Component {
                             format={"DD MMMM, YYYY"}
                             editFormat={"YYYY-MM-DD"}
                             value={new Date(this.props.fromData)}
-                            locale="it"
                             onChange={this.props.onChangeFromData}/>
                         <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="aitapp.selectToDate"/></Label>
                         <DateTimePicker
@@ -108,7 +107,6 @@ class DateRangePicker extends React.Component {
                             format={"DD MMMM, YYYY"}
                             editFormat={"YYYY-MM-DD"}
                             value={new Date(this.props.toData)}
-                            locale="it"
                             onChange={this.props.onChangeToData}/>
                     </div>
                 </FormGroup>
@@ -154,7 +152,7 @@ const mapStateToProps = (state) => {
         toData: state?.geoclimahome?.toData || new Date('1995-01-01'),
         settings: state?.layers?.settings || {expanded: false, options: {opacity: 1}},
         layers: state?.layers || {},
-        dateRangePickerIsVisible: state.controls.drawer ? state.controls.drawer.enabled : false
+        dateRangePickerIsVisible: state?.controls?.drawer ? state?.controls?.drawer?.enabled : false
     };
 };
 

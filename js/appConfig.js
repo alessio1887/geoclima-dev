@@ -25,6 +25,7 @@ const geoclimahome = {
 export default {
     ...appConfigMS,
     pages: [
+        // Added Custom Page
         ...appConfigMS.pages.map(
             page => page.name === "mapviewer" ? {
                 ...page,

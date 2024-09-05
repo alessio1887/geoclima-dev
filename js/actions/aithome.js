@@ -8,7 +8,6 @@
 
 export const MAP_YEAR_CHANGED = 'MAP_YEAR_CHANGED';
 export const MAP_PERIOD_CHANGED = 'MAP_PERIOD_CHANGED';
-export const CLICK_THUMBNAIL_HOME = 'CLICK_THUMBNAIL_HOME';
 
 export function changeYear(toData) {
     return {
@@ -21,13 +20,5 @@ export function changePeriod(periodType) {
     return {
         type: MAP_PERIOD_CHANGED,
         periodType
-    };
-}
-
-export function clickThumbnail(showModal, imgSrc) {
-    return {
-        type: CLICK_THUMBNAIL_HOME,
-        showModal,
-        imgSrc
     };
 }

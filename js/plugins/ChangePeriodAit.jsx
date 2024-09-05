@@ -25,7 +25,7 @@ import aithome from '../reducers/aithome';
 import layers from '../../MapStore2/web/client/reducers/layers';
 
 momentLocaliser(moment);
-moment().locale('it');
+moment.locale('it');
 moment.updateLocale('it', {
     months: [
         "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio",
@@ -120,6 +120,7 @@ class ChangePeriodAit extends React.Component {
                             format={"DD MMMM, YYYY"}
                             editFormat={"YYYY-MM-DD"}
                             value={new Date(this.props.toDataReal)}
+                            loclae="it"
                             onChange={this.props.onChangeYear}/>
                         <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="aitapp.selectCumulativePeriod"/></Label>
                         <DropdownList
@@ -207,9 +208,9 @@ const mapStateToProps = (state) => {
             { key: "12", label: "12 Mesi" },
             { key: "10", label: "dal 1° Ottobre" }
         ],
-        settings: state.layers && state.layers.settings || {expanded: false, options: {opacity: 1}},
-        layers: state.layers || {},
-        changePeriodAitActive: state.controls.drawer ? state.controls.drawer.enabled : false
+        settings: state?.layers?.settings || {expanded: false, options: {opacity: 1}},
+        layers: state?.layers || {},
+        changePeriodAitActive: state?.controls?.drawer ? state?.controls?.drawer?.enabled : false
     };
 };
 

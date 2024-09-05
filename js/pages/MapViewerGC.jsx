@@ -9,8 +9,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import MapViewerCmp from '../../MapStore2/web/client/product/components/viewer/MapViewerCmp';
-import { loadNewMap, loadMapConfig } from '../../MapStore2/web/client/actions/config.js'; // '../actions/config';
+import MapViewerCmpGC from '@js/components/viewer/MapViewerCmpGC.jsx';
+import { loadNewMap, loadMapConfig } from '../actions/config.js';
 import { initMap } from '../../MapStore2/web/client/actions/map.js';
 import MapViewerContainer from '../../MapStore2/web/client/containers/MapViewer.jsx';
 
@@ -41,7 +41,7 @@ class MapViewerPageGC extends React.Component {
     };
 
     render() {
-        return (<MapViewerCmp {...this.props} />);
+        return (<MapViewerCmpGC {...this.props} />);
     }
 }
 

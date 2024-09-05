@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
 */
 
-import {MAP_YEAR_CHANGED, MAP_PERIOD_CHANGED, CLICK_THUMBNAIL_HOME} from '../actions/aithome';
+import {MAP_YEAR_CHANGED, MAP_PERIOD_CHANGED} from '../actions/aithome';
 import DateAPI from '../utils/ManageDateUtils';
 
 const defaultState = {
@@ -43,17 +43,6 @@ function aithome(state = defaultState, action) {
             periodType: action.periodType,
             showModal: false,
             imgSrc: "",
-            map: state.map
-        };
-    case CLICK_THUMBNAIL_HOME:
-        return {
-            fromData: new Date(DateAPI.calculateDateFromKey(state.periodType, state.toData).fromData),
-            toData: new Date(DateAPI.calculateDateFromKey(state.periodType, state.toData).toData),
-            fromDataReal: new Date(DateAPI.calculateDateFromKeyReal(state.periodType, state.toDataReal).fromData),
-            toDataReal: new Date(DateAPI.calculateDateFromKeyReal(state.periodType, state.toDataReal).toData),
-            periodType: state.periodType,
-            showModal: action.showModal,
-            imgSrc: action.imgSrc,
             map: state.map
         };
     default:
