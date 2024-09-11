@@ -238,22 +238,6 @@
             "it": {
               "code": "it-IT",
               "description": "Italiano"
-            },
-            "en": {
-              "code": "en-US",
-              "description": "English"
-            },
-            "fr": {
-              "code": "fr-FR",
-              "description": "Français"
-            },
-            "de": {
-              "code": "de-DE",
-              "description": "Deutsch"
-            },
-            "es": {
-              "code": "es-ES",
-              "description": "Español"
             }
           }
         }
@@ -374,7 +358,7 @@
         ],
         "desktop": [
           {
-            "name": "ChangePeriodAit",
+            "name": "DecadeRangePicker",
             "cfg" : {
               "id": "mapstore-changedate-map"
             }
