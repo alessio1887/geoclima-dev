@@ -15,11 +15,13 @@ const aitHome = {
     toData: new Date(DateAPI.calculateDateFromKey("1", moment().subtract(1, 'day')._d).toData),
     fromDataReal: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).fromData),
     toDataReal: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
-    periodType: "1"
+    periodType: "1",
+    showDecadeRangePicker: true
 };
 const geoclimahome = {
-    fromData: new Date(moment().subtract(1, 'day')._d),
-    toData: new Date(moment().subtract(1, 'day')._d)
+    fromData: new Date(moment().subtract(1, 'month')._d),
+    toData: new Date(moment().subtract(1, 'day')._d),
+    showDateRangePicker: false
 };
 
 export default {

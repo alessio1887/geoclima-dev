@@ -8,6 +8,7 @@
 
 export const FROMDATA_CHANGED = 'FROMDATA_CHANGED';
 export const TODATA_CHANGED = 'TODATA_CHANGED';
+export const CLICK_THUMBNAIL_HOME = 'CLICK_THUMBNAIL_HOME';
 
 export function changeFromData(fromData) {
     return {
@@ -20,5 +21,13 @@ export function changeToData(toData) {
     return {
         type: TODATA_CHANGED,
         toData
+    };
+}
+
+export function clickThumbnail(showModal, imgSrc) {
+    return {
+        type: CLICK_THUMBNAIL_HOME,
+        showModal,
+        imgSrc
     };
 }
