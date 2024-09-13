@@ -1,4 +1,5 @@
-.ms-daterangepicker-action {
+.ms-daterangepicker-action,
+.ms-decaderange-action {
   -webkit-box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
   -moz-box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
@@ -7,19 +8,52 @@
   /* overflow: hidden; */
   display: flex;
   left: 4px;
-  top: 60px;
   /* height: 200px; */
   flex-direction: column;
   margin: 0;
   border: none;
   z-index: 10;
+  top: 4px;
 }
 
-#mapstore-daterangepicker-map {
+#button-rangepicker-container {
+    display: flex; /* Make the container a flexbox */
+    justify-content: center; /* Arrange buttons horizontally */
+    align-items: center;
+    border-radius: 3px;      /* Arrotonda gli angoli, opzionale */
+    margin: 10px 0;
+}
+#button-rangepicker-container button {
+    margin: 0 10px;
+}
+/*
+#mapstore-navbar .MapSearchBar {
+    -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    -moz-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+
+    .square-button-md {
+        .ms-loader {
+            >div {
+                border-top-color: rgba(7, 138, 163, 0.2);
+                border-right-color: rgba(7, 138, 163, 0.2);
+                border-bottom-color: rgba(7, 138, 163, 0.2);
+                border-left-color: #078aa3;
+            }
+        }
+    }
+}
+
+*/
+
+
+#mapstore-daterangepicker-map,
+#mapstore-changedate-map {
     margin-top: 80px;
 }
 
-#mapstore-daterangepicker {
+#mapstore-daterangepicker,
+#mapstore-changedate {
     margin-top: 0px;
     margin-right: auto;
 }
@@ -43,15 +77,18 @@
 }
 
 @media (min-width: 769px) {
-    div#mapstore-daterangepicker {
+    div#mapstore-daterangepicker,
+    div#mapstore-changedate {
         /*width: 300px;*/
         margin-left: auto;
         margin-bottom: 40px;
         /* visibility: hidden; */
     }
 }
+
 @media (max-width: 768px) {
-    div#mapstore-daterangepicker {
+    div#mapstore-daterangepicker,
+    div#mapstore-changedate {
         width: 100%;
         /* visibility: hidden; */
     }

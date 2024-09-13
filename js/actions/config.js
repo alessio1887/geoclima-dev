@@ -9,6 +9,7 @@
 import axios from '../../MapStore2/web/client/libs/ajax';
 import DateAPI from '../utils/ManageDateUtils';
 import moment from 'moment';
+import { isVariabiliMeteoLayer, isSPIorSPEILayer } from '../utils/CheckLayerVariabiliMeteoUtils';
 
 
 export const LOAD_NEW_MAP = 'MAP:LOAD_NEW_MAP';
@@ -49,22 +50,49 @@ export function loadNewMap(configName, contextId) {
         contextId
     };
 }
-
+/*
 export function loadMapConfig(configName, mapId, fromData, toData, fromDataReal, toDataReal) {
     return (dispatch) => {
         return axios.get(configName).then((response) => {
             if (typeof response.data === 'object') {
                 response.data.map.layers.map((data) => {
-                    if (data && data.group && (data.group === "Variabili Meteo.Pioggia" ||
-                        data.group === "Variabili Meteo.Temperatura" ||
-                        data.group === "Variabili Meteo.Evapotraspirazione" ||
-                        data.group === "Variabili Meteo.Bilancio Idrico Semplificato" ||
-                        data.group === "Layer di Base")) {
-                        const mapFile = DateAPI.setAITMapFile(moment(fromData).format('YYYY-MM-DD'), moment(toData).format('YYYY-MM-DD'));
+                    if (data?.group === "Variabili Meteo.Pioggia" ||
+                        data?.group === "Variabili Meteo.Temperatura" ||
+                        data?.group === "Variabili Meteo.Evapotraspirazione" ||
+                        data?.group === "Variabili Meteo.Bilancio Idrico Semplificato" ||
+                        data?.group === "Layer di Base") {
+                        const mapFile = DateAPI.setGCMapFile(moment(fromData).format('YYYY-MM-DD'), moment(toData).format('YYYY-MM-DD'));
                         Object.assign(data, {params: {map: mapFile, fromData: moment(fromData).format('YYYY-MM-DD'), toData: moment(toData).format('YYYY-MM-DD')}});
                     } else if ( data.group === "Variabili Meteo.SPI" ||
                         data.group === "Variabili Meteo.SPEI") {
-                        const mapFile = DateAPI.setAITMapFile(moment(fromData).format('YYYY-MM-DD'), moment(toData).format('YYYY-MM-DD'));
+                        const mapFile = DateAPI.setGCMapFile(moment(fromData).format('YYYY-MM-DD'), moment(toData).format('YYYY-MM-DD'));
+                        Object.assign(data, {params: {map: mapFile, fromData: moment(fromDataReal).clone().subtract(1, 'day').format('YYYY-MM-DD'), toData: moment(toDataReal).clone().subtract(1, 'day').format('YYYY-MM-DD')}});
+                    }
+                }, this);
+                dispatch(configureMap(response.data, mapId));
+            } else {
+                try {
+                    JSON.parse(response.data);
+                } catch (e) {
+                    dispatch(configureError('Configuration file broken (' + configName + '): ' + e.message, mapId));
+                }
+            }
+        }).catch((e) => {
+            dispatch(configureError(e, mapId));
+        });
+    };
+}
+*/
+export function loadMapConfig(configName, mapId, fromData, toData, fromDataReal, toDataReal) {
+    return async(dispatch) => {
+        return axios.get(configName).then((response) => {
+            if (typeof response.data === 'object') {
+                response.data.map.layers.map((data) => {
+                    if (isVariabiliMeteoLayer(data?.group)) {
+                        const mapFile = DateAPI.setGCMapFile(moment(fromData).format('YYYY-MM-DD'), moment(toData).format('YYYY-MM-DD'));
+                        Object.assign(data, {params: {map: mapFile, fromData: moment(fromData).format('YYYY-MM-DD'), toData: moment(toData).format('YYYY-MM-DD')}});
+                    } else if ( isSPIorSPEILayer(data?.group)) {
+                        const mapFile = DateAPI.setGCMapFile(moment(fromData).format('YYYY-MM-DD'), moment(toData).format('YYYY-MM-DD'));
                         Object.assign(data, {params: {map: mapFile, fromData: moment(fromDataReal).clone().subtract(1, 'day').format('YYYY-MM-DD'), toData: moment(toDataReal).clone().subtract(1, 'day').format('YYYY-MM-DD')}});
                     }
                 }, this);

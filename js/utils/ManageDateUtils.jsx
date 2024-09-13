@@ -86,7 +86,13 @@ const Api = {
         dateArray[2] = '21';
         return dateArray.join("-");
     },
-    setAITMapFile(fromData, toData) {
+    /**
+     * Metodo che restituire il nome del mapfile da passare come parametro alla richiesta HTTP.
+     * Infatti, in base alla durata della cumulata i valori delle legende nel mapfile cambiano, ad esempio una cumulata
+     * di pioggia di un mese ha valori molto diversi di una cumulata di pioggia di un anno.
+     * Ogni mapfile ha una riclassificazione diversa della legenda. In allegato i vari mapfile che vengono usati adesso nell'applicazione online.
+     */
+    setGCMapFile(fromData, toData) {
         let geoclimaMap = "geoclima";
 
         const fromDataMoment = moment(fromData);

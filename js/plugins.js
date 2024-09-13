@@ -1,5 +1,5 @@
 import DateRangePickerPlugin from '@js/plugins/DateRangePicker';
-import ChangePeriodAitPlugin from '@js/plugins/ChangePeriodAit';
+import DecadeRangePickerPlugin from '@js/plugins/DecadeRangePicker';
 import productPlugins from '@mapstore/product/plugins.js';
 
 export default {
@@ -9,6 +9,6 @@ export default {
     plugins: {
         ...productPlugins.plugins,
         DateRangePickerPlugin,
-        ChangePeriodAitPlugin
+        DecadeRangePickerPlugin
     }
 };

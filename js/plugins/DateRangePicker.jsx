@@ -8,21 +8,23 @@
 */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Label, FormGroup } from 'react-bootstrap';
+import { Button, Label, FormGroup, Glyphicon } from 'react-bootstrap';
 import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
 import { DateTimePicker  } from 'react-widgets';
 import { compose } from 'redux';
 import DateAPI from '../utils/ManageDateUtils';
+import { isVariabiliMeteoLayer, isSPIorSPEILayer } from '../utils/CheckLayerVariabiliMeteoUtils';
 import { connect } from 'react-redux';
 import assign from 'object-assign';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
-import './daterangepicker.css';
+import './rangepicker.css';
 
 import layers from '../../MapStore2/web/client/reducers/layers';
 import geoclimahome from '@js/reducers/geoclimahome';
+import { toggleDecadeRangePicker } from '../actions/aithome';
 import { changeFromData, changeToData } from '@js/actions/geoclimahome';
 
 momentLocaliser(moment);
@@ -50,10 +52,11 @@ class DateRangePicker extends React.Component {
         settings: PropTypes.object,
         layers: PropTypes.object,
         map: PropTypes.string,
-        dateRangePickerIsVisible: PropTypes.bool // serve per la visibilita del componente
+        dateRangePickerIsVisible: PropTypes.bool, // serve per la visibilita del componente
+        onToggleDateRangePicker: PropTypes.func
     };
     static defaultProps = {
-        fromData: new Date(moment().subtract(1, 'day')._d),
+        fromData: new Date(moment().subtract(1, 'month')._d),
         toData: new Date(moment().subtract(1, 'day')._d),
         onChangeFromData: () => {},
         onChangeToData: () => {},
@@ -69,14 +72,6 @@ class DateRangePicker extends React.Component {
         },
         dateRangePickerIsVisible: false
     };
-    componentWillReceiveProps(nextProps) {
-        if (this.props.id === "mapstore-daterange-map") {
-            if (this.props.fromData.getTime() !== nextProps.fromData.getTime() || this.props.toData.getTime() !== nextProps.toData.getTime()) {
-                const mapFile = DateAPI.setAITMapFile(nextProps.fromData, nextProps.toData);
-                this.updateParams({params: {map: mapFile, fromData: moment(nextProps.fromData).format('YYYY-MM-DD'), toData: moment(nextProps.toData).format('YYYY-MM-DD')}});
-            }
-        }
-    }
 
     render() {
         if (!this.props.dateRangePickerIsVisible) {
@@ -93,7 +88,7 @@ class DateRangePicker extends React.Component {
                         <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="aitapp.selectFromDate"/></Label>
                         <DateTimePicker
                             time={false}
-                            min={new Date("1995-01-01")}
+                            min={moment().subtract(1, 'years').startOf('day')._d}
                             max={moment().subtract(1, 'day')._d}
                             format={"DD MMMM, YYYY"}
                             editFormat={"YYYY-MM-DD"}
@@ -102,16 +97,34 @@ class DateRangePicker extends React.Component {
                         <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="aitapp.selectToDate"/></Label>
                         <DateTimePicker
                             time={false}
-                            min={new Date("1995-01-01")}
+                            min={moment().subtract(1, 'years').startOf('day')._d}
                             max={moment().subtract(1, 'day')._d}
                             format={"DD MMMM, YYYY"}
                             editFormat={"YYYY-MM-DD"}
                             value={new Date(this.props.toData)}
                             onChange={this.props.onChangeToData}/>
+                        <div id="button-rangepicker-container">
+                            <Button onClick={this.handleApplyPeriod}>
+                                <Glyphicon glyph="calendar" /> Applica periodo
+                            </Button>
+                            <Button variant="primary" onClick={this.props.onToggleDateRangePicker}>
+                                Mostra selezione per decadi
+                            </Button>
+                        </div>
                     </div>
                 </FormGroup>
             </div>
         );
+    }
+    handleApplyPeriod = () => {
+        const mapFile = DateAPI.setGCMapFile(this.props.fromData, this.props.toData);
+        this.updateParams({
+            params: {
+                map: mapFile,
+                fromData: moment(this.props.fromData).format('YYYY-MM-DD'),
+                toData: moment(this.props.toData).format('YYYY-MM-DD')
+            }
+        });
     }
 
     updateParams(newParams, onUpdateNode = true) {
@@ -124,16 +137,7 @@ class DateRangePicker extends React.Component {
         this.props.onUpdateSettings(newParams);
         if (onUpdateNode) {
             this.props.layers.flat.map((layer) => {
-                if ([
-                    // "Variabili Meteo.Pioggia",
-                    "Variabili Meteo.e2b72ce0-639f-11ef-be2b-777eaf553525",
-                    "Variabili Meteo.Temperatura",
-                    "Variabili Meteo.Evapotraspirazione",
-                    "Variabili Meteo.Bilancio Idrico Semplificato",
-                    "Variabili Meteo.SPI",
-                    "Variabili Meteo.SPEI",
-                    "Layer di Base"
-                ].includes(layer.group)) {
+                if (isVariabiliMeteoLayer(layer.name) || isSPIorSPEILayer(layer.name)) {
                     // funzione che aggiorna la mappa
                     this.props.onUpdateNode(
                         layer.id,
@@ -148,11 +152,11 @@ class DateRangePicker extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-        fromData: state?.geoclimahome?.fromData || new Date('1995-01-01'),
-        toData: state?.geoclimahome?.toData || new Date('1995-01-01'),
+        fromData: state?.geoclimahome?.fromData || new Date(moment().subtract(1, 'month')._d),
+        toData: state?.geoclimahome?.toData || new Date(moment().subtract(1, 'day')._d),
         settings: state?.layers?.settings || {expanded: false, options: {opacity: 1}},
         layers: state?.layers || {},
-        dateRangePickerIsVisible: state?.controls?.drawer ? state?.controls?.drawer?.enabled : false
+        dateRangePickerIsVisible: (!state?.aithome?.showDecadeRangePicker ) ? true : false
     };
 };
 
@@ -160,7 +164,8 @@ const DateRangePickerPlugin = connect(mapStateToProps, {
     onChangeFromData: compose(changeFromData, (event) => event),
     onChangeToData: compose(changeToData, (event) => event),
     onUpdateSettings: updateSettings,
-    onUpdateNode: updateNode
+    onUpdateNode: updateNode,
+    onToggleDateRangePicker: toggleDecadeRangePicker
 })(DateRangePicker);
 
 export default createPlugin(
