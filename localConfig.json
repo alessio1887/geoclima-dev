@@ -360,7 +360,7 @@
           {
             "name": "DecadeRangePicker",
             "cfg" : {
-              "id": "mapstore-changedate-map"
+              "id": "mapstore-decaderange-map"
             }
           },
           {
