@@ -18,23 +18,13 @@ import DateAPI from '../utils/ManageDateUtils';
 import { connect } from 'react-redux';
 import assign from 'object-assign';
 import moment from 'moment';
-import momentLocaliser from 'react-widgets/lib/localizers/moment';
+import italianCalendar from '../utils/italianCalendar';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
 import './rangepicker.css';
 
 import aithome from '../reducers/aithome';
 import layers from '../../MapStore2/web/client/reducers/layers';
 
-
-moment().locale('it');
-moment.updateLocale('it', {
-    months: [
-        "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio",
-        "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"
-    ],
-    weekdays: 'Domenica_Lunedì_Martedì_Mercoledì_Giovedì_Venerdì_Sabato'.split('_')
-});
-momentLocaliser(moment);
 
 // This plugin allows you to select periods in decades (multiples of 10 days)
 class DecadeRangePicker extends React.Component {
@@ -95,6 +85,7 @@ class DecadeRangePicker extends React.Component {
         if (!this.props.decadeRanePickerActive) {
             return null;
         }
+
         return (
             <div className={this.props.className} style={this.props.style}>
                 <FormGroup style={{marginBottom: "0px"}} bsSize="sm">
@@ -105,7 +96,14 @@ class DecadeRangePicker extends React.Component {
                         <div style={{padding: "6px", textAlign: 'center'}} >Dal: <span id="from-data-statistics" >{moment(this.props.fromData).format('DD/MM/YYYY')}</span> - al: <span id="to-data-statistics" >{moment(this.props.toData).format('DD/MM/YYYY')}</span></div>
                         <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="aitapp.selectDateHidrologicYear"/></Label>
                         <DateTimePicker
+                            culture="it"
                             time={false}
+                            calendarProps={{
+                                monthNames: italianCalendar.monthNames,
+                                monthNamesShort: italianCalendar.monthNamesShort,
+                                dayNames: italianCalendar.dayNames,
+                                dayNamesShort: italianCalendar.dayNamesShort
+                            }}
                             min={moment().subtract(1, 'years').startOf('day')._d}
                             max={moment().subtract(1, 'day')._d}
                             format={"DD MMMM, YYYY"}
