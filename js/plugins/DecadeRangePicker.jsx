@@ -18,7 +18,6 @@ import DateAPI from '../utils/ManageDateUtils';
 import { connect } from 'react-redux';
 import assign from 'object-assign';
 import moment from 'moment';
-import italianCalendar from '../utils/italianCalendar';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
 import './rangepicker.css';
 
@@ -98,12 +97,6 @@ class DecadeRangePicker extends React.Component {
                         <DateTimePicker
                             culture="it"
                             time={false}
-                            calendarProps={{
-                                monthNames: italianCalendar.monthNames,
-                                monthNamesShort: italianCalendar.monthNamesShort,
-                                dayNames: italianCalendar.dayNames,
-                                dayNamesShort: italianCalendar.dayNamesShort
-                            }}
                             min={moment().subtract(1, 'years').startOf('day')._d}
                             max={moment().subtract(1, 'day')._d}
                             format={"DD MMMM, YYYY"}

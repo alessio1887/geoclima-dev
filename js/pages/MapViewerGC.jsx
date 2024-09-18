@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, GeoSolutions Sas.
+ * Copyright 2024, GeoSolutions Sas.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
@@ -10,9 +10,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import MapViewerCmpGC from '@js/components/viewer/MapViewerCmpGC.jsx';
-import { loadNewMap, loadMapConfig } from '../actions/config.js';
+import { loadNewMap, loadMapConfigByDateRange } from '../actions/config.js';
+// import { loadNewMap, loadMapConfig } from '../../MapStore2/web/client/actions/config.js';
 import { initMap } from '../../MapStore2/web/client/actions/map.js';
 import MapViewerContainer from '../../MapStore2/web/client/containers/MapViewer.jsx';
+import moment from 'moment';
 
 import url from 'url';
 
@@ -27,7 +29,7 @@ class MapViewerPageGC extends React.Component {
         loadMapConfig: PropTypes.func,
         onInit: PropTypes.func,
         plugins: PropTypes.object,
-        wrappedComponent: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
+        wrappedContainer: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
         location: PropTypes.object
     };
 
@@ -47,12 +49,12 @@ class MapViewerPageGC extends React.Component {
 
 export default connect((state) => ({
     mode: urlQuery?.mobile || state?.browser?.mobile ? 'mobile' : 'desktop',
-    fromData: state?.aithome?.fromData || new Date('1995-01-01'),
-    toData: state?.aithome?.toData || new Date('1995-01-01'),
-    fromDataReal: state?.aithome?.fromDataReal || new Date('1995-01-01'),
-    toDataReal: state?.aithome?.toDataReal || new Date('1995-01-01')
+    fromData: state?.aithome?.fromData || new Date(moment().subtract(1, 'month')._d),
+    toData: state?.aithome?.toData || new Date(moment().subtract(1, 'day')._d),
+    fromDataReal: state?.aithome?.fromDataReal ||  new Date(moment().subtract(1, 'month')._d),
+    toDataReal: state?.aithome?.toDataReal || new Date(moment().subtract(1, 'day')._d)
 }),
-{   loadNewMap,
-    loadMapConfig,
+{   loadNewMap: loadNewMap,
+    loadMapConfig: loadMapConfigByDateRange,
     onInit: initMap
 })(MapViewerPageGC);

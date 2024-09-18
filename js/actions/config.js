@@ -1,5 +1,5 @@
 /**
- * Copyright 2015, GeoSolutions Sas.
+ * Copyright 2024, GeoSolutions Sas.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
@@ -24,6 +24,10 @@ export const MAP_SAVE_ERROR = 'MAP:MAP_SAVE_ERROR';
 export const MAP_SAVED = 'MAP:MAP_SAVED';
 export const RESET_MAP_SAVE_ERROR = 'MAP:RESET_MAP_SAVE_ERROR';
 
+/**
+ * File identical to MapStore's actions\config.js, with the addition of the loadMapConfigByDateRange method
+ *  which get the layers based on a date range.
+ */
 
 export function configureMap(conf, mapId, zoomToExtent) {
     return {
@@ -50,53 +54,32 @@ export function loadNewMap(configName, contextId) {
         contextId
     };
 }
-/*
-export function loadMapConfig(configName, mapId, fromData, toData, fromDataReal, toDataReal) {
+
+export function loadMapConfig(configName, mapId, config, mapInfo, overrideConfig) {
+    return {
+        type: LOAD_MAP_CONFIG,
+        configName,
+        mapId,
+        config,
+        mapInfo,
+        overrideConfig
+    };
+}
+// Gets layers based on date range
+export function loadMapConfigByDateRange(configName, mapId, fromData, toData, fromDataReal, toDataReal) {
     return (dispatch) => {
         return axios.get(configName).then((response) => {
             if (typeof response.data === 'object') {
                 response.data.map.layers.map((data) => {
-                    if (data?.group === "Variabili Meteo.Pioggia" ||
-                        data?.group === "Variabili Meteo.Temperatura" ||
-                        data?.group === "Variabili Meteo.Evapotraspirazione" ||
-                        data?.group === "Variabili Meteo.Bilancio Idrico Semplificato" ||
-                        data?.group === "Layer di Base") {
+                    if (isVariabiliMeteoLayer(data?.name)) {
                         const mapFile = DateAPI.setGCMapFile(moment(fromData).format('YYYY-MM-DD'), moment(toData).format('YYYY-MM-DD'));
                         Object.assign(data, {params: {map: mapFile, fromData: moment(fromData).format('YYYY-MM-DD'), toData: moment(toData).format('YYYY-MM-DD')}});
-                    } else if ( data.group === "Variabili Meteo.SPI" ||
-                        data.group === "Variabili Meteo.SPEI") {
+                    } else if ( isSPIorSPEILayer(data?.name)) {
                         const mapFile = DateAPI.setGCMapFile(moment(fromData).format('YYYY-MM-DD'), moment(toData).format('YYYY-MM-DD'));
                         Object.assign(data, {params: {map: mapFile, fromData: moment(fromDataReal).clone().subtract(1, 'day').format('YYYY-MM-DD'), toData: moment(toDataReal).clone().subtract(1, 'day').format('YYYY-MM-DD')}});
                     }
                 }, this);
-                dispatch(configureMap(response.data, mapId));
-            } else {
-                try {
-                    JSON.parse(response.data);
-                } catch (e) {
-                    dispatch(configureError('Configuration file broken (' + configName + '): ' + e.message, mapId));
-                }
-            }
-        }).catch((e) => {
-            dispatch(configureError(e, mapId));
-        });
-    };
-}
-*/
-export function loadMapConfig(configName, mapId, fromData, toData, fromDataReal, toDataReal) {
-    return async(dispatch) => {
-        return axios.get(configName).then((response) => {
-            if (typeof response.data === 'object') {
-                response.data.map.layers.map((data) => {
-                    if (isVariabiliMeteoLayer(data?.group)) {
-                        const mapFile = DateAPI.setGCMapFile(moment(fromData).format('YYYY-MM-DD'), moment(toData).format('YYYY-MM-DD'));
-                        Object.assign(data, {params: {map: mapFile, fromData: moment(fromData).format('YYYY-MM-DD'), toData: moment(toData).format('YYYY-MM-DD')}});
-                    } else if ( isSPIorSPEILayer(data?.group)) {
-                        const mapFile = DateAPI.setGCMapFile(moment(fromData).format('YYYY-MM-DD'), moment(toData).format('YYYY-MM-DD'));
-                        Object.assign(data, {params: {map: mapFile, fromData: moment(fromDataReal).clone().subtract(1, 'day').format('YYYY-MM-DD'), toData: moment(toDataReal).clone().subtract(1, 'day').format('YYYY-MM-DD')}});
-                    }
-                }, this);
-                dispatch(configureMap(response.data, mapId));
+                dispatch(loadMapConfig(configName, mapId, response.data));
             } else {
                 try {
                     JSON.parse(response.data);

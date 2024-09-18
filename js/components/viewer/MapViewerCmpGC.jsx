@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, GeoSolutions Sas.
+ * Copyright 2024, GeoSolutions Sas.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
@@ -108,6 +108,7 @@ class MapViewerComponentGC extends React.Component {
             if (mapId === 'new') {
                 this.props.loadNewMap(configUrl, contextId && parseInt(contextId, 10));
             } else {
+                // Gets the layers for the last month
                 this.props.loadMapConfig(configUrl, mapId, fromData, toData, fromDataReal, toDataReal);
             }
         }
