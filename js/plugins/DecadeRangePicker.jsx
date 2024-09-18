@@ -92,9 +92,9 @@ class DecadeRangePicker extends React.Component {
                     <div
                         id="ms-decaderange-action"
                         className="ms-decaderange-action">
-                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}>Periodo decadi considerate</Label>
+                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.titleDecadePeriod"/></Label>
                         <div style={{padding: "6px", textAlign: 'center'}} >Dal: <span id="from-data-statistics" >{moment(this.props.fromData).format('DD/MM/YYYY')}</span> - al: <span id="to-data-statistics" >{moment(this.props.toData).format('DD/MM/YYYY')}</span></div>
-                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="aitapp.selectDateHidrologicYear"/></Label>
+                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.selectDateHidrologicYear"/></Label>
                         <DateTimePicker
                             culture="it"
                             time={false}
@@ -110,7 +110,7 @@ class DecadeRangePicker extends React.Component {
                             editFormat={"YYYY-MM-DD"}
                             value={new Date(this.props.toDataReal)}
                             onChange={this.props.onChangeYear}/>
-                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="aitapp.selectCumulativePeriod"/></Label>
+                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.selectCumulativePeriod"/></Label>
                         <DropdownList
                             id="period1"
                             key={this.props.periodType || "1"}
@@ -121,10 +121,10 @@ class DecadeRangePicker extends React.Component {
                             onChange={this.props.onChangePeriod}/>
                         <div id="button-rangepicker-container">
                             <Button onClick={this.handleApplyPeriod}>
-                                <Glyphicon glyph="calendar" /> Applica periodo
+                                <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton"/>
                             </Button>
                             <Button onClick={this.props.onToggleDecadeRangePicker}>
-                                Mostra selezione per date
+                                <Message msgId="gcapp.decadeRangeButton"/>
                             </Button>
                         </div>
                     </div>

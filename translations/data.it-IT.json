@@ -1,12 +1,16 @@
     {
     "locale": "it-IT",
     "messages": {
-        "aitapp": {
-            "titlePeriod": "Periodo considerato",
+        "gcapp": {
+            "titleDecadePeriod": "Periodo in decadi considerate",
+            "titleDatePeriod": "Periodo considerato",
             "selectDateHidrologicYear": "Seleziona una data",
             "selectCumulativePeriod": "Seleziona periodo di cumulata dalla data selezionata",
             "selectFromDate": "Seleziona la data d'inizio periodo",
-            "selectToDate": "Seleziona la data di fine periodo"
+            "selectToDate": "Seleziona la data di fine periodo",
+            "applyPeriodButton": " Applica periodo",
+            "dateRangeButton": "Range fisso",
+            "decadeRangeButton": "Range libero"
         },
         "Language": "Lingua",
         "msgId0": "{name} ha scattato {numPhotos, plural, =0 {nessuna foto} other {# foto}} il {takenDate, date, long}.",

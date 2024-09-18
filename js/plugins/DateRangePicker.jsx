@@ -73,9 +73,9 @@ class DateRangePicker extends React.Component {
                     <div
                         id="ms-daterangepicker-action"
                         className="ms-daterangepicker-action">
-                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="aitapp.titlePeriod"/></Label>
+                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.titleDatePeriod"/></Label>
                         <div style={{padding: "6px", textAlign: 'center'}} >Dal: <span id="from-data-statistics" >{moment(this.props.fromData).format('DD/MM/YYYY')}</span> - al: <span id="to-data-statistics" >{moment(this.props.toData).format('DD/MM/YYYY')}</span></div>
-                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="aitapp.selectFromDate"/></Label>
+                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.selectFromDate"/></Label>
                         <DateTimePicker
                             culture="it"
                             time={false}
@@ -91,7 +91,7 @@ class DateRangePicker extends React.Component {
                             editFormat={"YYYY-MM-DD"}
                             value={new Date(this.props.fromData)}
                             onChange={this.props.onChangeFromData}/>
-                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="aitapp.selectToDate"/></Label>
+                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.selectToDate"/></Label>
                         <DateTimePicker
                             culture="it"
                             time={false}
@@ -109,10 +109,10 @@ class DateRangePicker extends React.Component {
                             onChange={this.props.onChangeToData}/>
                         <div id="button-rangepicker-container">
                             <Button onClick={this.handleApplyPeriod}>
-                                <Glyphicon glyph="calendar" /> Applica periodo
+                                <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton"/>
                             </Button>
                             <Button variant="primary" onClick={this.props.onToggleDateRangePicker}>
-                                Mostra selezione per decadi
+                                <Message msgId="gcapp.dateRangeButton"/>
                             </Button>
                         </div>
                     </div>
