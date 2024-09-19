@@ -62,7 +62,8 @@ function aithome(state = defaultState, action) {
             periodType: state.periodType,
             showModal: action.showModal,
             imgSrc: action.imgSrc,
-            map: state.map
+            map: state.map,
+            showDecadeRangePicker: state.showDecadeRangePicker
         };
     default:
         return state;

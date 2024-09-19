@@ -9,6 +9,8 @@
 export const FROMDATA_CHANGED = 'FROMDATA_CHANGED';
 export const TODATA_CHANGED = 'TODATA_CHANGED';
 export const CLICK_THUMBNAIL_HOME = 'CLICK_THUMBNAIL_HOME';
+export const OPEN_ALERT = 'OPEN_ALERT';
+export const CLOSE_ALERT = 'CLOSE_ALERT';
 
 export function changeFromData(fromData) {
     return {
@@ -24,10 +26,14 @@ export function changeToData(toData) {
     };
 }
 
-export function clickThumbnail(showModal, imgSrc) {
+export function openAlert(alertMessage) {
     return {
-        type: CLICK_THUMBNAIL_HOME,
-        showModal,
-        imgSrc
+        type: OPEN_ALERT,
+        alertMessage
+    };
+}
+export function closeAlert() {
+    return {
+        type: CLOSE_ALERT
     };
 }

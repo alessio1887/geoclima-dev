@@ -8,7 +8,7 @@
 */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Label, FormGroup, Glyphicon } from 'react-bootstrap';
+import { Button, Label, FormGroup, Glyphicon, Alert } from 'react-bootstrap';
 import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
 import { DateTimePicker  } from 'react-widgets';
@@ -24,7 +24,7 @@ import './rangepicker.css';
 import layers from '../../MapStore2/web/client/reducers/layers';
 import geoclimahome from '@js/reducers/geoclimahome';
 import { toggleDecadeRangePicker } from '../actions/aithome';
-import { changeFromData, changeToData } from '@js/actions/geoclimahome';
+import { changeFromData, changeToData, openAlert, closeAlert } from '@js/actions/geoclimahome';
 
 
 class DateRangePicker extends React.Component {
@@ -42,7 +42,10 @@ class DateRangePicker extends React.Component {
         layers: PropTypes.object,
         map: PropTypes.string,
         dateRangePickerIsVisible: PropTypes.bool, // serve per la visibilita del componente
-        onToggleDateRangePicker: PropTypes.func
+        onToggleDateRangePicker: PropTypes.func,
+        alertMessage: PropTypes.string,
+        onOpenAlert: PropTypes.func,
+        onCloseAlert: PropTypes.func
     };
     static defaultProps = {
         fromData: new Date(moment().subtract(1, 'month')._d),
@@ -59,7 +62,8 @@ class DateRangePicker extends React.Component {
             position: 'absolute',
             height: '100%'
         },
-        dateRangePickerIsVisible: false
+        dateRangePickerIsVisible: false,
+        alertMessage: null
     };
 
     render() {
@@ -68,27 +72,37 @@ class DateRangePicker extends React.Component {
         }
         return (
             <div className={this.props.className} style={this.props.style}>
+                {this.props.alertMessage && (
+                    <Alert variant="danger" style={{ zIndex: 1000, position: 'relative', paddingTop: '40px' }}>
+                        <div  style={{ position: 'absolute', top: '5px', right: '5px' }}>
+                            <Button onClick={this.props.onCloseAlert}  variant="outline-danger" size="sm">
+                                <Glyphicon glyph="remove" />
+                            </Button>
+                        </div>
+                        <Message msgId={this.props.alertMessage} style={{ fontSize: '48px' }}/>
+                    </Alert>
+                )}
                 <FormGroup style={{marginBottom: "0px"}} bsSize="sm">
                     <div
                         id="ms-daterangepicker-action"
                         className="ms-daterangepicker-action">
-                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.titleDatePeriod"/></Label>
+                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.freeRangePicker.titlePeriod"/></Label>
                         <div style={{padding: "6px", textAlign: 'center'}} >Dal: <span id="from-data-statistics" >{moment(this.props.fromData).format('DD/MM/YYYY')}</span> - al: <span id="to-data-statistics" >{moment(this.props.toData).format('DD/MM/YYYY')}</span></div>
-                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.selectFromDate"/></Label>
+                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.freeRangePicker.selectFromDate"/></Label>
                         <DateTimePicker
                             culture="it"
                             time={false}
-                            min={moment().subtract(1, 'years').startOf('day')._d}
+                            min={new Date("1991-01-01")}
                             max={moment().subtract(1, 'day')._d}
                             format={"DD MMMM, YYYY"}
                             editFormat={"YYYY-MM-DD"}
                             value={new Date(this.props.fromData)}
                             onChange={this.props.onChangeFromData}/>
-                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.selectToDate"/></Label>
+                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.freeRangePicker.selectToDate"/></Label>
                         <DateTimePicker
                             culture="it"
                             time={false}
-                            min={moment().subtract(1, 'years').startOf('day')._d}
+                            min={new Date("1991-01-02")}
                             max={moment().subtract(1, 'day')._d}
                             format={"DD MMMM, YYYY"}
                             editFormat={"YYYY-MM-DD"}
@@ -96,10 +110,10 @@ class DateRangePicker extends React.Component {
                             onChange={this.props.onChangeToData}/>
                         <div id="button-rangepicker-container">
                             <Button onClick={this.handleApplyPeriod}>
-                                <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton"/>
+                                <Glyphicon glyph="calendar" /><Message msgId="gcapp.freeRangePicker.applyPeriodButton"/>
                             </Button>
                             <Button variant="primary" onClick={this.props.onToggleDateRangePicker}>
-                                <Message msgId="gcapp.dateRangeButton"/>
+                                <Message msgId="gcapp.freeRangePicker.dateRangeButton"/>
                             </Button>
                         </div>
                     </div>
@@ -108,23 +122,43 @@ class DateRangePicker extends React.Component {
         );
     }
     handleApplyPeriod = () => {
-        const mapFile = DateAPI.setGCMapFile(this.props.fromData, this.props.toData);
+        // const mapFile = DateAPI.setGCMapFile(this.props.fromData, this.props.toData);
+        // this.updateParams({
+        //     params: {
+        //         map: mapFile,
+        //         fromData: moment(this.props.fromData).format('YYYY-MM-DD'),
+        //         toData: moment(this.props.toData).format('YYYY-MM-DD')
+        //     }
+        // });
+        const { fromData, toData } = this.props;
+
+        // Verifiche sulle date
+        const startDate = moment(fromData);
+        const endDate = moment(toData);
+        if (endDate.isBefore(startDate)) {
+            // this.props.onOpenAlert('La data inizio non può essere minore della data fine.');
+            this.props.onOpenAlert("gcapp.errorMessages.endDateBefore");
+            return;
+        }
+
+        const oneYearFromStart = startDate.clone().add(1, 'year');
+        if (endDate.isAfter(oneYearFromStart)) {
+            this.props.onOpenAlert("gcapp.errorMessages.rangeTooLarge");
+            return;
+        }
+
+        // Se le verifiche passano, procedi con l'aggiornamento dei parametri
+        const mapFile = DateAPI.setGCMapFile(fromData, toData);
         this.updateParams({
             params: {
                 map: mapFile,
-                fromData: moment(this.props.fromData).format('YYYY-MM-DD'),
-                toData: moment(this.props.toData).format('YYYY-MM-DD')
+                fromData: moment(fromData).format('YYYY-MM-DD'),
+                toData: moment(toData).format('YYYY-MM-DD')
             }
         });
     }
 
     updateParams(newParams, onUpdateNode = true) {
-        // let originalSettings = assign({}, this.state.originalSettings);
-        // // TODO one level only storage of original settings for the moment
-        // Object.keys(newParams).forEach((key) => {
-        //     originalSettings[key] = this.state.initialState[key];
-        // });
-        // this.setState({originalSettings});
         this.props.onUpdateSettings(newParams);
         if (onUpdateNode) {
             this.props.layers.flat.map((layer) => {
@@ -147,7 +181,8 @@ const mapStateToProps = (state) => {
         toData: state?.geoclimahome?.toData || new Date(moment().subtract(1, 'day')._d),
         settings: state?.layers?.settings || {expanded: false, options: {opacity: 1}},
         layers: state?.layers || {},
-        dateRangePickerIsVisible: (!state?.aithome?.showDecadeRangePicker ) ? true : false
+        dateRangePickerIsVisible: (!state?.aithome?.showDecadeRangePicker ) ? true : false,
+        alertMessage: state?.geoclimahome?.alertMessage || null
     };
 };
 
@@ -156,7 +191,9 @@ const DateRangePickerPlugin = connect(mapStateToProps, {
     onChangeToData: compose(changeToData, (event) => event),
     onUpdateSettings: updateSettings,
     onUpdateNode: updateNode,
-    onToggleDateRangePicker: toggleDecadeRangePicker
+    onToggleDateRangePicker: toggleDecadeRangePicker,
+    onOpenAlert: openAlert,
+    onCloseAlert: closeAlert
 })(DateRangePicker);
 
 export default createPlugin(
