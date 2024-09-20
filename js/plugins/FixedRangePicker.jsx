@@ -7,12 +7,12 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Label, FormGroup, Glyphicon } from 'react-bootstrap';
+import { Button, Label, FormGroup, Glyphicon, Alert } from 'react-bootstrap';
 import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
 import { DateTimePicker, DropdownList } from 'react-widgets';
 import { compose } from 'redux';
-import { changeYear, changePeriod, toggleDecadeRangePicker } from '../actions/aithome';
+import { changeYear, changePeriod, toggleDecadeRangePicker, openAlert, closeAlert  } from '../actions/aithome';
 import { isVariabiliMeteoLayer, isSPIorSPEILayer } from '../utils/CheckLayerVariabiliMeteoUtils';
 import DateAPI from '../utils/ManageDateUtils';
 import { connect } from 'react-redux';
@@ -45,11 +45,14 @@ class FixedRangePicker extends React.Component {
         periodTypes: PropTypes.array,
         map: PropTypes.string,
         fixedRangePickerActive: PropTypes.bool, // serve per la visibilita del componente
-        onToggleFixedRangePicker: PropTypes.func
+        onToggleFixedRangePicker: PropTypes.func,
+        alertMessage: PropTypes.string,
+        onOpenAlert: PropTypes.func,
+        onCloseAlert: PropTypes.func
     };
     static defaultProps = {
-        fromData: new Date(DateAPI.calculateDateFromKey("1", moment().subtract(1, 'day')._d).fromData),
-        toData: new Date(DateAPI.calculateDateFromKey("1", moment().subtract(1, 'day')._d).toData),
+        fromData: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).fromData),
+        toData: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
         fromDataReal: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).fromData),
         toDataReal: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
         onChangeYear: () => {},
@@ -74,7 +77,8 @@ class FixedRangePicker extends React.Component {
             position: 'absolute',
             height: '100%'
         },
-        fixedRangePickerActive: false
+        fixedRangePickerActive: false,
+        alertMessage: null
     };
 
     render() {
@@ -83,6 +87,16 @@ class FixedRangePicker extends React.Component {
         }
         return (
             <div className={this.props.className} style={this.props.style}>
+                {this.props.alertMessage && (
+                    <Alert variant="danger" className="alert-date">
+                        <div  className="alert-date-close">
+                            <Button onClick={this.props.onCloseAlert}  variant="outline-danger" size="sm">
+                                <Glyphicon glyph="remove" />
+                            </Button>
+                        </div>
+                        <Message msgId={this.props.alertMessage}/>
+                    </Alert>
+                )}
                 <FormGroup style={{marginBottom: "0px"}} bsSize="sm">
                     <div
                         id="ms-fixedrangepicker-action"
@@ -123,12 +137,22 @@ class FixedRangePicker extends React.Component {
     }
 
     handleApplyPeriod = () => {
-        const mapFile = DateAPI.setGCMapFile(this.props.fromData, this.props.toData);
+        const { fromData, toData } = this.props;
+
+        // Verifiche sulle date
+        const startDate = moment(fromData);
+        if (startDate.isBefore(moment('1991-01-01'))) {
+            this.props.onOpenAlert("gcapp.errorMessages.dateTooEarly");
+            return;
+        }
+
+        // Se le verifiche passano, procedi con l'aggiornamento dei parametri
+        const mapFile = DateAPI.setGCMapFile(fromData, toData);
         this.updateParams({
             params: {
                 map: mapFile,
-                fromData: moment(this.props.fromData).format('YYYY-MM-DD'),
-                toData: moment(this.props.toData).format('YYYY-MM-DD')
+                fromData: moment(fromData).format('YYYY-MM-DD'),
+                toData: moment(toData).format('YYYY-MM-DD')
             }
         });
         this.updateParamsReal({
@@ -201,7 +225,8 @@ const mapStateToProps = (state) => {
         ],
         settings: state?.layers?.settings || {expanded: false, options: {opacity: 1}},
         layers: state?.layers || {},
-        fixedRangePickerActive: (state?.aithome?.showFixedRangePicker ) ? true : false
+        fixedRangePickerActive: (state?.aithome?.showFixedRangePicker ) ? true : false,
+        alertMessage: state?.aithome?.alertMessage || null
     };
 };
 
@@ -210,7 +235,9 @@ const FixedRangePickerPlugin = connect(mapStateToProps, {
     onChangePeriod: compose(changePeriod, (event) => event.key),
     onUpdateSettings: updateSettings,
     onUpdateNode: updateNode,
-    onToggleFixedRangePicker: toggleDecadeRangePicker
+    onToggleFixedRangePicker: toggleDecadeRangePicker,
+    onOpenAlert: openAlert,
+    onCloseAlert: closeAlert
 })(FixedRangePicker);
 
 export default createPlugin(

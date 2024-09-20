@@ -10,6 +10,8 @@ export const MAP_YEAR_CHANGED = 'MAP_YEAR_CHANGED';
 export const MAP_PERIOD_CHANGED = 'MAP_PERIOD_CHANGED';
 export const TOGGLE_PLUGIN = 'TOGGLE_PLUGIN';
 export const CLICK_THUMBNAIL_HOME = 'CLICK_THUMBNAIL_HOME';
+export const OPEN_ALERT = 'FIXEDRANGE:OPEN_ALERT';
+export const CLOSE_ALERT = 'FIXEDRANGE:CLOSE_ALERT';
 
 export function changeYear(toData) {
     return {
@@ -36,5 +38,16 @@ export function clickThumbnail(showModal, imgSrc) {
         type: CLICK_THUMBNAIL_HOME,
         showModal,
         imgSrc
+    };
+}
+export function openAlert(alertMessage) {
+    return {
+        type: OPEN_ALERT,
+        alertMessage
+    };
+}
+export function closeAlert() {
+    return {
+        type: CLOSE_ALERT
     };
 }

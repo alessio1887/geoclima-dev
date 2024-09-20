@@ -122,21 +122,12 @@ class FreeRangePicker extends React.Component {
         );
     }
     handleApplyPeriod = () => {
-        // const mapFile = DateAPI.setGCMapFile(this.props.fromData, this.props.toData);
-        // this.updateParams({
-        //     params: {
-        //         map: mapFile,
-        //         fromData: moment(this.props.fromData).format('YYYY-MM-DD'),
-        //         toData: moment(this.props.toData).format('YYYY-MM-DD')
-        //     }
-        // });
         const { fromData, toData } = this.props;
 
         // Verifiche sulle date
         const startDate = moment(fromData);
         const endDate = moment(toData);
         if (endDate.isBefore(startDate)) {
-            // this.props.onOpenAlert('La data inizio non può essere minore della data fine.');
             this.props.onOpenAlert("gcapp.errorMessages.endDateBefore");
             return;
         }

@@ -75,8 +75,8 @@
 }
 
 @media (min-width: 769px) {
-    div#mapstore-freerangepicker,
-    div#mapstore-fixedrangepicker {
+    div#mapstore-freerangepicker-map,
+    div#mapstore-fixedrangepicker-map {
         /*width: 300px;*/
         margin-left: auto;
         margin-bottom: 40px;
