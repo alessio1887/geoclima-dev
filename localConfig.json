@@ -360,13 +360,13 @@
           {
             "name": "FixedRangePicker",
             "cfg" : {
-              "id": "mapstore-fixedrange-map"
+              "id": "mapstore-fixedrangepicker-map"
             }
           },
           {
             "name": "FreeRangePicker",
             "cfg" : {
-              "id": "mapstore-freerange-map"
+              "id": "mapstore-freerangepicker-map"
             }
           },
           {
