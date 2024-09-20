@@ -5,8 +5,8 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import DateRangePickerPlugin from '@js/plugins/DateRangePicker';
-import DecadeRangePickerPlugin from '@js/plugins/DecadeRangePicker';
+import FreeRangePickerPlugin from '@js/plugins/FreeRangePicker';
+import FixedRangePickerPlugin from '@js/plugins/FixedRangePicker';
 import productPlugins from '@mapstore/product/plugins.js';
 
 export default {
@@ -15,7 +15,7 @@ export default {
     },
     plugins: {
         ...productPlugins.plugins,
-        DateRangePickerPlugin,
-        DecadeRangePickerPlugin
+        FreeRangePickerPlugin,
+        FixedRangePickerPlugin
     }
 };

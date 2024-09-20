@@ -358,15 +358,15 @@
         ],
         "desktop": [
           {
-            "name": "DecadeRangePicker",
+            "name": "FixedRangePicker",
             "cfg" : {
-              "id": "mapstore-decaderange-map"
+              "id": "mapstore-fixedrange-map"
             }
           },
           {
-            "name": "DateRangePicker",
+            "name": "FreeRangePicker",
             "cfg" : {
-              "id": "mapstore-daterange-map"
+              "id": "mapstore-freerange-map"
             }
           },
           {

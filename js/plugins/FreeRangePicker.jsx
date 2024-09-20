@@ -27,7 +27,7 @@ import { toggleDecadeRangePicker } from '../actions/aithome';
 import { changeFromData, changeToData, openAlert, closeAlert } from '@js/actions/geoclimahome';
 
 
-class DateRangePicker extends React.Component {
+class FreeRangePicker extends React.Component {
     static propTypes = {
         style: PropTypes.object,
         id: PropTypes.string,
@@ -41,8 +41,8 @@ class DateRangePicker extends React.Component {
         settings: PropTypes.object,
         layers: PropTypes.object,
         map: PropTypes.string,
-        dateRangePickerIsVisible: PropTypes.bool, // serve per la visibilita del componente
-        onToggleDateRangePicker: PropTypes.func,
+        freeRangePickerIsVisible: PropTypes.bool, // serve per la visibilita del componente
+        onToggleFreeRangePicker: PropTypes.func,
         alertMessage: PropTypes.string,
         onOpenAlert: PropTypes.func,
         onCloseAlert: PropTypes.func
@@ -62,30 +62,30 @@ class DateRangePicker extends React.Component {
             position: 'absolute',
             height: '100%'
         },
-        dateRangePickerIsVisible: false,
+        freeRangePickerIsVisible: false,
         alertMessage: null
     };
 
     render() {
-        if (!this.props.dateRangePickerIsVisible) {
+        if (!this.props.freeRangePickerIsVisible) {
             return null;
         }
         return (
             <div className={this.props.className} style={this.props.style}>
                 {this.props.alertMessage && (
-                    <Alert variant="danger" style={{ zIndex: 1000, position: 'relative', paddingTop: '40px' }}>
-                        <div  style={{ position: 'absolute', top: '5px', right: '5px' }}>
+                    <Alert variant="danger" className="alert-date">
+                        <div  className="alert-date-close">
                             <Button onClick={this.props.onCloseAlert}  variant="outline-danger" size="sm">
                                 <Glyphicon glyph="remove" />
                             </Button>
                         </div>
-                        <Message msgId={this.props.alertMessage} style={{ fontSize: '48px' }}/>
+                        <Message msgId={this.props.alertMessage}/>
                     </Alert>
                 )}
                 <FormGroup style={{marginBottom: "0px"}} bsSize="sm">
                     <div
-                        id="ms-daterangepicker-action"
-                        className="ms-daterangepicker-action">
+                        id="ms-freerangepicker-action"
+                        className="ms-freerangepicker-action">
                         <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.freeRangePicker.titlePeriod"/></Label>
                         <div style={{padding: "6px", textAlign: 'center'}} >Dal: <span id="from-data-statistics" >{moment(this.props.fromData).format('DD/MM/YYYY')}</span> - al: <span id="to-data-statistics" >{moment(this.props.toData).format('DD/MM/YYYY')}</span></div>
                         <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.freeRangePicker.selectFromDate"/></Label>
@@ -112,7 +112,7 @@ class DateRangePicker extends React.Component {
                             <Button onClick={this.handleApplyPeriod}>
                                 <Glyphicon glyph="calendar" /><Message msgId="gcapp.freeRangePicker.applyPeriodButton"/>
                             </Button>
-                            <Button variant="primary" onClick={this.props.onToggleDateRangePicker}>
+                            <Button variant="primary" onClick={this.props.onToggleFreeRangePicker}>
                                 <Message msgId="gcapp.freeRangePicker.dateRangeButton"/>
                             </Button>
                         </div>
@@ -181,28 +181,28 @@ const mapStateToProps = (state) => {
         toData: state?.geoclimahome?.toData || new Date(moment().subtract(1, 'day')._d),
         settings: state?.layers?.settings || {expanded: false, options: {opacity: 1}},
         layers: state?.layers || {},
-        dateRangePickerIsVisible: (!state?.aithome?.showDecadeRangePicker ) ? true : false,
+        freeRangePickerIsVisible: (!state?.aithome?.showFixedRangePicker ) ? true : false,
         alertMessage: state?.geoclimahome?.alertMessage || null
     };
 };
 
-const DateRangePickerPlugin = connect(mapStateToProps, {
+const FreeRangePickerPlugin = connect(mapStateToProps, {
     onChangeFromData: compose(changeFromData, (event) => event),
     onChangeToData: compose(changeToData, (event) => event),
     onUpdateSettings: updateSettings,
     onUpdateNode: updateNode,
-    onToggleDateRangePicker: toggleDecadeRangePicker,
+    onToggleFreeRangePicker: toggleDecadeRangePicker,
     onOpenAlert: openAlert,
     onCloseAlert: closeAlert
-})(DateRangePicker);
+})(FreeRangePicker);
 
 export default createPlugin(
-    'DateRangePickerPlugin',
+    'FreeRangePickerPlugin',
     {
-        component: assign(DateRangePickerPlugin, {
+        component: assign(FreeRangePickerPlugin, {
             GridContainer: {
-                id: 'dateRangePicker',
-                name: 'dateRangePicker',
+                id: 'freeRangePicker',
+                name: 'freeRangePicker',
                 tool: true,
                 position: 1,
                 priority: 1

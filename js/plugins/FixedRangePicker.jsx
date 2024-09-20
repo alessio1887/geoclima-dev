@@ -25,16 +25,13 @@ import aithome from '../reducers/aithome';
 import layers from '../../MapStore2/web/client/reducers/layers';
 
 
-// This plugin allows you to select periods in decades (multiples of 10 days)
-class DecadeRangePicker extends React.Component {
+class FixedRangePicker extends React.Component {
     static propTypes = {
         style: PropTypes.object,
         id: PropTypes.string,
         className: PropTypes.string,
-        // fromData-toDate sono le date ricalcolate in base alla decade in cui ricadono, vengono passare come parametri alle richeiste http
         fromData: PropTypes.instanceOf(Date),
         toData: PropTypes.instanceOf(Date),
-        // fromDataReal-toDateReal sono le date effettivamente selezionate dal form
         fromDataReal: PropTypes.instanceOf(Date),
         toDataReal: PropTypes.instanceOf(Date),
         onChangeYear: PropTypes.func,
@@ -47,8 +44,8 @@ class DecadeRangePicker extends React.Component {
         periodType: PropTypes.string,
         periodTypes: PropTypes.array,
         map: PropTypes.string,
-        decadeRanePickerActive: PropTypes.bool, // serve per la visibilita del componente
-        onToggleDecadeRangePicker: PropTypes.func
+        fixedRangePickerActive: PropTypes.bool, // serve per la visibilita del componente
+        onToggleFixedRangePicker: PropTypes.func
     };
     static defaultProps = {
         fromData: new Date(DateAPI.calculateDateFromKey("1", moment().subtract(1, 'day')._d).fromData),
@@ -69,28 +66,27 @@ class DecadeRangePicker extends React.Component {
         ],
         periodType: "1",
         map: "geoclima",
-        id: "mapstore-decaderange",
-        className: "mapstore-decaderange",
+        id: "mapstore-fixederange",
+        className: "mapstore-fixederange",
         style: {
             top: 0,
             left: "305px",
             position: 'absolute',
             height: '100%'
         },
-        decadeRanePickerActive: false
+        fixedRangePickerActive: false
     };
 
     render() {
-        if (!this.props.decadeRanePickerActive) {
+        if (!this.props.fixedRangePickerActive) {
             return null;
         }
-
         return (
             <div className={this.props.className} style={this.props.style}>
                 <FormGroup style={{marginBottom: "0px"}} bsSize="sm">
                     <div
-                        id="ms-decaderange-action"
-                        className="ms-decaderange-action">
+                        id="ms-fixedrangepicker-action"
+                        className="ms-fixedrangepicker-action">
                         <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.fixedRangePicker.titlePeriod"/></Label>
                         <div style={{padding: "6px", textAlign: 'center'}} >Dal: <span id="from-data-statistics" >{moment(this.props.fromData).format('DD/MM/YYYY')}</span> - al: <span id="to-data-statistics" >{moment(this.props.toData).format('DD/MM/YYYY')}</span></div>
                         <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.fixedRangePicker.selectDateHidrologicYear"/></Label>
@@ -114,9 +110,9 @@ class DecadeRangePicker extends React.Component {
                             onChange={this.props.onChangePeriod}/>
                         <div id="button-rangepicker-container">
                             <Button onClick={this.handleApplyPeriod}>
-                                <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton"/>
+                                <Glyphicon glyph="calendar" /><Message msgId="gcapp.fixedRangePicker.applyPeriodButton"/>
                             </Button>
-                            <Button onClick={this.props.onToggleDecadeRangePicker}>
+                            <Button onClick={this.props.onToggleFixedRangePicker}>
                                 <Message msgId="gcapp.fixedRangePicker.fixedRangeButton"/>
                             </Button>
                         </div>
@@ -205,25 +201,25 @@ const mapStateToProps = (state) => {
         ],
         settings: state?.layers?.settings || {expanded: false, options: {opacity: 1}},
         layers: state?.layers || {},
-        decadeRanePickerActive: (state?.aithome?.showDecadeRangePicker ) ? true : false
+        fixedRangePickerActive: (state?.aithome?.showFixedRangePicker ) ? true : false
     };
 };
 
-const DecadeRangePickerPlugin = connect(mapStateToProps, {
+const FixedRangePickerPlugin = connect(mapStateToProps, {
     onChangeYear: compose(changeYear, (event) => event),
     onChangePeriod: compose(changePeriod, (event) => event.key),
     onUpdateSettings: updateSettings,
     onUpdateNode: updateNode,
-    onToggleDecadeRangePicker: toggleDecadeRangePicker
-})(DecadeRangePicker);
+    onToggleFixedRangePicker: toggleDecadeRangePicker
+})(FixedRangePicker);
 
 export default createPlugin(
-    'DecadeRangePickerPlugin',
+    'FixedRangePickerPlugin',
     {
-        component: assign(DecadeRangePickerPlugin, {
+        component: assign(FixedRangePickerPlugin, {
             GridContainer: {
-                id: 'decadeRangePicker',
-                name: 'decadeRangePicker',
+                id: 'fixedRangePicker',
+                name: 'fixedRangePicker',
                 tool: true,
                 position: 1,
                 priority: 1

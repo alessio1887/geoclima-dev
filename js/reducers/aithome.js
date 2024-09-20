@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
 */
 
-import {MAP_YEAR_CHANGED, MAP_PERIOD_CHANGED, TOGGLE_PLUGIN, CLICK_THUMBNAIL_HOME} from '../actions/aithome';
+import {MAP_YEAR_CHANGED, MAP_PERIOD_CHANGED, TOGGLE_PLUGIN } from '../actions/aithome';
 import DateAPI from '../utils/ManageDateUtils';
 
 const defaultState = {
@@ -19,7 +19,7 @@ const defaultState = {
     imgSrc: "",
     // map: "/opt/ait/ait.map"
     map: "geoclima",
-    showDecadeRangePicker: false
+    showFixedRangePicker: true
 };
 
 function aithome(state = defaultState, action) {
@@ -34,7 +34,7 @@ function aithome(state = defaultState, action) {
             showModal: false,
             imgSrc: "",
             map: state.map,
-            showDecadeRangePicker: state.showDecadeRangePicker
+            showFixedRangePicker: state.showFixedRangePicker
         };
     case MAP_PERIOD_CHANGED:
         return {
@@ -46,24 +46,12 @@ function aithome(state = defaultState, action) {
             showModal: false,
             imgSrc: "",
             map: state.map,
-            showDecadeRangePicker: state.showDecadeRangePicker
+            showFixedRangePicker: state.showFixedRangePicker
         };
     case TOGGLE_PLUGIN:
         return {
             ...state,
-            showDecadeRangePicker: !state.showDecadeRangePicker
-        };
-    case CLICK_THUMBNAIL_HOME:
-        return {
-            fromData: new Date(DateAPI.calculateDateFromKey(state.periodType, state.toData).fromData),
-            toData: new Date(DateAPI.calculateDateFromKey(state.periodType, state.toData).toData),
-            fromDataReal: new Date(DateAPI.calculateDateFromKeyReal(state.periodType, state.toDataReal).fromData),
-            toDataReal: new Date(DateAPI.calculateDateFromKeyReal(state.periodType, state.toDataReal).toData),
-            periodType: state.periodType,
-            showModal: action.showModal,
-            imgSrc: action.imgSrc,
-            map: state.map,
-            showDecadeRangePicker: state.showDecadeRangePicker
+            showFixedRangePicker: !state.showFixedRangePicker
         };
     default:
         return state;
