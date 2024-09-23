@@ -50,9 +50,7 @@ class MapViewerPageGC extends React.Component {
 export default connect((state) => ({
     mode: urlQuery?.mobile || state?.browser?.mobile ? 'mobile' : 'desktop',
     fromData: state?.aithome?.fromData || new Date(moment().subtract(1, 'month')._d),
-    toData: state?.aithome?.toData || new Date(moment().subtract(1, 'day')._d),
-    fromDataReal: state?.aithome?.fromDataReal ||  new Date(moment().subtract(1, 'month')._d),
-    toDataReal: state?.aithome?.toDataReal || new Date(moment().subtract(1, 'day')._d)
+    toData: state?.aithome?.toData || new Date(moment().subtract(1, 'day')._d)
 }),
 {   loadNewMap: loadNewMap,
     loadMapConfig: loadMapConfigByDateRange,

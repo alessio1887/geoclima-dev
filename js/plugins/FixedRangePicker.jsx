@@ -32,8 +32,6 @@ class FixedRangePicker extends React.Component {
         className: PropTypes.string,
         fromData: PropTypes.instanceOf(Date),
         toData: PropTypes.instanceOf(Date),
-        fromDataReal: PropTypes.instanceOf(Date),
-        toDataReal: PropTypes.instanceOf(Date),
         onChangeYear: PropTypes.func,
         onChangeMonth: PropTypes.func,
         onChangePeriod: PropTypes.func,
@@ -53,8 +51,6 @@ class FixedRangePicker extends React.Component {
     static defaultProps = {
         fromData: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).fromData),
         toData: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
-        fromDataReal: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).fromData),
-        toDataReal: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
         onChangeYear: () => {},
         onChangeMonth: () => {},
         onChangePeriod: () => {},
@@ -111,7 +107,7 @@ class FixedRangePicker extends React.Component {
                             max={moment().subtract(1, 'day')._d}
                             format={"DD MMMM, YYYY"}
                             editFormat={"YYYY-MM-DD"}
-                            value={new Date(this.props.toDataReal)}
+                            value={new Date(this.props.toData)}
                             onChange={this.props.onChangeYear}/>
                         <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.fixedRangePicker.selectCumulativePeriod"/></Label>
                         <DropdownList
@@ -158,19 +154,13 @@ class FixedRangePicker extends React.Component {
         this.updateParamsReal({
             params: {
                 map: mapFile,
-                fromData: moment(this.props.fromDataReal).clone().subtract(1, 'day').format('YYYY-MM-DD'),
-                toData: moment(this.props.toDataReal).clone().subtract(1, 'day').format('YYYY-MM-DD')
+                fromData: moment(this.props.fromData).clone().subtract(1, 'day').format('YYYY-MM-DD'),
+                toData: moment(this.props.toData).clone().subtract(1, 'day').format('YYYY-MM-DD')
             }
         });
     }
 
     updateParams(newParams, onUpdateNode = true) {
-        // let originalSettings = assign({}, this.state.originalSettings);
-        // // TODO one level only storage of original settings for the moment
-        // Object.keys(newParams).forEach((key) => {
-        //     originalSettings[key] = this.state.initialState[key];
-        // });
-        // this.setState({originalSettings});
         this.props.onUpdateSettings(newParams);
         if (onUpdateNode) {
             this.props.layers.flat.map((layer) => {
@@ -186,17 +176,10 @@ class FixedRangePicker extends React.Component {
         }
     }
     updateParamsReal(newParams, onUpdateNode = true) {
-        // let originalSettings = assign({}, this.state.originalSettings);
-        // // TODO one level only storage of original settings for the moment
-        // Object.keys(newParams).forEach((key) => {
-        //     originalSettings[key] = this.state.initialState[key];
-        // });
-        // this.setState({originalSettings});
         this.props.onUpdateSettings(newParams);
         if (onUpdateNode) {
             this.props.layers.flat.map((layer) => {
                 if (isSPIorSPEILayer(layer.name)) {
-                // if (layers.group === "Spazializzazioni" || layers.group === "Aree di allerta meteo" || layers.group === "Stazioni") {
                     this.props.onUpdateNode(
                         layer.id,
                         "layers",
@@ -212,8 +195,6 @@ const mapStateToProps = (state) => {
     return {
         fromData: state?.aithome?.fromData || new Date(moment().subtract(1, 'month')._d),
         toData: state?.aithome?.toData || new Date(moment().subtract(1, 'day')._d),
-        fromDataReal: state?.aithome?.fromDataReal || new Date(moment().subtract(1, 'month')._d),
-        toDataReal: state?.aithome?.toDataReal || new Date(moment().subtract(1, 'day')._d),
         periodType: state?.aithome?.periodType || "1",
         periodTypes: state?.aithome?.periodTypes || [
             { key: "1", label: "1 Mese" },

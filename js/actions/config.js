@@ -66,17 +66,14 @@ export function loadMapConfig(configName, mapId, config, mapInfo, overrideConfig
     };
 }
 // Gets layers based on date range
-export function loadMapConfigByDateRange(configName, mapId, fromData, toData, fromDataReal, toDataReal) {
+export function loadMapConfigByDateRange(configName, mapId, fromData, toData) {
     return (dispatch) => {
         return axios.get(configName).then((response) => {
             if (typeof response.data === 'object') {
                 response.data.map.layers.map((data) => {
-                    if (isVariabiliMeteoLayer(data?.name)) {
+                    if (isVariabiliMeteoLayer(data?.name) || isSPIorSPEILayer(data?.name)) {
                         const mapFile = DateAPI.setGCMapFile(moment(fromData).format('YYYY-MM-DD'), moment(toData).format('YYYY-MM-DD'));
                         Object.assign(data, {params: {map: mapFile, fromData: moment(fromData).format('YYYY-MM-DD'), toData: moment(toData).format('YYYY-MM-DD')}});
-                    } else if ( isSPIorSPEILayer(data?.name)) {
-                        const mapFile = DateAPI.setGCMapFile(moment(fromData).format('YYYY-MM-DD'), moment(toData).format('YYYY-MM-DD'));
-                        Object.assign(data, {params: {map: mapFile, fromData: moment(fromDataReal).clone().subtract(1, 'day').format('YYYY-MM-DD'), toData: moment(toDataReal).clone().subtract(1, 'day').format('YYYY-MM-DD')}});
                     }
                 }, this);
                 dispatch(loadMapConfig(configName, mapId, response.data));

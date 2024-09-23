@@ -27,11 +27,8 @@ class MapViewerComponentGC extends React.Component {
         location: PropTypes.object,
         className: PropTypes.string,
         onLoaded: PropTypes.func,
-
         fromData: PropTypes.instanceOf(Date),
-        toData: PropTypes.instanceOf(Date),
-        fromDataReal: PropTypes.instanceOf(Date),
-        toDataReal: PropTypes.instanceOf(Date)
+        toData: PropTypes.instanceOf(Date)
     };
     static defaultProps = {
         mode: 'desktop',
@@ -85,8 +82,6 @@ class MapViewerComponentGC extends React.Component {
 
             let fromData = this.props.fromData;
             let toData = this.props.toData;
-            let fromDataReal = this.props.fromDataReal;
-            let toDataReal = this.props.toDataReal;
 
             oldLocation = this.props.location;
             if (!ConfigUtils.getDefaults().ignoreMobileCss) {
@@ -109,7 +104,7 @@ class MapViewerComponentGC extends React.Component {
                 this.props.loadNewMap(configUrl, contextId && parseInt(contextId, 10));
             } else {
                 // Gets the layers for the last month
-                this.props.loadMapConfig(configUrl, mapId, fromData, toData, fromDataReal, toDataReal);
+                this.props.loadMapConfig(configUrl, mapId, fromData, toData);
             }
         }
     }

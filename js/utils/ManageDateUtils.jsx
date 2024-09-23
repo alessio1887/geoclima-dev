@@ -41,51 +41,6 @@ const Api = {
         }
         return date;
     },
-    calculateDateFromKey(key, toData) {
-        let date = {};
-
-        // The selected DATE from the users
-        date.toData = Api.startMonthDecade(moment(toData).clone().format('YYYY-MM-DD'));
-
-        // const year = moment(toData).clone().format('YYYY-MM-DD');
-        if (key === "1") {
-            date.fromData = Api.startMonthDecade(moment(toData).clone().subtract(1, 'month').format('YYYY-MM-DD'));
-        } else if (key === "3") {
-            date.fromData = Api.startMonthDecade(moment(toData).clone().subtract(3, 'month').format('YYYY-MM-DD'));
-        } else if (key === "4") {
-            date.fromData = Api.startMonthDecade(moment(toData).clone().subtract(4, 'month').format('YYYY-MM-DD'));
-        } else if (key === "6") {
-            date.fromData = Api.startMonthDecade(moment(toData).clone().subtract(6, 'month').format('YYYY-MM-DD'));
-        } else if (key === "12") {
-            date.fromData = Api.startMonthDecade(moment(toData).clone().subtract(12, 'month').format('YYYY-MM-DD'));
-        } else {
-            // se la data selezionata è minore del 1 ottobre dello stesso anno
-            const currentYear = moment(date.toData).format('YYYY');
-            const currentToData = moment().clone().format(currentYear + "-10-01");
-            if (date.toData < currentToData) {
-                if (moment(toData).clone().format('YYYY') < currentYear) {
-                    date.fromData = Api.startMonthDecade(moment(toData).clone().endOf('year').subtract(2, 'month').startOf('month').format('YYYY-MM-DD'));
-                } else {
-                    date.fromData = Api.startMonthDecade(moment(toData).clone().subtract(1, 'year').endOf('year').subtract(2, 'month').startOf('month').format('YYYY-MM-DD'));
-                }
-            } else {
-                date.fromData = Api.startMonthDecade(moment(toData).clone().endOf('year').subtract(2, 'month').startOf('month').format('YYYY-MM-DD'));
-            }
-        }
-        return date;
-    },
-    startMonthDecade(date) {
-        const dateArray = date.split("-");
-        if (dateArray[2] <= 10) {
-            dateArray[2] = '01';
-            return dateArray.join("-");
-        } else if (dateArray[2] > 10 && dateArray[2] < 21) {
-            dateArray[2] = '11';
-            return dateArray.join("-");
-        }
-        dateArray[2] = '21';
-        return dateArray.join("-");
-    },
     /**
      * Metodo che restituire il nome del mapfile da passare come parametro alla richiesta HTTP.
      * Infatti, in base alla durata della cumulata i valori delle legende nel mapfile cambiano, ad esempio una cumulata
