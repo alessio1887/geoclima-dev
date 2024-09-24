@@ -22,9 +22,9 @@ import { createPlugin } from '@mapstore/utils/PluginsUtils';
 import './rangepicker.css';
 
 import layers from '../../MapStore2/web/client/reducers/layers';
-import geoclimahome from '@js/reducers/geoclimahome';
-import { toggleDecadeRangePicker } from '../actions/aithome';
-import { changeFromData, changeToData, openAlert, closeAlert } from '@js/actions/geoclimahome';
+import freerangepicker from '@js/reducers/freerangepicker';
+import { toggleRangePickerPlugin } from '../actions/fixedrangepicker';
+import { changeFromData, changeToData, openAlert, closeAlert } from '@js/actions/freerangepicker';
 
 
 class FreeRangePicker extends React.Component {
@@ -168,12 +168,12 @@ class FreeRangePicker extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-        fromData: state?.geoclimahome?.fromData || new Date(moment().subtract(1, 'month')._d),
-        toData: state?.geoclimahome?.toData || new Date(moment().subtract(1, 'day')._d),
+        fromData: state?.freerangepicker?.fromData || new Date(moment().subtract(1, 'month')._d),
+        toData: state?.freerangepicker?.toData || new Date(moment().subtract(1, 'day')._d),
         settings: state?.layers?.settings || {expanded: false, options: {opacity: 1}},
         layers: state?.layers || {},
-        freeRangePickerIsVisible: (!state?.aithome?.showFixedRangePicker ) ? true : false,
-        alertMessage: state?.geoclimahome?.alertMessage || null
+        freeRangePickerIsVisible: (!state?.fixedrangepicker?.showFixedRangePicker ) ? true : false,
+        alertMessage: state?.freerangepicker?.alertMessage || null
     };
 };
 
@@ -182,7 +182,7 @@ const FreeRangePickerPlugin = connect(mapStateToProps, {
     onChangeToData: compose(changeToData, (event) => event),
     onUpdateSettings: updateSettings,
     onUpdateNode: updateNode,
-    onToggleFreeRangePicker: toggleDecadeRangePicker,
+    onToggleFreeRangePicker: toggleRangePickerPlugin,
     onOpenAlert: openAlert,
     onCloseAlert: closeAlert
 })(FreeRangePicker);
@@ -200,7 +200,7 @@ export default createPlugin(
             }
         }),
         reducers: {
-            geoclimahome: geoclimahome,
+            freerangepicker: freerangepicker,
             layers: layers
         }
     }

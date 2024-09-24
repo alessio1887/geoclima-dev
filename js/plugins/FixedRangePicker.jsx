@@ -12,7 +12,7 @@ import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
 import { DateTimePicker, DropdownList } from 'react-widgets';
 import { compose } from 'redux';
-import { changeYear, changePeriod, toggleDecadeRangePicker, openAlert, closeAlert  } from '../actions/aithome';
+import { changeYear, changePeriod, toggleRangePickerPlugin, openAlert, closeAlert  } from '../actions/fixedrangepicker';
 import { isVariabiliMeteoLayer, isSPIorSPEILayer } from '../utils/CheckLayerVariabiliMeteoUtils';
 import DateAPI from '../utils/ManageDateUtils';
 import { connect } from 'react-redux';
@@ -21,7 +21,7 @@ import moment from 'moment';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
 import './rangepicker.css';
 
-import aithome from '../reducers/aithome';
+import fixedrangepicker from '../reducers/fixedrangepicker';
 import layers from '../../MapStore2/web/client/reducers/layers';
 
 
@@ -151,13 +151,6 @@ class FixedRangePicker extends React.Component {
                 toData: moment(toData).format('YYYY-MM-DD')
             }
         });
-        this.updateParamsReal({
-            params: {
-                map: mapFile,
-                fromData: moment(this.props.fromData).clone().subtract(1, 'day').format('YYYY-MM-DD'),
-                toData: moment(this.props.toData).clone().subtract(1, 'day').format('YYYY-MM-DD')
-            }
-        });
     }
 
     updateParams(newParams, onUpdateNode = true) {
@@ -175,28 +168,14 @@ class FixedRangePicker extends React.Component {
             }, this);
         }
     }
-    updateParamsReal(newParams, onUpdateNode = true) {
-        this.props.onUpdateSettings(newParams);
-        if (onUpdateNode) {
-            this.props.layers.flat.map((layer) => {
-                if (isSPIorSPEILayer(layer.name)) {
-                    this.props.onUpdateNode(
-                        layer.id,
-                        "layers",
-                        assign({}, this.props.settings.props, newParams)
-                    );
-                }
-            }, this);
-        }
-    }
 }
 
 const mapStateToProps = (state) => {
     return {
-        fromData: state?.aithome?.fromData || new Date(moment().subtract(1, 'month')._d),
-        toData: state?.aithome?.toData || new Date(moment().subtract(1, 'day')._d),
-        periodType: state?.aithome?.periodType || "1",
-        periodTypes: state?.aithome?.periodTypes || [
+        fromData: state?.fixedrangepicker?.fromData || new Date(moment().subtract(1, 'month')._d),
+        toData: state?.fixedrangepicker?.toData || new Date(moment().subtract(1, 'day')._d),
+        periodType: state?.fixedrangepicker?.periodType || "1",
+        periodTypes: state?.fixedrangepicker?.periodTypes || [
             { key: "1", label: "1 Mese" },
             { key: "3", label: "3 Mesi" },
             { key: "4", label: "4 Mesi" },
@@ -206,8 +185,8 @@ const mapStateToProps = (state) => {
         ],
         settings: state?.layers?.settings || {expanded: false, options: {opacity: 1}},
         layers: state?.layers || {},
-        fixedRangePickerActive: (state?.aithome?.showFixedRangePicker ) ? true : false,
-        alertMessage: state?.aithome?.alertMessage || null
+        fixedRangePickerActive: (state?.fixedrangepicker?.showFixedRangePicker ) ? true : false,
+        alertMessage: state?.fixedrangepicker?.alertMessage || null
     };
 };
 
@@ -216,7 +195,7 @@ const FixedRangePickerPlugin = connect(mapStateToProps, {
     onChangePeriod: compose(changePeriod, (event) => event.key),
     onUpdateSettings: updateSettings,
     onUpdateNode: updateNode,
-    onToggleFixedRangePicker: toggleDecadeRangePicker,
+    onToggleFixedRangePicker: toggleRangePickerPlugin,
     onOpenAlert: openAlert,
     onCloseAlert: closeAlert
 })(FixedRangePicker);
@@ -234,7 +213,7 @@ export default createPlugin(
             }
         }),
         reducers: {
-            aithome: aithome,
+            fixedrangepicker: fixedrangepicker,
             layers: layers
         }
     }

@@ -10,13 +10,13 @@ import DateAPI from './utils/ManageDateUtils';
 import moment from 'moment';
 import MapViewerGC from './pages/MapViewerGC';
 
-const aitHome = {
+const fixedrangepicker = {
     fromData: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).fromData),
     toData: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
     periodType: "1",
     showFixedRangePicker: true
 };
-const geoclimahome = {
+const freerangepicker = {
     fromData: new Date(moment().subtract(1, 'month')._d),
     toData: new Date(moment().subtract(1, 'day')._d),
     showFreeRangePicker: false
@@ -37,8 +37,8 @@ export default {
         ...appConfigMS.initialState,
         defaultState: {
             ...appConfigMS.initialState.defaultState,
-            aithome: aitHome,
-            geoclimahome: geoclimahome
+            fixedrangepicker: fixedrangepicker,
+            freerangepicker: freerangepicker
         }
     }
 };

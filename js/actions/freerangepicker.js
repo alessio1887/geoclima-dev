@@ -9,8 +9,8 @@
 export const FROMDATA_CHANGED = 'FROMDATA_CHANGED';
 export const TODATA_CHANGED = 'TODATA_CHANGED';
 export const CLICK_THUMBNAIL_HOME = 'CLICK_THUMBNAIL_HOME';
-export const OPEN_ALERT = 'OPEN_ALERT';
-export const CLOSE_ALERT = 'CLOSE_ALERT';
+export const OPEN_ALERT = 'FREERANGE:OPEN_ALERT';
+export const CLOSE_ALERT = 'FREERANGE:CLOSE_ALERT';
 
 export function changeFromData(fromData) {
     return {

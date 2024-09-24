@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
 */
 import moment from 'moment';
-import {FROMDATA_CHANGED, TODATA_CHANGED, OPEN_ALERT, CLOSE_ALERT} from '../actions/geoclimahome';
+import {FROMDATA_CHANGED, TODATA_CHANGED, OPEN_ALERT, CLOSE_ALERT} from '../actions/freerangepicker';
 
 const defaultState = {
     fromData: new Date(moment().subtract(1, 'month')._d),
@@ -17,7 +17,7 @@ const defaultState = {
     alertMessage: null
 };
 
-function geoclimahome(state = defaultState, action) {
+function freerangepicker(state = defaultState, action) {
     switch (action.type) {
     case FROMDATA_CHANGED:
         return {
@@ -48,4 +48,4 @@ function geoclimahome(state = defaultState, action) {
     }
 }
 
-export default geoclimahome;
+export default freerangepicker;

@@ -27,7 +27,7 @@ export function changePeriod(periodType) {
     };
 }
 
-export function toggleDecadeRangePicker() {
+export function toggleRangePickerPlugin() {
     return {
         type: TOGGLE_PLUGIN
     };
