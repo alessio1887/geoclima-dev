@@ -44,18 +44,6 @@
     right: 5px;
 }
 
-
-#mapstore-freerangepicker-map,
-#mapstore-fixedrangepicker-map {
-    margin-top: 80px;
-}
-
-#mapstore-freerangepicker,
-#mapstore-fixedrangepicker {
-    margin-top: 0px;
-    margin-right: auto;
-}
-
 @media (max-width: 1310px) {
     .ms-fixedrangepicker-action {
       -webkit-box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
