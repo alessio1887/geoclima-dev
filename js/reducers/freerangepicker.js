@@ -5,6 +5,7 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
 */
+import { LAYER_LOADING, LAYER_LOAD, LAYER_ERROR} from '@mapstore/actions/layers';
 import moment from 'moment';
 import {FROMDATA_CHANGED, TODATA_CHANGED, OPEN_ALERT, CLOSE_ALERT} from '../actions/freerangepicker';
 
@@ -42,6 +43,17 @@ function freerangepicker(state = defaultState, action) {
         return {
             ...state,
             alertMessage: null
+        };
+    case LAYER_LOADING:
+        return {
+            ...state,
+            isInteractionDisabled: true
+        };
+    case LAYER_LOAD:
+    case LAYER_ERROR:
+        return {
+            ...state,
+            isInteractionDisabled: false
         };
     default:
         return state;

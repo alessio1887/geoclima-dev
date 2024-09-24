@@ -5,7 +5,7 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
 */
-
+import { LAYER_LOADING, LAYER_LOAD, LAYER_ERROR} from '@mapstore/actions/layers';
 import {MAP_YEAR_CHANGED, MAP_PERIOD_CHANGED, TOGGLE_PLUGIN, OPEN_ALERT, CLOSE_ALERT } from '../actions/fixedrangepicker';
 import DateAPI from '../utils/ManageDateUtils';
 
@@ -15,34 +15,26 @@ const defaultState = {
     toData: new Date(DateAPI.calculateDateFromKeyReal("1").toData),
     showModal: false,
     imgSrc: "",
-    // map: "/opt/ait/ait.map"
     map: "geoclima",
-    showFixedRangePicker: true
+    showFixedRangePicker: true,
+    isInteractionDisabled: false
 };
 
-function aithome(state = defaultState, action) {
+function fixedrangepicker(state = defaultState, action) {
     switch (action.type) {
     case MAP_YEAR_CHANGED:
         return {
+            ...state,
             fromData: new Date(DateAPI.calculateDateFromKeyReal(state.periodType, action.toData).fromData),
             toData: new Date(DateAPI.calculateDateFromKeyReal(state.periodType, action.toData).toData),
-            periodType: state.periodType,
-            showModal: false,
-            imgSrc: "",
-            map: state.map,
-            showFixedRangePicker: state.showFixedRangePicker,
-            alertMessage: null
+            periodType: state.periodType
         };
     case MAP_PERIOD_CHANGED:
         return {
+            ...state,
             fromData: new Date(DateAPI.calculateDateFromKeyReal(action.periodType, state.toData).fromData),
             toData: new Date(DateAPI.calculateDateFromKeyReal(action.periodType, state.toData).toData),
-            periodType: action.periodType,
-            showModal: false,
-            imgSrc: "",
-            map: state.map,
-            showFixedRangePicker: state.showFixedRangePicker,
-            alertMessage: null
+            periodType: action.periodType
         };
     case TOGGLE_PLUGIN:
         return {
@@ -59,9 +51,20 @@ function aithome(state = defaultState, action) {
             ...state,
             alertMessage: null
         };
+    case LAYER_LOADING:
+        return {
+            ...state,
+            isInteractionDisabled: true
+        };
+    case LAYER_LOAD:
+    case LAYER_ERROR:
+        return {
+            ...state,
+            isInteractionDisabled: false
+        };
     default:
         return state;
     }
 }
 
-export default aithome;
+export default fixedrangepicker;

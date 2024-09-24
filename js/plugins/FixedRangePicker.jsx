@@ -46,7 +46,8 @@ class FixedRangePicker extends React.Component {
         onToggleFixedRangePicker: PropTypes.func,
         alertMessage: PropTypes.string,
         onOpenAlert: PropTypes.func,
-        onCloseAlert: PropTypes.func
+        onCloseAlert: PropTypes.func,
+        isInteractionDisabled: PropTypes.bool
     };
     static defaultProps = {
         fromData: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).fromData),
@@ -74,7 +75,8 @@ class FixedRangePicker extends React.Component {
             height: '100%'
         },
         fixedRangePickerActive: false,
-        alertMessage: null
+        alertMessage: null,
+        isInteractionDisabled: false
     };
 
     render() {
@@ -108,7 +110,8 @@ class FixedRangePicker extends React.Component {
                             format={"DD MMMM, YYYY"}
                             editFormat={"YYYY-MM-DD"}
                             value={new Date(this.props.toData)}
-                            onChange={this.props.onChangeYear}/>
+                            onChange={this.props.onChangeYear}
+                            disabled={this.props.isInteractionDisabled}/>
                         <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.fixedRangePicker.selectCumulativePeriod"/></Label>
                         <DropdownList
                             id="period1"
@@ -117,12 +120,13 @@ class FixedRangePicker extends React.Component {
                             valueField = "key"
                             textField = "label"
                             value={this.props.periodType || "1"}
-                            onChange={this.props.onChangePeriod}/>
+                            onChange={this.props.onChangePeriod}
+                            disabled={this.props.isInteractionDisabled}/>
                         <div id="button-rangepicker-container">
-                            <Button onClick={this.handleApplyPeriod}>
+                            <Button onClick={this.handleApplyPeriod} disabled={this.props.isInteractionDisabled}>
                                 <Glyphicon glyph="calendar" /><Message msgId="gcapp.fixedRangePicker.applyPeriodButton"/>
                             </Button>
-                            <Button onClick={this.props.onToggleFixedRangePicker}>
+                            <Button onClick={this.props.onToggleFixedRangePicker} disabled={this.props.isInteractionDisabled}>
                                 <Message msgId="gcapp.fixedRangePicker.fixedRangeButton"/>
                             </Button>
                         </div>
@@ -186,7 +190,8 @@ const mapStateToProps = (state) => {
         settings: state?.layers?.settings || {expanded: false, options: {opacity: 1}},
         layers: state?.layers || {},
         fixedRangePickerActive: (state?.fixedrangepicker?.showFixedRangePicker ) ? true : false,
-        alertMessage: state?.fixedrangepicker?.alertMessage || null
+        alertMessage: state?.fixedrangepicker?.alertMessage || null,
+        isInteractionDisabled: state?.fixedrangepicker?.isInteractionDisabled || false
     };
 };
 

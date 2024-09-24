@@ -45,7 +45,8 @@ class FreeRangePicker extends React.Component {
         onToggleFreeRangePicker: PropTypes.func,
         alertMessage: PropTypes.string,
         onOpenAlert: PropTypes.func,
-        onCloseAlert: PropTypes.func
+        onCloseAlert: PropTypes.func,
+        isInteractionDisabled: PropTypes.bool
     };
     static defaultProps = {
         fromData: new Date(moment().subtract(1, 'month')._d),
@@ -63,7 +64,8 @@ class FreeRangePicker extends React.Component {
             height: '100%'
         },
         freeRangePickerIsVisible: false,
-        alertMessage: null
+        alertMessage: null,
+        isInteractionDisabled: false
     };
 
     render() {
@@ -97,7 +99,8 @@ class FreeRangePicker extends React.Component {
                             format={"DD MMMM, YYYY"}
                             editFormat={"YYYY-MM-DD"}
                             value={new Date(this.props.fromData)}
-                            onChange={this.props.onChangeFromData}/>
+                            onChange={this.props.onChangeFromData}
+                            disabled={this.props.isInteractionDisabled}/>
                         <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.freeRangePicker.selectToDate"/></Label>
                         <DateTimePicker
                             culture="it"
@@ -107,12 +110,13 @@ class FreeRangePicker extends React.Component {
                             format={"DD MMMM, YYYY"}
                             editFormat={"YYYY-MM-DD"}
                             value={new Date(this.props.toData)}
-                            onChange={this.props.onChangeToData}/>
+                            onChange={this.props.onChangeToData}
+                            disabled={this.props.isInteractionDisabled}/>
                         <div id="button-rangepicker-container">
-                            <Button onClick={this.handleApplyPeriod}>
+                            <Button onClick={this.handleApplyPeriod}  disabled={this.props.isInteractionDisabled}>
                                 <Glyphicon glyph="calendar" /><Message msgId="gcapp.freeRangePicker.applyPeriodButton"/>
                             </Button>
-                            <Button variant="primary" onClick={this.props.onToggleFreeRangePicker}>
+                            <Button variant="primary" onClick={this.props.onToggleFreeRangePicker} disabled={this.props.isInteractionDisabled}>
                                 <Message msgId="gcapp.freeRangePicker.dateRangeButton"/>
                             </Button>
                         </div>
@@ -173,7 +177,8 @@ const mapStateToProps = (state) => {
         settings: state?.layers?.settings || {expanded: false, options: {opacity: 1}},
         layers: state?.layers || {},
         freeRangePickerIsVisible: (!state?.fixedrangepicker?.showFixedRangePicker ) ? true : false,
-        alertMessage: state?.freerangepicker?.alertMessage || null
+        alertMessage: state?.freerangepicker?.alertMessage || null,
+        isInteractionDisabled: state?.freerangepicker?.isInteractionDisabled || false
     };
 };
 
