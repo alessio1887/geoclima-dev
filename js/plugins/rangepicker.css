@@ -16,6 +16,32 @@
   top: 4px;
 }
 
+#ms-fixederange-dropdown {
+    -webkit-box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+    -moz-box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+    position: absolute;
+    background-color: #FFFFFF;
+    /* overflow: hidden; */
+    display: flex;
+    left: 4px;
+    /* height: 200px; */
+    flex-direction: column;
+    margin: 0;
+    border: none;
+    z-index: 10;
+    top: 4px;
+}
+
+.labels-fixedrangepicker,
+.labels-freerangepicker {
+    border-radius: 0%;
+    padding: 10px;
+    font-size: 14px;
+    flex: 1
+}
+
+
 #button-rangepicker-container {
     display: flex; /* Make the container a flexbox */
     justify-content: center; /* Arrange buttons horizontally */

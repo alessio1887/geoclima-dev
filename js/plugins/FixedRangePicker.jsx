@@ -12,7 +12,7 @@ import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
 import { DateTimePicker, DropdownList } from 'react-widgets';
 import { compose } from 'redux';
-import { changeYear, changePeriod, toggleRangePickerPlugin, openAlert, closeAlert  } from '../actions/fixedrangepicker';
+import { changeYear, changePeriod, toggleRangePickerPlugin, openAlert, closeAlert } from '../actions/fixedrangepicker';
 import { isVariabiliMeteoLayer, isSPIorSPEILayer } from '../utils/CheckLayerVariabiliMeteoUtils';
 import DateAPI from '../utils/ManageDateUtils';
 import { connect } from 'react-redux';
@@ -52,17 +52,17 @@ class FixedRangePicker extends React.Component {
     static defaultProps = {
         fromData: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).fromData),
         toData: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
-        onChangeYear: () => {},
-        onChangeMonth: () => {},
-        onChangePeriod: () => {},
-        onUpdateSettings: () => {},
+        onChangeYear: () => { },
+        onChangeMonth: () => { },
+        onChangePeriod: () => { },
+        onUpdateSettings: () => { },
         periodTypes: [
-            { key: "1", label: "1 Mese"},
-            { key: "3", label: "3 Mesi"},
-            { key: "4", label: "4 Mesi"},
-            { key: "6", label: "6 Mesi"},
-            { key: "12", label: "12 Mesi"},
-            { key: "10", label: "dal 1° Ottobre"}
+            { key: "1", label: "1 Mese" },
+            { key: "3", label: "3 Mesi" },
+            { key: "4", label: "4 Mesi" },
+            { key: "6", label: "6 Mesi" },
+            { key: "12", label: "12 Mesi" },
+            { key: "10", label: "dal 1° Ottobre" }
         ],
         periodType: "1",
         map: "geoclima",
@@ -87,21 +87,21 @@ class FixedRangePicker extends React.Component {
             <div className={this.props.className} style={this.props.style}>
                 {this.props.alertMessage && (
                     <Alert variant="danger" className="alert-date">
-                        <div  className="alert-date-close">
-                            <Button onClick={this.props.onCloseAlert}  variant="outline-danger" size="sm">
+                        <div className="alert-date-close">
+                            <Button onClick={this.props.onCloseAlert} variant="outline-danger" size="sm">
                                 <Glyphicon glyph="remove" />
                             </Button>
                         </div>
-                        <Message msgId={this.props.alertMessage}/>
+                        <Message msgId={this.props.alertMessage} />
                     </Alert>
                 )}
-                <FormGroup style={{marginBottom: "0px"}} bsSize="sm">
+                <FormGroup style={{ marginBottom: "0px" }} bsSize="sm">
                     <div
                         id="ms-fixedrangepicker-action"
                         className="ms-fixedrangepicker-action">
-                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.fixedRangePicker.titlePeriod"/></Label>
-                        <div style={{padding: "6px", textAlign: 'center'}} >Dal: <span id="from-data-statistics" >{moment(this.props.fromData).format('DD/MM/YYYY')}</span> - al: <span id="to-data-statistics" >{moment(this.props.toData).format('DD/MM/YYYY')}</span></div>
-                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.fixedRangePicker.selectDateHidrologicYear"/></Label>
+                        <Label className="labels-fixedrangepicker"><Message msgId="gcapp.fixedRangePicker.titlePeriod" /></Label>
+                        <div style={{ padding: "6px", textAlign: 'center' }} >Dal: <span id="from-data-statistics" >{moment(this.props.fromData).format('DD/MM/YYYY')}</span> - al: <span id="to-data-statistics" >{moment(this.props.toData).format('DD/MM/YYYY')}</span></div>
+                        <Label className="labels-fixedrangepicker"><Message msgId="gcapp.fixedRangePicker.selectDateHidrologicYear" /></Label>
                         <DateTimePicker
                             culture="it"
                             time={false}
@@ -111,23 +111,23 @@ class FixedRangePicker extends React.Component {
                             editFormat={"YYYY-MM-DD"}
                             value={new Date(this.props.toData)}
                             onChange={this.props.onChangeYear}
-                            disabled={this.props.isInteractionDisabled}/>
-                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.fixedRangePicker.selectCumulativePeriod"/></Label>
+                            disabled={this.props.isInteractionDisabled} />
+                        <Label className="labels-fixedrangepicker"><Message msgId="gcapp.fixedRangePicker.selectCumulativePeriod" /></Label>
                         <DropdownList
                             id="period1"
                             key={this.props.periodType || "1"}
                             data={this.props.periodTypes}
-                            valueField = "key"
-                            textField = "label"
+                            valueField="key"
+                            textField="label"
                             value={this.props.periodType || "1"}
                             onChange={this.props.onChangePeriod}
-                            disabled={this.props.isInteractionDisabled}/>
+                            disabled={this.props.isInteractionDisabled} />
                         <div id="button-rangepicker-container">
                             <Button onClick={this.handleApplyPeriod} disabled={this.props.isInteractionDisabled}>
-                                <Glyphicon glyph="calendar" /><Message msgId="gcapp.fixedRangePicker.applyPeriodButton"/>
+                                <Glyphicon glyph="calendar" /><Message msgId="gcapp.fixedRangePicker.applyPeriodButton" />
                             </Button>
                             <Button onClick={this.props.onToggleFixedRangePicker} disabled={this.props.isInteractionDisabled}>
-                                <Message msgId="gcapp.fixedRangePicker.fixedRangeButton"/>
+                                <Message msgId="gcapp.fixedRangePicker.fixedRangeButton" />
                             </Button>
                         </div>
                     </div>
@@ -187,9 +187,9 @@ const mapStateToProps = (state) => {
             { key: "12", label: "12 Mesi" },
             { key: "10", label: "dal 1° Ottobre" }
         ],
-        settings: state?.layers?.settings || {expanded: false, options: {opacity: 1}},
+        settings: state?.layers?.settings || { expanded: false, options: { opacity: 1 } },
         layers: state?.layers || {},
-        fixedRangePickerActive: (state?.fixedrangepicker?.showFixedRangePicker ) ? true : false,
+        fixedRangePickerActive: (state?.fixedrangepicker?.showFixedRangePicker) ? true : false,
         alertMessage: state?.fixedrangepicker?.alertMessage || null,
         isInteractionDisabled: state?.fixedrangepicker?.isInteractionDisabled || false
     };

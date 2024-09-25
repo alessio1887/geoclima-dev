@@ -88,9 +88,9 @@ class FreeRangePicker extends React.Component {
                     <div
                         id="ms-freerangepicker-action"
                         className="ms-freerangepicker-action">
-                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.freeRangePicker.titlePeriod"/></Label>
+                        <Label className="labels-freerangepicker"><Message msgId="gcapp.freeRangePicker.titlePeriod"/></Label>
                         <div style={{padding: "6px", textAlign: 'center'}} >Dal: <span id="from-data-statistics" >{moment(this.props.fromData).format('DD/MM/YYYY')}</span> - al: <span id="to-data-statistics" >{moment(this.props.toData).format('DD/MM/YYYY')}</span></div>
-                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.freeRangePicker.selectFromDate"/></Label>
+                        <Label className="labels-freerangepicker"><Message msgId="gcapp.freeRangePicker.selectFromDate"/></Label>
                         <DateTimePicker
                             culture="it"
                             time={false}
@@ -101,7 +101,7 @@ class FreeRangePicker extends React.Component {
                             value={new Date(this.props.fromData)}
                             onChange={this.props.onChangeFromData}
                             disabled={this.props.isInteractionDisabled}/>
-                        <Label style={{borderRadius: "0%", padding: "10px", fontSize: "14px", flex: 1}}><Message msgId="gcapp.freeRangePicker.selectToDate"/></Label>
+                        <Label className="labels-freerangepicker"><Message msgId="gcapp.freeRangePicker.selectToDate"/></Label>
                         <DateTimePicker
                             culture="it"
                             time={false}
