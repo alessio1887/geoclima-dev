@@ -12,6 +12,7 @@ export const TOGGLE_PLUGIN = 'TOGGLE_PLUGIN';
 export const CLICK_THUMBNAIL_HOME = 'CLICK_THUMBNAIL_HOME';
 export const OPEN_ALERT = 'FIXEDRANGE:OPEN_ALERT';
 export const CLOSE_ALERT = 'FIXEDRANGE:CLOSE_ALERT';
+export const COLLAPSE_RANGE_PICKER = 'FIXEDRANGE:COLLAPSE_RANGE_PICKER';
 
 export function changeYear(toData) {
     return {
@@ -49,5 +50,10 @@ export function openAlert(alertMessage) {
 export function closeAlert() {
     return {
         type: CLOSE_ALERT
+    };
+}
+export function collapsePlugin() {
+    return {
+        type: COLLAPSE_RANGE_PICKER
     };
 }

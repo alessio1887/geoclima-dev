@@ -11,6 +11,7 @@ import moment from 'moment';
 import MapViewerGC from './pages/MapViewerGC';
 
 const fixedrangepicker = {
+    isOpenPlugin: false,
     fromData: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).fromData),
     toData: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
     periodType: "1",

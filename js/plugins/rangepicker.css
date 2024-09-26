@@ -1,9 +1,7 @@
-.ms-freerangepicker-action,
 .ms-fixedrangepicker-action {
   -webkit-box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
   -moz-box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-  position: absolute;
   background-color: #FFFFFF;
   /* overflow: hidden; */
   display: flex;
@@ -16,7 +14,7 @@
   top: 4px;
 }
 
-#ms-fixederange-dropdown {
+.ms-freerangepicker-action {
     -webkit-box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
     -moz-box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
@@ -31,7 +29,7 @@
     border: none;
     z-index: 10;
     top: 4px;
-}
+  }
 
 .labels-fixedrangepicker,
 .labels-freerangepicker {
@@ -46,7 +44,7 @@
     display: flex; /* Make the container a flexbox */
     justify-content: center; /* Arrange buttons horizontally */
     align-items: center;
-    border-radius: 3px;      /* Arrotonda gli angoli, opzionale */
+    border-radius: 3px;      /* Arrotonda gli angoli */
     margin: 10px 0;
 }
 #button-rangepicker-container button {

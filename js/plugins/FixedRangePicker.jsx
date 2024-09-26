@@ -7,12 +7,12 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Label, FormGroup, Glyphicon, Alert } from 'react-bootstrap';
+import { Button, ButtonGroup, Collapse, Label, FormGroup, Glyphicon, Alert } from 'react-bootstrap';
 import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
 import { DateTimePicker, DropdownList } from 'react-widgets';
 import { compose } from 'redux';
-import { changeYear, changePeriod, toggleRangePickerPlugin, openAlert, closeAlert } from '../actions/fixedrangepicker';
+import { changeYear, changePeriod, toggleRangePickerPlugin, openAlert, closeAlert, collapsePlugin } from '../actions/fixedrangepicker';
 import { isVariabiliMeteoLayer, isSPIorSPEILayer } from '../utils/CheckLayerVariabiliMeteoUtils';
 import DateAPI from '../utils/ManageDateUtils';
 import { connect } from 'react-redux';
@@ -30,6 +30,8 @@ class FixedRangePicker extends React.Component {
         style: PropTypes.object,
         id: PropTypes.string,
         className: PropTypes.string,
+        isOpenPlugin: PropTypes.bool,
+        onCollapsePlugin: PropTypes.func,
         fromData: PropTypes.instanceOf(Date),
         toData: PropTypes.instanceOf(Date),
         onChangeYear: PropTypes.func,
@@ -50,12 +52,14 @@ class FixedRangePicker extends React.Component {
         isInteractionDisabled: PropTypes.bool
     };
     static defaultProps = {
+        isOpenPlugin: false,
         fromData: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).fromData),
         toData: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
         onChangeYear: () => { },
         onChangeMonth: () => { },
         onChangePeriod: () => { },
         onUpdateSettings: () => { },
+        onCollapsePlugin: () => { },
         periodTypes: [
             { key: "1", label: "1 Mese" },
             { key: "3", label: "3 Mesi" },
@@ -95,43 +99,46 @@ class FixedRangePicker extends React.Component {
                         <Message msgId={this.props.alertMessage} />
                     </Alert>
                 )}
-                <FormGroup style={{ marginBottom: "0px" }} bsSize="sm">
-                    <div
-                        id="ms-fixedrangepicker-action"
-                        className="ms-fixedrangepicker-action">
-                        <Label className="labels-fixedrangepicker"><Message msgId="gcapp.fixedRangePicker.titlePeriod" /></Label>
-                        <div style={{ padding: "6px", textAlign: 'center' }} >Dal: <span id="from-data-statistics" >{moment(this.props.fromData).format('DD/MM/YYYY')}</span> - al: <span id="to-data-statistics" >{moment(this.props.toData).format('DD/MM/YYYY')}</span></div>
-                        <Label className="labels-fixedrangepicker"><Message msgId="gcapp.fixedRangePicker.selectDateHidrologicYear" /></Label>
-                        <DateTimePicker
-                            culture="it"
-                            time={false}
-                            min={new Date("1991-01-01")}
-                            max={moment().subtract(1, 'day')._d}
-                            format={"DD MMMM, YYYY"}
-                            editFormat={"YYYY-MM-DD"}
-                            value={new Date(this.props.toData)}
-                            onChange={this.props.onChangeYear}
-                            disabled={this.props.isInteractionDisabled} />
-                        <Label className="labels-fixedrangepicker"><Message msgId="gcapp.fixedRangePicker.selectCumulativePeriod" /></Label>
-                        <DropdownList
-                            id="period1"
-                            key={this.props.periodType || "1"}
-                            data={this.props.periodTypes}
-                            valueField="key"
-                            textField="label"
-                            value={this.props.periodType || "1"}
-                            onChange={this.props.onChangePeriod}
-                            disabled={this.props.isInteractionDisabled} />
-                        <div id="button-rangepicker-container">
-                            <Button onClick={this.handleApplyPeriod} disabled={this.props.isInteractionDisabled}>
-                                <Glyphicon glyph="calendar" /><Message msgId="gcapp.fixedRangePicker.applyPeriodButton" />
-                            </Button>
-                            <Button onClick={this.props.onToggleFixedRangePicker} disabled={this.props.isInteractionDisabled}>
-                                <Message msgId="gcapp.fixedRangePicker.fixedRangeButton" />
-                            </Button>
+                <Button  onClick= {this.props.onCollapsePlugin} style={{ zIndex: 100,  position: "absolute"}}>
+                    <Message msgId="gcapp.fixedRangePicker.collapsePlugin"/>
+                </Button>
+                <Collapse in={this.props.isOpenPlugin} style={{ zIndex: 100,  position: "absolute", top: "30px"  }}>
+                    <FormGroup style={{ marginBottom: "0px" }} bsSize="sm">
+                        <div className="ms-fixedrangepicker-action">
+                            <Label className="labels-fixedrangepicker"><Message msgId="gcapp.fixedRangePicker.titlePeriod" /></Label>
+                            <div style={{ padding: "6px", textAlign: 'center' }} >Dal: <span id="from-data-statistics" >{moment(this.props.fromData).format('DD/MM/YYYY')}</span> - al: <span id="to-data-statistics" >{moment(this.props.toData).format('DD/MM/YYYY')}</span></div>
+                            <Label className="labels-fixedrangepicker"><Message msgId="gcapp.fixedRangePicker.selectDateHidrologicYear" /></Label>
+                            <DateTimePicker
+                                culture="it"
+                                time={false}
+                                min={new Date("1991-01-01")}
+                                max={moment().subtract(1, 'day')._d}
+                                format={"DD MMMM, YYYY"}
+                                editFormat={"YYYY-MM-DD"}
+                                value={new Date(this.props.toData)}
+                                onChange={this.props.onChangeYear}
+                                disabled={this.props.isInteractionDisabled} />
+                            <Label className="labels-fixedrangepicker"><Message msgId="gcapp.fixedRangePicker.selectCumulativePeriod" /></Label>
+                            <DropdownList
+                                id="period1"
+                                key={this.props.periodType || "1"}
+                                data={this.props.periodTypes}
+                                valueField="key"
+                                textField="label"
+                                value={this.props.periodType || "1"}
+                                onChange={this.props.onChangePeriod}
+                                disabled={this.props.isInteractionDisabled} />
+                            <ButtonGroup id="button-rangepicker-container">
+                                <Button onClick={this.handleApplyPeriod} disabled={this.props.isInteractionDisabled}>
+                                    <Glyphicon glyph="calendar" /><Message msgId="gcapp.fixedRangePicker.applyPeriodButton" />
+                                </Button>
+                                <Button onClick={this.props.onToggleFixedRangePicker} disabled={this.props.isInteractionDisabled}>
+                                    <Message msgId="gcapp.fixedRangePicker.fixedRangeButton" />
+                                </Button>
+                            </ButtonGroup>
                         </div>
-                    </div>
-                </FormGroup>
+                    </FormGroup>
+                </Collapse>
             </div>
         );
     }
@@ -176,6 +183,7 @@ class FixedRangePicker extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
+        isOpenPlugin: state?.fixedrangepicker?.isOpenPlugin,
         fromData: state?.fixedrangepicker?.fromData || new Date(moment().subtract(1, 'month')._d),
         toData: state?.fixedrangepicker?.toData || new Date(moment().subtract(1, 'day')._d),
         periodType: state?.fixedrangepicker?.periodType || "1",
@@ -196,6 +204,7 @@ const mapStateToProps = (state) => {
 };
 
 const FixedRangePickerPlugin = connect(mapStateToProps, {
+    onCollapsePlugin: collapsePlugin,
     onChangeYear: compose(changeYear, (event) => event),
     onChangePeriod: compose(changePeriod, (event) => event.key),
     onUpdateSettings: updateSettings,

@@ -6,10 +6,11 @@
  * LICENSE file in the root directory of this source tree.
 */
 import { LAYER_LOADING, LAYER_LOAD, LAYER_ERROR} from '@mapstore/actions/layers';
-import {MAP_YEAR_CHANGED, MAP_PERIOD_CHANGED, TOGGLE_PLUGIN, OPEN_ALERT, CLOSE_ALERT } from '../actions/fixedrangepicker';
+import {MAP_YEAR_CHANGED, MAP_PERIOD_CHANGED, TOGGLE_PLUGIN, OPEN_ALERT, CLOSE_ALERT, COLLAPSE_RANGE_PICKER } from '../actions/fixedrangepicker';
 import DateAPI from '../utils/ManageDateUtils';
 
 const defaultState = {
+    isOpenPlugin: false,
     periodType: "1",
     fromData: new Date(DateAPI.calculateDateFromKeyReal("1").fromData),
     toData: new Date(DateAPI.calculateDateFromKeyReal("1").toData),
@@ -61,6 +62,11 @@ function fixedrangepicker(state = defaultState, action) {
         return {
             ...state,
             isInteractionDisabled: false
+        };
+    case COLLAPSE_RANGE_PICKER:
+        return {
+            ...state,
+            isOpenPlugin: !state.isOpenPlugin
         };
     default:
         return state;
