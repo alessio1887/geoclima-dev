@@ -7,9 +7,10 @@
 */
 import { LAYER_LOADING, LAYER_LOAD, LAYER_ERROR} from '@mapstore/actions/layers';
 import moment from 'moment';
-import {FROMDATA_CHANGED, TODATA_CHANGED, OPEN_ALERT, CLOSE_ALERT} from '../actions/freerangepicker';
+import {FROMDATA_CHANGED, TODATA_CHANGED, OPEN_ALERT, CLOSE_ALERT, COLLAPSE_RANGE_PICKER} from '../actions/freerangepicker';
 
 const defaultState = {
+    isCollapsedPlugin: true,
     fromData: new Date(moment().subtract(1, 'month')._d),
     toData: new Date(moment().subtract(1, 'day')._d),
     showModal: false,
@@ -54,6 +55,11 @@ function freerangepicker(state = defaultState, action) {
         return {
             ...state,
             isInteractionDisabled: false
+        };
+    case COLLAPSE_RANGE_PICKER:
+        return {
+            ...state,
+            isCollapsedPlugin: !state.isCollapsedPlugin
         };
     default:
         return state;

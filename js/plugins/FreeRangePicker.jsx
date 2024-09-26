@@ -8,7 +8,7 @@
 */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Label, FormGroup, Glyphicon, Alert } from 'react-bootstrap';
+import { Button, ButtonGroup, Collapse, Label, FormGroup, Glyphicon, Alert } from 'react-bootstrap';
 import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
 import { DateTimePicker  } from 'react-widgets';
@@ -24,7 +24,7 @@ import './rangepicker.css';
 import layers from '../../MapStore2/web/client/reducers/layers';
 import freerangepicker from '@js/reducers/freerangepicker';
 import { toggleRangePickerPlugin } from '../actions/fixedrangepicker';
-import { changeFromData, changeToData, openAlert, closeAlert } from '@js/actions/freerangepicker';
+import { changeFromData, changeToData, openAlert, closeAlert, collapsePlugin } from '@js/actions/freerangepicker';
 
 
 class FreeRangePicker extends React.Component {
@@ -32,6 +32,8 @@ class FreeRangePicker extends React.Component {
         style: PropTypes.object,
         id: PropTypes.string,
         className: PropTypes.string,
+        isCollapsedPlugin: PropTypes.bool,
+        onCollapsePlugin: PropTypes.func,
         fromData: PropTypes.instanceOf(Date),
         toData: PropTypes.instanceOf(Date),
         onChangeFromData: PropTypes.func,
@@ -49,11 +51,13 @@ class FreeRangePicker extends React.Component {
         isInteractionDisabled: PropTypes.bool
     };
     static defaultProps = {
+        isCollapsedPlugin: false,
         fromData: new Date(moment().subtract(1, 'month')._d),
         toData: new Date(moment().subtract(1, 'day')._d),
         onChangeFromData: () => {},
         onChangeToData: () => {},
         onUpdateSettings: () => {},
+        onCollapsePlugin: () => { },
         map: "geoclima",
         id: "mapstore-daterange",
         className: "mapstore-daterange",
@@ -84,44 +88,47 @@ class FreeRangePicker extends React.Component {
                         <Message msgId={this.props.alertMessage}/>
                     </Alert>
                 )}
-                <FormGroup style={{marginBottom: "0px"}} bsSize="sm">
-                    <div
-                        id="ms-freerangepicker-action"
-                        className="ms-freerangepicker-action">
-                        <Label className="labels-freerangepicker"><Message msgId="gcapp.freeRangePicker.titlePeriod"/></Label>
-                        <div style={{padding: "6px", textAlign: 'center'}} >Dal: <span id="from-data-statistics" >{moment(this.props.fromData).format('DD/MM/YYYY')}</span> - al: <span id="to-data-statistics" >{moment(this.props.toData).format('DD/MM/YYYY')}</span></div>
-                        <Label className="labels-freerangepicker"><Message msgId="gcapp.freeRangePicker.selectFromDate"/></Label>
-                        <DateTimePicker
-                            culture="it"
-                            time={false}
-                            min={new Date("1991-01-01")}
-                            max={moment().subtract(1, 'day')._d}
-                            format={"DD MMMM, YYYY"}
-                            editFormat={"YYYY-MM-DD"}
-                            value={new Date(this.props.fromData)}
-                            onChange={this.props.onChangeFromData}
-                            disabled={this.props.isInteractionDisabled}/>
-                        <Label className="labels-freerangepicker"><Message msgId="gcapp.freeRangePicker.selectToDate"/></Label>
-                        <DateTimePicker
-                            culture="it"
-                            time={false}
-                            min={new Date("1991-01-02")}
-                            max={moment().subtract(1, 'day')._d}
-                            format={"DD MMMM, YYYY"}
-                            editFormat={"YYYY-MM-DD"}
-                            value={new Date(this.props.toData)}
-                            onChange={this.props.onChangeToData}
-                            disabled={this.props.isInteractionDisabled}/>
-                        <div id="button-rangepicker-container">
-                            <Button onClick={this.handleApplyPeriod}  disabled={this.props.isInteractionDisabled}>
-                                <Glyphicon glyph="calendar" /><Message msgId="gcapp.freeRangePicker.applyPeriodButton"/>
-                            </Button>
-                            <Button variant="primary" onClick={this.props.onToggleFreeRangePicker} disabled={this.props.isInteractionDisabled}>
-                                <Message msgId="gcapp.freeRangePicker.dateRangeButton"/>
-                            </Button>
+                <Button  onClick= {this.props.onCollapsePlugin} style={{ zIndex: 100,  position: "absolute"}}>
+                    <Message msgId="gcapp.freeRangePicker.collapsePlugin"/>
+                </Button>
+                <Collapse in={!this.props.isCollapsedPlugin} style={{ zIndex: 100,  position: "absolute", top: "30px"  }}>
+                    <FormGroup style={{marginBottom: "0px"}} bsSize="sm">
+                        <div className="ms-freerangepicker-action">
+                            <Label className="labels-freerangepicker"><Message msgId="gcapp.freeRangePicker.titlePeriod"/></Label>
+                            <div style={{padding: "6px", textAlign: 'center'}} >Dal: <span id="from-data-statistics" >{moment(this.props.fromData).format('DD/MM/YYYY')}</span> - al: <span id="to-data-statistics" >{moment(this.props.toData).format('DD/MM/YYYY')}</span></div>
+                            <Label className="labels-freerangepicker"><Message msgId="gcapp.freeRangePicker.selectFromDate"/></Label>
+                            <DateTimePicker
+                                culture="it"
+                                time={false}
+                                min={new Date("1991-01-01")}
+                                max={moment().subtract(1, 'day')._d}
+                                format={"DD MMMM, YYYY"}
+                                editFormat={"YYYY-MM-DD"}
+                                value={new Date(this.props.fromData)}
+                                onChange={this.props.onChangeFromData}
+                                disabled={this.props.isInteractionDisabled}/>
+                            <Label className="labels-freerangepicker"><Message msgId="gcapp.freeRangePicker.selectToDate"/></Label>
+                            <DateTimePicker
+                                culture="it"
+                                time={false}
+                                min={new Date("1991-01-02")}
+                                max={moment().subtract(1, 'day')._d}
+                                format={"DD MMMM, YYYY"}
+                                editFormat={"YYYY-MM-DD"}
+                                value={new Date(this.props.toData)}
+                                onChange={this.props.onChangeToData}
+                                disabled={this.props.isInteractionDisabled}/>
+                            <ButtonGroup id="button-rangepicker-container">
+                                <Button onClick={this.handleApplyPeriod}  disabled={this.props.isInteractionDisabled}>
+                                    <Glyphicon glyph="calendar" /><Message msgId="gcapp.freeRangePicker.applyPeriodButton"/>
+                                </Button>
+                                <Button variant="primary" onClick={this.props.onToggleFreeRangePicker} disabled={this.props.isInteractionDisabled}>
+                                    <Message msgId="gcapp.freeRangePicker.dateRangeButton"/>
+                                </Button>
+                            </ButtonGroup>
                         </div>
-                    </div>
-                </FormGroup>
+                    </FormGroup>
+                </Collapse>
             </div>
         );
     }
@@ -172,6 +179,7 @@ class FreeRangePicker extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
+        isCollapsedPlugin: state?.freerangepicker?.isCollapsedPlugin,
         fromData: state?.freerangepicker?.fromData || new Date(moment().subtract(1, 'month')._d),
         toData: state?.freerangepicker?.toData || new Date(moment().subtract(1, 'day')._d),
         settings: state?.layers?.settings || {expanded: false, options: {opacity: 1}},
@@ -183,6 +191,7 @@ const mapStateToProps = (state) => {
 };
 
 const FreeRangePickerPlugin = connect(mapStateToProps, {
+    onCollapsePlugin: collapsePlugin,
     onChangeFromData: compose(changeFromData, (event) => event),
     onChangeToData: compose(changeToData, (event) => event),
     onUpdateSettings: updateSettings,

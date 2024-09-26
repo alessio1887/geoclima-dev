@@ -19,6 +19,7 @@ const fixedrangepicker = {
     isInteractionDisabled: false
 };
 const freerangepicker = {
+    isCollapsedPlugin: false,
     fromData: new Date(moment().subtract(1, 'month')._d),
     toData: new Date(moment().subtract(1, 'day')._d),
     showFreeRangePicker: false,

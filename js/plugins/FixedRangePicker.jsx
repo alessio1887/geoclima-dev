@@ -52,7 +52,7 @@ class FixedRangePicker extends React.Component {
         isInteractionDisabled: PropTypes.bool
     };
     static defaultProps = {
-        isOpenPlugin: false,
+        isOpenPlugin: true,
         fromData: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).fromData),
         toData: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
         onChangeYear: () => { },

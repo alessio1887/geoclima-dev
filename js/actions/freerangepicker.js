@@ -11,6 +11,7 @@ export const TODATA_CHANGED = 'TODATA_CHANGED';
 export const CLICK_THUMBNAIL_HOME = 'CLICK_THUMBNAIL_HOME';
 export const OPEN_ALERT = 'FREERANGE:OPEN_ALERT';
 export const CLOSE_ALERT = 'FREERANGE:CLOSE_ALERT';
+export const COLLAPSE_RANGE_PICKER = 'FREERANGE:COLLAPSE_RANGE_PICKER';
 
 export function changeFromData(fromData) {
     return {
@@ -35,5 +36,10 @@ export function openAlert(alertMessage) {
 export function closeAlert() {
     return {
         type: CLOSE_ALERT
+    };
+}
+export function collapsePlugin() {
+    return {
+        type: COLLAPSE_RANGE_PICKER
     };
 }
