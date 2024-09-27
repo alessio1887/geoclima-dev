@@ -8,7 +8,7 @@
 */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, ButtonGroup, Collapse, Label, FormGroup, Glyphicon, Alert } from 'react-bootstrap';
+import { Button, ButtonGroup, Collapse, Label, FormGroup, Glyphicon } from 'react-bootstrap';
 import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
 import { DateTimePicker  } from 'react-widgets';
@@ -78,16 +78,6 @@ class FreeRangePicker extends React.Component {
         }
         return (
             <div className={this.props.className} style={this.props.style}>
-                {this.props.alertMessage && (
-                    <Alert variant="danger" className="alert-date">
-                        <div  className="alert-date-close">
-                            <Button onClick={this.props.onCloseAlert}  variant="outline-danger" size="sm">
-                                <Glyphicon glyph="remove" />
-                            </Button>
-                        </div>
-                        <Message msgId={this.props.alertMessage}/>
-                    </Alert>
-                )}
                 <Button  onClick= {this.props.onCollapsePlugin} style={{ zIndex: 100,  position: "absolute"}}>
                     <Message msgId="gcapp.freeRangePicker.collapsePlugin"/>
                 </Button>
@@ -126,6 +116,12 @@ class FreeRangePicker extends React.Component {
                                     <Message msgId="gcapp.freeRangePicker.dateRangeButton"/>
                                 </Button>
                             </ButtonGroup>
+                            {this.props.alertMessage && (
+                                <div className="alert-date" >
+                                    <strong><Message msgId="warning"/></strong>
+                                    <span ><Message msgId={this.props.alertMessage}/></span>
+                                </div>
+                            )}
                         </div>
                     </FormGroup>
                 </Collapse>
@@ -148,8 +144,10 @@ class FreeRangePicker extends React.Component {
             this.props.onOpenAlert("gcapp.errorMessages.rangeTooLarge");
             return;
         }
-
         // Se le verifiche passano, procedi con l'aggiornamento dei parametri
+        if (this.props.alertMessage !== null) {
+            this.props.onCloseAlert();
+        }
         const mapFile = DateAPI.setGCMapFile(fromData, toData);
         this.updateParams({
             params: {
