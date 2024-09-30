@@ -94,15 +94,13 @@ const clickedPointCheckEpic = (action$, store) =>
 
             let fromData = {};
             let toData = {};
-            let fromDataReal = {};
-            let toDataReal = {};
             let variable = '';
             let periodType = '';
 
             if (appState.infochart.showInfoChartPanel) {
-                ({ toData, fromData, fromDataReal, toDataReal, variable, periodType } = appState.infochart.infoChartData);
+                ({ toData, fromData, variable, periodType } = appState.infochart.infoChartData);
             } else {
-                ({ toData, fromData, fromDataReal, toDataReal, periodType } = appState.fixedrangepicker);
+                ({ toData, fromData,  periodType } = appState.fixedrangepicker);
                 variable = visVariable;
             }
 
@@ -115,8 +113,6 @@ const clickedPointCheckEpic = (action$, store) =>
                         toData: moment(toData).format('YYYY-MM-DD'),
                         fromData: moment(fromData).format('YYYY-MM-DD'),
                         variable,
-                        fromDataReal: moment(fromDataReal).format('YYYY-MM-DD'),
-                        toDataReal: moment(toDataReal).format('YYYY-MM-DD'),
                         periodType
                     })
                 );

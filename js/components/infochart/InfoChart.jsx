@@ -247,7 +247,7 @@ class InfoChart extends React.Component {
                                     max={moment().subtract(1, 'day')._d}
                                     format={"DD MMMM, YYYY"}
                                     editFormat={"YYYY-MM-DD"}
-                                    value={new Date(this.props.infoChartData.toDataReal)}
+                                    value={new Date(this.props.infoChartData.toData)}
                                     onChange={(value) => this.changeChartDateTo(value)}/>
                                 <ControlLabel style={{fontSize: "14px", marginTop: "10px"}}><Message msgId="gcapp.fixedRangePicker.selectCumulativePeriod"/></ControlLabel>
                                 <DropdownList
@@ -283,32 +283,24 @@ class InfoChart extends React.Component {
     changeChartDateFrom = (value) => {
         let toData = this.props.infoChartData.toData;
         let fromData = DateAPI.calculateDateFromKeyReal(value, moment(this.props.infoChartData.toData).format('YYYY-MM-DD')).fromData;
-        let fromDataReal = DateAPI.calculateDateFromKeyReal(value, moment(this.props.infoChartData.toData).format('YYYY-MM-DD')).fromData;
-        let toDataReal = this.props.infoChartData.toDataReal;
 
         this.props.onFetchInfoChartData({
             latlng: this.props.infoChartData.latlng,
             toData,
             fromData,
             variable: this.props.infoChartData.variable,
-            fromDataReal,
-            toDataReal,
             periodType: value
         });
     }
     changeChartDateTo = (value) => {
         let toData = DateAPI.calculateDateFromKeyReal(this.props.infoChartData.periodType, moment(value).format('YYYY-MM-DD')).toData;
         let fromData = DateAPI.calculateDateFromKeyReal(this.props.infoChartData.periodType, moment(value).format('YYYY-MM-DD')).fromData;
-        let fromDataReal = DateAPI.calculateDateFromKeyReal(this.props.infoChartData.periodType, moment(value).format('YYYY-MM-DD')).fromData;
-        let toDataReal = DateAPI.calculateDateFromKeyReal(this.props.infoChartData.periodType, moment(value).format('YYYY-MM-DD')).toData;
 
         this.props.onFetchInfoChartData({
             latlng: this.props.infoChartData.latlng,
             toData,
             fromData,
             variable: this.props.infoChartData.variable,
-            fromDataReal,
-            toDataReal,
             periodType: this.props.infoChartData.periodType
         });
     }
@@ -318,8 +310,6 @@ class InfoChart extends React.Component {
             toData: this.props.infoChartData.toData,
             fromData: this.props.infoChartData.fromData,
             variable: value.id,
-            fromDataReal: this.props.infoChartData.fromDataReal,
-            toDataReal: this.props.infoChartData.toDataReal,
             periodType: this.props.infoChartData.periodType
         });
     }

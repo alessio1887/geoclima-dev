@@ -33,10 +33,8 @@ const InfoChartPlugin = connect(
 const InfoChartPanel = connect((state) => ({
     show: state.infochart && state.infochart.showInfoChartPanel || false,
     infoChartData: {
-        fromData: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.fromData || new Date(DateAPI.calculateDateFromKey("10", moment().subtract(1, 'day')._d).fromData),
-        toData: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.toData || new Date(DateAPI.calculateDateFromKey("1", moment().subtract(1, 'day')._d).toData),
-        fromDataReal: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.fromDataReal || new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).fromData),
-        toDataReal: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.toDataReal || new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
+        fromData: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.fromData || new Date(DateAPI.calculateDateFromKeyReal("10", moment().subtract(1, 'day')._d).fromData),
+        toData: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.toData || new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
         variable: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.variable || 'prec',
         latlng: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.latlng || {},
         periodType: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.periodType || "1",
