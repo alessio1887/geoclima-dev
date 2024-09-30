@@ -1,0 +1,15 @@
+#mapstore-infochartdate1 {
+    margin:10px;
+}
+
+#ms-infocharttodate-action1 {
+    float:left;
+    width:30%;
+    overflow:hidden;
+}
+
+#ms-infochartfromdate-action1 {
+    float:left;
+    width:30%;
+    overflow:hidden;
+}

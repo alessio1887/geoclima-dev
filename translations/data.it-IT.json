@@ -24,6 +24,11 @@
               "dateTooEarly": "La data selezionata non può essere precedente al 1-01-1991."
             }
         },
+        "infochart": {
+            "tooltipDeactivate": "Disattiva visualizzazione grafico",
+            "tooltipActivate": "Attiva visualizzazione grafico",
+            "selectMeteoVariable": "Seleziona una variabile"
+        },
         "Language": "Lingua",
         "msgId0": "{name} ha scattato {numPhotos, plural, =0 {nessuna foto} other {# foto}} il {takenDate, date, long}.",
         "htmlTest": "{name} {surname}",

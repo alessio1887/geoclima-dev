@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
 
 import MapViewerCmpGC from '@js/components/viewer/MapViewerCmpGC.jsx';
 import { loadNewMap, loadMapConfigByDateRange } from '../actions/config.js';
-// import { loadNewMap, loadMapConfig } from '../../MapStore2/web/client/actions/config.js';
 import { initMap } from '../../MapStore2/web/client/actions/map.js';
 import MapViewerContainer from '../../MapStore2/web/client/containers/MapViewer.jsx';
 import moment from 'moment';
