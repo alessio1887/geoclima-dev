@@ -13,7 +13,7 @@ import Message from '../../../MapStore2/web/client/components/I18N/Message';
 
 import Dialog from '../../../MapStore2/web/client/components/misc/Dialog';
 import BorderLayout from '../../../MapStore2/web/client/components/layout/BorderLayout';
-import {AreaChart, Area, XAxis, YAxis, CartesianGrid, Legend, Tooltip} from 'recharts';
+import Plot from '../../../MapStore2/web/client/components/charts/PlotlyChart.jsx';
 import moment from 'moment';
 import { DateTimePicker, DropdownList } from 'react-widgets';
 import DateAPI from '../../utils/ManageDateUtils';
@@ -101,7 +101,7 @@ class InfoChart extends React.Component {
                 bottom: 5
             },
             width: 850,
-            height: 300
+            height: 400
         },
         animated: true,
         classNameInfoChartDate: "mapstore-infochartdate",
@@ -132,90 +132,62 @@ class InfoChart extends React.Component {
             || newProps.mapinfoActive
             || newProps.data.length > 0;
     }
+    // Chart's definition
     showChart = () => {
         if (!this.props.maskLoading) {
-            if (this.props.infoChartData.variable === 'prec' || this.props.infoChartData.variable === 'evap') {
-                return (
-                    <AreaChart margin={this.props.chartStyle.margin} width={this.props.chartStyle.width} height={this.props.chartStyle.height} data={this.formatDataCum(this.props.data)}>
-                        <XAxis
-                            hide={false}
-                            dataKey="name"
-                            tickCount={20}/>
-                        <YAxis
-                            hide={false}/>
-                        <Tooltip />
-                        <Legend />
-                        <CartesianGrid
-                            strokeDasharray="3 3"
-                            horizontal/>
-                        <defs>
-                            <linearGradient id="st_value_clima" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#FF0000" stopOpacity={0.8}/>
-                                <stop offset="95%" stopColor="#FF0000" stopOpacity={0}/>
-                            </linearGradient>
-                            <linearGradient id="st_value" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
-                                <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
-                            </linearGradient>
-                        </defs>
-                        <Area
-                            isAnimationActive={this.props.animated}
-                            dataKey="st_value_clima"
-                            stroke="#FF0000"
-                            fill="#FF0000"
-                            fillOpacity={1}
-                            activeDot={{r: 8}}
-                            name="Climatologia (mm)"/>
-                        <Area
-                            isAnimationActive={this.props.animated}
-                            dataKey="st_value"
-                            stroke="#8884d8"
-                            fill="#8884d8"
-                            fillOpacity={1}
-                            activeDot={{r: 8}}
-                            name="Anno in corso (mm)"/>
-                    </AreaChart>
-                );
-            } else if (this.props.infoChartData.variable === 'temp' || this.props.infoChartData.variable === 'bis') {
-                return (
-                    <AreaChart baseValue={'dataMin'} margin={this.props.chartStyle.margin} width={this.props.chartStyle.width} height={this.props.chartStyle.height} data={this.formatDataTemp(this.props.data)}>
-                        <XAxis
-                            hide={false}
-                            dataKey="data"
-                            tickCount={20}/>
-                        <YAxis hide={false}/>
-                        <Tooltip />
-                        <Legend />
-                        <CartesianGrid
-                            strokeDasharray="3 3"
-                            horizontal/>
-                        <defs>
-                            <linearGradient id="st_value_clima" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="100%" stopColor="#FF0000" stopOpacity={0.8}/>
-                            </linearGradient>
-                            <linearGradient id="st_value" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="100%" stopColor="#8884d8" stopOpacity={0.8}/>
-                            </linearGradient>
-                        </defs>
-                        <Area
-                            isAnimationActive={this.props.animated}
-                            dataKey="st_value_clima"
-                            stroke="#FF0000"
-                            fill="#FF0000"
-                            fillOpacity={1}
-                            activeDot={{r: 8}}
-                            name={this.props.infoChartData.variable === 'temp' ? "Climatologia (°C)" : "Climatologia (mm)"}/>
-                        <Area
-                            isAnimationActive={this.props.animated}
-                            dataKey="st_value"
-                            stroke="#8884d8"
-                            fill="#8884d8"
-                            fillOpacity={1}
-                            activeDot={{r: 8}}
-                            name={this.props.infoChartData.variable === 'temp' ? "Anno in corso (°C)" : "Anno in corso (mm)"}/>
-                    </AreaChart>
-                );
-            }
+            const chartData = this.props.infoChartData.variable === 'prec' || this.props.infoChartData.variable === 'evap'
+                ? this.formatDataCum(this.props.data)
+                : this.formatDataTemp(this.props.data);
+
+            const climaColor = this.props.infoChartData.variable === 'temp' ? '#8884d8' :  '#FF0000';
+            const currentColor = this.props.infoChartData.variable === 'temp' ? '#FF0000' : '#8884d8';
+
+            return (
+                <Plot
+                    data={[
+                        {
+                            x: chartData.map(d => d.name || d.data),
+                            y: chartData.map(d => d.st_value_clima),
+                            customdata: chartData.map(d => d.st_value),
+                            type: 'scatter',
+                            mode: 'lines+markers',
+                            fill: 'tonexty',
+                            name: 'Climatologia (mm)',
+                            line: { color: climaColor },
+                            hovertemplate: '<b>%{x}</b><br><b>Anno in corso (mm): %{customdata}</b><br><b>Climatologia (mm): %{y}</b><extra></extra>'
+                        },
+                        {
+                            x: chartData.map(d => d.name || d.data),
+                            y: chartData.map(d => d.st_value),
+                            customdata: chartData.map(d => d.st_value_clima),
+                            type: 'scatter',
+                            mode: 'lines+markers',
+                            fill: 'tonexty',
+                            name: 'Anno in corso (mm)',
+                            line: { color: currentColor },
+                            hovertemplate: '<b>%{x}</b><br><b>Anno in corso (mm): %{y}</b><br><b>Climatologia (mm): %{customdata}</b><extra></extra>'
+                        }
+                    ]}
+                    layout={{
+                        width: this.props.chartStyle.width,
+                        height: this.props.chartStyle.height,
+                        xaxis: { // Dates format
+                            tickformat: '%Y-%m-%d'
+                        },
+                        yaxis: { title: this.props.infoChartData.variable === 'temp' ? 'Temperatura (°C)' : 'Valore (mm)' },
+                        margin: this.props.chartStyle.margin,
+                        showlegend: true,
+                        legend: {
+                            orientation: 'h',
+                            x: 0.5,
+                            y: -0.2
+                        }
+                    }}
+                    useResizeHandler
+                    style={{ width: '100%', height: '100%' }}
+                    modeBar
+                />
+            );
         }
         return null;
     }
@@ -236,12 +208,13 @@ class InfoChart extends React.Component {
                                     data={this.props.variableList}
                                     valueField = "id"
                                     textField = "name"
-                                    value={this.props.infoChartData && this.props.infoChartData.variable || "prec"}
+                                    value={this.props.infoChartData?.variable || "prec"}
                                     onChange={(value) => {
                                         this.changeChartVariable(value);
                                     }}/>
                                 <ControlLabel style={{fontSize: "14px", marginTop: "10px"}}><Message msgId="gcapp.fixedRangePicker.selectDateHidrologicYear"/></ControlLabel>
                                 <DateTimePicker
+                                    culture="it"
                                     time={false}
                                     min={new Date("1995-01-01")}
                                     max={moment().subtract(1, 'day')._d}
@@ -255,7 +228,7 @@ class InfoChart extends React.Component {
                                     data={this.props.periodTypes}
                                     valueField = "key"
                                     textField = "label"
-                                    value={this.props.infoChartData && this.props.infoChartData.periodType || "1"}
+                                    value={this.props.infoChartData?.periodType || "1"}
                                     onChange={(value) => {
                                         this.changeChartDateFrom(value.key);
                                     }}/>
@@ -327,18 +300,6 @@ class InfoChart extends React.Component {
             );
             cum += o.st_value;
             cumClima += o.st_value_clima;
-        }, this);
-        return data;
-    }
-    formatDataBis(values) {
-        let data = [];
-        values.forEach(function(o) {
-            data.push(
-                {
-                    "data": o.data.substring(0, 10),
-                    "bilancio": o.bilancio
-                }
-            );
         }, this);
         return data;
     }

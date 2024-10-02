@@ -2,25 +2,12 @@
     "proxyUrl": {
         "url": "proxy/?url=",
         "useCORS": [
-          "http://demo.geo-solutions.it/geoserver",
-          "https://demo.geo-solutions.it:443/geoserver",
-          "https://demo.geo-solutions.it/geoserver",
-          "https://nominatim.openstreetmap.org",
-          "http://cloudsdi.geo-solutions.it",
-          "https://gs-stable.geo-solutions.it/geoserver",
-          "https://gs-stable.geo-solutions.it:443/geoserver",
-          "http://gs-stable.geo-solutions.it/geoserver",
-          "http://gs-stable.geo-solutions.it:443/geoserver",
-          "https://gs-stable.geosolutionsgroup.com/geoserver",
-          "https://gs-stable.geosolutionsgroup.com:443/geoserver",
-          "http://gs-stable.geosolutionsgroup.com/geoserver",
-          "http://gs-stable.geosolutionsgroup.com:443/geoserver",
-          "https://tile.googleapis.com",
-          "https://maps1.geosolutionsgroup.com/geoserver/",
-          "https://maps2.geosolutionsgroup.com/geoserver/",
-          "https://maps3.geosolutionsgroup.com/geoserver/",
-          "https://maps4.geosolutionsgroup.com/geoserver/",
-          "https://maps5.geosolutionsgroup.com/geoserver/"
+          "http://geoportale.lamma.rete.toscana.it/geoserver_sar",
+            "https://geoportale.lamma.rete.toscana.it/geoserver_sar",
+            "https://geoportale.lamma.rete.toscana.it/cgi-bin/sar_app/sarCharts.py",
+            "https://geoportale.lamma.rete.toscana.it/cgi-bin/ait_app/aitchart.py",
+            "https://nominatim.openstreetmap.org",
+            "http://spatialreference.org/ref/epsg/3003/proj4/"
         ]
     },
     "geoStoreUrl": "rest/geostore/",
@@ -524,6 +511,13 @@
                 }
             },
             "ScaleBox", {
+              "name":"InfoChart",
+              "override": {
+                "Toolbar": {
+                  "alwaysVisible": true
+                }
+              }
+            }, {
               "name":"ZoomAll",
               "override": {
                 "Toolbar": {
