@@ -7,7 +7,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, ButtonGroup, Collapse, Label, FormGroup, Glyphicon } from 'react-bootstrap';
+import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon, Label } from 'react-bootstrap';
 import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
 import { DateTimePicker, DropdownList } from 'react-widgets';
@@ -20,6 +20,7 @@ import assign from 'object-assign';
 import moment from 'moment';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
 import './rangepicker.css';
+import RangePickerInfo from '../components/datepickers/RangePickerInfo';
 
 import fixedrangepicker from '../reducers/fixedrangepicker';
 import layers from '../../MapStore2/web/client/reducers/layers';
@@ -95,8 +96,11 @@ class FixedRangePicker extends React.Component {
                 <Collapse in={this.props.isOpenPlugin} style={{ zIndex: 100,  position: "absolute", top: "30px"  }}>
                     <FormGroup style={{ marginBottom: "0px" }} bsSize="sm">
                         <div className="ms-fixedrangepicker-action">
-                            <Label className="labels-fixedrangepicker"><Message msgId="gcapp.fixedRangePicker.titlePeriod" /></Label>
-                            <div style={{ padding: "6px", textAlign: 'center' }} >Dal: <span id="from-data-statistics" >{moment(this.props.fromData).format('DD/MM/YYYY')}</span> - al: <span id="to-data-statistics" >{moment(this.props.toData).format('DD/MM/YYYY')}</span></div>
+                            <RangePickerInfo
+                                labelTitleId="gcapp.fixedRangePicker.titlePeriod"
+                                fromData={this.props.fromData}
+                                toData={this.props.toData}
+                            />
                             <Label className="labels-fixedrangepicker"><Message msgId="gcapp.fixedRangePicker.selectDateHidrologicYear" /></Label>
                             <DateTimePicker
                                 culture="it"

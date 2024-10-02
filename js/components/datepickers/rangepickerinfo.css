@@ -1,0 +1,19 @@
+.labels-rangepicker {
+    border-radius: 0%;
+    padding: 10px;
+    font-size: 14px;
+    flex: 1
+}
+
+.labels-container {
+  background-color: #FFFFFF;
+  /* overflow: hidden; */
+  display: flex;
+  left: 4px;
+  /* height: 200px; */
+  flex-direction: column;
+  margin: 0;
+  border: none;
+  z-index: 10;
+  top: 4px;
+}

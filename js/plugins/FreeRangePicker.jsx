@@ -26,6 +26,8 @@ import freerangepicker from '@js/reducers/freerangepicker';
 import { toggleRangePickerPlugin } from '../actions/fixedrangepicker';
 import { changeFromData, changeToData, openAlert, closeAlert, collapsePlugin } from '@js/actions/freerangepicker';
 
+import RangePickerInfo from '../components/datepickers/RangePickerInfo';
+
 
 class FreeRangePicker extends React.Component {
     static propTypes = {
@@ -84,8 +86,11 @@ class FreeRangePicker extends React.Component {
                 <Collapse in={!this.props.isCollapsedPlugin} style={{ zIndex: 100,  position: "absolute", top: "30px"  }}>
                     <FormGroup style={{marginBottom: "0px"}} bsSize="sm">
                         <div className="ms-freerangepicker-action">
-                            <Label className="labels-freerangepicker"><Message msgId="gcapp.freeRangePicker.titlePeriod"/></Label>
-                            <div style={{padding: "6px", textAlign: 'center'}} >Dal: <span id="from-data-statistics" >{moment(this.props.fromData).format('DD/MM/YYYY')}</span> - al: <span id="to-data-statistics" >{moment(this.props.toData).format('DD/MM/YYYY')}</span></div>
+                            <RangePickerInfo
+                                labelTitleId="gcapp.freeRangePicker.titlePeriod"
+                                fromData={this.props.fromData}
+                                toData={this.props.toData}
+                            />
                             <Label className="labels-freerangepicker"><Message msgId="gcapp.freeRangePicker.selectFromDate"/></Label>
                             <DateTimePicker
                                 culture="it"
