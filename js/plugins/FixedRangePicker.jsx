@@ -21,6 +21,7 @@ import moment from 'moment';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
 import './rangepicker.css';
 import RangePickerInfo from '../components/datepickers/RangePickerInfo';
+import FixedRangeManager from '../components/datepickers/FixedRangeManager';
 
 import fixedrangepicker from '../reducers/fixedrangepicker';
 import layers from '../../MapStore2/web/client/reducers/layers';
@@ -101,27 +102,13 @@ class FixedRangePicker extends React.Component {
                                 fromData={this.props.fromData}
                                 toData={this.props.toData}
                             />
-                            <Label className="labels-fixedrangepicker"><Message msgId="gcapp.fixedRangePicker.selectDateHidrologicYear" /></Label>
-                            <DateTimePicker
-                                culture="it"
-                                time={false}
-                                min={new Date("1991-01-01")}
-                                max={moment().subtract(1, 'day')._d}
-                                format={"DD MMMM, YYYY"}
-                                editFormat={"YYYY-MM-DD"}
-                                value={new Date(this.props.toData)}
-                                onChange={this.props.onChangeYear}
-                                disabled={this.props.isInteractionDisabled} />
-                            <Label className="labels-fixedrangepicker"><Message msgId="gcapp.fixedRangePicker.selectCumulativePeriod" /></Label>
-                            <DropdownList
-                                id="period1"
-                                key={this.props.periodType || "1"}
-                                data={this.props.periodTypes}
-                                valueField="key"
-                                textField="label"
-                                value={this.props.periodType || "1"}
-                                onChange={this.props.onChangePeriod}
-                                disabled={this.props.isInteractionDisabled} />
+                            <FixedRangeManager
+                                toData={this.props.toData}
+                                onChangeYear={this.props.onChangeYear}
+                                isInteractionDisabled={this.props.isInteractionDisabled}
+                                periodType={this.props.periodType}
+                                onChangePeriod={this.props.onChangePeriod}
+                            />
                             <ButtonGroup id="button-rangepicker-container">
                                 <Button onClick={this.handleApplyPeriod} disabled={this.props.isInteractionDisabled}>
                                     <Glyphicon glyph="calendar" /><Message msgId="gcapp.fixedRangePicker.applyPeriodButton" />

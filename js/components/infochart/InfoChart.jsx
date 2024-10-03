@@ -30,7 +30,6 @@ import './infochart.css';
   * @prop {bool} show
   *
   */
-
 class InfoChart extends React.Component {
     static propTypes = {
         id: PropTypes.string,
