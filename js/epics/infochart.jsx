@@ -16,7 +16,7 @@ import {
     fetchInfoChartData
 } from '../actions/infochart';
 import { CLICK_ON_MAP } from '../../MapStore2/web/client/actions/map';
-import API from '../api/AITApi';
+import API from '../api/GeoClimaApi';
 import moment from 'moment';
 
 /**
@@ -123,7 +123,7 @@ const clickedPointCheckEpic = (action$, store) =>
 const loadInfoChartDataEpic = (action$, store) =>
     action$.ofType(FETCH_INFOCHART_DATA)
         .switchMap(() => Observable.fromPromise(
-            API.aitchart(store.getState().infochart.infoChartData)
+            API.geoclimachart(store.getState().infochart.infoChartData)
                 .then(res => res.data)
         ))
         .switchMap(data => Observable.of(fetchedInfoChartData(data, false)));

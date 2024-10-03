@@ -7,10 +7,9 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon, Label } from 'react-bootstrap';
+import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-bootstrap';
 import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
-import { DateTimePicker, DropdownList } from 'react-widgets';
 import { compose } from 'redux';
 import { changeYear, changePeriod, toggleRangePickerPlugin, openAlert, closeAlert, collapsePlugin } from '../actions/fixedrangepicker';
 import { isVariabiliMeteoLayer, isSPIorSPEILayer } from '../utils/CheckLayerVariabiliMeteoUtils';

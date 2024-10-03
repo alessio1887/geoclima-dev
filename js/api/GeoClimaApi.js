@@ -6,10 +6,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 import axios from '../../MapStore2/web/client/libs/ajax';
-import urlUtil from 'url';
 import assign from 'object-assign';
-const DEFAULT_URL_AITCHART = 'geoportale.lamma.rete.toscana.it/cgi-bin/ait_app/aitchart.py';
-const DEFAULT_URL_AITSTATS = 'geoportale.lamma.rete.toscana.it/cgi-bin/ait_app/aitstats.py';
+import urlUtil from 'url';
+const DEFAULT_URL_GEOCLIMA_CHART = 'geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/geoclima_chart.py';
 
 // const defaultOptions = {
 //     format: 'json',
@@ -18,23 +17,15 @@ const DEFAULT_URL_AITSTATS = 'geoportale.lamma.rete.toscana.it/cgi-bin/ait_app/a
 //     priority: 5
 // };
 /**
- * API for local config
+ * API using localConfig.json for AJAX proxy settings
+ * The proxy URL and allowed CORS domains are defined in localConfig.json
  */
 const Api = {
-    aitchart: function(data, options) {
+    geoclimachart: function(data, options) {
         var params = assign({lat: data.latlng.lat, lng: data.latlng.lng, toData: data.toData, fromData: data.fromData, variable: data.variable}, options || {});
         var url = urlUtil.format({
             protocol: window.location.hostname === 'localhost' ? 'https:' : window.location.protocol,
-            host: DEFAULT_URL_AITCHART,
-            query: params
-        });
-        return axios.get(url); // TODO the jsonp method returns .promise and .cancel method,the last can be called when user cancel the query
-    },
-    aitstats: function(coords, options) {
-        var params = assign({lat: coords.lat, lng: coords.lng}, options || {});
-        var url = urlUtil.format({
-            protocol: window.location.hostname === 'localhost' ? 'https:' : window.location.protocol,
-            host: DEFAULT_URL_AITSTATS,
+            host: DEFAULT_URL_GEOCLIMA_CHART,
             query: params
         });
         return axios.get(url); // TODO the jsonp method returns .promise and .cancel method,the last can be called when user cancel the query

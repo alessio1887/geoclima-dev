@@ -113,8 +113,10 @@ class InfoChart extends React.Component {
         onChangeChartDate: () => {},
         variableList: [
             {id: "prec", name: "Precipitazione"},
-            {id: "temp", name: "Temperatura"},
-            {id: "evap", name: "Evapotraspirazione Potenziale"},
+            {id: "tmed", name: "Temperatura Media"},
+            {id: "tmax", name: "Temperatura Massima"},
+            {id: "tmin", name: "Temperatura Minima"},
+            {id: "ret", name: "Evapotraspirazione Potenziale"},
             {id: "bis", name: "Bilancio Idrico Semplificato"}
         ],
         periodTypes: [
@@ -134,12 +136,12 @@ class InfoChart extends React.Component {
     // Chart's definition
     showChart = () => {
         if (!this.props.maskLoading) {
-            const chartData = this.props.infoChartData.variable === 'prec' || this.props.infoChartData.variable === 'evap'
+            const chartData = this.props.infoChartData.variable === 'prec' || this.props.infoChartData.variable === 'ret'
                 ? this.formatDataCum(this.props.data)
                 : this.formatDataTemp(this.props.data);
 
-            const climaColor = this.props.infoChartData.variable === 'temp' ? '#8884d8' :  '#FF0000';
-            const currentColor = this.props.infoChartData.variable === 'temp' ? '#FF0000' : '#8884d8';
+            const climaColor = this.props.infoChartData.variable === 'tmed' ? '#8884d8' :  '#FF0000';
+            const currentColor = this.props.infoChartData.variable === 'tmed' ? '#FF0000' : '#8884d8';
 
             return (
                 <Plot
@@ -173,7 +175,7 @@ class InfoChart extends React.Component {
                         xaxis: { // Dates format
                             tickformat: '%Y-%m-%d'
                         },
-                        yaxis: { title: this.props.infoChartData.variable === 'temp' ? 'Temperatura (°C)' : 'Valore (mm)' },
+                        yaxis: { title: ['tmed', 'tmax', 'tmin'].includes(this.props.infoChartData.variable)  ? 'Temperatura (°C)' : 'Valore (mm)' },
                         margin: this.props.chartStyle.margin,
                         showlegend: true,
                         legend: {
