@@ -8,10 +8,9 @@
 */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, ButtonGroup, Collapse, Label, FormGroup, Glyphicon } from 'react-bootstrap';
+import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-bootstrap';
 import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
-import { DateTimePicker  } from 'react-widgets';
 import { compose } from 'redux';
 import DateAPI from '../utils/ManageDateUtils';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
@@ -26,6 +25,7 @@ import freerangepicker from '@js/reducers/freerangepicker';
 import { toggleRangePickerPlugin } from '../actions/fixedrangepicker';
 import { changeFromData, changeToData, openAlert, closeAlert, collapsePlugin } from '@js/actions/freerangepicker';
 
+import FreeRangeManager from '../components/datepickers/FreeRangeManager';
 import RangePickerInfo from '../components/datepickers/RangePickerInfo';
 
 
@@ -71,7 +71,7 @@ class FreeRangePicker extends React.Component {
         },
         freeRangePickerIsVisible: false,
         alertMessage: null,
-        isInteractionDisabled: false
+        isInteractionDisabled: true
     };
 
     render() {
@@ -91,28 +91,14 @@ class FreeRangePicker extends React.Component {
                                 fromData={this.props.fromData}
                                 toData={this.props.toData}
                             />
-                            <Label className="labels-freerangepicker"><Message msgId="gcapp.freeRangePicker.selectFromDate"/></Label>
-                            <DateTimePicker
-                                culture="it"
-                                time={false}
-                                min={new Date("1991-01-01")}
-                                max={moment().subtract(1, 'day')._d}
-                                format={"DD MMMM, YYYY"}
-                                editFormat={"YYYY-MM-DD"}
-                                value={new Date(this.props.fromData)}
-                                onChange={this.props.onChangeFromData}
-                                disabled={this.props.isInteractionDisabled}/>
-                            <Label className="labels-freerangepicker"><Message msgId="gcapp.freeRangePicker.selectToDate"/></Label>
-                            <DateTimePicker
-                                culture="it"
-                                time={false}
-                                min={new Date("1991-01-02")}
-                                max={moment().subtract(1, 'day')._d}
-                                format={"DD MMMM, YYYY"}
-                                editFormat={"YYYY-MM-DD"}
-                                value={new Date(this.props.toData)}
-                                onChange={this.props.onChangeToData}
-                                disabled={this.props.isInteractionDisabled}/>
+                            <FreeRangeManager
+                                fromData={this.props.fromData}
+                                toData={this.props.toData}
+                                onChangeFromData={this.props.onChangeFromData}
+                                onChangeToData={this.props.onChangeToData}
+                                isInteractionDisabled={this.props.isInteractionDisabled}
+                                styleLabels="labels-freerangepicker"
+                            />
                             <ButtonGroup id="button-rangepicker-container">
                                 <Button onClick={this.handleApplyPeriod}  disabled={this.props.isInteractionDisabled}>
                                     <Glyphicon glyph="calendar" /><Message msgId="gcapp.freeRangePicker.applyPeriodButton"/>

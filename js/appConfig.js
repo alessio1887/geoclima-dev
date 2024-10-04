@@ -16,14 +16,14 @@ const fixedrangepicker = {
     toData: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
     periodType: "1",
     showFixedRangePicker: true,
-    isInteractionDisabled: false
+    isInteractionDisabled: true
 };
 const freerangepicker = {
     isCollapsedPlugin: false,
     fromData: new Date(moment().subtract(1, 'month')._d),
     toData: new Date(moment().subtract(1, 'day')._d),
     showFreeRangePicker: false,
-    isInteractionDisabled: false
+    isInteractionDisabled: true
 };
 
 export default {

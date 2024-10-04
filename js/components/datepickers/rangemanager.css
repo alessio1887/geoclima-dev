@@ -1,4 +1,5 @@
-.ms-fixedrangemanager-action  {
+.ms-fixedrangemanager-action,
+.ms-freerangemanager-action {
   background-color: #FFFFFF;
   /* overflow: hidden; */
   display: flex;

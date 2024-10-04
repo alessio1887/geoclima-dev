@@ -74,7 +74,7 @@ class FixedRangePicker extends React.Component {
         },
         fixedRangePickerActive: false,
         alertMessage: null,
-        isInteractionDisabled: false
+        isInteractionDisabled: true
     };
 
     render() {

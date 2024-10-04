@@ -5,7 +5,7 @@ import Message from '../../../MapStore2/web/client/components/I18N/Message';
 import moment from 'moment';
 import { PERIOD_TYPES } from '../../utils/ManageDateUtils';
 
-import './fixedrangemanager.css';
+import './rangemanager.css';
 
 const FixedRangeManager = (props) => {
     return (
