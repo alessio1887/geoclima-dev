@@ -14,7 +14,7 @@ import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/l
 import { DateTimePicker  } from 'react-widgets';
 import { compose } from 'redux';
 import DateAPI from '../utils/ManageDateUtils';
-import { isVariabiliMeteoLayer, isSPIorSPEILayer } from '../utils/CheckLayerVariabiliMeteoUtils';
+import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 import { connect } from 'react-redux';
 import assign from 'object-assign';
 import moment from 'moment';
@@ -167,7 +167,7 @@ class FreeRangePicker extends React.Component {
         this.props.onUpdateSettings(newParams);
         if (onUpdateNode) {
             this.props.layers.flat.map((layer) => {
-                if (isVariabiliMeteoLayer(layer.name) || isSPIorSPEILayer(layer.name)) {
+                if (isVariabiliMeteoLayer(layer.name)) {
                     // funzione che aggiorna la mappa
                     this.props.onUpdateNode(
                         layer.id,

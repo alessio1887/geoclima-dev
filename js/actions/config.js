@@ -9,7 +9,7 @@
 import axios from '../../MapStore2/web/client/libs/ajax';
 import DateAPI from '../utils/ManageDateUtils';
 import moment from 'moment';
-import { isVariabiliMeteoLayer, isSPIorSPEILayer } from '../utils/CheckLayerVariabiliMeteoUtils';
+import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 
 
 export const LOAD_NEW_MAP = 'MAP:LOAD_NEW_MAP';
@@ -71,7 +71,7 @@ export function loadMapConfigByDateRange(configName, mapId, fromData, toData) {
         return axios.get(configName).then((response) => {
             if (typeof response.data === 'object') {
                 response.data.map.layers.map((data) => {
-                    if (isVariabiliMeteoLayer(data?.name) || isSPIorSPEILayer(data?.name)) {
+                    if (isVariabiliMeteoLayer(data?.name)) {
                         const mapFile = DateAPI.setGCMapFile(moment(fromData).format('YYYY-MM-DD'), moment(toData).format('YYYY-MM-DD'));
                         Object.assign(data, {params: {map: mapFile, fromData: moment(fromData).format('YYYY-MM-DD'), toData: moment(toData).format('YYYY-MM-DD')}});
                     }

@@ -12,8 +12,8 @@ import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
 import { compose } from 'redux';
 import { changeYear, changePeriod, toggleRangePickerPlugin, openAlert, closeAlert, collapsePlugin } from '../actions/fixedrangepicker';
-import { isVariabiliMeteoLayer, isSPIorSPEILayer } from '../utils/CheckLayerVariabiliMeteoUtils';
-import DateAPI from '../utils/ManageDateUtils';
+import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
+import DateAPI, { PERIOD_TYPES } from '../utils/ManageDateUtils';
 import { connect } from 'react-redux';
 import assign from 'object-assign';
 import moment from 'moment';
@@ -61,14 +61,7 @@ class FixedRangePicker extends React.Component {
         onChangePeriod: () => { },
         onUpdateSettings: () => { },
         onCollapsePlugin: () => { },
-        periodTypes: [
-            { key: "1", label: "1 Mese" },
-            { key: "3", label: "3 Mesi" },
-            { key: "4", label: "4 Mesi" },
-            { key: "6", label: "6 Mesi" },
-            { key: "12", label: "12 Mesi" },
-            { key: "10", label: "dal 1° Ottobre" }
-        ],
+        periodTypes: PERIOD_TYPES,
         periodType: "1",
         map: "geoclima",
         id: "mapstore-fixederange",
@@ -156,7 +149,7 @@ class FixedRangePicker extends React.Component {
         this.props.onUpdateSettings(newParams);
         if (onUpdateNode) {
             this.props.layers.flat.map((layer) => {
-                if (isVariabiliMeteoLayer(layer.name) || isSPIorSPEILayer(layer.name)) {
+                if (isVariabiliMeteoLayer(layer.name)) {
                     // funzione che aggiorna la mappa
                     this.props.onUpdateNode(
                         layer.id,
@@ -175,14 +168,7 @@ const mapStateToProps = (state) => {
         fromData: state?.fixedrangepicker?.fromData || new Date(moment().subtract(1, 'month')._d),
         toData: state?.fixedrangepicker?.toData || new Date(moment().subtract(1, 'day')._d),
         periodType: state?.fixedrangepicker?.periodType || "1",
-        periodTypes: state?.fixedrangepicker?.periodTypes || [
-            { key: "1", label: "1 Mese" },
-            { key: "3", label: "3 Mesi" },
-            { key: "4", label: "4 Mesi" },
-            { key: "6", label: "6 Mesi" },
-            { key: "12", label: "12 Mesi" },
-            { key: "10", label: "dal 1° Ottobre" }
-        ],
+        periodTypes: state?.fixedrangepicker?.periodTypes || PERIOD_TYPES,
         settings: state?.layers?.settings || { expanded: false, options: { opacity: 1 } },
         layers: state?.layers || {},
         fixedRangePickerActive: (state?.fixedrangepicker?.showFixedRangePicker) ? true : false,

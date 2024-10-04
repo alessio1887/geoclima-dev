@@ -3,19 +3,11 @@ import { DateTimePicker, DropdownList } from 'react-widgets';
 import { Label } from 'react-bootstrap';
 import Message from '../../../MapStore2/web/client/components/I18N/Message';
 import moment from 'moment';
+import { PERIOD_TYPES } from '../../utils/ManageDateUtils';
 
 import './fixedrangemanager.css';
 
 const FixedRangeManager = (props) => {
-    const periodTypes = [
-        { key: "1", label: "1 Mese" },
-        { key: "3", label: "3 Mesi" },
-        { key: "4", label: "4 Mesi" },
-        { key: "6", label: "6 Mesi" },
-        { key: "12", label: "12 Mesi" },
-        { key: "10", label: "dal 1° Ottobre" }
-    ];
-
     return (
         <div className="ms-fixedrangemanager-action">
             <Label className="labels-fixedrangemanager"><Message msgId="gcapp.fixedRangePicker.selectDateHidrologicYear" /></Label>
@@ -33,7 +25,7 @@ const FixedRangeManager = (props) => {
             <DropdownList
                 id="period1"
                 key={props.periodType || "1"}
-                data={periodTypes}
+                data={PERIOD_TYPES}
                 valueField="key"
                 textField="label"
                 value={props.periodType || "1"}

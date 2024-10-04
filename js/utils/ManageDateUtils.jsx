@@ -7,6 +7,15 @@
  */
 import moment from 'moment';
 
+export const PERIOD_TYPES = [
+    { key: "1", label: "1 Mese" },
+    { key: "3", label: "3 Mesi" },
+    { key: "4", label: "4 Mesi" },
+    { key: "6", label: "6 Mesi" },
+    { key: "12", label: "12 Mesi" },
+    { key: "10", label: "dal 1° Ottobre" }
+];
+
 const Api = {
     calculateDateFromKeyReal(key, toData) {
         let date = {};

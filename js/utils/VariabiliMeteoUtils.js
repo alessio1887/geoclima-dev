@@ -15,18 +15,9 @@ const SPEI = [ "spei1", "spei3", "spei6", "spei12"];
 
 export function isVariabiliMeteoLayer(layerName) {
     let check = false;
-    if (PIOGGIA.includes(layerName) || TEMPERATURA.includes(layerName) || EVAPOTRASPIRAZIONE.includes(layerName)
-        || BILANCIOIDRICOSEMPLIFICATO.includes(layerName)) {
+    if (PIOGGIA.includes(layerName) || TEMPERATURA.includes(layerName) || EVAPOTRASPIRAZIONE.includes(layerName) ||
+    SPI.includes(layerName) || SPEI.includes(layerName) || BILANCIOIDRICOSEMPLIFICATO.includes(layerName)) {
         check = true;
     }
     return check;
 }
-
-export function isSPIorSPEILayer(layerName) {
-    let check = false;
-    if (SPI.includes(layerName) || SPEI.includes(layerName)) {
-        check = true;
-    }
-    return check;
-}
-
