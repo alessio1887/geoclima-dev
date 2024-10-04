@@ -11,14 +11,6 @@
   top: 4px;
 }
 
-.labels-fixedrangemanager {
-    border-radius: 0%;
-    padding: 10px;
-    font-size: 14px;
-    flex: 1
-}
-
-
 @media (max-width: 1310px) {
     .ms-fixedrangemanager-action  {
         background-color: #FFFFFF;

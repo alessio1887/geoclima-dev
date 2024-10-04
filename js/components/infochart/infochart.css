@@ -13,3 +13,14 @@
     width:30%;
     overflow:hidden;
 }
+
+.labels-infochart {
+    color: black; /* Colore nero per il testo */
+    background-color: white; /* Sfondo bianco */
+    display: block; /* Assicura che il label sia un blocco allineato */
+    text-align: left; /* Allinea il testo a sinistra */
+    padding: 15px 0px 5px;
+    font-size: 14px; /* Assicurati che la dimensione del testo sia corretta */
+    font-weight: normal; /* Imposta il peso del font a normale */
+    font-weight: bold;
+}

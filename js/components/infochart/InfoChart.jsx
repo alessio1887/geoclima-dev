@@ -8,15 +8,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {Glyphicon, Panel, Grid, FormGroup, ControlLabel} from 'react-bootstrap';
+import {Glyphicon, Panel, Grid, FormGroup, Label} from 'react-bootstrap';
 import Message from '../../../MapStore2/web/client/components/I18N/Message';
 
 import Dialog from '../../../MapStore2/web/client/components/misc/Dialog';
 import BorderLayout from '../../../MapStore2/web/client/components/layout/BorderLayout';
 import Plot from '../../../MapStore2/web/client/components/charts/PlotlyChart.jsx';
 import moment from 'moment';
-import { DateTimePicker, DropdownList } from 'react-widgets';
-import DateAPI from '../../utils/ManageDateUtils';
+import { DropdownList } from 'react-widgets';
+import FixedRangeManager from '../../components/datepickers/FixedRangeManager';
+import DateAPI, { PERIOD_TYPES }  from '../../utils/ManageDateUtils';
 
 import './infochart.css';
 /**
@@ -119,14 +120,7 @@ class InfoChart extends React.Component {
             {id: "ret", name: "Evapotraspirazione Potenziale"},
             {id: "bis", name: "Bilancio Idrico Semplificato"}
         ],
-        periodTypes: [
-            { key: "1", label: "1 Mese"},
-            { key: "3", label: "3 Mesi"},
-            { key: "4", label: "4 Mesi"},
-            { key: "6", label: "6 Mesi"},
-            { key: "12", label: "12 Mesi"},
-            { key: "10", label: "dal 1° Ottobre"}
-        ]
+        periodTypes: PERIOD_TYPES
     }
     shouldComponentUpdate(newProps) {
         return newProps.active
@@ -203,7 +197,7 @@ class InfoChart extends React.Component {
                     <Panel >
                         <Grid fluid style={{paddingTop: 2, paddingBottom: 2}}>
                             <FormGroup>
-                                <ControlLabel style={{fontSize: "14px"}}><Message msgId="infochart.selectMeteoVariable"/></ControlLabel>
+                                <Label className="labels-infochart"><Message msgId="infochart.selectMeteoVariable"/></Label>
                                 <DropdownList
                                     key="charts"
                                     data={this.props.variableList}
@@ -213,26 +207,14 @@ class InfoChart extends React.Component {
                                     onChange={(value) => {
                                         this.changeChartVariable(value);
                                     }}/>
-                                <ControlLabel style={{fontSize: "14px", marginTop: "10px"}}><Message msgId="gcapp.fixedRangePicker.selectDateHidrologicYear"/></ControlLabel>
-                                <DateTimePicker
-                                    culture="it"
-                                    time={false}
-                                    min={new Date("1995-01-01")}
-                                    max={moment().subtract(1, 'day')._d}
-                                    format={"DD MMMM, YYYY"}
-                                    editFormat={"YYYY-MM-DD"}
-                                    value={new Date(this.props.infoChartData.toData)}
-                                    onChange={(value) => this.changeChartDateTo(value)}/>
-                                <ControlLabel style={{fontSize: "14px", marginTop: "10px"}}><Message msgId="gcapp.fixedRangePicker.selectCumulativePeriod"/></ControlLabel>
-                                <DropdownList
-                                    key="period"
-                                    data={this.props.periodTypes}
-                                    valueField = "key"
-                                    textField = "label"
-                                    value={this.props.infoChartData?.periodType || "1"}
-                                    onChange={(value) => {
-                                        this.changeChartDateFrom(value.key);
-                                    }}/>
+                                <FixedRangeManager
+                                    toData={this.props.infoChartData.toData}
+                                    periodType={this.props.infoChartData.periodType}
+                                    onChangeToData={(value) => this.changeChartDateTo(value)}
+                                    onChangePeriod={(value) => this.changeChartDateFrom(value.key)}
+                                    isInteractionDisabled={false}
+                                    styleLabels="labels-infochart"
+                                />
                             </FormGroup>
                         </Grid>
                     </Panel>

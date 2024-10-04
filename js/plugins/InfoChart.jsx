@@ -11,7 +11,7 @@ import {setInfoChartVisibility, fetchInfoChartData, fetchedInfoChartData, toggle
 import InfoChartButton from '../components/buttons/InfoChartButton';
 import InfoChart from '../components/infochart/InfoChart';
 import moment from 'moment';
-import DateAPI from '../utils/ManageDateUtils';
+import DateAPI, { PERIOD_TYPES } from '../utils/ManageDateUtils';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
 import infoChartReducer from '../reducers/infochart';
 import * as infoChartEpic from '../epics/infochart';
@@ -38,7 +38,7 @@ const InfoChartPanel = connect((state) => ({
         variable: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.variable || 'prec',
         latlng: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.latlng || {},
         periodType: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.periodType || "1",
-        periodTypes: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.periodTypes || [{ key: "1", label: "1 Mese"}, { key: "3", label: "3 Mesi"}, { key: "4", label: "4 Mesi"}, { key: "6", label: "6 Mesi"}, { key: "12", label: "12 Mesi"}, { key: "10", label: "dal 1° Ottobre"}]
+        periodTypes: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.periodTypes || PERIOD_TYPES
     },
     data: state.infochart && state.infochart.data || '',
     maskLoading: state.infochart && state.infochart.maskLoading,

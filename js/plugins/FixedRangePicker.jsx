@@ -96,10 +96,11 @@ class FixedRangePicker extends React.Component {
                             />
                             <FixedRangeManager
                                 toData={this.props.toData}
-                                onChangeYear={this.props.onChangeYear}
+                                onChangeToData={this.props.onChangeYear}
                                 isInteractionDisabled={this.props.isInteractionDisabled}
                                 periodType={this.props.periodType}
                                 onChangePeriod={this.props.onChangePeriod}
+                                styleLabels="labels-fixedrangepicker"
                             />
                             <ButtonGroup id="button-rangepicker-container">
                                 <Button onClick={this.handleApplyPeriod} disabled={this.props.isInteractionDisabled}>
