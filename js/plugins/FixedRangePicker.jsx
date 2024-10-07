@@ -107,7 +107,7 @@ class FixedRangePicker extends React.Component {
                                     <Glyphicon glyph="calendar" /><Message msgId="gcapp.fixedRangePicker.applyPeriodButton" />
                                 </Button>
                                 <Button onClick={this.props.onToggleFixedRangePicker} disabled={this.props.isInteractionDisabled}>
-                                    <Message msgId="gcapp.fixedRangePicker.fixedRangeButton" />
+                                    <Message msgId="gcapp.fixedRangePicker.dateRangeButton" />
                                 </Button>
                             </ButtonGroup>
                             {this.props.alertMessage && (

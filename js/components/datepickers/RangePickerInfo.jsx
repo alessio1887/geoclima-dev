@@ -1,6 +1,6 @@
 import React from 'react';
 import { Label } from 'react-bootstrap';
-import Message from '../../../MapStore2/web/client/components/I18N/Message'
+import Message from '../../../MapStore2/web/client/components/I18N/Message';
 import moment from 'moment';
 
 import './rangepickerinfo.css';
