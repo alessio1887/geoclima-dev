@@ -13,6 +13,22 @@ const BILANCIOIDRICOSEMPLIFICATO = ["BilancioIdricoSemplificato", "BilancioIdric
 const SPI = [ "spi1", "spi3", "spi6", "spi12"];
 const SPEI = [ "spei1", "spei3", "spei6", "spei12"];
 
+export const PREC = "prec";
+export const TMED = "tmed";
+export const TMAX = "tmax";
+export const TMIN = "tmin";
+export const RET = "ret";
+export const BIS = "bis";
+
+export const VARIABLE_LIST = [
+    { id: PREC, name: "Precipitazione" },
+    { id: TMED, name: "Temperatura Media" },
+    { id: TMAX, name: "Temperatura Massima" },
+    { id: TMIN, name: "Temperatura Minima" },
+    { id: RET, name: "Evapotraspirazione Potenziale" },
+    { id: BIS, name: "Bilancio Idrico Semplificato" }
+];
+
 export function isVariabiliMeteoLayer(layerName) {
     let check = false;
     if (PIOGGIA.includes(layerName) || TEMPERATURA.includes(layerName) || EVAPOTRASPIRAZIONE.includes(layerName) ||

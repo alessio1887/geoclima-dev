@@ -18,6 +18,7 @@ import moment from 'moment';
 import { DropdownList } from 'react-widgets';
 import FixedRangeManager from '../../components/datepickers/FixedRangeManager';
 import DateAPI, { PERIOD_TYPES }  from '../../utils/ManageDateUtils';
+import { TMED, TMAX, TMIN, PREC, RET, VARIABLE_LIST  }  from '../../utils/VariabiliMeteoUtils';
 
 import './infochart.css';
 /**
@@ -112,14 +113,7 @@ class InfoChart extends React.Component {
             height: '100%'
         },
         onChangeChartDate: () => {},
-        variableList: [
-            {id: "prec", name: "Precipitazione"},
-            {id: "tmed", name: "Temperatura Media"},
-            {id: "tmax", name: "Temperatura Massima"},
-            {id: "tmin", name: "Temperatura Minima"},
-            {id: "ret", name: "Evapotraspirazione Potenziale"},
-            {id: "bis", name: "Bilancio Idrico Semplificato"}
-        ],
+        variableList: VARIABLE_LIST,
         periodTypes: PERIOD_TYPES
     }
     shouldComponentUpdate(newProps) {
@@ -130,12 +124,12 @@ class InfoChart extends React.Component {
     // Chart's definition
     showChart = () => {
         if (!this.props.maskLoading) {
-            const chartData = this.props.infoChartData.variable === 'prec' || this.props.infoChartData.variable === 'ret'
+            const chartData = this.props.infoChartData.variable === PREC || this.props.infoChartData.variable === RET
                 ? this.formatDataCum(this.props.data)
                 : this.formatDataTemp(this.props.data);
 
-            const climaColor = this.props.infoChartData.variable === 'tmed' ? '#8884d8' :  '#FF0000';
-            const currentColor = this.props.infoChartData.variable === 'tmed' ? '#FF0000' : '#8884d8';
+            const climaColor = this.props.infoChartData.variable === TMED ? '#8884d8' :  '#FF0000';
+            const currentColor = this.props.infoChartData.variable === TMED ? '#FF0000' : '#8884d8';
 
             return (
                 <Plot
@@ -169,7 +163,7 @@ class InfoChart extends React.Component {
                         xaxis: { // Dates format
                             tickformat: '%Y-%m-%d'
                         },
-                        yaxis: { title: ['tmed', 'tmax', 'tmin'].includes(this.props.infoChartData.variable)  ? 'Temperatura (°C)' : 'Valore (mm)' },
+                        yaxis: { title: [TMED, TMAX, TMIN].includes(this.props.infoChartData.variable)  ? 'Temperatura (°C)' : 'Valore (mm)' },
                         margin: this.props.chartStyle.margin,
                         showlegend: true,
                         legend: {
