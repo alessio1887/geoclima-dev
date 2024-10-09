@@ -356,6 +356,12 @@
             }
           },
           {
+            "name": "DateRangeLabel",
+            "cfg" : {
+              "id": "mapstore-daterangelabel-map"
+            }
+          },
+          {
             "name": "Map",
             "cfg": {
               "mapOptions": {
