@@ -635,6 +635,33 @@
     {
       "name": "SidebarMenu",
       "hidden": true
+    },{
+      "name": "FixedRangePicker",
+      "cfg" : {
+        "id": "mapstore-fixedrangepicker-map"
+      }
+    },
+    {
+      "name": "FreeRangePicker",
+      "cfg" : {
+        "id": "mapstore-freerangepicker-map"
+      }
+    }, {
+      "name":"InfoChart",
+      "override": {
+        "Toolbar": {
+          "alwaysVisible": true
+        }
+      },
+      "dependencies": [
+        "Toolbar",
+        "Expander"
+      ]
+    }, {
+      "name": "DateRangeLabel",
+      "cfg" : {
+        "id": "mapstore-daterangelabel-map"
+      }
     }
   ]
 }
