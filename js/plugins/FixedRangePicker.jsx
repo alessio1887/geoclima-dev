@@ -31,7 +31,7 @@ class FixedRangePicker extends React.Component {
         style: PropTypes.object,
         id: PropTypes.string,
         className: PropTypes.string,
-        isOpenPlugin: PropTypes.bool,
+        isCollapsedPlugin: PropTypes.bool,
         onCollapsePlugin: PropTypes.func,
         fromData: PropTypes.instanceOf(Date),
         toData: PropTypes.instanceOf(Date),
@@ -53,7 +53,7 @@ class FixedRangePicker extends React.Component {
         isInteractionDisabled: PropTypes.bool
     };
     static defaultProps = {
-        isOpenPlugin: true,
+        isCollapsedPlugin: true,
         fromData: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).fromData),
         toData: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
         onChangeYear: () => { },
@@ -83,10 +83,11 @@ class FixedRangePicker extends React.Component {
         }
         return (
             <div className={this.props.className} style={this.props.style}>
-                <Button  onClick= {this.props.onCollapsePlugin} style={{ zIndex: 100,  position: "absolute"}}>
-                    <Message msgId="gcapp.fixedRangePicker.collapsePlugin"/>
+                <Button  onClick= {this.props.onCollapsePlugin} className={['collapse-rangepicker', this.props.isCollapsedPlugin && 'expanded'].join(' ')}>
+                    <Message msgId="gcapp.fixedRangePicker.collapsePlugin"/>{' '}
+                    <span className="collapse-rangepicker-icon">&#9650;</span>
                 </Button>
-                <Collapse in={this.props.isOpenPlugin} style={{ zIndex: 100,  position: "absolute", top: "30px"  }}>
+                <Collapse in={!this.props.isCollapsedPlugin}  style={{ zIndex: 100,  position: "absolute", top: "30px"  }}>
                     <FormGroup style={{ marginBottom: "0px" }} bsSize="sm">
                         <div className="ms-fixedrangepicker-action">
                             <RangePickerInfo
@@ -165,7 +166,7 @@ class FixedRangePicker extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-        isOpenPlugin: state?.fixedrangepicker?.isOpenPlugin,
+        isCollapsedPlugin: state?.fixedrangepicker?.isCollapsedPlugin,
         fromData: state?.fixedrangepicker?.fromData || new Date(moment().subtract(1, 'month')._d),
         toData: state?.fixedrangepicker?.toData || new Date(moment().subtract(1, 'day')._d),
         periodType: state?.fixedrangepicker?.periodType || "1",

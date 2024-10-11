@@ -23,6 +23,16 @@
     flex: 1
 }
 
+.collapse-rangepicker-icon {
+    display: inline-block;
+    font-size: 0.85rem;
+    margin-left: 0.25rem;
+    transition: transform 0.3s ease-out;
+}
+
+.collapse-rangepicker.expanded .collapse-rangepicker-icon  {
+    transform: rotate(180deg);
+  }
 
 #button-rangepicker-container {
     display: flex; /* Make the container a flexbox */

@@ -80,8 +80,9 @@ class FreeRangePicker extends React.Component {
         }
         return (
             <div className={this.props.className} style={this.props.style}>
-                <Button  onClick= {this.props.onCollapsePlugin} style={{ zIndex: 100,  position: "absolute"}}>
-                    <Message msgId="gcapp.freeRangePicker.collapsePlugin"/>
+                <Button  onClick= {this.props.onCollapsePlugin} className={['collapse-rangepicker', this.props.isCollapsedPlugin && 'expanded'].join(' ')}>
+                    <Message msgId="gcapp.freeRangePicker.collapsePlugin"/>{' '}
+                    <span className="collapse-rangepicker-icon">&#9650;</span>
                 </Button>
                 <Collapse in={!this.props.isCollapsedPlugin} style={{ zIndex: 100,  position: "absolute", top: "30px"  }}>
                     <FormGroup style={{marginBottom: "0px"}} bsSize="sm">

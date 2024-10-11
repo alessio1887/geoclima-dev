@@ -10,7 +10,7 @@ import {MAP_YEAR_CHANGED, MAP_PERIOD_CHANGED, TOGGLE_PLUGIN, OPEN_ALERT, CLOSE_A
 import DateAPI from '../utils/ManageDateUtils';
 
 const defaultState = {
-    isOpenPlugin: false,
+    isCollapsedPlugin: false,
     periodType: "1",
     fromData: new Date(DateAPI.calculateDateFromKeyReal("1").fromData),
     toData: new Date(DateAPI.calculateDateFromKeyReal("1").toData),
@@ -66,7 +66,7 @@ function fixedrangepicker(state = defaultState, action) {
     case COLLAPSE_RANGE_PICKER:
         return {
             ...state,
-            isOpenPlugin: !state.isOpenPlugin
+            isCollapsedPlugin: !state.isCollapsedPlugin
         };
     default:
         return state;

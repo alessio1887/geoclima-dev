@@ -10,7 +10,7 @@ import moment from 'moment';
 import {FROMDATA_CHANGED, TODATA_CHANGED, OPEN_ALERT, CLOSE_ALERT, COLLAPSE_RANGE_PICKER} from '../actions/freerangepicker';
 
 const defaultState = {
-    isCollapsedPlugin: true,
+    isCollapsedPlugin: false,
     fromData: new Date(moment().subtract(1, 'month')._d),
     toData: new Date(moment().subtract(1, 'day')._d),
     showModal: false,
