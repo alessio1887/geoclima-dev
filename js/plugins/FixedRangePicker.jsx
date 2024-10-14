@@ -1,5 +1,5 @@
 /**
- * Copyright 2024, GeoSolutions Sas.
+ * Copyright 2024, Consorzio LaMMA.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
@@ -83,7 +83,7 @@ class FixedRangePicker extends React.Component {
         }
         return (
             <div className={this.props.className} style={this.props.style}>
-                <Button  onClick= {this.props.onCollapsePlugin} className={['collapse-rangepicker', this.props.isCollapsedPlugin && 'expanded'].join(' ')}>
+                <Button  onClick= {this.props.onCollapsePlugin} className={`collapse-rangepicker ${this.props.isCollapsedPlugin ? 'collapsed' : ''}`}>
                     <Message msgId="gcapp.fixedRangePicker.collapsePlugin"/>{' '}
                     <span className="collapse-rangepicker-icon">&#9650;</span>
                 </Button>

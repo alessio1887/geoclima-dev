@@ -1,5 +1,5 @@
 /**
- * Copyright 2024, GeoSolutions Sas.
+ * Copyright 2024, Consorzio LaMMA.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
@@ -10,7 +10,6 @@ import React from "react";
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import assign from 'object-assign';
-import RangePickerInfo from '../components/datepickers/RangePickerInfo';
 import updateDateLabelEpic from '../epics/daterangelabel';
 import moment from 'moment';
 
@@ -28,20 +27,17 @@ class DateRangeLabel extends React.Component {
         id: "mapstore-daterangelabel",
         style: {
             position: "absolute",
-            bottom: 20,            // Distanza dal fondo della pagina
-            left: "50%",           // Centra l'elemento orizzontalmente
-            transform: "translateX(-50%)",  // Sposta l'elemento indietro della metà della sua larghezza per centrarlo esattamente
-            zIndex: 2000
+            left: "53%",           // Centra l'elemento orizzontalmente
+            transform: "translateX(-50%)"  // Sposta l'elemento indietro della metà della sua larghezza per centrarlo esattamente
         }
     };
     render() {
         return (
-            <div style={this.props.style}>
-                <RangePickerInfo
-                    labelTitleId="gcapp.fixedRangePicker.titlePeriod"
-                    fromData={this.props.fromData}
-                    toData={this.props.toData}
-                />
+            <div className="daterangelabel" style={this.props.style}>
+                <div style={{ padding: "6px", textAlign: 'center' }}>
+                    <strong>Dal: <span>{moment(this.props.fromData).format('DD/MM/YYYY')}</span> -
+                    al: <span>{moment(this.props.toData).format('DD/MM/YYYY')}</span></strong>
+                </div>
             </div>
         );
     }
@@ -49,8 +45,8 @@ class DateRangeLabel extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-        fromData: state.daterangelabel?.fromData || new Date(moment().subtract(1, 'month')._d),
-        toData: state.daterangelabel?.toData || new Date(moment().subtract(1, 'day')._d)
+        fromData: state.daterangelabel?.fromData ? new Date(state.daterangelabel.fromData) : new Date(moment().subtract(1, 'month')._d),
+        toData: state.daterangelabel?.toData ? new Date(state.daterangelabel.toData) : new Date(moment().subtract(1, 'day')._d)
     };
 };
 
@@ -60,11 +56,10 @@ const DateRangeLabelPlugin = connect(
 
 export default createPlugin("DateRangeLabelPlugin", {
     component: assign(DateRangeLabelPlugin, {
-        GridContainer: {
-            id: 'dateRangeLabelP',
+        MapFooter: {
             name: 'dateRangeLabel',
+            position: 2,
             tool: true,
-            position: 1,
             priority: 1
         }
     }),

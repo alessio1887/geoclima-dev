@@ -157,7 +157,7 @@ class InfoChart extends React.Component {
                             customdata: chartData.map(d => d.st_value),
                             type: 'scatter',
                             mode: 'lines+markers',
-                            fill: 'tonexty',
+                            fill: 'none',
                             name: 'Climatologia (mm)',
                             line: { color: climaColor },
                             hovertemplate: '<b>%{x}</b><br><b>Anno in corso (mm): %{customdata}</b><br><b>Climatologia (mm): %{y}</b><extra></extra>'
@@ -189,7 +189,6 @@ class InfoChart extends React.Component {
                             y: -0.2
                         }
                     }}
-                    useResizeHandler
                     style={{ width: '100%', height: '100%' }}
                     modeBar
                 />
