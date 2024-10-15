@@ -145,8 +145,13 @@ class InfoChart extends React.Component {
                 ? this.formatDataCum(this.props.data)
                 : this.formatDataTemp(this.props.data);
 
-            const climaColor = this.props.infoChartData.variable === TMED ? '#8884d8' :  '#FF0000';
-            const currentColor = this.props.infoChartData.variable === TMED ? '#FF0000' : '#8884d8';
+            const climaColor = [TMED, TMAX, TMIN].includes(this.props.infoChartData.variable) ? '#8884d8' :  '#FF0000';
+            const currentColor = [TMED, TMAX, TMIN].includes(this.props.infoChartData.variable) ? '#FF0000' : '#8884d8';
+
+            // Definizione delle unità di misura dinamiche
+            const unit = [TMED, TMAX, TMIN].includes(this.props.infoChartData.variable) ? '°C' : 'mm';
+            const climaLabel = "Climatologia " + unit;
+            const currentYearLabel = "Anno in corso " + unit;
 
             return (
                 <Plot
@@ -158,9 +163,9 @@ class InfoChart extends React.Component {
                             type: 'scatter',
                             mode: 'lines+markers',
                             fill: 'none',
-                            name: 'Climatologia (mm)',
+                            name: climaLabel,
                             line: { color: climaColor },
-                            hovertemplate: '<b>%{x}</b><br><b>Anno in corso (mm): %{customdata}</b><br><b>Climatologia (mm): %{y}</b><extra></extra>'
+                            hovertemplate: `<b>%{x}</b><br><b>${currentYearLabel}: %{customdata}</b><br><b> ${climaLabel}: %{y}</b><extra></extra>`
                         },
                         {
                             x: chartData.map(d => d.name || d.data),
@@ -169,9 +174,9 @@ class InfoChart extends React.Component {
                             type: 'scatter',
                             mode: 'lines+markers',
                             fill: 'tonexty',
-                            name: 'Anno in corso (mm)',
+                            name: currentYearLabel,
                             line: { color: currentColor },
-                            hovertemplate: '<b>%{x}</b><br><b>Anno in corso (mm): %{y}</b><br><b>Climatologia (mm): %{customdata}</b><extra></extra>'
+                            hovertemplate: `<b>%{x}</b><br><b>${currentYearLabel}: %{y}</b><br><b>${climaLabel}: %{customdata}</b><extra></extra>`
                         }
                     ]}
                     layout={{
@@ -180,7 +185,9 @@ class InfoChart extends React.Component {
                         xaxis: { // Dates format
                             tickformat: '%Y-%m-%d'
                         },
-                        yaxis: { title: [TMED, TMAX, TMIN].includes(this.props.infoChartData.variable)  ? 'Temperatura (°C)' : 'Valore (mm)' },
+                        yaxis: {
+                            title: [TMED, TMAX, TMIN].includes(this.props.infoChartData.variable)  ? 'Temperatura (°C)' : 'Valore (mm)'
+                        },
                         margin: this.props.chartStyle.margin,
                         showlegend: true,
                         legend: {
