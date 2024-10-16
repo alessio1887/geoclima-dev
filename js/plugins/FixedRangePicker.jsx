@@ -50,7 +50,8 @@ class FixedRangePicker extends React.Component {
         alertMessage: PropTypes.string,
         onOpenAlert: PropTypes.func,
         onCloseAlert: PropTypes.func,
-        isInteractionDisabled: PropTypes.bool
+        isInteractionDisabled: PropTypes.bool,
+        shiftRight: PropTypes.bool
     };
     static defaultProps = {
         isCollapsedPlugin: true,
@@ -68,21 +69,27 @@ class FixedRangePicker extends React.Component {
         className: "mapstore-fixederange",
         style: {
             top: 0,
-            left: "305px",
+            left: "40px",
             position: 'absolute',
             height: '100%'
         },
         fixedRangePickerActive: false,
         alertMessage: null,
-        isInteractionDisabled: true
+        isInteractionDisabled: true,
+        shiftRight: false
     };
 
     render() {
         if (!this.props.fixedRangePickerActive) {
             return null;
         }
+        const marginLeft = this.props.shiftRight ? '260px' : '0';
+        const combinedStyle = {
+            marginLeft,
+            ...this.props.style // Assicurati di mantenere gli stili passati
+        };
         return (
-            <div className={this.props.className} style={this.props.style}>
+            <div className={this.props.className} style={combinedStyle}>
                 <Button  onClick= {this.props.onCollapsePlugin} className={`collapse-rangepicker ${this.props.isCollapsedPlugin ? 'collapsed' : ''}`}>
                     <Message msgId="gcapp.fixedRangePicker.collapsePlugin"/>{' '}
                     <span className="collapse-rangepicker-icon">&#9650;</span>
@@ -175,7 +182,8 @@ const mapStateToProps = (state) => {
         layers: state?.layers || {},
         fixedRangePickerActive: (state?.fixedrangepicker?.showFixedRangePicker) ? true : false,
         alertMessage: state?.fixedrangepicker?.alertMessage || null,
-        isInteractionDisabled: state?.fixedrangepicker?.isInteractionDisabled || false
+        isInteractionDisabled: state?.fixedrangepicker?.isInteractionDisabled || false,
+        shiftRight: state.controls.drawer ? state.controls.drawer.enabled : false
     };
 };
 
