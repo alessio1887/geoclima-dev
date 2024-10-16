@@ -153,32 +153,33 @@ class InfoChart extends React.Component {
             const climaLabel = "Climatologia " + unit;
             const currentYearLabel = "Anno in corso " + unit;
 
+            const scatterClimatologia = {
+                x: chartData.map(d => d.name || d.data),
+                y: chartData.map(d => d.st_value_clima),
+                customdata: chartData.map(d => d.st_value),
+                type: 'scatter',
+                mode: 'lines+markers',
+                fill: 'none',
+                name: climaLabel,
+                line: { color: climaColor },
+                hovertemplate: `<b>%{x}</b><br><b>${currentYearLabel}: %{customdata}</b><br><b> ${climaLabel}: %{y}</b><extra></extra>`
+            };
+
+            const scatterCurrentYear = {
+                x: chartData.map(d => d.name || d.data),
+                y: chartData.map(d => d.st_value),
+                customdata: chartData.map(d => d.st_value_clima),
+                type: 'scatter',
+                mode: 'lines+markers',
+                fill: 'tonexty',
+                name: currentYearLabel,
+                line: { color: currentColor },
+                hovertemplate: `<b>%{x}</b><br><b>${currentYearLabel}: %{y}</b><br><b>${climaLabel}: %{customdata}</b><extra></extra>`
+            };
+
             return (
                 <Plot
-                    data={[
-                        {
-                            x: chartData.map(d => d.name || d.data),
-                            y: chartData.map(d => d.st_value_clima),
-                            customdata: chartData.map(d => d.st_value),
-                            type: 'scatter',
-                            mode: 'lines+markers',
-                            fill: 'none',
-                            name: climaLabel,
-                            line: { color: climaColor },
-                            hovertemplate: `<b>%{x}</b><br><b>${currentYearLabel}: %{customdata}</b><br><b> ${climaLabel}: %{y}</b><extra></extra>`
-                        },
-                        {
-                            x: chartData.map(d => d.name || d.data),
-                            y: chartData.map(d => d.st_value),
-                            customdata: chartData.map(d => d.st_value_clima),
-                            type: 'scatter',
-                            mode: 'lines+markers',
-                            fill: 'tonexty',
-                            name: currentYearLabel,
-                            line: { color: currentColor },
-                            hovertemplate: `<b>%{x}</b><br><b>${currentYearLabel}: %{y}</b><br><b>${climaLabel}: %{customdata}</b><extra></extra>`
-                        }
-                    ]}
+                    data={[scatterClimatologia, scatterCurrentYear]}
                     layout={{
                         width: this.props.chartStyle.width,
                         height: this.props.chartStyle.height,

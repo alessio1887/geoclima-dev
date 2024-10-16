@@ -1,5 +1,5 @@
 /*
- * Copyright 2024, GeoSolutions Sas.
+ * Copyright 2024, Consorzio LaMMA.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
