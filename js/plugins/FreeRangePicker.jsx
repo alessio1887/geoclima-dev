@@ -79,7 +79,7 @@ class FreeRangePicker extends React.Component {
         if (!this.props.freeRangePickerIsVisible) {
             return null;
         }
-        const marginLeft = this.props.shiftRight ? '260px' : '0';
+        const marginLeft = this.props.shiftRight ? '265px' : '5px';
         const combinedStyle = {
             marginLeft,
             ...this.props.style // Assicurati di mantenere gli stili passati
