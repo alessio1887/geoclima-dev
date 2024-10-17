@@ -84,15 +84,16 @@ class FixedRangePicker extends React.Component {
             return null;
         }
         const marginLeft = this.props.shiftRight ? '265px' : '5px';
-        const combinedStyle = {
+        const pluginStyle = {
             marginLeft,
-            ...this.props.style // Assicurati di mantenere gli stili passati
+            ...this.props.style
         };
+        const rotateIcon = this.props.isCollapsedPlugin ? 'rotate(180deg)' : 'rotate(0deg)';
         return (
-            <div className={this.props.className} style={combinedStyle}>
-                <Button  onClick= {this.props.onCollapsePlugin} className={`collapse-rangepicker ${this.props.isCollapsedPlugin ? 'collapsed' : ''}`}>
+            <div className={this.props.className} style={pluginStyle}>
+                <Button  onClick= {this.props.onCollapsePlugin}>
                     <Message msgId="gcapp.fixedRangePicker.collapsePlugin"/>{' '}
-                    <span className="collapse-rangepicker-icon">&#9650;</span>
+                    <span className="collapse-rangepicker-icon" style={{ transform: rotateIcon }}>&#9650;</span>
                 </Button>
                 <Collapse in={!this.props.isCollapsedPlugin}  style={{ zIndex: 100,  position: "absolute", top: "30px"  }}>
                     <FormGroup style={{ marginBottom: "0px" }} bsSize="sm">
