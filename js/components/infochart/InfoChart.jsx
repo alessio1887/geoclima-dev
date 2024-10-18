@@ -19,7 +19,7 @@ import { DropdownList } from 'react-widgets';
 import FixedRangeManager from '../../components/datepickers/FixedRangeManager';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
 import DateAPI, { PERIOD_TYPES }  from '../../utils/ManageDateUtils';
-import { TMED, TMAX, TMIN, PREC, RET, VARIABLE_LIST  }  from '../../utils/VariabiliMeteoUtils';
+import { TMED, TMAX, TMIN, PREC, RET, VARIABLE_LIST, fillAreas  }  from '../../utils/VariabiliMeteoUtils';
 
 import './infochart.css';
 
@@ -145,60 +145,63 @@ class InfoChart extends React.Component {
                 ? this.formatDataCum(this.props.data)
                 : this.formatDataTemp(this.props.data);
 
-            const climaColor = [TMED, TMAX, TMIN].includes(this.props.infoChartData.variable) ? '#8884d8' :  '#FF0000';
-            const currentColor = [TMED, TMAX, TMIN].includes(this.props.infoChartData.variable) ? '#FF0000' : '#8884d8';
-
             // Definizione delle unità di misura dinamiche
             const unit = [TMED, TMAX, TMIN].includes(this.props.infoChartData.variable) ? '°C' : 'mm';
             const climaLabel = "Climatologia " + unit;
             const currentYearLabel = "Anno in corso " + unit;
 
-            const scatterClimatologia = {
-                x: chartData.map(d => d.name || d.data),
-                y: chartData.map(d => d.st_value_clima),
-                customdata: chartData.map(d => d.st_value),
-                type: 'scatter',
-                mode: 'lines+markers',
-                fill: 'none',
+            const dateObjects = chartData.map(item => new Date(item.data));
+            const observedData = chartData.map(item => item.st_value);
+            const climatologicalData = chartData.map(item => item.st_value_clima);
+            const fillTraces = fillAreas(dateObjects, observedData, climatologicalData, this.props.infoChartData.variable);
+            const trace1 = {
+                x: dateObjects,
+                y: climatologicalData,
+                mode: 'lines',
                 name: climaLabel,
-                line: { color: climaColor },
-                hovertemplate: `<b>%{x}</b><br><b>${currentYearLabel}: %{customdata}</b><br><b> ${climaLabel}: %{y}</b><extra></extra>`
+                line: { color: '#8884d8',  width: 5 }
             };
 
-            const scatterCurrentYear = {
-                x: chartData.map(d => d.name || d.data),
-                y: chartData.map(d => d.st_value),
-                customdata: chartData.map(d => d.st_value_clima),
-                type: 'scatter',
-                mode: 'lines+markers',
-                fill: 'tonexty',
+            const trace2 = {
+                x: dateObjects,
+                y: observedData,
+                mode: 'lines',
                 name: currentYearLabel,
-                line: { color: currentColor },
-                hovertemplate: `<b>%{x}</b><br><b>${currentYearLabel}: %{y}</b><br><b>${climaLabel}: %{customdata}</b><extra></extra>`
+                line: { color: '#FF0000',  width: 5 }
+            };
+
+            const dataChart = [trace1, trace2].concat(fillTraces);
+
+            // const layoutChart = {
+            //     title: 'Temperature Comparison',
+            //     xaxis: { title: 'Date', type: 'date' },
+            //     yaxis: { title: 'Temperature (°C)' }
+            // };
+
+            const layoutChart = {
+                width: this.props.chartStyle.width,
+                height: this.props.chartStyle.height,
+                xaxis: { // Dates format
+                    tickformat: '%Y-%m-%d'
+                },
+                yaxis: {
+                    title: [TMED, TMAX, TMIN].includes(this.props.infoChartData.variable)  ? 'Temperatura (°C)' : 'Valore (mm)'
+                },
+                margin: this.props.chartStyle.margin,
+                showlegend: true,
+                legend: {
+                    orientation: 'h',
+                    x: 0.5,
+                    y: -0.2
+                }
             };
 
             return (
                 <Plot
-                    data={[scatterClimatologia, scatterCurrentYear]}
-                    layout={{
-                        width: this.props.chartStyle.width,
-                        height: this.props.chartStyle.height,
-                        xaxis: { // Dates format
-                            tickformat: '%Y-%m-%d'
-                        },
-                        yaxis: {
-                            title: [TMED, TMAX, TMIN].includes(this.props.infoChartData.variable)  ? 'Temperatura (°C)' : 'Valore (mm)'
-                        },
-                        margin: this.props.chartStyle.margin,
-                        showlegend: true,
-                        legend: {
-                            orientation: 'h',
-                            x: 0.5,
-                            y: -0.2
-                        }
-                    }}
+                    // data={[scatterClimatologia, scatterCurrentYear]}
+                    data={dataChart}
+                    layout={layoutChart}
                     style={{ width: '100%', height: '100%' }}
-                    modeBar
                 />
             );
         }
@@ -328,7 +331,7 @@ class InfoChart extends React.Component {
         values.forEach(function(o) {
             data.push(
                 {
-                    "name": o.data.substring(0, 10),
+                    "data": o.data.substring(0, 10),
                     "st_value": parseFloat(cum.toFixed(1)),
                     "st_value_clima": parseFloat(cumClima.toFixed(1))
                 }
