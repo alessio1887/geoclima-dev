@@ -65,9 +65,8 @@ class FreeRangePicker extends React.Component {
         className: "mapstore-daterange",
         style: {
             top: 0,
-            left: "40px",
             position: 'absolute',
-            height: '100%'
+            zIndex: 10
         },
         freeRangePickerIsVisible: false,
         alertMessage: null,
@@ -82,12 +81,13 @@ class FreeRangePicker extends React.Component {
         const marginLeft = this.props.shiftRight ? '265px' : '5px';
         const pluginStyle = {
             marginLeft,
+            left: "40px",
             ...this.props.style
         };
         const rotateIcon = this.props.isCollapsedPlugin ? 'rotate(180deg)' : 'rotate(0deg)';
         return (
             <div className={this.props.className} style={pluginStyle}>
-                <Button  onClick= {this.props.onCollapsePlugin}>
+                <Button  onClick= {this.props.onCollapsePlugin} style={this.props.style}>
                     <Message msgId="gcapp.freeRangePicker.collapsePlugin"/>{' '}
                     <span className="collapse-rangepicker-icon" style={{ transform: rotateIcon }}>&#9650;</span>
                 </Button>
