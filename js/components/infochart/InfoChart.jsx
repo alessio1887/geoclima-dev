@@ -189,6 +189,7 @@ class InfoChart extends React.Component {
                 },
                 margin: this.props.chartStyle.margin,
                 showlegend: true,
+                hovermode: 'x unified',
                 legend: {
                     orientation: 'h',
                     x: 0.5,
