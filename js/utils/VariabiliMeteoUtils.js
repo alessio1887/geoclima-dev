@@ -61,9 +61,17 @@ function getIntersection(x1, y1, x2, y2, clim_y1, clim_y2) {
  * one color if the observed values are below climatology, and another color if they are above.
  * It also handles intersections between the two curves.
  */
-export function fillAreas(dateObjects, observed, climatological) {
+export function fillAreas(dateObjects, observed, climatological, variabile) {
     let fillTraces = [];
-
+    let  upperColor;
+    let  belowColor;
+    if (PREC === variabile ) {
+        upperColor = 'rgba(0, 0, 255, 0.5)';
+        belowColor = 'rgba(255, 0, 0, 0.5)';
+    } else {
+        upperColor = 'rgba(255, 0, 0, 0.5)';
+        belowColor = 'rgba(0, 0, 255, 0.5)';
+    }
     let i;
     for (i = 0; i < dateObjects.length - 1; i++) {
         const x0 = dateObjects[i].getTime();
@@ -79,7 +87,7 @@ export function fillAreas(dateObjects, observed, climatological) {
                 x: [x0, x1, x1, x0],
                 y: [y0Obs, y1Obs, y1Clim, y0Clim],
                 fill: 'toself',
-                fillcolor: y1Obs > y1Clim ? 'rgba(255, 0, 0, 0.5)' : 'rgba(0, 0, 255, 0.5)', // Blu per osservato > climatologico, rosso per il contrario
+                fillcolor: y1Obs > y1Clim ? upperColor : belowColor,
                 line: { color: 'transparent' },
                 showlegend: false,
                 hoverinfo: 'skip'
@@ -92,7 +100,7 @@ export function fillAreas(dateObjects, observed, climatological) {
                     x: [x0, xIntersect, xIntersect, x0],
                     y: [y0Obs, yIntersect, yIntersect, y0Clim],
                     fill: 'toself',
-                    fillcolor: y0Obs > y0Clim ? 'rgba(255, 0, 0, 0.5)' : 'rgba(0, 0, 255, 0.5)', // Blue for observed > climatological, red for the opposite
+                    fillcolor: y0Obs > y0Clim ? upperColor : belowColor,
                     line: { color: 'transparent' },
                     showlegend: false,
                     hoverinfo: 'skip'
@@ -102,7 +110,7 @@ export function fillAreas(dateObjects, observed, climatological) {
                     x: [xIntersect, x1, x1, xIntersect],
                     y: [yIntersect, y1Obs, y1Clim, yIntersect],
                     fill: 'toself',
-                    fillcolor: y1Obs > y1Clim ? 'rgba(255, 0, 0, 0.5)' : 'rgba(0, 0, 255, 0.5)',
+                    fillcolor: y1Obs > y1Clim ? upperColor : belowColor,
                     line: { color: 'transparent' },
                     showlegend: false,
                     hoverinfo: 'skip'
@@ -114,7 +122,7 @@ export function fillAreas(dateObjects, observed, climatological) {
                 x: [x0, x1, x1, x0],
                 y: [Math.max(y0Obs, y0Clim), Math.max(y1Obs, y1Clim), Math.min(y1Obs, y1Clim), Math.min(y0Obs, y0Clim)],
                 fill: 'toself',
-                fillcolor: y0Obs > y0Clim ? 'rgba(255, 0, 0, 0.5)' : 'rgba(0, 0, 255, 0.5)',
+                fillcolor: y0Obs > y0Clim ? upperColor : belowColor,
                 line: { color: 'transparent' },
                 showlegend: false,
                 hoverinfo: 'skip'

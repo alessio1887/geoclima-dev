@@ -134,9 +134,9 @@ class InfoChart extends React.Component {
         }));
     };
 
-    shouldComponentUpdate(newProps) {
+    shouldComponentUpdate(newProps, newState) {
         let shouldUpdate = false;
-        if (!isEqual(this.props.data, newProps.data)) {
+        if (!isEqual(this.props.data, newProps.data) || this.state.activeRangeManager !== newState.activeRangeManager) {
             shouldUpdate = newProps.active || newProps.mapinfoActive || newProps.data.length > 0;
         }
         return shouldUpdate;
@@ -156,13 +156,15 @@ class InfoChart extends React.Component {
             const dateObjects = chartData.map(item => new Date(item.data));
             const observedData = chartData.map(item => item.st_value);
             const climatologicalData = chartData.map(item => item.st_value_clima);
-            const fillTraces = fillAreas(dateObjects, observedData, climatologicalData);
+            const fillTraces = fillAreas(dateObjects, observedData, climatologicalData, this.props.infoChartData.variable);
+
+            const colorTraceObserved = this.props.infoChartData.variable === PREC ? 'rgba(0, 0, 255, 1)' : 'rgba(255, 0, 0, 1)';
             const trace1 = {
                 x: dateObjects,
                 y: climatologicalData,
                 mode: 'lines',
                 name: climaLabel,
-                line: { color: '#8884d8',  width: 5 }
+                line: { color: '#38293C',  width: 1 }
             };
 
             const trace2 = {
@@ -170,17 +172,9 @@ class InfoChart extends React.Component {
                 y: observedData,
                 mode: 'lines',
                 name: currentYearLabel,
-                line: { color: '#FF0000',  width: 5 }
+                line: { color: colorTraceObserved,  width: 1 }
             };
-
             const dataChart = [trace1, trace2].concat(fillTraces);
-
-            // const layoutChart = {
-            //     title: 'Temperature Comparison',
-            //     xaxis: { title: 'Date', type: 'date' },
-            //     yaxis: { title: 'Temperature (°C)' }
-            // };
-
             const layoutChart = {
                 width: this.props.chartStyle.width,
                 height: this.props.chartStyle.height,
@@ -199,10 +193,8 @@ class InfoChart extends React.Component {
                     y: -0.2
                 }
             };
-
             return (
                 <Plot
-                    // data={[scatterClimatologia, scatterCurrentYear]}
                     data={dataChart}
                     layout={layoutChart}
                     style={{ width: '100%', height: '100%' }}
