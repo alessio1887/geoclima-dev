@@ -61,24 +61,9 @@ function getIntersection(x1, y1, x2, y2, clim_y1, clim_y2) {
  * one color if the observed values are below climatology, and another color if they are above.
  * It also handles intersections between the two curves.
  */
-export function fillAreas(dateObjects, observed, climatological, variabile) {
+export function fillAreas(dateObjects, observed, climatological) {
     let fillTraces = [];
-    let  upperColor;
-    let  belowColor;
-    // if (PIOGGIA.includes(variabile)) {
-    //     upperColor = '#8884d8';
-    //     belowColor = '#FF0000';
-    // } else {
-    //     upperColor = '#FF0000';
-    //     belowColor = '#8884d8';
-    // }
-    if (PREC === variabile ) {
-        upperColor = 'rgba(0, 0, 255, 0.6)';
-        belowColor = 'rgba(255, 0, 0, 0.6)';
-    } else {
-        upperColor = 'rgba(255, 0, 0, 0.6))';
-        belowColor = 'rgba(0, 0, 255, 0.6)';
-    }
+
     let i;
     for (i = 0; i < dateObjects.length - 1; i++) {
         const x0 = dateObjects[i].getTime();
@@ -88,16 +73,27 @@ export function fillAreas(dateObjects, observed, climatological, variabile) {
         const y0Clim = climatological[i];
         const y1Clim = climatological[i + 1];
 
-        // Check for intersection
-        if ((y0Obs < y0Clim && y1Obs > y1Clim) || (y0Obs > y0Clim && y1Obs < y1Clim)) {
+        if (y0Obs === y0Clim && y1Obs !== y1Clim) {
+            // Case where the observed temperature equals the climatological temperature
+            fillTraces.push({
+                x: [x0, x1, x1, x0],
+                y: [y0Obs, y1Obs, y1Clim, y0Clim],
+                fill: 'toself',
+                fillcolor: y1Obs > y1Clim ? 'rgba(255, 0, 0, 0.5)' : 'rgba(0, 0, 255, 0.5)', // Blu per osservato > climatologico, rosso per il contrario
+                line: { color: 'transparent' },
+                showlegend: false,
+                hoverinfo: 'skip'
+            });
+        } else if ((y0Obs < y0Clim && y1Obs > y1Clim) || (y0Obs > y0Clim && y1Obs < y1Clim)) {
+            // Case of intersection when temperatures reverse
             const [xIntersect, yIntersect] = getIntersection(x0, y0Obs, x1, y1Obs, y0Clim, y1Clim);
-            if (xIntersect !== null) { // Only proceed if there is a valid intersection
+            if (xIntersect !== null) {
                 fillTraces.push({
                     x: [x0, xIntersect, xIntersect, x0],
                     y: [y0Obs, yIntersect, yIntersect, y0Clim],
                     fill: 'toself',
-                    fillcolor: y0Obs < y0Clim ? belowColor : upperColor,
-                    line: {color: 'transparent'},
+                    fillcolor: y0Obs > y0Clim ? 'rgba(255, 0, 0, 0.5)' : 'rgba(0, 0, 255, 0.5)', // Blue for observed > climatological, red for the opposite
+                    line: { color: 'transparent' },
                     showlegend: false,
                     hoverinfo: 'skip'
                 });
@@ -106,19 +102,20 @@ export function fillAreas(dateObjects, observed, climatological, variabile) {
                     x: [xIntersect, x1, x1, xIntersect],
                     y: [yIntersect, y1Obs, y1Clim, yIntersect],
                     fill: 'toself',
-                    fillcolor: y1Obs < y1Clim ? belowColor : upperColor,
-                    line: {color: 'transparent'},
+                    fillcolor: y1Obs > y1Clim ? 'rgba(255, 0, 0, 0.5)' : 'rgba(0, 0, 255, 0.5)',
+                    line: { color: 'transparent' },
                     showlegend: false,
                     hoverinfo: 'skip'
                 });
             }
         } else {
+            // Normal case without intersection
             fillTraces.push({
                 x: [x0, x1, x1, x0],
                 y: [Math.max(y0Obs, y0Clim), Math.max(y1Obs, y1Clim), Math.min(y1Obs, y1Clim), Math.min(y0Obs, y0Clim)],
                 fill: 'toself',
-                fillcolor: y0Obs < y0Clim ? belowColor : upperColor,
-                line: {color: 'transparent'},
+                fillcolor: y0Obs > y0Clim ? 'rgba(255, 0, 0, 0.5)' : 'rgba(0, 0, 255, 0.5)',
+                line: { color: 'transparent' },
                 showlegend: false,
                 hoverinfo: 'skip'
             });

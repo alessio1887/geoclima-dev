@@ -20,6 +20,7 @@ import FixedRangeManager from '../../components/datepickers/FixedRangeManager';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
 import DateAPI, { PERIOD_TYPES }  from '../../utils/ManageDateUtils';
 import { TMED, TMAX, TMIN, PREC, RET, VARIABLE_LIST, fillAreas  }  from '../../utils/VariabiliMeteoUtils';
+import isEqual from 'lodash/isEqual';
 
 import './infochart.css';
 
@@ -134,9 +135,11 @@ class InfoChart extends React.Component {
     };
 
     shouldComponentUpdate(newProps) {
-        return newProps.active
-            || newProps.mapinfoActive
-            || newProps.data.length > 0;
+        let shouldUpdate = false;
+        if (!isEqual(this.props.data, newProps.data)) {
+            shouldUpdate = newProps.active || newProps.mapinfoActive || newProps.data.length > 0;
+        }
+        return shouldUpdate;
     }
     // Chart's definition
     showChart = () => {
@@ -153,7 +156,7 @@ class InfoChart extends React.Component {
             const dateObjects = chartData.map(item => new Date(item.data));
             const observedData = chartData.map(item => item.st_value);
             const climatologicalData = chartData.map(item => item.st_value_clima);
-            const fillTraces = fillAreas(dateObjects, observedData, climatologicalData, this.props.infoChartData.variable);
+            const fillTraces = fillAreas(dateObjects, observedData, climatologicalData);
             const trace1 = {
                 x: dateObjects,
                 y: climatologicalData,
