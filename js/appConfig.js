@@ -1,5 +1,5 @@
 /**
- * Copyright 2024, GeoSolutions Sas.
+ * Copyright 2024, Consorzio LaMMA
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
@@ -9,6 +9,7 @@ import appConfigMS from '@mapstore/product/appConfig';
 import DateAPI from './utils/ManageDateUtils';
 import moment from 'moment';
 import MapViewerGC from './pages/MapViewerGC';
+import ContextGC from './pages/ContextGC';
 
 const fixedrangepicker = {
     isCollapsedPlugin: false,
@@ -29,13 +30,21 @@ const freerangepicker = {
 export default {
     ...appConfigMS,
     pages: [
-        // Added Custom Page
-        ...appConfigMS.pages.map(
-            page => page.name === "mapviewer" ? {
-                ...page,
-                component: MapViewerGC
-            } : page
-        )
+        // Added Custom Pages
+        ...appConfigMS.pages.map(page => {
+            if (page.name === "mapviewer") {
+                return {
+                    ...page,
+                    component: MapViewerGC
+                };
+            } else if (page.name === "context") {
+                return {
+                    ...page,
+                    component: ContextGC
+                };
+            }
+            return page; // Return the original page if no conditions are met
+        })
     ],
     initialState: {
         ...appConfigMS.initialState,
