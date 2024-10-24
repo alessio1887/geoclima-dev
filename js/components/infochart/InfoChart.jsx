@@ -19,7 +19,7 @@ import { DropdownList } from 'react-widgets';
 import FixedRangeManager from '../../components/datepickers/FixedRangeManager';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
 import DateAPI, { PERIOD_TYPES }  from '../../utils/ManageDateUtils';
-import { TMED, TMAX, TMIN, PREC, RET, VARIABLE_LIST, fillAreas  }  from '../../utils/VariabiliMeteoUtils';
+import { fillAreas  }  from '../../utils/VariabiliMeteoUtils';
 import isEqual from 'lodash/isEqual';
 
 import './infochart.css';
@@ -69,9 +69,7 @@ class InfoChart extends React.Component {
         toData: PropTypes.instanceOf(Date),
         classNameInfoChartDate: PropTypes.string,
         styleInfoChartDate: PropTypes.object,
-        onChangeChartDate: PropTypes.func,
-        variableList: PropTypes.array,
-        periodTypes: PropTypes.array
+        onChangeChartDate: PropTypes.func
     }
     static defaultProps = {
         id: "mapstore-sarchart-panel",
@@ -118,9 +116,7 @@ class InfoChart extends React.Component {
             position: 'absolute',
             height: '100%'
         },
-        onChangeChartDate: () => {},
-        variableList: VARIABLE_LIST,
-        periodTypes: PERIOD_TYPES
+        onChangeChartDate: () => {}
     }
 
     // Stato locale per gestire quale range manager mostrare
@@ -144,12 +140,15 @@ class InfoChart extends React.Component {
     // Chart's definition
     showChart = () => {
         if (!this.props.maskLoading) {
+            const PREC = this.props.infoChartData.variabileChartPrecipitazione;
+            const RET = this.props.infoChartData.variabileChartEvotrasporazione;
+            const TEMP_LIST = this.props.infoChartData.variabiliChartTemperatura;
             const chartData = this.props.infoChartData.variable === PREC || this.props.infoChartData.variable === RET
                 ? this.formatDataCum(this.props.data)
                 : this.formatDataTemp(this.props.data);
 
             // Definizione delle unità di misura dinamiche
-            const unit = [TMED, TMAX, TMIN].includes(this.props.infoChartData.variable) ? '°C' : 'mm';
+            const unit = TEMP_LIST.includes(this.props.infoChartData.variable) ? '°C' : 'mm';
             const climaLabel = "Climatologia " + unit;
             const currentYearLabel = "Anno in corso " + unit;
 
@@ -182,7 +181,7 @@ class InfoChart extends React.Component {
                     tickformat: '%Y-%m-%d'
                 },
                 yaxis: {
-                    title: [TMED, TMAX, TMIN].includes(this.props.infoChartData.variable)  ? 'Temperatura (°C)' : 'Valore (mm)'
+                    title: TEMP_LIST.includes(this.props.infoChartData.variable)  ? 'Temperatura (°C)' : 'Valore (mm)'
                 },
                 margin: this.props.chartStyle.margin,
                 showlegend: true,
@@ -217,7 +216,7 @@ class InfoChart extends React.Component {
                                 <Label className="labels-infochart"><Message msgId="infochart.selectMeteoVariable"/></Label>
                                 <DropdownList
                                     key="charts"
-                                    data={this.props.variableList}
+                                    data={this.props.infoChartData?.variableList}
                                     valueField = "id"
                                     textField = "name"
                                     value={this.props.infoChartData?.variable || "prec"}
@@ -227,8 +226,9 @@ class InfoChart extends React.Component {
                                 {/* Alterna tra FixedRangeManager e FreeRangeManager in base a activeRangeManager */}
                                 {this.state.activeRangeManager === FIXED_RANGE ? (
                                     <FixedRangeManager
-                                        toData={this.props.infoChartData.toData}
-                                        periodType={this.props.infoChartData.periodType}
+                                        toData={this.props.infoChartData?.toData}
+                                        periodType={this.props.infoChartData?.periodType}
+                                        periodTypes={this.props.infoChartData?.periodTypes}
                                         onChangeToData={(value) => this.changeChartDateTo(value)}
                                         onChangePeriod={(value) => this.changeChartDateFrom(value.key)}
                                         isInteractionDisabled={false}
@@ -281,7 +281,7 @@ class InfoChart extends React.Component {
         } else { // FREE_RANGE
             fromData = moment(value).clone().format('YYYY-MM-DD');
             // Get the key of the first period as the default value
-            periodKey = PERIOD_TYPES[0]?.key;
+            periodKey = this.props.infoChartData?.periodTypes[0]?.key || PERIOD_TYPES[0]?.key;
         }
         this.props.onFetchInfoChartData({
             latlng: this.props.infoChartData.latlng,
@@ -301,7 +301,7 @@ class InfoChart extends React.Component {
             toData = moment(value).clone().format('YYYY-MM-DD');
             fromData = this.props.infoChartData.fromData;
             // Get the key of the first period as the default value
-            periodKey = PERIOD_TYPES[0]?.key;
+            periodKey = this.props.infoChartData?.periodTypes[0]?.key || PERIOD_TYPES[0]?.key;
         }
         this.props.onFetchInfoChartData({
             latlng: this.props.infoChartData.latlng,

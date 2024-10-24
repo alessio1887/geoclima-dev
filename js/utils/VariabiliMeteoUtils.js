@@ -5,35 +5,18 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const PIOGGIA = ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata"];
-const TEMPERATURA = ["Temperatura_Media", "Temperatura_Media_Anomalia",
-    "Temperatura_Minima", "Temperatura_Minima_Anomalia", "Temperatura_Massima", "Temperatura_Massima_Anomalia"];
-const EVAPOTRASPIRAZIONE = ["Evapotraspirazione", "Evapotraspirazione_Anomalia_mm", "Evapotraspirazione_Anomalia_perc"];
-const BILANCIOIDRICOSEMPLIFICATO = ["BilancioIdricoSemplificato", "BilancioIdricoSemplificato_Anomalia_mm", "BilancioIdricoSemplificato_Anomalia_perc"];
-const SPI = [ "spi1", "spi3", "spi6", "spi12"];
-const SPEI = [ "spei1", "spei3", "spei6", "spei12"];
-
-export const PREC = "prec";
-export const TMED = "tmed";
-export const TMAX = "tmax";
-export const TMIN = "tmin";
-export const RET = "ret";
-export const BIS = "bis";
-
-export const VARIABLE_LIST = [
-    { id: PREC, name: "Precipitazione" },
-    { id: TMED, name: "Temperatura Media" },
-    { id: TMAX, name: "Temperatura Massima" },
-    { id: TMIN, name: "Temperatura Minima" },
-    { id: RET, name: "Evapotraspirazione Potenziale" },
-    { id: BIS, name: "Bilancio Idrico Semplificato" }
-];
+import ConfigUtils from '@mapstore/utils/ConfigUtils';
 
 export function isVariabiliMeteoLayer(layerName) {
+    const VARIABILI_METEO = ConfigUtils.getConfigProp('variabiliMeteo');
     let check = false;
-    if (PIOGGIA.includes(layerName) || TEMPERATURA.includes(layerName) || EVAPOTRASPIRAZIONE.includes(layerName) ||
-    SPI.includes(layerName) || SPEI.includes(layerName) || BILANCIOIDRICOSEMPLIFICATO.includes(layerName)) {
-        check = true;
+    // Iterate through the VARIABILI_METEO object
+    for (const nomeVariabile in VARIABILI_METEO) {
+        // VARIABILI_METEO[nomeVariabile] should be an array of meteorological variables
+        if (VARIABILI_METEO[nomeVariabile].includes(layerName)) {
+            check = true;
+            break;
+        }
     }
     return check;
 }
@@ -65,6 +48,7 @@ export function fillAreas(dateObjects, observed, climatological, variabile) {
     let fillTraces = [];
     let  upperColor;
     let  belowColor;
+    const PREC = ConfigUtils.getConfigProp('variabileChartPrecipitazione');
     if (PREC === variabile ) {
         upperColor = 'rgba(0, 0, 255, 0.5)';
         belowColor = 'rgba(255, 0, 0, 0.5)';

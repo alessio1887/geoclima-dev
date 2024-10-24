@@ -17,8 +17,6 @@ import infoChartReducer from '../reducers/infochart';
 import * as infoChartEpic from '../epics/infochart';
 import assign from 'object-assign';
 
-import { PREC } from '../utils/VariabiliMeteoUtils';
-
 const mapStateToProps = (state) => ({
     active: state && state.controls && state.controls.chartinfo && state.controls.chartinfo.enabled
 });
@@ -37,10 +35,14 @@ const InfoChartPanel = connect((state) => ({
     infoChartData: {
         fromData: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.fromData || new Date(DateAPI.calculateDateFromKeyReal("10", moment().subtract(1, 'day')._d).fromData),
         toData: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.toData || new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
-        variable: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.variable || PREC,
+        variable: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.variable || state?.localConfig?.variabileChartPrecipitazione,
         latlng: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.latlng || {},
         periodType: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.periodType || "1",
-        periodTypes: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.periodTypes || PERIOD_TYPES
+        periodTypes: state?.localConfig?.periodTypes || PERIOD_TYPES,
+        variableList: state?.localConfig?.variabiliChartList,
+        variabileChartPrecipitazione: state?.localConfig?.variabileChartPrecipitazione,
+        variabileChartEvotrasporazione: state?.localConfig?. variabileChartEvotrasporazione,
+        variabiliChartTemperatura: state?.localConfig?.variabiliChartTemperatura
     },
     data: state.infochart && state.infochart.data || '',
     maskLoading: state.infochart && state.infochart.maskLoading,

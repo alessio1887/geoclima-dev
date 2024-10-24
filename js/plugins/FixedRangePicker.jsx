@@ -13,7 +13,7 @@ import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/l
 import { compose } from 'redux';
 import { changeYear, changePeriod, toggleRangePickerPlugin, openAlert, closeAlert, collapsePlugin } from '../actions/fixedrangepicker';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
-import DateAPI, { PERIOD_TYPES } from '../utils/ManageDateUtils';
+import DateAPI from '../utils/ManageDateUtils';
 import { connect } from 'react-redux';
 import assign from 'object-assign';
 import moment from 'moment';
@@ -62,7 +62,6 @@ class FixedRangePicker extends React.Component {
         onChangePeriod: () => { },
         onUpdateSettings: () => { },
         onCollapsePlugin: () => { },
-        periodTypes: PERIOD_TYPES,
         periodType: "1",
         map: "geoclima",
         id: "mapstore-fixederange",
@@ -108,6 +107,7 @@ class FixedRangePicker extends React.Component {
                                 onChangeToData={this.props.onChangeYear}
                                 isInteractionDisabled={this.props.isInteractionDisabled}
                                 periodType={this.props.periodType}
+                                periodTypes={this.props.periodTypes}
                                 onChangePeriod={this.props.onChangePeriod}
                                 styleLabels="labels-fixedrangepicker"
                             />
@@ -178,7 +178,7 @@ const mapStateToProps = (state) => {
         fromData: state?.fixedrangepicker?.fromData || new Date(moment().subtract(1, 'month')._d),
         toData: state?.fixedrangepicker?.toData || new Date(moment().subtract(1, 'day')._d),
         periodType: state?.fixedrangepicker?.periodType || "1",
-        periodTypes: state?.fixedrangepicker?.periodTypes || PERIOD_TYPES,
+        periodTypes: state?.localConfig?.periodTypes,
         settings: state?.layers?.settings || { expanded: false, options: { opacity: 1 } },
         layers: state?.layers || {},
         fixedRangePickerActive: (state?.fixedrangepicker?.showFixedRangePicker) ? true : false,

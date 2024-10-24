@@ -10,7 +10,6 @@ import { DateTimePicker, DropdownList } from 'react-widgets';
 import { Label } from 'react-bootstrap';
 import Message from '../../../MapStore2/web/client/components/I18N/Message';
 import moment from 'moment';
-import { PERIOD_TYPES } from '../../utils/ManageDateUtils';
 
 import './rangemanager.css';
 
@@ -32,7 +31,7 @@ const FixedRangeManager = (props) => {
             <DropdownList
                 id="period1"
                 key={props.periodType || "1"}
-                data={PERIOD_TYPES}
+                data={props.periodTypes}
                 valueField="key"
                 textField="label"
                 value={props.periodType || "1"}
