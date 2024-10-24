@@ -7,7 +7,7 @@
 */
 import { Observable } from 'rxjs';
 import { setControlProperty } from '../../MapStore2/web/client/actions/controls';
-import { TOGGLE_MAPINFO_STATE, toggleMapInfoState } from '../../MapStore2/web/client/actions/mapInfo';
+import { TOGGLE_MAPINFO_STATE, changeMapInfoState, toggleMapInfoState } from '../../MapStore2/web/client/actions/mapInfo';
 import {
     TOGGLE_INFOCHART,
     FETCH_INFOCHART_DATA,
@@ -16,6 +16,7 @@ import {
     fetchInfoChartData
 } from '../actions/infochart';
 import { CLICK_ON_MAP } from '../../MapStore2/web/client/actions/map';
+import { LOADING } from '@mapstore/actions/maps';
 import API from '../api/GeoClimaApi';
 import moment from 'moment';
 
@@ -47,25 +48,38 @@ const setVisVariable = (variable) => {
     return 'prec';
 };
 
-const returnToHomeCheck = (action$, store) =>
-    action$.ofType('@@router/LOCATION_CHANGE').switchMap(() => {
-        const { pathname } = store.getState().routing.location;
-        if (pathname === '/') {
-            return Observable.of(
-                setInfoChartVisibility(false)
-            );
-        }
-        return Observable.empty();
+const closeInfoChartPanel = (action$) =>
+    action$.ofType(LOADING).switchMap(() => {
+        return Observable.of(
+            setControlProperty("chartinfo", "enabled", false),
+            setInfoChartVisibility(false, []),
+            changeMapInfoState(true)
+        );
     });
 
 const toggleMapInfoEpic = (action$, store) =>
     action$.ofType(TOGGLE_MAPINFO_STATE).switchMap(() => {
-        const chartInfoEnabled = store.getState().controls.chartinfo.enabled;
-        const mapInfoEnabled = store.getState().mapInfo.enabled;
-        if (mapInfoEnabled === chartInfoEnabled) {
+        const storeState = store.getState();
+        if (storeState.controls.chartinfo) {
+            const chartInfoEnabled = store.getState().controls.chartinfo.enabled;
+            const mapInfoEnabled = store.getState().mapInfo.enabled;
+            if (chartInfoEnabled && !mapInfoEnabled) {
+                return Observable.of(
+                    changeMapInfoState(false),
+                    setInfoChartVisibility(false),
+                    setControlProperty("chartinfo", "enabled", true)
+                );
+            } else if (!chartInfoEnabled && !mapInfoEnabled) {
+                return Observable.of(
+                    changeMapInfoState(false),
+                    setInfoChartVisibility(false),
+                    setControlProperty("chartinfo", "enabled", false)
+                );
+            }
             return Observable.of(
-                setControlProperty("chartinfo", "enabled", false),
-                setInfoChartVisibility(false)
+                changeMapInfoState(true),
+                setInfoChartVisibility(false),
+                setControlProperty("chartinfo", "enabled", false)
             );
         }
         return Observable.empty();
@@ -77,12 +91,13 @@ const toggleInfoChartEpic = (action$, store) =>
         if (mapInfoEnabled) {
             return Observable.of(
                 setControlProperty("chartinfo", "enabled", action.enable),
-                toggleMapInfoState(false)
+                toggleMapInfoState()
             );
         }
         return Observable.of(
             setControlProperty("chartinfo", "enabled", action.enable),
-            setInfoChartVisibility(false)
+            setInfoChartVisibility(false),
+            toggleMapInfoState()
         );
     });
 
@@ -133,5 +148,5 @@ export {
     toggleInfoChartEpic,
     clickedPointCheckEpic,
     loadInfoChartDataEpic,
-    returnToHomeCheck
+    closeInfoChartPanel
 };
