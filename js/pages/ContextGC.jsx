@@ -15,9 +15,11 @@ import { createStructuredSelector, createSelector } from 'reselect';
 // import MapViewerCmp from '../components/viewer/MapViewerCmp';
 import MapViewerCmpGC from '@js/components/viewer/MapViewerCmpGC';
 import { loadContext, clearContext } from '@mapstore/actions/context';
+import { loadMapConfigByDateRange } from '../actions/config.js';
 import MapViewerContainer from '@mapstore/containers/MapViewer';
 import { contextMonitoredStateSelector, pluginsSelector, currentTitleSelector, contextThemeSelector, contextCustomVariablesEnabledSelector } from '@mapstore/selectors/context';
 import ContextTheme from '@mapstore/components/theme/ContextTheme';
+import ConfigUtils from '@mapstore/utils/ConfigUtils';
 import moment from 'moment';
 
 const ConnectedContextTheme = connect(
@@ -26,15 +28,6 @@ const ConnectedContextTheme = connect(
         customVariablesEnabled: contextCustomVariablesEnabledSelector
     })
 )(ContextTheme);
-
-// Define selectors for fromData and toData
-const fromDataSelector = createSelector(
-    () => new Date(moment().subtract(1, 'month')._d)
-);
-
-const toDataSelector = createSelector(
-    () => new Date(moment().subtract(1, 'day')._d)
-);
 
 
 /**
@@ -88,6 +81,7 @@ class ContextGC extends React.Component {
         reset: PropTypes.func,
         wrappedContainer: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
         location: PropTypes.object,
+        loadMapConfigByDateRange: PropTypes.func,
         fromData: PropTypes.instanceOf(Date),
         toData: PropTypes.instanceOf(Date)
     };
@@ -100,9 +94,7 @@ class ContextGC extends React.Component {
         match: {
             params: {}
         },
-        wrappedContainer: MapViewerContainer,
-        fromData: new Date(moment().subtract(1, 'month')._d),
-        toData: new Date(moment().subtract(1, 'day')._d)
+        wrappedContainer: MapViewerContainer
     };
 
     state = {};
@@ -134,8 +126,11 @@ class ContextGC extends React.Component {
     onLoaded = (pluginsAreLoaded) => {
         if (pluginsAreLoaded && !this.state.pluginsAreLoaded) {
             this.setState({pluginsAreLoaded: true}, () => {
-                const params = this.props.match.params;
+                let params = this.props.match.params;
                 this.oldTitle = document.title;
+                const mapId = params.mapId;
+                const { configUrl } = ConfigUtils.getConfigUrl({ mapId });
+                this.props.loadMapConfigByDateRange(configUrl, mapId, new Date(moment().subtract(1, 'month')._d), new Date(moment().subtract(1, 'day')._d));
                 this.props.loadContext(params);
             });
         }
@@ -148,12 +143,11 @@ export default compose(
             pluginsConfig: pluginsSelector,
             mode: () => 'desktop',
             monitoredState: contextMonitoredStateSelector,
-            windowTitle: currentTitleSelector,
-            fromData: fromDataSelector,
-            toData: toDataSelector
+            windowTitle: currentTitleSelector
         }),
         {
             loadContext,
-            reset: clearContext
+            reset: clearContext,
+            loadMapConfigByDateRange: loadMapConfigByDateRange
         })
 )(ContextGC);
