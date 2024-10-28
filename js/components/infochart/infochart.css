@@ -25,12 +25,16 @@
     font-weight: bold;
 }
 
+/* Contenitore del ButtonGroup */
+.button-group-wrapper {
+    position: relative; /* Definisce il posizionamento relativo per il genitore */
+    display: flex;
+    justify-content: flex-end;
+    margin-right: -10px;
+    margin-bottom: -10px;
+}
+
+/* Spostamento dei pulsanti */
 .rangepicker-button {
-    float: right;
-    margin-top: 15px;
-    padding: 5px 10px;
-    font-size: 14px;
-    border: 1px solid #007bff;
-    background-color: transparent;
-    color: #007bff;
+    margin: 20px 10px 0px 0px;
 }

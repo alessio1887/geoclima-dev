@@ -8,7 +8,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Button, Glyphicon, Panel, Grid, FormGroup, Label} from 'react-bootstrap';
+import { Button, ButtonGroup, Glyphicon, Panel, Grid, FormGroup, Label} from 'react-bootstrap';
 import Message from '../../../MapStore2/web/client/components/I18N/Message';
 
 import Dialog from '../../../MapStore2/web/client/components/misc/Dialog';
@@ -18,9 +18,8 @@ import moment from 'moment';
 import { DropdownList } from 'react-widgets';
 import FixedRangeManager from '../../components/datepickers/FixedRangeManager';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
-import DateAPI, { PERIOD_TYPES }  from '../../utils/ManageDateUtils';
+import { PERIOD_TYPES }  from '../../utils/ManageDateUtils';
 import { fillAreas  }  from '../../utils/VariabiliMeteoUtils';
-import isEqual from 'lodash/isEqual';
 
 import './infochart.css';
 
@@ -67,6 +66,8 @@ class InfoChart extends React.Component {
         animated: PropTypes.bool,
         fromData: PropTypes.instanceOf(Date),
         toData: PropTypes.instanceOf(Date),
+        variable: PropTypes.object,
+        periodType: PropTypes.string,
         classNameInfoChartDate: PropTypes.string,
         styleInfoChartDate: PropTypes.object,
         onChangeChartDate: PropTypes.func
@@ -119,9 +120,14 @@ class InfoChart extends React.Component {
         onChangeChartDate: () => {}
     }
 
-    // Stato locale per gestire quale range manager mostrare
+
     state = {
-        activeRangeManager: FIXED_RANGE
+        // Stato locale per gestire quale range manager mostrare
+        activeRangeManager: FIXED_RANGE,
+        zoomData: {
+            startDate: null,
+            endDate: null
+        }
     };
     // Funzione per gestire il click del pulsante
     toggleRangeManager  = () => {
@@ -129,20 +135,23 @@ class InfoChart extends React.Component {
             activeRangeManager: prevState.activeRangeManager === FIXED_RANGE ? FREE_RANGE : FIXED_RANGE
         }));
     };
-
-    shouldComponentUpdate(newProps, newState) {
-        let shouldUpdate = false;
-        if (!isEqual(this.props.data, newProps.data) || this.state.activeRangeManager !== newState.activeRangeManager) {
-            shouldUpdate = newProps.active || newProps.mapinfoActive || newProps.data.length > 0;
+    handleRelayout = (eventData) => {
+        if (eventData['xaxis.range[0]'] && eventData['xaxis.range[1]']) {
+            const zoomData = {
+                startDate: new Date(eventData['xaxis.range[0]']),
+                endDate: new Date(eventData['xaxis.range[1]'])
+            };
+            // set local state
+            this.setState({ zoomData });
         }
-        return shouldUpdate;
-    }
-    // Chart's definition
+    };
     showChart = () => {
         if (!this.props.maskLoading) {
-            const PREC = this.props.infoChartData.variabileChartPrecipitazione;
-            const RET = this.props.infoChartData.variabileChartEvotrasporazione;
-            const TEMP_LIST = this.props.infoChartData.variabiliChartTemperatura;
+            // These three values are retrieved from 'infoChartData' in 'props', which is configured based on settings in localConfig.json
+            const PREC = this.props.variabileChartPrecipitazione;
+            const RET = this.props.variabileChartEvotrasporazione;
+            const TEMP_LIST = this.props.variabiliChartTemperatura;
+
             const chartData = this.props.infoChartData.variable === PREC || this.props.infoChartData.variable === RET
                 ? this.formatDataCum(this.props.data)
                 : this.formatDataTemp(this.props.data);
@@ -178,7 +187,8 @@ class InfoChart extends React.Component {
                 width: this.props.chartStyle.width,
                 height: this.props.chartStyle.height,
                 xaxis: { // Dates format
-                    tickformat: '%Y-%m-%d'
+                    tickformat: '%Y-%m-%d',
+                    range: [this.state.zoomData.startDate || Math.min(...dateObjects), this.state.zoomData.endDate || Math.max(...dateObjects)] // Mantieni il range di zoom
                 },
                 yaxis: {
                     title: TEMP_LIST.includes(this.props.infoChartData.variable)  ? 'Temperatura (°C)' : 'Valore (mm)'
@@ -197,6 +207,11 @@ class InfoChart extends React.Component {
                     data={dataChart}
                     layout={layoutChart}
                     style={{ width: '100%', height: '100%' }}
+                    onRelayout={this.handleRelayout}
+                    config={{ // Chart toolbar config
+                        displayModeBar: true,
+                        modeBarButtonsToRemove: ['autoScale2d']
+                    }}
                 />
             );
         }
@@ -219,36 +234,39 @@ class InfoChart extends React.Component {
                                     data={this.props.infoChartData?.variableList}
                                     valueField = "id"
                                     textField = "name"
-                                    value={this.props.infoChartData?.variable || "prec"}
-                                    onChange={(value) => {
-                                        this.changeChartVariable(value);
-                                    }}/>
+                                    value={this.props.variable}
+                                    onChange={this.props.onChangeChartVariable}/>
                                 {/* Alterna tra FixedRangeManager e FreeRangeManager in base a activeRangeManager */}
                                 {this.state.activeRangeManager === FIXED_RANGE ? (
                                     <FixedRangeManager
-                                        toData={this.props.infoChartData?.toData}
-                                        periodType={this.props.infoChartData?.periodType}
+                                        toData={this.props.toData}
+                                        periodType={this.props.periodType}
                                         periodTypes={this.props.infoChartData?.periodTypes}
-                                        onChangeToData={(value) => this.changeChartDateTo(value)}
-                                        onChangePeriod={(value) => this.changeChartDateFrom(value.key)}
+                                        onChangeToData={this.props.onChangeToData}
+                                        onChangePeriod={this.props.onChangePeriod}
                                         isInteractionDisabled={false}
                                         styleLabels="labels-infochart"
                                     />
                                 ) : (
                                     <FreeRangeManager
-                                        fromData={this.props.infoChartData.fromData}
-                                        toData={this.props.infoChartData.toData}
-                                        onChangeFromData={(value) => this.changeChartDateFrom(value)}
-                                        onChangeToData={(value) => this.changeChartDateTo(value)}
+                                        fromData={this.props.fromData}
+                                        toData={this.props.toData}
+                                        onChangeFromData={this.props.onChangeFromData}
+                                        onChangeToData={this.props.onChangeToData}
                                         isInteractionDisabled={false}
                                         styleLabels="labels-infochart"
                                     />
                                 )}
-                                <Button className="rangepicker-button" onClick={this.toggleRangeManager }>
-                                    <Message msgId={this.state.activeRangeManager === FIXED_RANGE
-                                        ? "gcapp.fixedRangePicker.dateRangeButton"
-                                        : "gcapp.freeRangePicker.dateRangeButton"}  />
-                                </Button>
+                                <ButtonGroup className="button-group-wrapper">
+                                    <Button className="rangepicker-button" onClick={this.handleApplyPeriod}>
+                                        <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton"/>
+                                    </Button>
+                                    <Button className="rangepicker-button" onClick={this.toggleRangeManager }>
+                                        <Message msgId={this.state.activeRangeManager === FIXED_RANGE
+                                            ? "gcapp.fixedRangePicker.dateRangeButton"
+                                            : "gcapp.freeRangePicker.dateRangeButton"}  />
+                                    </Button>
+                                </ButtonGroup>
                             </FormGroup>
                         </Grid>
                     </Panel>
@@ -267,58 +285,6 @@ class InfoChart extends React.Component {
 
     closePanel = () => {
         this.props.onSetInfoChartVisibility(false);
-    }
-
-    // LA DATA DEVE ESSERE IN FORMATO 'YYYY-MM-DD'
-    // @param {any} value - Input che viene interpretato come chiave del periodo (RANGE_FIXED) o come una data in formato libero (FREE_RANGE)
-    changeChartDateFrom = (value) => {
-        // TODO: crea due funzionidiverse: una per FIXED_RANGE e una per FREE_RANGE
-        let fromData; let toData; let periodKey;
-        toData = this.props.infoChartData.toData;
-        if (this.state.activeRangeManager === FIXED_RANGE) {
-            fromData = DateAPI.calculateDateFromKeyReal(value, moment(this.props.infoChartData.toData).format('YYYY-MM-DD')).fromData;
-            periodKey = value;
-        } else { // FREE_RANGE
-            fromData = moment(value).clone().format('YYYY-MM-DD');
-            // Get the key of the first period as the default value
-            periodKey = this.props.infoChartData?.periodTypes[0]?.key || PERIOD_TYPES[0]?.key;
-        }
-        this.props.onFetchInfoChartData({
-            latlng: this.props.infoChartData.latlng,
-            toData,
-            fromData,
-            variable: this.props.infoChartData.variable,
-            periodType: periodKey
-        });
-    }
-    changeChartDateTo = (value) => {
-        let fromData; let toData; let periodKey;
-        if (this.state.activeRangeManager === FIXED_RANGE) {
-            toData = DateAPI.calculateDateFromKeyReal(this.props.infoChartData.periodType, moment(value).format('YYYY-MM-DD')).toData;
-            fromData = DateAPI.calculateDateFromKeyReal(this.props.infoChartData.periodType, moment(value).format('YYYY-MM-DD')).fromData;
-            periodKey = this.props.infoChartData.periodType;
-        } else { // FREE_RANGE
-            toData = moment(value).clone().format('YYYY-MM-DD');
-            fromData = this.props.infoChartData.fromData;
-            // Get the key of the first period as the default value
-            periodKey = this.props.infoChartData?.periodTypes[0]?.key || PERIOD_TYPES[0]?.key;
-        }
-        this.props.onFetchInfoChartData({
-            latlng: this.props.infoChartData.latlng,
-            toData,
-            fromData,
-            variable: this.props.infoChartData.variable,
-            periodType: periodKey
-        });
-    }
-    changeChartVariable = (value) => {
-        this.props.onFetchInfoChartData({
-            latlng: this.props.infoChartData.latlng,
-            toData: this.props.infoChartData.toData,
-            fromData: this.props.infoChartData.fromData,
-            variable: value.id,
-            periodType: this.props.infoChartData.periodType
-        });
     }
     formatDataCum(values) {
         let data = [];
@@ -350,5 +316,57 @@ class InfoChart extends React.Component {
         }, this);
         return data;
     }
+    handleApplyPeriod = () => {
+        const { fromData, toData } = this.props;
+        const periodKey = this.state.activeRangeManager === FIXED_RANGE ? this.props.periodType : PERIOD_TYPES[0]?.key;
+        const variableId = this.props.variable.id || this.props.variable;
+
+/*        // Verifiche sulle date
+        const startDate = moment(fromData);
+        const endDate = moment(toData);
+        if (startDate.isBefore(moment('1991-01-01'))) {
+            this.props.onOpenAlert("gcapp.errorMessages.dateTooEarly");
+            return;
+        }
+        if (endDate.isBefore(startDate)) {
+            this.props.onOpenAlert("gcapp.errorMessages.endDateBefore");
+            return;
+        }
+
+        const oneYearFromStart = startDate.clone().add(1, 'year');
+        if (endDate.isAfter(oneYearFromStart)) {
+            this.props.onOpenAlert("gcapp.errorMessages.rangeTooLarge");
+            return;
+        }
+        // Se le verifiche passano, procedi con l'aggiornamento dei parametri
+        if (this.props.alertMessage !== null) {
+            this.props.onCloseAlert();
+        }
+        const mapFile = DateAPI.setGCMapFile(fromData, toData);
+        this.updateParams({
+            params: {
+                map: mapFile,
+                fromData: moment(fromData).format('YYYY-MM-DD'),
+                toData: moment(toData).format('YYYY-MM-DD')
+            }
+        });
+        */
+        // Dates must be in 'yyyy-mm-dd' format; otherwise, an error will occur.
+        this.props.onFetchInfoChartData({
+            latlng: this.props.infoChartData.latlng,
+            toData: moment(toData).format('YYYY-MM-DD'),
+            fromData: moment(fromData).format('YYYY-MM-DD'),
+            variable: variableId,
+            periodType: periodKey
+        });
+        // Reset zoom
+        const zoomData = {
+            startDate: null,
+            endDate: null
+        };
+        this.setState({ zoomData });
+    }
 }
+
+
 export default InfoChart;

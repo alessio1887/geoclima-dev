@@ -7,7 +7,8 @@
 */
 
 import {connect} from 'react-redux';
-import {setInfoChartVisibility, fetchInfoChartData, fetchedInfoChartData, toggleInfoChart} from '../actions/infochart';
+import { compose } from 'redux';
+import {setInfoChartVisibility, fetchInfoChartData, fetchedInfoChartData, toggleInfoChart, changeChartVariable, changePeriod, changeFromData, changeToData } from '../actions/infochart';
 import InfoChartButton from '../components/buttons/InfoChartButton';
 import InfoChart from '../components/infochart/InfoChart';
 import moment from 'moment';
@@ -33,25 +34,33 @@ const InfoChartPlugin = connect(
 const InfoChartPanel = connect((state) => ({
     show: state.infochart && state.infochart.showInfoChartPanel || false,
     infoChartData: {
-        fromData: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.fromData || new Date(DateAPI.calculateDateFromKeyReal("10", moment().subtract(1, 'day')._d).fromData),
-        toData: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.toData || new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
-        variable: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.variable || state?.localConfig?.variabileChartPrecipitazione,
-        latlng: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.latlng || {},
-        periodType: state.infochart && state.infochart.infoChartData && state.infochart.infoChartData.periodType || "1",
+        fromData: state.infochart?.infoChartData?.fromData || new Date(DateAPI.calculateDateFromKeyReal("10", moment().subtract(1, 'day')._d).fromData),
+        toData: state.infochart?.infoChartData?.toData || new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
+        variable: state.infochart?.infoChartData?.variable || state?.localConfig?.variabileChartPrecipitazione,
+        latlng: state.infochart?.infoChartData?.latlng || {},
+        periodType: state.infochart?.infoChartData?.periodType || "1",
         periodTypes: state?.localConfig?.periodTypes || PERIOD_TYPES,
-        variableList: state?.localConfig?.variabiliChartList,
-        variabileChartPrecipitazione: state?.localConfig?.variabileChartPrecipitazione,
-        variabileChartEvotrasporazione: state?.localConfig?. variabileChartEvotrasporazione,
-        variabiliChartTemperatura: state?.localConfig?.variabiliChartTemperatura
+        variableList: state?.localConfig?.variabiliChartList
     },
-    data: state.infochart && state.infochart.data || '',
-    maskLoading: state.infochart && state.infochart.maskLoading,
-    active: state && state.controls && state.controls.chartinfo && state.controls.chartinfo.enabled || false,
-    mapinfoActive: state && state.mapInfo && state.mapInfo.enabled || false
+    data: state.infochart?.data || '',
+    maskLoading: state.infochart?.maskLoading,
+    active: state.controls?.chartinfo?.enabled || false,
+    mapinfoActive: state.mapInfo?.enabled || false,
+    variabileChartPrecipitazione: state?.localConfig?.variabileChartPrecipitazione,
+    variabileChartEvotrasporazione: state?.localConfig?.variabileChartEvotrasporazione,
+    variabiliChartTemperatura: state?.localConfig?.variabiliChartTemperatura,
+    variable: state.infochart?.variable || state?.localConfig?.variabileChartPrecipitazione,
+    fromData: state.infochart?.fromData || new Date(DateAPI.calculateDateFromKeyReal("1").fromData), // Initializes 'fromData' based on Infochart's date range; defaults to a calculated date if missing
+    toData: state.infochart?.toData || new Date(DateAPI.calculateDateFromKeyReal("1").toData),   // Initializes 'toData' based on Infochart's date range; defaults to a calculated date if missing
+    periodType: state.infochart?.periodType || "1"
 }), {
     onSetInfoChartVisibility: setInfoChartVisibility,
     onFetchInfoChartData: fetchInfoChartData,
-    onFetchedInfoChartData: fetchedInfoChartData
+    onFetchedInfoChartData: fetchedInfoChartData,
+    onChangeChartVariable: compose(changeChartVariable, (event) => event),
+    onChangeToData: compose(changeToData, (event) => event),
+    onChangeFromData: compose(changeFromData, (event) => event),
+    onChangePeriod: compose(changePeriod, (event) => event.key)
 })(InfoChart);
 
 

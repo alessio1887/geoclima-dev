@@ -7,7 +7,6 @@
               "selectDateHidrologicYear": "Seleziona una data",
               "selectCumulativePeriod": "Seleziona periodo di cumulata dalla data selezionata",
               "dateRangeButton": "Range libero",
-              "applyPeriodButton": " Applica periodo",
               "collapsePlugin": "Seleziona un intervallo di date"
             },
             "freeRangePicker": {
@@ -15,14 +14,14 @@
               "selectFromDate": "Seleziona la data d'inizio periodo",
               "selectToDate": "Seleziona la data di fine periodo",
               "dateRangeButton": "Range fisso",
-              "applyPeriodButton": " Applica periodo",
               "collapsePlugin": "Seleziona un intervallo di date"
             },
             "errorMessages": {
               "endDateBefore": "La data fine non può essere minore della data inizio.",
               "rangeTooLarge": "L'intervallo di date non può superare un anno.",
               "dateTooEarly": "La data selezionata non può essere precedente al 1-01-1991."
-            }
+            },
+            "applyPeriodButton": " Applica periodo"
         },
         "infochart": {
             "tooltipDeactivate": "Disattiva visualizzazione grafico",

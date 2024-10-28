@@ -109,7 +109,7 @@ class FreeRangePicker extends React.Component {
                             />
                             <ButtonGroup id="button-rangepicker-container">
                                 <Button onClick={this.handleApplyPeriod}  disabled={this.props.isInteractionDisabled}>
-                                    <Glyphicon glyph="calendar" /><Message msgId="gcapp.freeRangePicker.applyPeriodButton"/>
+                                    <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton"/>
                                 </Button>
                                 <Button variant="primary" onClick={this.props.onToggleFreeRangePicker} disabled={this.props.isInteractionDisabled}>
                                     <Message msgId="gcapp.freeRangePicker.dateRangeButton"/>
