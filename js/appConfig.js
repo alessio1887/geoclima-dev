@@ -9,7 +9,6 @@ import appConfigMS from '@mapstore/product/appConfig';
 import DateAPI from './utils/ManageDateUtils';
 import moment from 'moment';
 import MapViewerGC from './pages/MapViewerGC';
-import ContextGC from './pages/ContextGC';
 
 const fixedrangepicker = {
     isCollapsedPlugin: false,
@@ -30,21 +29,13 @@ const freerangepicker = {
 export default {
     ...appConfigMS,
     pages: [
-        // Added Custom Pages
-        ...appConfigMS.pages.map(page => {
-            if (page.name === "mapviewer") {
-                return {
-                    ...page,
-                    component: MapViewerGC
-                };
-            } else if (page.name === "context") {
-                return {
-                    ...page,
-                    component: ContextGC
-                };
-            }
-            return page; // Return the original page if no conditions are met
-        })
+        // Added Custom Page
+        ...appConfigMS.pages.map(
+            page => page.name === "mapviewer" ? {
+                ...page,
+                component: MapViewerGC
+            } : page
+        )
     ],
     initialState: {
         ...appConfigMS.initialState,
