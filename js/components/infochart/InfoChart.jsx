@@ -8,7 +8,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Button, ButtonGroup, Glyphicon, Panel, Grid, FormGroup, Label} from 'react-bootstrap';
+import { Collapse, Button, ButtonGroup, Glyphicon, Panel, Grid, FormGroup, Label} from 'react-bootstrap';
 import Message from '../../../MapStore2/web/client/components/I18N/Message';
 
 import Dialog from '../../../MapStore2/web/client/components/misc/Dialog';
@@ -127,7 +127,9 @@ class InfoChart extends React.Component {
         zoomData: {
             startDate: null,
             endDate: null
-        }
+        },
+        dragModeChart: null,
+        isCollapsedFormGroup: false
     };
     // Funzione per gestire il click del pulsante
     toggleRangeManager  = () => {
@@ -143,6 +145,10 @@ class InfoChart extends React.Component {
             };
             // set local state
             this.setState({ zoomData });
+        }
+        if (eventData.dragmode) {
+            this.setState({ dragModeChart: eventData.dragmode
+            });
         }
     };
     showChart = () => {
@@ -200,7 +206,8 @@ class InfoChart extends React.Component {
                     orientation: 'h',
                     x: 0.5,
                     y: -0.2
-                }
+                },
+                dragmode: this.state.dragModeChart
             };
             return (
                 <Plot
@@ -225,51 +232,56 @@ class InfoChart extends React.Component {
                     <button onClick={() => this.closePanel()} className="layer-settings-metadata-panel-close close">{this.props.closeGlyph ? <Glyphicon glyph={this.props.closeGlyph}/> : <span>×</span>}</button>
                 </span>
                 <div role="body">
-                    <Panel >
-                        <Grid fluid style={{paddingTop: 2, paddingBottom: 2}}>
-                            <FormGroup>
-                                <Label className="labels-infochart"><Message msgId="infochart.selectMeteoVariable"/></Label>
-                                <DropdownList
-                                    key="charts"
-                                    data={this.props.infoChartData?.variableList}
-                                    valueField = "id"
-                                    textField = "name"
-                                    value={this.props.variable}
-                                    onChange={this.props.onChangeChartVariable}/>
-                                {/* Alterna tra FixedRangeManager e FreeRangeManager in base a activeRangeManager */}
-                                {this.state.activeRangeManager === FIXED_RANGE ? (
-                                    <FixedRangeManager
-                                        toData={this.props.toData}
-                                        periodType={this.props.periodType}
-                                        periodTypes={this.props.infoChartData?.periodTypes}
-                                        onChangeToData={this.props.onChangeToData}
-                                        onChangePeriod={this.props.onChangePeriod}
-                                        isInteractionDisabled={false}
-                                        styleLabels="labels-infochart"
-                                    />
-                                ) : (
-                                    <FreeRangeManager
-                                        fromData={this.props.fromData}
-                                        toData={this.props.toData}
-                                        onChangeFromData={this.props.onChangeFromData}
-                                        onChangeToData={this.props.onChangeToData}
-                                        isInteractionDisabled={false}
-                                        styleLabels="labels-infochart"
-                                    />
-                                )}
-                                <ButtonGroup className="button-group-wrapper">
-                                    <Button className="rangepicker-button" onClick={this.handleApplyPeriod}>
-                                        <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton"/>
-                                    </Button>
-                                    <Button className="rangepicker-button" onClick={this.toggleRangeManager }>
-                                        <Message msgId={this.state.activeRangeManager === FIXED_RANGE
-                                            ? "gcapp.fixedRangePicker.dateRangeButton"
-                                            : "gcapp.freeRangePicker.dateRangeButton"}  />
-                                    </Button>
-                                </ButtonGroup>
-                            </FormGroup>
-                        </Grid>
-                    </Panel>
+                    <Button onClick={() => this.setState({ isCollapsedFormGroup: !this.state.isCollapsedFormGroup })}>
+                        {this.state.isCollapsedFormGroup ? 'Espandi' : 'Collassa'}
+                    </Button>
+                    <Collapse in={!this.state.isCollapsedFormGroup}>
+                        <Panel >
+                            <Grid fluid style={{paddingTop: 2, paddingBottom: 2}}>
+                                <FormGroup>
+                                    <Label className="labels-infochart"><Message msgId="infochart.selectMeteoVariable"/></Label>
+                                    <DropdownList
+                                        key="charts"
+                                        data={this.props.infoChartData?.variableList}
+                                        valueField = "id"
+                                        textField = "name"
+                                        value={this.props.variable}
+                                        onChange={this.props.onChangeChartVariable}/>
+                                    {/* Alterna tra FixedRangeManager e FreeRangeManager in base a activeRangeManager */}
+                                    {this.state.activeRangeManager === FIXED_RANGE ? (
+                                        <FixedRangeManager
+                                            toData={this.props.toData}
+                                            periodType={this.props.periodType}
+                                            periodTypes={this.props.infoChartData?.periodTypes}
+                                            onChangeToData={this.props.onChangeToData}
+                                            onChangePeriod={this.props.onChangePeriod}
+                                            isInteractionDisabled={false}
+                                            styleLabels="labels-infochart"
+                                        />
+                                    ) : (
+                                        <FreeRangeManager
+                                            fromData={this.props.fromData}
+                                            toData={this.props.toData}
+                                            onChangeFromData={this.props.onChangeFromData}
+                                            onChangeToData={this.props.onChangeToData}
+                                            isInteractionDisabled={false}
+                                            styleLabels="labels-infochart"
+                                        />
+                                    )}
+                                    <ButtonGroup className="button-group-wrapper">
+                                        <Button className="rangepicker-button" onClick={this.handleApplyPeriod}>
+                                            <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton"/>
+                                        </Button>
+                                        <Button className="rangepicker-button" onClick={this.toggleRangeManager }>
+                                            <Message msgId={this.state.activeRangeManager === FIXED_RANGE
+                                                ? "gcapp.fixedRangePicker.dateRangeButton"
+                                                : "gcapp.freeRangePicker.dateRangeButton"}  />
+                                        </Button>
+                                    </ButtonGroup>
+                                </FormGroup>
+                            </Grid>
+                        </Panel>
+                    </Collapse>
                     {this.showChart()}
                 </div>
             </Dialog>
@@ -321,7 +333,7 @@ class InfoChart extends React.Component {
         const periodKey = this.state.activeRangeManager === FIXED_RANGE ? this.props.periodType : PERIOD_TYPES[0]?.key;
         const variableId = this.props.variable.id || this.props.variable;
 
-/*        // Verifiche sulle date
+/*      // Verifiche sulle date
         const startDate = moment(fromData);
         const endDate = moment(toData);
         if (startDate.isBefore(moment('1991-01-01'))) {

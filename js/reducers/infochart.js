@@ -23,8 +23,8 @@ const infoChartDefaultState = {
     data: [],
     maskLoading: true,
     variable: "prec",
-    fromData: new Date(DateAPI.calculateDateFromKeyReal("1").fromData),
-    toData: new Date(DateAPI.calculateDateFromKeyReal("1").toData),
+    fromData: new Date(moment().subtract(1, 'month')._d),
+    toData: new Date(moment().subtract(1, 'day')._d),
     periodType: "1"
 };
 

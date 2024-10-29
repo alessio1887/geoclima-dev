@@ -50,8 +50,10 @@ const InfoChartPanel = connect((state) => ({
     variabileChartEvotrasporazione: state?.localConfig?.variabileChartEvotrasporazione,
     variabiliChartTemperatura: state?.localConfig?.variabiliChartTemperatura,
     variable: state.infochart?.variable || state?.localConfig?.variabileChartPrecipitazione,
-    fromData: state.infochart?.fromData || new Date(DateAPI.calculateDateFromKeyReal("1").fromData), // Initializes 'fromData' based on Infochart's date range; defaults to a calculated date if missing
-    toData: state.infochart?.toData || new Date(DateAPI.calculateDateFromKeyReal("1").toData),   // Initializes 'toData' based on Infochart's date range; defaults to a calculated date if missing
+    // Initializes 'fromData' based on Infochart's date range; defaults to a calculated date if missing
+    fromData: state.infochart?.fromData || new Date(DateAPI.calculateDateFromKeyReal("10", moment().subtract(1, 'day')._d).fromData),
+    // Initializes 'toData' based on Infochart's date range; defaults to a calculated date if missing
+    toData: state.infochart?.toData || new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
     periodType: state.infochart?.periodType || "1"
 }), {
     onSetInfoChartVisibility: setInfoChartVisibility,
