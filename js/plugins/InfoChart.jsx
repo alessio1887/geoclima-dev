@@ -8,7 +8,8 @@
 
 import {connect} from 'react-redux';
 import { compose } from 'redux';
-import {setInfoChartVisibility, fetchInfoChartData, fetchedInfoChartData, toggleInfoChart, changeChartVariable, changePeriod, changeFromData, changeToData } from '../actions/infochart';
+import {setInfoChartVisibility, changeFixedRangeToData, fetchInfoChartData, fetchedInfoChartData, toggleInfoChart,
+    changeChartVariable, changePeriod, changeFromData, changeToData } from '../actions/infochart';
 import InfoChartButton from '../components/buttons/InfoChartButton';
 import InfoChart from '../components/infochart/InfoChart';
 import moment from 'moment';
@@ -62,6 +63,7 @@ const InfoChartPanel = connect((state) => ({
     onChangeChartVariable: compose(changeChartVariable, (event) => event),
     onChangeToData: compose(changeToData, (event) => event),
     onChangeFromData: compose(changeFromData, (event) => event),
+    onChangeFixedRangeTodata: compose(changeFixedRangeToData, (event) => event),
     onChangePeriod: compose(changePeriod, (event) => event.key)
 })(InfoChart);
 

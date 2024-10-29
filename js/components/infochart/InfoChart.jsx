@@ -129,7 +129,8 @@ class InfoChart extends React.Component {
             endDate: null
         },
         dragModeChart: null,
-        isCollapsedFormGroup: false
+        isCollapsedFormGroup: false,
+        alertMessage: null
     };
     // Funzione per gestire il click del pulsante
     toggleRangeManager  = () => {
@@ -253,7 +254,7 @@ class InfoChart extends React.Component {
                                             toData={this.props.toData}
                                             periodType={this.props.periodType}
                                             periodTypes={this.props.infoChartData?.periodTypes}
-                                            onChangeToData={this.props.onChangeToData}
+                                            onChangeToData={this.props.onChangeFixedRangeTodata}
                                             onChangePeriod={this.props.onChangePeriod}
                                             isInteractionDisabled={false}
                                             styleLabels="labels-infochart"
@@ -279,6 +280,12 @@ class InfoChart extends React.Component {
                                         </Button>
                                     </ButtonGroup>
                                 </FormGroup>
+                                {this.state.alertMessage && (
+                                    <div className="alert-date" >
+                                        <strong><Message msgId="warning"/></strong>
+                                        <span ><Message msgId={this.state.alertMessage}/></span>
+                                    </div>
+                                )}
                             </Grid>
                         </Panel>
                     </Collapse>
@@ -328,46 +335,45 @@ class InfoChart extends React.Component {
         }, this);
         return data;
     }
-    handleApplyPeriod = () => {
-        const { fromData, toData } = this.props;
-        const periodKey = this.state.activeRangeManager === FIXED_RANGE ? this.props.periodType : PERIOD_TYPES[0]?.key;
-        const variableId = this.props.variable.id || this.props.variable;
-
-/*      // Verifiche sulle date
+    // Date validations
+    validateDateRange = (fromData, toData) => {
         const startDate = moment(fromData);
         const endDate = moment(toData);
+
         if (startDate.isBefore(moment('1991-01-01'))) {
-            this.props.onOpenAlert("gcapp.errorMessages.dateTooEarly");
-            return;
+            this.setState({ alertMessage: "gcapp.errorMessages.dateTooEarly" });
+            return false;
         }
         if (endDate.isBefore(startDate)) {
-            this.props.onOpenAlert("gcapp.errorMessages.endDateBefore");
+            this.setState({ alertMessage: "gcapp.errorMessages.endDateBefore" });
+            return false;
+        }
+        if (endDate.isAfter(startDate.clone().add(1, 'year'))) {
+            this.setState({ alertMessage: "gcapp.errorMessages.rangeTooLarge" });
+            return false;
+        }
+        return true;
+    };
+    handleApplyPeriod = () => {
+        // Set fromData, toData, periodKey and variabile meteo
+        const fromData = moment(this.props.fromData).clone().format('YYYY-MM-DD');
+        const toData = moment(this.props.toData).clone().format('YYYY-MM-DD');
+        // Set the period key as the first in the list if necessary if FREE_RANGE
+        const periodKey = this.state.activeRangeManager === FIXED_RANGE ? this.props.periodType : PERIOD_TYPES[0]?.key;
+        const variableId = this.props.variable.id || this.props.variable;
+        // Date validations
+        if (!this.validateDateRange(fromData, toData)) {
             return;
         }
-
-        const oneYearFromStart = startDate.clone().add(1, 'year');
-        if (endDate.isAfter(oneYearFromStart)) {
-            this.props.onOpenAlert("gcapp.errorMessages.rangeTooLarge");
-            return;
+        // Clear alert message if validations pass
+        if (this.state.alertMessage !== null) {
+            this.setState({ alertMessage: null });
         }
-        // Se le verifiche passano, procedi con l'aggiornamento dei parametri
-        if (this.props.alertMessage !== null) {
-            this.props.onCloseAlert();
-        }
-        const mapFile = DateAPI.setGCMapFile(fromData, toData);
-        this.updateParams({
-            params: {
-                map: mapFile,
-                fromData: moment(fromData).format('YYYY-MM-DD'),
-                toData: moment(toData).format('YYYY-MM-DD')
-            }
-        });
-        */
-        // Dates must be in 'yyyy-mm-dd' format; otherwise, an error will occur.
+        // Ensure dates are in 'YYYY-MM-DD' format before making the fetch call
         this.props.onFetchInfoChartData({
             latlng: this.props.infoChartData.latlng,
-            toData: moment(toData).format('YYYY-MM-DD'),
-            fromData: moment(fromData).format('YYYY-MM-DD'),
+            toData: toData,
+            fromData: fromData,
             variable: variableId,
             periodType: periodKey
         });

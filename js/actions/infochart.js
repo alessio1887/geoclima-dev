@@ -9,6 +9,7 @@
 export const CHARTVARIABLE_CHANGED = 'CHARTVARIABLE_CHANGED';
 export const TODATA_CHANGED = 'INFOCHART:TODATA_CHANGED';
 export const FROMDATA_CHANGED = 'INFOCHART:FROMDATA_CHANGED';
+export const TODATA_FIXEDRANGE_CHANGED = 'INFOCHART:TODATA_FIXEDRANGE_CHANGED';
 export const SET_INFOCHART_VISIBILITY = 'SET_INFOCHART_VISIBILITY';
 export const CHART_PERIOD_CHANGED = 'CHART_PERIOD_CHANGED';
 export const FETCH_INFOCHART_DATA = 'FETCH_INFOCHART_DATA';
@@ -32,6 +33,13 @@ export function changeFromData(fromData) {
 export function changeToData(toData) {
     return {
         type: TODATA_CHANGED,
+        toData
+    };
+}
+
+export function changeFixedRangeToData(toData) {
+    return {
+        type: TODATA_FIXEDRANGE_CHANGED,
         toData
     };
 }

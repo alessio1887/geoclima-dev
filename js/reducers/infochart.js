@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
 */
 
-import { CHARTVARIABLE_CHANGED, FROMDATA_CHANGED, TODATA_CHANGED, CHART_PERIOD_CHANGED, SET_INFOCHART_VISIBILITY, FETCH_INFOCHART_DATA, FETCHED_INFOCHART_DATA} from '../actions/infochart';
+import { CHARTVARIABLE_CHANGED, TODATA_FIXEDRANGE_CHANGED, FROMDATA_CHANGED, TODATA_CHANGED, CHART_PERIOD_CHANGED, SET_INFOCHART_VISIBILITY, FETCH_INFOCHART_DATA, FETCHED_INFOCHART_DATA } from '../actions/infochart';
 import moment from 'moment';
 import DateAPI from '../utils/ManageDateUtils';
 import assign from 'object-assign';
@@ -45,10 +45,16 @@ function infochart(state = infoChartDefaultState, action) {
             ...state,
             fromData: action.fromData
         };
+    case TODATA_FIXEDRANGE_CHANGED:
+        return {
+            ...state,
+            fromData: new Date(DateAPI.calculateDateFromKeyReal(state.periodType, action.toData).fromData),
+            toData: action.toData
+        };
     case CHART_PERIOD_CHANGED:
         return {
             ...state,
-            fromData: new Date(DateAPI.calculateDateFromKeyReal(action.periodType).fromData),
+            fromData: new Date(DateAPI.calculateDateFromKeyReal(action.periodType, state.toData).fromData),
             periodType: action.periodType
         };
     case SET_INFOCHART_VISIBILITY: {
