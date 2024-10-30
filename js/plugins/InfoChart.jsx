@@ -55,7 +55,8 @@ const InfoChartPanel = connect((state) => ({
     fromData: state.infochart?.fromData || new Date(DateAPI.calculateDateFromKeyReal("10", moment().subtract(1, 'day')._d).fromData),
     // Initializes 'toData' based on Infochart's date range; defaults to a calculated date if missing
     toData: state.infochart?.toData || new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
-    periodType: state.infochart?.periodType || "1"
+    periodType: state.infochart?.periodType || "1",
+    isInteractionDisabled: state.infochart?.isInteractionDisabled || false
 }), {
     onSetInfoChartVisibility: setInfoChartVisibility,
     onFetchInfoChartData: fetchInfoChartData,

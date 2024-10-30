@@ -61,10 +61,10 @@ function infochart(state = infoChartDefaultState, action) {
         return assign({}, state, {showInfoChartPanel: action.status, data: action.data, maskLoading: action.maskLoading});
     }
     case FETCH_INFOCHART_DATA: {
-        return assign({}, state, {infoChartData: action.params, data: [], maskLoading: action.maskLoading});
+        return assign({}, state, {infoChartData: action.params, data: [], maskLoading: action.maskLoading, isInteractionDisabled: !state.isInteractionDisabled});
     }
     case FETCHED_INFOCHART_DATA: {
-        return assign({}, state, {data: action.data, maskLoading: action.maskLoading});
+        return assign({}, state, {data: action.data, maskLoading: action.maskLoading, isInteractionDisabled: !state.isInteractionDisabled});
     }
     default:
         return state;

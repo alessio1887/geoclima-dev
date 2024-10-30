@@ -70,7 +70,8 @@ class InfoChart extends React.Component {
         periodType: PropTypes.string,
         classNameInfoChartDate: PropTypes.string,
         styleInfoChartDate: PropTypes.object,
-        onChangeChartDate: PropTypes.func
+        onChangeChartDate: PropTypes.func,
+        isInteractionDisabled: PropTypes.bool
     }
     static defaultProps = {
         id: "mapstore-sarchart-panel",
@@ -270,10 +271,10 @@ class InfoChart extends React.Component {
                                         />
                                     )}
                                     <ButtonGroup className="button-group-wrapper">
-                                        <Button className="rangepicker-button" onClick={this.handleApplyPeriod}>
+                                        <Button className="rangepicker-button" onClick={this.handleApplyPeriod} disabled={this.props.isInteractionDisabled}>
                                             <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton"/>
                                         </Button>
-                                        <Button className="rangepicker-button" onClick={this.toggleRangeManager }>
+                                        <Button className="rangepicker-button" onClick={this.toggleRangeManager } disabled={this.props.isInteractionDisabled}>
                                             <Message msgId={this.state.activeRangeManager === FIXED_RANGE
                                                 ? "gcapp.fixedRangePicker.dateRangeButton"
                                                 : "gcapp.freeRangePicker.dateRangeButton"}  />
