@@ -6,13 +6,13 @@
  * LICENSE file in the root directory of this source tree.
 */
 import { LAYER_LOADING, LAYER_LOAD, LAYER_ERROR} from '@mapstore/actions/layers';
-import moment from 'moment';
+import { FROM_DATA, TO_DATA } from '../utils/ManageDateUtils';
 import {FROMDATA_CHANGED, TODATA_CHANGED, OPEN_ALERT, CLOSE_ALERT, COLLAPSE_RANGE_PICKER} from '../actions/freerangepicker';
 
 const defaultState = {
     isCollapsedPlugin: false,
-    fromData: new Date(moment().subtract(1, 'month')._d),
-    toData: new Date(moment().subtract(1, 'day')._d),
+    fromData: FROM_DATA,
+    toData: TO_DATA,
     showModal: false,
     imgSrc: "",
     map: "geoclima",

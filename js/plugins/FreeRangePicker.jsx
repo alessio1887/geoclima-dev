@@ -11,7 +11,7 @@ import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-boots
 import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
 import { compose } from 'redux';
-import DateAPI from '../utils/ManageDateUtils';
+import DateAPI, { FROM_DATA, TO_DATA} from '../utils/ManageDateUtils';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 import { connect } from 'react-redux';
 import assign from 'object-assign';
@@ -54,8 +54,6 @@ class FreeRangePicker extends React.Component {
     };
     static defaultProps = {
         isCollapsedPlugin: false,
-        fromData: new Date(moment().subtract(1, 'month')._d),
-        toData: new Date(moment().subtract(1, 'day')._d),
         onChangeFromData: () => {},
         onChangeToData: () => {},
         onUpdateSettings: () => {},
@@ -177,8 +175,8 @@ class FreeRangePicker extends React.Component {
 const mapStateToProps = (state) => {
     return {
         isCollapsedPlugin: state?.freerangepicker?.isCollapsedPlugin,
-        fromData: state?.freerangepicker?.fromData || new Date(moment().subtract(1, 'month')._d),
-        toData: state?.freerangepicker?.toData || new Date(moment().subtract(1, 'day')._d),
+        fromData: state?.freerangepicker?.fromData || FROM_DATA,
+        toData: state?.freerangepicker?.toData || TO_DATA,
         settings: state?.layers?.settings || {expanded: false, options: {opacity: 1}},
         layers: state?.layers || {},
         freeRangePickerIsVisible: (!state?.fixedrangepicker?.showFixedRangePicker ) ? true : false,

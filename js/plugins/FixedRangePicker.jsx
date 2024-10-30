@@ -13,7 +13,7 @@ import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/l
 import { compose } from 'redux';
 import { changeYear, changePeriod, toggleRangePickerPlugin, openAlert, closeAlert, collapsePlugin } from '../actions/fixedrangepicker';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
-import DateAPI from '../utils/ManageDateUtils';
+import DateAPI, { FROM_DATA, TO_DATA } from '../utils/ManageDateUtils';
 import { connect } from 'react-redux';
 import assign from 'object-assign';
 import moment from 'moment';
@@ -55,8 +55,6 @@ class FixedRangePicker extends React.Component {
     };
     static defaultProps = {
         isCollapsedPlugin: true,
-        fromData: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).fromData),
-        toData: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
         onChangeYear: () => { },
         onChangeMonth: () => { },
         onChangePeriod: () => { },
@@ -175,8 +173,8 @@ class FixedRangePicker extends React.Component {
 const mapStateToProps = (state) => {
     return {
         isCollapsedPlugin: state?.fixedrangepicker?.isCollapsedPlugin,
-        fromData: state?.fixedrangepicker?.fromData || new Date(moment().subtract(1, 'month')._d),
-        toData: state?.fixedrangepicker?.toData || new Date(moment().subtract(1, 'day')._d),
+        fromData: state?.fixedrangepicker?.fromData || FROM_DATA,
+        toData: state?.fixedrangepicker?.toData || TO_DATA,
         periodType: state?.fixedrangepicker?.periodType || "1",
         periodTypes: state?.localConfig?.periodTypes,
         settings: state?.layers?.settings || { expanded: false, options: { opacity: 1 } },

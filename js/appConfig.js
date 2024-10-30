@@ -6,22 +6,21 @@
  * LICENSE file in the root directory of this source tree.
  */
 import appConfigMS from '@mapstore/product/appConfig';
-import DateAPI from './utils/ManageDateUtils';
-import moment from 'moment';
+import { FROM_DATA, TO_DATA } from './utils/ManageDateUtils';
 import MapViewerGC from './pages/MapViewerGC';
 
 const fixedrangepicker = {
     isCollapsedPlugin: false,
-    fromData: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).fromData),
-    toData: new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
+    fromData: FROM_DATA,
+    toData: TO_DATA,
     periodType: "1",
     showFixedRangePicker: true,
     isInteractionDisabled: true
 };
 const freerangepicker = {
     isCollapsedPlugin: false,
-    fromData: new Date(moment().subtract(1, 'month')._d),
-    toData: new Date(moment().subtract(1, 'day')._d),
+    fromData: FROM_DATA,
+    toData: TO_DATA,
     showFreeRangePicker: false,
     isInteractionDisabled: true
 };

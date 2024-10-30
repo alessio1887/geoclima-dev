@@ -13,7 +13,7 @@ import MapViewerCmpGC from '@js/components/viewer/MapViewerCmpGC.jsx';
 import { loadNewMap, loadMapConfigByDateRange } from '../actions/config.js';
 import { initMap } from '../../MapStore2/web/client/actions/map.js';
 import MapViewerContainer from '../../MapStore2/web/client/containers/MapViewer.jsx';
-import moment from 'moment';
+import { FROM_DATA, TO_DATA } from '../utils/ManageDateUtils';
 
 import url from 'url';
 
@@ -48,8 +48,8 @@ class MapViewerPageGC extends React.Component {
 
 export default connect((state) => ({
     mode: urlQuery?.mobile || state?.browser?.mobile ? 'mobile' : 'desktop',
-    fromData: new Date(moment().subtract(1, 'month')._d),
-    toData: new Date(moment().subtract(1, 'day')._d)
+    fromData: FROM_DATA,
+    toData: TO_DATA
 }),
 {   loadNewMap: loadNewMap,
     loadMapConfig: loadMapConfigByDateRange,

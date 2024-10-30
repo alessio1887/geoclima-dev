@@ -7,13 +7,13 @@
 */
 import { LAYER_LOADING, LAYER_LOAD, LAYER_ERROR} from '@mapstore/actions/layers';
 import {MAP_YEAR_CHANGED, MAP_PERIOD_CHANGED, TOGGLE_PLUGIN, OPEN_ALERT, CLOSE_ALERT, COLLAPSE_RANGE_PICKER } from '../actions/fixedrangepicker';
-import DateAPI from '../utils/ManageDateUtils';
+import DateAPI, { FROM_DATA, TO_DATA } from '../utils/ManageDateUtils';
 
 const defaultState = {
     isCollapsedPlugin: false,
     periodType: "1",
-    fromData: new Date(DateAPI.calculateDateFromKeyReal("1").fromData),
-    toData: new Date(DateAPI.calculateDateFromKeyReal("1").toData),
+    fromData: FROM_DATA,
+    toData: TO_DATA,
     showModal: false,
     imgSrc: "",
     map: "geoclima",
