@@ -9,11 +9,10 @@
 import {connect} from 'react-redux';
 import { compose } from 'redux';
 import {setInfoChartVisibility, changeFixedRangeToData, fetchInfoChartData, fetchedInfoChartData, toggleInfoChart,
-    changeChartVariable, changePeriod, changeFromData, changeToData } from '../actions/infochart';
+    changeChartVariable, changePeriod, changeFromData, changeToData, resetInfoChartDates } from '../actions/infochart';
 import InfoChartButton from '../components/buttons/InfoChartButton';
 import InfoChart from '../components/infochart/InfoChart';
-import moment from 'moment';
-import DateAPI, { PERIOD_TYPES } from '../utils/ManageDateUtils';
+import { FROM_DATA, TO_DATA, PERIOD_TYPES } from '../utils/ManageDateUtils';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
 import infoChartReducer from '../reducers/infochart';
 import * as infoChartEpic from '../epics/infochart';
@@ -35,8 +34,8 @@ const InfoChartPlugin = connect(
 const InfoChartPanel = connect((state) => ({
     show: state.infochart && state.infochart.showInfoChartPanel || false,
     infoChartData: {
-        fromData: state.infochart?.infoChartData?.fromData || new Date(DateAPI.calculateDateFromKeyReal("10", moment().subtract(1, 'day')._d).fromData),
-        toData: state.infochart?.infoChartData?.toData || new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
+        fromData: state.infochart?.infoChartData?.fromData || FROM_DATA,
+        toData: state.infochart?.infoChartData?.toData || TO_DATA,
         variable: state.infochart?.infoChartData?.variable || state?.localConfig?.variabileChartPrecipitazione,
         latlng: state.infochart?.infoChartData?.latlng || {},
         periodType: state.infochart?.infoChartData?.periodType || "1",
@@ -52,9 +51,9 @@ const InfoChartPanel = connect((state) => ({
     variabiliChartTemperatura: state?.localConfig?.variabiliChartTemperatura,
     variable: state.infochart?.variable || state?.localConfig?.variabileChartPrecipitazione,
     // Initializes 'fromData' based on Infochart's date range; defaults to a calculated date if missing
-    fromData: state.infochart?.fromData || new Date(DateAPI.calculateDateFromKeyReal("10", moment().subtract(1, 'day')._d).fromData),
+    fromData: state.infochart?.fromData || FROM_DATA,
     // Initializes 'toData' based on Infochart's date range; defaults to a calculated date if missing
-    toData: state.infochart?.toData || new Date(DateAPI.calculateDateFromKeyReal("1", moment().subtract(1, 'day')._d).toData),
+    toData: state.infochart?.toData || TO_DATA,
     periodType: state.infochart?.periodType || "1",
     isInteractionDisabled: state.infochart?.isInteractionDisabled || false
 }), {
@@ -65,7 +64,8 @@ const InfoChartPanel = connect((state) => ({
     onChangeToData: compose(changeToData, (event) => event),
     onChangeFromData: compose(changeFromData, (event) => event),
     onChangeFixedRangeTodata: compose(changeFixedRangeToData, (event) => event),
-    onChangePeriod: compose(changePeriod, (event) => event.key)
+    onChangePeriod: compose(changePeriod, (event) => event.key),
+    onResetInfoChartDates: compose(resetInfoChartDates, (event) => event)
 })(InfoChart);
 
 

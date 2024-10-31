@@ -133,6 +133,9 @@ class InfoChart extends React.Component {
         isCollapsedFormGroup: false,
         alertMessage: null
     };
+    shouldComponentUpdate(newProps) {
+        return newProps.active || newProps.mapinfoActive || newProps.data.length > 0;
+    }
     // Funzione per gestire il click del pulsante
     toggleRangeManager  = () => {
         this.setState(prevState => ({
@@ -305,6 +308,8 @@ class InfoChart extends React.Component {
 
     closePanel = () => {
         this.props.onSetInfoChartVisibility(false);
+        this.props.onResetInfoChartDates(this.props.infoChartData.periodTypes[0].key);
+        this.resetChartZoom();
     }
     formatDataCum(values) {
         let data = [];
@@ -378,7 +383,10 @@ class InfoChart extends React.Component {
             variable: variableId,
             periodType: periodKey
         });
-        // Reset zoom
+        this.resetChartZoom();
+    }
+
+    resetChartZoom = () => {
         const zoomData = {
             startDate: null,
             endDate: null

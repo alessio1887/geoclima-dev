@@ -15,6 +15,7 @@ export const CHART_PERIOD_CHANGED = 'CHART_PERIOD_CHANGED';
 export const FETCH_INFOCHART_DATA = 'FETCH_INFOCHART_DATA';
 export const FETCHED_INFOCHART_DATA = 'FETCHED_INFOCHART_DATA';
 export const TOGGLE_INFOCHART = 'TOGGLE_INFOCHART';
+export const RESET_INFO_CHART_DATES = 'RESET_INFO_CHART_DATES';
 
 export function changeChartVariable(variable) {
     return {
@@ -74,6 +75,15 @@ export function fetchedInfoChartData(data, maskLoading) {
         maskLoading
     };
 }
+
+
+export function resetInfoChartDates(periodType) {
+    return {
+        type: RESET_INFO_CHART_DATES,
+        periodType
+    };
+}
+
 
 /**
  * when fullscreen have to be toggled
