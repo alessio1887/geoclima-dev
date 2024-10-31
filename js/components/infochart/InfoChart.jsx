@@ -120,14 +120,16 @@ class InfoChart extends React.Component {
         },
         onChangeChartDate: () => {}
     }
-
-
     state = {
         // Stato locale per gestire quale range manager mostrare
         activeRangeManager: FIXED_RANGE,
         zoomData: {
+            // x axos
             startDate: null,
-            endDate: null
+            endDate: null,
+            // y axis
+            variabileStart: null,
+            variabileEnd: null
         },
         dragModeChart: null,
         isCollapsedFormGroup: false,
@@ -151,9 +153,14 @@ class InfoChart extends React.Component {
             // set local state
             this.setState({ zoomData });
         }
+        if (eventData['yaxis.range[0]'] && eventData['yaxis.range[1]']) {
+            const { zoomData } = this.state; // Ottieni lo stato attuale
+            zoomData.variabileStart = eventData['yaxis.range[0]'];
+            zoomData.variabileEnd = eventData['yaxis.range[1]'];
+            this.setState({ zoomData });
+        }
         if (eventData.dragmode) {
-            this.setState({ dragModeChart: eventData.dragmode
-            });
+            this.setState({ dragModeChart: eventData.dragmode });
         }
     };
     showChart = () => {
@@ -202,7 +209,8 @@ class InfoChart extends React.Component {
                     range: [this.state.zoomData.startDate || Math.min(...dateObjects), this.state.zoomData.endDate || Math.max(...dateObjects)] // Mantieni il range di zoom
                 },
                 yaxis: {
-                    title: TEMP_LIST.includes(this.props.infoChartData.variable)  ? 'Temperatura (°C)' : 'Valore (mm)'
+                    title: TEMP_LIST.includes(this.props.infoChartData.variable)  ? 'Temperatura (°C)' : 'Valore (mm)',
+                    range: [this.state.zoomData.variabileStart || Math.min(...observedData), this.state.zoomData.variabileEnd || Math.max(...observedData)] // Range di zoom per l'asse Y
                 },
                 margin: this.props.chartStyle.margin,
                 showlegend: true,
@@ -388,8 +396,12 @@ class InfoChart extends React.Component {
 
     resetChartZoom = () => {
         const zoomData = {
+            // x axis
             startDate: null,
-            endDate: null
+            endDate: null,
+            // y axis
+            variabileStart: null,
+            variabileEnd: null
         };
         this.setState({ zoomData });
     }
