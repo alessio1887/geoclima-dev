@@ -7,6 +7,7 @@
 */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Resizable } from 'react-resizable';
 
 import { Collapse, Button, ButtonGroup, Glyphicon, Panel, Grid, FormGroup, Label} from 'react-bootstrap';
 import Message from '../../../MapStore2/web/client/components/I18N/Message';
@@ -21,6 +22,7 @@ import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
 import { PERIOD_TYPES }  from '../../utils/ManageDateUtils';
 import { fillAreas  }  from '../../utils/VariabiliMeteoUtils';
 
+import 'react-resizable/css/styles.css';
 import './infochart.css';
 
 const FIXED_RANGE = "fixed";
@@ -41,7 +43,6 @@ class InfoChart extends React.Component {
     static propTypes = {
         id: PropTypes.string,
         panelClassName: PropTypes.string,
-        panelStyle: PropTypes.object,
         closeGlyph: PropTypes.string,
         onSetInfoChartVisibility: PropTypes.func,
         onFetchInfoChartData: PropTypes.func,
@@ -76,13 +77,6 @@ class InfoChart extends React.Component {
     static defaultProps = {
         id: "mapstore-sarchart-panel",
         panelClassName: "toolbar-panel portal-dialog",
-        panelStyle: {
-            width: "880px",
-            maxWidth: "880px",
-            left: "calc(50% - 440px)",
-            height: "fit-content",
-            top: "0px"
-        },
         closeGlyph: "1-close",
         onSetInfoChartVisibility: () => {},
         onFetchInfoChartData: () => {},
@@ -124,7 +118,7 @@ class InfoChart extends React.Component {
         // Stato locale per gestire quale range manager mostrare
         activeRangeManager: FIXED_RANGE,
         zoomData: {
-            // x axos
+            // x axis
             startDate: null,
             endDate: null,
             // y axis
@@ -133,11 +127,21 @@ class InfoChart extends React.Component {
         },
         dragModeChart: null,
         isCollapsedFormGroup: false,
-        alertMessage: null
+        alertMessage: null,
+        widthResizable: 880,
+        heightResizable: 800
     };
     shouldComponentUpdate(newProps) {
         return newProps.active || newProps.mapinfoActive || newProps.data.length > 0;
     }
+    //
+    onResize = (e, { size }) => {
+        this.setState({
+            widthResizable: size.width,
+            heightResizable: size.height
+        });
+    };
+
     // Funzione per gestire il click del pulsante
     toggleRangeManager  = () => {
         this.setState(prevState => ({
@@ -202,15 +206,15 @@ class InfoChart extends React.Component {
             };
             const dataChart = [trace1, trace2].concat(fillTraces);
             const layoutChart = {
-                width: this.props.chartStyle.width,
-                height: this.props.chartStyle.height,
+                width: this.state.widthResizable - 10,
+                height: this.state.heightResizable - (this.state.isCollapsedFormGroup ? 110 : 400 ), // Set the height based on the collapse state of the FormGroup
                 xaxis: { // Dates format
                     tickformat: '%Y-%m-%d',
-                    range: [this.state.zoomData.startDate || Math.min(...dateObjects), this.state.zoomData.endDate || Math.max(...dateObjects)] // Mantieni il range di zoom
+                    range: [this.state.zoomData.startDate || Math.min(...dateObjects), this.state.zoomData.endDate || Math.max(...dateObjects)]
                 },
                 yaxis: {
                     title: TEMP_LIST.includes(this.props.infoChartData.variable)  ? 'Temperatura (°C)' : 'Valore (mm)',
-                    range: [this.state.zoomData.variabileStart || Math.min(...observedData), this.state.zoomData.variabileEnd || Math.max(...observedData)] // Range di zoom per l'asse Y
+                    range: [this.state.zoomData.variabileStart || Math.min(...observedData), this.state.zoomData.variabileEnd || Math.max(...observedData)]
                 },
                 margin: this.props.chartStyle.margin,
                 showlegend: true,
@@ -230,82 +234,128 @@ class InfoChart extends React.Component {
                     onRelayout={this.handleRelayout}
                     config={{ // Chart toolbar config
                         displayModeBar: true,
-                        modeBarButtonsToRemove: ['autoScale2d']
+                        modeBarButtonsToRemove: ['autoScale2d'],
+                        autosizable: true
                     }}
                 />
             );
         }
         return null;
     }
+    getHeader = () => {
+        return ( <span role="header" style={{ position: 'relative', zIndex: 1000 }}>
+            <span className="layer-settings-metadata-panel-title">Pannello Grafici - Latitudine: {parseFloat(this.props.infoChartData.latlng.lat.toFixed(5))}, Longitudine: {parseFloat(this.props.infoChartData.latlng.lng.toFixed(5))}</span>
+            <button onClick={() => this.closePanel()} className="layer-settings-metadata-panel-close close">{this.props.closeGlyph ? <Glyphicon glyph={this.props.closeGlyph}/> : <span>×</span>}</button>
+        </span>
+        );
+    }
+    getPanelFormGroup = () => {
+        return (
+            <Panel>
+                <Grid fluid style={{paddingTop: 2, paddingBottom: 2}}>
+                    <FormGroup>
+                        <Label className="labels-infochart"><Message msgId="infochart.selectMeteoVariable"/></Label>
+                        <DropdownList
+                            key="charts"
+                            data={this.props.infoChartData?.variableList}
+                            valueField = "id"
+                            textField = "name"
+                            value={this.props.variable}
+                            onChange={this.props.onChangeChartVariable}/>
+                        {/* Alterna tra FixedRangeManager e FreeRangeManager in base a activeRangeManager */}
+                        {this.state.activeRangeManager === FIXED_RANGE ? (
+                            <FixedRangeManager
+                                toData={this.props.toData}
+                                periodType={this.props.periodType}
+                                periodTypes={this.props.infoChartData?.periodTypes}
+                                onChangeToData={this.props.onChangeFixedRangeTodata}
+                                onChangePeriod={this.props.onChangePeriod}
+                                isInteractionDisabled={false}
+                                styleLabels="labels-infochart"
+                            />
+                        ) : (
+                            <FreeRangeManager
+                                fromData={this.props.fromData}
+                                toData={this.props.toData}
+                                onChangeFromData={this.props.onChangeFromData}
+                                onChangeToData={this.props.onChangeToData}
+                                isInteractionDisabled={false}
+                                styleLabels="labels-infochart"
+                            />
+                        )}
+                        <ButtonGroup className="button-group-wrapper">
+                            <Button className="rangepicker-button" onClick={this.handleApplyPeriod} disabled={this.props.isInteractionDisabled}>
+                                <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton"/>
+                            </Button>
+                            <Button className="rangepicker-button" onClick={this.toggleRangeManager } disabled={this.props.isInteractionDisabled}>
+                                <Message msgId={this.state.activeRangeManager === FIXED_RANGE
+                                    ? "gcapp.fixedRangePicker.dateRangeButton"
+                                    : "gcapp.freeRangePicker.dateRangeButton"}  />
+                            </Button>
+                        </ButtonGroup>
+                    </FormGroup>
+                    {this.state.alertMessage && (
+                        <div className="alert-date" >
+                            <strong><Message msgId="warning"/></strong>
+                            <span ><Message msgId={this.state.alertMessage}/></span>
+                        </div>
+                    )}
+                </Grid>
+            </Panel>
+        );
+    }
     getBody = () => {
         return (
-            <Dialog maskLoading={this.props.maskLoading} id={this.props.id} style={this.props.panelStyle} className={this.props.panelClassName}>
-                <span role="header">
-                    <span className="layer-settings-metadata-panel-title">Pannello Grafici - Latitudine: {parseFloat(this.props.infoChartData.latlng.lat.toFixed(5))}, Longitudine: {parseFloat(this.props.infoChartData.latlng.lng.toFixed(5))}</span>
-                    <button onClick={() => this.closePanel()} className="layer-settings-metadata-panel-close close">{this.props.closeGlyph ? <Glyphicon glyph={this.props.closeGlyph}/> : <span>×</span>}</button>
-                </span>
-                <div role="body">
-                    <Button onClick={() => this.setState({ isCollapsedFormGroup: !this.state.isCollapsedFormGroup })}>
-                        {this.state.isCollapsedFormGroup ? 'Espandi' : 'Collassa'}
-                    </Button>
-                    <Collapse in={!this.state.isCollapsedFormGroup}>
-                        <Panel >
-                            <Grid fluid style={{paddingTop: 2, paddingBottom: 2}}>
-                                <FormGroup>
-                                    <Label className="labels-infochart"><Message msgId="infochart.selectMeteoVariable"/></Label>
-                                    <DropdownList
-                                        key="charts"
-                                        data={this.props.infoChartData?.variableList}
-                                        valueField = "id"
-                                        textField = "name"
-                                        value={this.props.variable}
-                                        onChange={this.props.onChangeChartVariable}/>
-                                    {/* Alterna tra FixedRangeManager e FreeRangeManager in base a activeRangeManager */}
-                                    {this.state.activeRangeManager === FIXED_RANGE ? (
-                                        <FixedRangeManager
-                                            toData={this.props.toData}
-                                            periodType={this.props.periodType}
-                                            periodTypes={this.props.infoChartData?.periodTypes}
-                                            onChangeToData={this.props.onChangeFixedRangeTodata}
-                                            onChangePeriod={this.props.onChangePeriod}
-                                            isInteractionDisabled={false}
-                                            styleLabels="labels-infochart"
-                                        />
-                                    ) : (
-                                        <FreeRangeManager
-                                            fromData={this.props.fromData}
-                                            toData={this.props.toData}
-                                            onChangeFromData={this.props.onChangeFromData}
-                                            onChangeToData={this.props.onChangeToData}
-                                            isInteractionDisabled={false}
-                                            styleLabels="labels-infochart"
-                                        />
-                                    )}
-                                    <ButtonGroup className="button-group-wrapper">
-                                        <Button className="rangepicker-button" onClick={this.handleApplyPeriod} disabled={this.props.isInteractionDisabled}>
-                                            <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton"/>
-                                        </Button>
-                                        <Button className="rangepicker-button" onClick={this.toggleRangeManager } disabled={this.props.isInteractionDisabled}>
-                                            <Message msgId={this.state.activeRangeManager === FIXED_RANGE
-                                                ? "gcapp.fixedRangePicker.dateRangeButton"
-                                                : "gcapp.freeRangePicker.dateRangeButton"}  />
-                                        </Button>
-                                    </ButtonGroup>
-                                </FormGroup>
-                                {this.state.alertMessage && (
-                                    <div className="alert-date" >
-                                        <strong><Message msgId="warning"/></strong>
-                                        <span ><Message msgId={this.state.alertMessage}/></span>
-                                    </div>
-                                )}
-                            </Grid>
-                        </Panel>
-                    </Collapse>
-                    {this.showChart()}
+            <Dialog maskLoading={this.props.maskLoading} id={this.props.id}
+                style={{
+                    maxWidth: "1200px",
+                    maxHeight: "990px",
+                    left: "calc(50% - 440px)",
+                    top: "0px",
+                    boxSizing: 'border-box',
+                    width: this.state.widthResizable,
+                    height: this.state.heightResizable,
+                    position: 'relative'
+                }}
+                className={this.props.panelClassName} draggable>
+                {this.getHeader()}
+                <div role="body"
+                    style={{
+                        position: 'relative',
+                        display: "flex",
+                        flexDirection: "column",
+                        width: '100%',
+                        height: '100%'
+                    }}>
+                    <Resizable
+                        width={this.state.widthResizable}
+                        height={this.state.heightResizable}
+                        onResize={this.onResize}
+                        minConstraints={[300, 200]}
+                        maxConstraints={[1200, 990]}
+                        style={{
+                            flexDirection: "column",
+                            bottom: 68,
+                            right: 17
+                        }}>
+                        <div style={{ display: "flex", flexDirection: "column", width: this.state.widthResizable, height: this.state.heightResizable,  padding: '10px'}}>
+                            <div style={{ position: "relative", top: "60px"}}>
+                                <Button onClick={() => this.setState({ isCollapsedFormGroup: !this.state.isCollapsedFormGroup })}
+                                    size="sm">
+                                    {this.state.isCollapsedFormGroup ? 'Espandi' : 'Collassa'}
+                                </Button>
+                                <Collapse in={!this.state.isCollapsedFormGroup}>
+                                    {this.getPanelFormGroup()}
+                                </Collapse>
+                                {this.showChart()}
+                            </div>
+                        </div>
+                    </Resizable>
                 </div>
             </Dialog>
         );
     }
+
     render() {
         return (
             this.props.show ? (
