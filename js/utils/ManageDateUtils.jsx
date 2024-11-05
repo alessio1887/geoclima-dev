@@ -82,7 +82,7 @@ const Api = {
 
 const yesterday = moment().subtract(1, 'day').toDate();
 const { fromData, toData } = Api.calculateDateFromKeyReal("1", yesterday);
-export const FROM_DATA = fromData;
-export const TO_DATA = toData;
+export const FROM_DATA = new Date(fromData);
+export const TO_DATA = new Date(toData);
 
 export default Api;
