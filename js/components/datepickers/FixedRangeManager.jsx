@@ -30,11 +30,11 @@ const FixedRangeManager = (props) => {
             <Label className={props.styleLabels}><Message msgId="gcapp.fixedRangePicker.selectCumulativePeriod" /></Label>
             <DropdownList
                 id="period1"
-                key={props.periodType || "1"}
+                key={props.periodType}
                 data={props.periodTypes}
                 valueField="key"
                 textField="label"
-                value={props.periodType || "1"}
+                value={props.periodType}
                 onChange={props.onChangePeriod}
                 disabled={props.isInteractionDisabled} />
         </div>

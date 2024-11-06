@@ -9,8 +9,8 @@
 import { FREE_RANGE, FIXED_RANGE } from '@js/utils/VariabiliMeteoUtils';
 import { CHARTVARIABLE_CHANGED, TODATA_FIXEDRANGE_CHANGED, FROMDATA_CHANGED,
     TODATA_CHANGED, CHART_PERIOD_CHANGED, SET_INFOCHART_VISIBILITY, FETCH_INFOCHART_DATA,
-    FETCHED_INFOCHART_DATA, RESET_INFO_CHART_DATES, COLLAPSE_RANGE_PICKER, SWITCH_RANGE_MANAGER } from '../actions/infochart';
-import DateAPI, { FROM_DATA, TO_DATA } from '../utils/ManageDateUtils';
+    FETCHED_INFOCHART_DATA, RESET_INFO_CHART_DATES, COLLAPSE_RANGE_PICKER, SWITCH_RANGE_MANAGER, OPEN_ALERT, CLOSE_ALERT } from '../actions/infochart';
+import DateAPI, { FROM_DATA, TO_DATA, PERIOD_TYPES } from '../utils/ManageDateUtils';
 import assign from 'object-assign';
 
 const infoChartDefaultState = {
@@ -18,18 +18,19 @@ const infoChartDefaultState = {
     infoChartData: {
         fromData: FROM_DATA,
         toData: TO_DATA,
-        variable: { "id": "prec", "name": "Precipitazione Minima"},
+        variable: { "id": "prec", "name": "Precipitazione cumulata"},
         latlng: {lat: 0, lng: 0},
-        periodType: "1"
+        periodType: PERIOD_TYPES[0].key
     },
     data: [],
     maskLoading: true,
-    variable: { "id": "prec", "name": "Precipitazione Minima"},
+    variable: { "id": "prec", "name": "Precipitazione cumulata"},
     fromData: FROM_DATA,
     toData: TO_DATA,
-    periodType: "1",
+    periodType: PERIOD_TYPES[0].key,
     isCollapsedFormGroup: false,
-    activeRangeManager: FIXED_RANGE
+    activeRangeManager: FIXED_RANGE,
+    alertMessage: null
 };
 
 function infochart(state = infoChartDefaultState, action) {
@@ -65,7 +66,12 @@ function infochart(state = infoChartDefaultState, action) {
         return assign({}, state, {showInfoChartPanel: action.status, data: action.data, maskLoading: action.maskLoading});
     }
     case FETCH_INFOCHART_DATA: {
-        return assign({}, state, {infoChartData: action.params, data: [], maskLoading: action.maskLoading, isInteractionDisabled: !state.isInteractionDisabled});
+        return assign({}, state, {
+            infoChartData: action.params,
+            data: [],
+            periodType: action.params.periodType,
+            maskLoading: action.maskLoading,
+            isInteractionDisabled: !state.isInteractionDisabled});
     }
     case FETCHED_INFOCHART_DATA: {
         return assign({}, state, {data: action.data, maskLoading: action.maskLoading, isInteractionDisabled: !state.isInteractionDisabled});
@@ -83,23 +89,18 @@ function infochart(state = infoChartDefaultState, action) {
             activeRangeManager: newRangeManager
         };
     }
-    case RESET_INFO_CHART_DATES: {
+    case OPEN_ALERT:
         return {
             ...state,
-            fromData: FROM_DATA,
-            toData: TO_DATA,
-            periodType: action.periodType,
-            variable: { "id": "prec", "name": "Precipitazione Minima"},
-            infoChartData: {
-                ...state.infoChartData,
-                fromData: FROM_DATA,
-                toData: TO_DATA,
-                periodType: action.periodType,
-                variable: { "id": "prec", "name": "Precipitazione Minima"}
-            },
-            isCollapsedFormGroup: false,
-            activeRangeManager: FIXED_RANGE
+            alertMessage: action.alertMessage
         };
+    case CLOSE_ALERT:
+        return {
+            ...state,
+            alertMessage: null
+        };
+    case RESET_INFO_CHART_DATES: {
+        return { ...infoChartDefaultState }; // Creates and returns a copy of the object
     }
     default:
         return state;

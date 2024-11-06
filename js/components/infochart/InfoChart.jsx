@@ -19,7 +19,7 @@ import moment from 'moment';
 import { DropdownList } from 'react-widgets';
 import FixedRangeManager from '../../components/datepickers/FixedRangeManager';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
-import { PERIOD_TYPES }  from '../../utils/ManageDateUtils';
+import DateAPI, { PERIOD_TYPES }  from '../../utils/ManageDateUtils';
 import { fillAreas, FIXED_RANGE }  from '../../utils/VariabiliMeteoUtils';
 
 import 'react-resizable/css/styles.css';
@@ -44,6 +44,7 @@ class InfoChart extends React.Component {
         onSetInfoChartVisibility: PropTypes.func,
         onFetchInfoChartData: PropTypes.func,
         onCollapseRangePicker: PropTypes.func,
+        onResetInfoChartDates: PropTypes.func,
         show: PropTypes.bool,
         infoChartData: PropTypes.object,
         maskLoading: PropTypes.bool,
@@ -71,7 +72,8 @@ class InfoChart extends React.Component {
         styleInfoChartDate: PropTypes.object,
         isInteractionDisabled: PropTypes.bool,
         isCollapsedFormGroup: PropTypes.bool,
-        activeRangeManager: PropTypes.string
+        activeRangeManager: PropTypes.string,
+        alertMessage: PropTypes.string
     }
     static defaultProps = {
         id: "mapstore-sarchart-panel",
@@ -81,6 +83,7 @@ class InfoChart extends React.Component {
         onFetchInfoChartData: () => {},
         onCollapseRangePicker: () => {},
         onSwitchRangeManager: () => {},
+        onResetInfoChartDates: () => {},
         show: false,
         infoChartData: {},
         maskLoading: true,
@@ -126,7 +129,6 @@ class InfoChart extends React.Component {
             variabileEnd: null
         },
         dragModeChart: null,
-        alertMessage: null,
         widthResizable: 880,
         heightResizable: 800
     };
@@ -286,10 +288,10 @@ class InfoChart extends React.Component {
                             </Button>
                         </ButtonGroup>
                     </FormGroup>
-                    {this.state.alertMessage && (
+                    {this.props.alertMessage && (
                         <div className="alert-date" >
                             <strong><Message msgId="warning"/></strong>
-                            <span ><Message msgId={this.state.alertMessage}/></span>
+                            <span ><Message msgId={this.props.alertMessage}/></span>
                         </div>
                     )}
                 </Grid>
@@ -356,7 +358,7 @@ class InfoChart extends React.Component {
 
     closePanel = () => {
         this.props.onSetInfoChartVisibility(false);
-        this.props.onResetInfoChartDates(this.props.infoChartData.periodTypes[0].key);
+        this.props.onResetInfoChartDates();
         this.resetChartZoom();
     }
     formatDataCum(values) {
@@ -395,25 +397,32 @@ class InfoChart extends React.Component {
         const endDate = moment(toData);
 
         if (startDate.isBefore(moment('1991-01-01'))) {
-            this.setState({ alertMessage: "gcapp.errorMessages.dateTooEarly" });
+            this.props.onOpenAlert("gcapp.errorMessages.dateTooEarly");
             return false;
         }
         if (endDate.isBefore(startDate)) {
-            this.setState({ alertMessage: "gcapp.errorMessages.endDateBefore" });
+            this.props.onOpenAlert("gcapp.errorMessages.endDateBefore");
             return false;
         }
         if (endDate.isAfter(startDate.clone().add(1, 'year'))) {
-            this.setState({ alertMessage: "gcapp.errorMessages.rangeTooLarge" });
+            this.props.onOpenAlert("gcapp.errorMessages.rangeTooLarge");
             return false;
         }
         return true;
     };
     handleApplyPeriod = () => {
         // Set fromData, toData, periodKey and variabile meteo
-        const fromData = moment(this.props.fromData).clone().format('YYYY-MM-DD');
-        const toData = moment(this.props.toData).clone().format('YYYY-MM-DD');
-        // Set the period key as the first in the list if necessary if FREE_RANGE
-        const periodKey = this.props.activeRangeManager === FIXED_RANGE ? this.props.periodType : PERIOD_TYPES[0]?.key;
+        let fromData;
+        let periodKey;
+        let toData = moment(this.props.toData).clone().format('YYYY-MM-DD');
+        if ( this.props.activeRangeManager === FIXED_RANGE) {
+            fromData = DateAPI.calculateDateFromKeyReal( this.props.periodType, toData).fromData;
+            periodKey = this.props.periodType;
+        } else {
+            fromData = moment(this.props.fromData).clone().format('YYYY-MM-DD');
+            // set default period
+            periodKey = PERIOD_TYPES[0]?.key;
+        }
         const variableId = this.props.variable.id || this.props.variable;
         // Date validations
         if (!this.validateDateRange(fromData, toData)) {
@@ -421,7 +430,7 @@ class InfoChart extends React.Component {
         }
         // Clear alert message if validations pass
         if (this.state.alertMessage !== null) {
-            this.setState({ alertMessage: null });
+            this.props.onCloseAlert();
         }
         // Ensure dates are in 'YYYY-MM-DD' format before making the fetch call
         this.props.onFetchInfoChartData({

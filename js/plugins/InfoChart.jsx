@@ -9,7 +9,8 @@
 import {connect} from 'react-redux';
 import { compose } from 'redux';
 import {setInfoChartVisibility, changeFixedRangeToData, fetchInfoChartData, fetchedInfoChartData, toggleInfoChart,
-    changeChartVariable, changePeriod, changeFromData, changeToData, resetInfoChartDates, collapseRangePicker, switchRangeManager } from '../actions/infochart';
+    changeChartVariable, changePeriod, changeFromData, changeToData, resetInfoChartDates, collapseRangePicker,
+    switchRangeManager, openAlert, closeAlert } from '../actions/infochart';
 import InfoChartButton from '../components/buttons/InfoChartButton';
 import InfoChart from '../components/infochart/InfoChart';
 import { FROM_DATA, TO_DATA, PERIOD_TYPES } from '../utils/ManageDateUtils';
@@ -39,7 +40,7 @@ const InfoChartPanel = connect((state) => ({
         toData: state.infochart?.infoChartData?.toData || TO_DATA,
         variable: state.infochart?.infoChartData?.variable || state?.localConfig?.variabileChartPrecipitazione,
         latlng: state.infochart?.infoChartData?.latlng || {},
-        periodType: state.infochart?.infoChartData?.periodType || "1",
+        periodType: state.infochart?.infoChartData?.periodType || PERIOD_TYPES[0].key,
         periodTypes: state?.localConfig?.periodTypes || PERIOD_TYPES,
         variableList: state?.localConfig?.variabiliChartList
     },
@@ -55,10 +56,11 @@ const InfoChartPanel = connect((state) => ({
     fromData: state.infochart?.fromData || FROM_DATA,
     // Initializes 'toData' based on Infochart's date range; defaults to a calculated date if missing
     toData: state.infochart?.toData || TO_DATA,
-    periodType: state.infochart?.periodType || "1",
+    periodType: state.infochart?.periodType || PERIOD_TYPES[0].key,
     isInteractionDisabled: state.infochart?.isInteractionDisabled || false,
     isCollapsedFormGroup: state.infochart?.isCollapsedFormGroup || false,
-    activeRangeManager: state.infochart?.activeRangeManager || FREE_RANGE
+    activeRangeManager: state.infochart?.activeRangeManager || FREE_RANGE,
+    alertMessage: state.infochart?.alertMessage || null
 }), {
     onSetInfoChartVisibility: setInfoChartVisibility,
     onFetchInfoChartData: fetchInfoChartData,
@@ -68,9 +70,11 @@ const InfoChartPanel = connect((state) => ({
     onChangeFromData: compose(changeFromData, (event) => event),
     onChangeFixedRangeTodata: compose(changeFixedRangeToData, (event) => event),
     onChangePeriod: compose(changePeriod, (event) => event.key),
-    onResetInfoChartDates: compose(resetInfoChartDates, (event) => event),
+    onResetInfoChartDates: resetInfoChartDates,
     onCollapseRangePicker: collapseRangePicker,
-    onSwitchRangeManager: switchRangeManager
+    onSwitchRangeManager: switchRangeManager,
+    onOpenAlert: openAlert,
+    onCloseAlert: closeAlert
 })(InfoChart);
 
 

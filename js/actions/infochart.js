@@ -18,6 +18,8 @@ export const TOGGLE_INFOCHART = 'TOGGLE_INFOCHART';
 export const RESET_INFO_CHART_DATES = 'RESET_INFO_CHART_DATES';
 export const COLLAPSE_RANGE_PICKER = 'INFOCHART:COLLAPSE_RANGE_PICKER';
 export const SWITCH_RANGE_MANAGER = 'INFOCHART:SWITCH_RANGE_MANAGER';
+export const OPEN_ALERT = 'INFOCHART:OPEN_ALERT';
+export const CLOSE_ALERT = 'INFOCHART:CLOSE_ALERT';
 
 export function changeChartVariable(variable) {
     return {
@@ -79,10 +81,9 @@ export function fetchedInfoChartData(data, maskLoading) {
 }
 
 
-export function resetInfoChartDates(periodType) {
+export function resetInfoChartDates() {
     return {
-        type: RESET_INFO_CHART_DATES,
-        periodType
+        type: RESET_INFO_CHART_DATES
     };
 }
 
@@ -111,5 +112,17 @@ export function collapseRangePicker() {
 export function switchRangeManager() {
     return {
         type: SWITCH_RANGE_MANAGER
+    };
+}
+
+export function openAlert(alertMessage) {
+    return {
+        type: OPEN_ALERT,
+        alertMessage
+    };
+}
+export function closeAlert() {
+    return {
+        type: CLOSE_ALERT
     };
 }
