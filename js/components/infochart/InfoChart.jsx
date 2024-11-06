@@ -334,7 +334,9 @@ class InfoChart extends React.Component {
                         <div style={{ display: "flex", flexDirection: "column", width: this.state.widthResizable, height: this.state.heightResizable,  padding: '10px'}}>
                             <div style={{ position: "relative", top: "60px"}}>
                                 <Button onClick={this.props.onCollapseRangePicker}>
-                                    {this.props.isCollapsedFormGroup ? 'Espandi' : 'Collassa'}
+                                    <Message msgId={this.props.isCollapsedFormGroup
+                                        ? "gcapp.infochart.expand"
+                                        : "gcapp.infochart.collapse"}  />
                                 </Button>
                                 <Collapse in={!this.props.isCollapsedFormGroup}>
                                     {this.getPanelFormGroup()}

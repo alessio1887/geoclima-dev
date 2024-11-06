@@ -21,7 +21,11 @@
               "rangeTooLarge": "L'intervallo di date non può superare un anno.",
               "dateTooEarly": "La data selezionata non può essere precedente al 1-01-1991."
             },
-            "applyPeriodButton": " Applica periodo"
+            "applyPeriodButton": " Applica periodo",
+            "infochart": {
+              "collapse": "Collassa",
+              "expand": "Espandi"
+            }
         },
         "infochart": {
             "tooltipDeactivate": "Disattiva visualizzazione grafico",
