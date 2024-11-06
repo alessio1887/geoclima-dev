@@ -16,6 +16,8 @@ export const FETCH_INFOCHART_DATA = 'FETCH_INFOCHART_DATA';
 export const FETCHED_INFOCHART_DATA = 'FETCHED_INFOCHART_DATA';
 export const TOGGLE_INFOCHART = 'TOGGLE_INFOCHART';
 export const RESET_INFO_CHART_DATES = 'RESET_INFO_CHART_DATES';
+export const COLLAPSE_RANGE_PICKER = 'INFOCHART:COLLAPSE_RANGE_PICKER';
+export const SWITCH_RANGE_MANAGER = 'INFOCHART:SWITCH_RANGE_MANAGER';
 
 export function changeChartVariable(variable) {
     return {
@@ -99,4 +101,15 @@ export function toggleInfoChart(enable, elementSelector) {
         elementSelector
     };
 }
+// To collapse the InfoChart's range picker
+export function collapseRangePicker() {
+    return {
+        type: COLLAPSE_RANGE_PICKER
+    };
+}
 
+export function switchRangeManager() {
+    return {
+        type: SWITCH_RANGE_MANAGER
+    };
+}

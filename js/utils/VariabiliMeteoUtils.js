@@ -7,6 +7,10 @@
  */
 import ConfigUtils from '@mapstore/utils/ConfigUtils';
 
+
+export const FIXED_RANGE = "fixed_range_picker";
+export const FREE_RANGE = "free_range_picker";
+
 export function isVariabiliMeteoLayer(layerName) {
     const VARIABILI_METEO = ConfigUtils.getConfigProp('variabiliMeteo');
     let check = false;

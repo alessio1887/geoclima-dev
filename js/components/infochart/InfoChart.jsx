@@ -20,13 +20,10 @@ import { DropdownList } from 'react-widgets';
 import FixedRangeManager from '../../components/datepickers/FixedRangeManager';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
 import { PERIOD_TYPES }  from '../../utils/ManageDateUtils';
-import { fillAreas  }  from '../../utils/VariabiliMeteoUtils';
+import { fillAreas, FIXED_RANGE }  from '../../utils/VariabiliMeteoUtils';
 
 import 'react-resizable/css/styles.css';
 import './infochart.css';
-
-const FIXED_RANGE = "fixed";
-const FREE_RANGE = "free";
 
 /**
   * Component used to show a panel with the charts data sar
@@ -46,6 +43,7 @@ class InfoChart extends React.Component {
         closeGlyph: PropTypes.string,
         onSetInfoChartVisibility: PropTypes.func,
         onFetchInfoChartData: PropTypes.func,
+        onCollapseRangePicker: PropTypes.func,
         show: PropTypes.bool,
         infoChartData: PropTypes.object,
         maskLoading: PropTypes.bool,
@@ -71,8 +69,9 @@ class InfoChart extends React.Component {
         periodType: PropTypes.string,
         classNameInfoChartDate: PropTypes.string,
         styleInfoChartDate: PropTypes.object,
-        onChangeChartDate: PropTypes.func,
-        isInteractionDisabled: PropTypes.bool
+        isInteractionDisabled: PropTypes.bool,
+        isCollapsedFormGroup: PropTypes.bool,
+        activeRangeManager: PropTypes.string
     }
     static defaultProps = {
         id: "mapstore-sarchart-panel",
@@ -80,6 +79,8 @@ class InfoChart extends React.Component {
         closeGlyph: "1-close",
         onSetInfoChartVisibility: () => {},
         onFetchInfoChartData: () => {},
+        onCollapseRangePicker: () => {},
+        onSwitchRangeManager: () => {},
         show: false,
         infoChartData: {},
         maskLoading: true,
@@ -112,11 +113,10 @@ class InfoChart extends React.Component {
             position: 'absolute',
             height: '100%'
         },
-        onChangeChartDate: () => {}
+        isCollapsedFormGroup: false
     }
     state = {
         // Stato locale per gestire quale range manager mostrare
-        activeRangeManager: FIXED_RANGE,
         zoomData: {
             // x axis
             startDate: null,
@@ -126,7 +126,6 @@ class InfoChart extends React.Component {
             variabileEnd: null
         },
         dragModeChart: null,
-        isCollapsedFormGroup: false,
         alertMessage: null,
         widthResizable: 880,
         heightResizable: 800
@@ -140,13 +139,6 @@ class InfoChart extends React.Component {
             widthResizable: size.width,
             heightResizable: size.height
         });
-    };
-
-    // Funzione per gestire il click del pulsante
-    toggleRangeManager  = () => {
-        this.setState(prevState => ({
-            activeRangeManager: prevState.activeRangeManager === FIXED_RANGE ? FREE_RANGE : FIXED_RANGE
-        }));
     };
     handleRelayout = (eventData) => {
         if (eventData['xaxis.range[0]'] && eventData['xaxis.range[1]']) {
@@ -207,7 +199,7 @@ class InfoChart extends React.Component {
             const dataChart = [trace1, trace2].concat(fillTraces);
             const layoutChart = {
                 width: this.state.widthResizable - 10,
-                height: this.state.heightResizable - (this.state.isCollapsedFormGroup ? 110 : 400 ), // Set the height based on the collapse state of the FormGroup
+                height: this.state.heightResizable - (this.props.isCollapsedFormGroup ? 110 : 400 ), // Set the height based on the collapse state of the FormGroup
                 xaxis: { // Dates format
                     tickformat: '%Y-%m-%d',
                     range: [this.state.zoomData.startDate || Math.min(...dateObjects), this.state.zoomData.endDate || Math.max(...dateObjects)]
@@ -244,7 +236,7 @@ class InfoChart extends React.Component {
     }
     getHeader = () => {
         return ( <span role="header" style={{ position: 'relative', zIndex: 1000 }}>
-            <span className="layer-settings-metadata-panel-title">Pannello Grafici - Latitudine: {parseFloat(this.props.infoChartData.latlng.lat.toFixed(5))}, Longitudine: {parseFloat(this.props.infoChartData.latlng.lng.toFixed(5))}</span>
+            <span>Pannello Grafici - Latitudine: {parseFloat(this.props.infoChartData.latlng.lat.toFixed(5))}, Longitudine: {parseFloat(this.props.infoChartData.latlng.lng.toFixed(5))}</span>
             <button onClick={() => this.closePanel()} className="layer-settings-metadata-panel-close close">{this.props.closeGlyph ? <Glyphicon glyph={this.props.closeGlyph}/> : <span>×</span>}</button>
         </span>
         );
@@ -263,7 +255,7 @@ class InfoChart extends React.Component {
                             value={this.props.variable}
                             onChange={this.props.onChangeChartVariable}/>
                         {/* Alterna tra FixedRangeManager e FreeRangeManager in base a activeRangeManager */}
-                        {this.state.activeRangeManager === FIXED_RANGE ? (
+                        {this.props.activeRangeManager === FIXED_RANGE ? (
                             <FixedRangeManager
                                 toData={this.props.toData}
                                 periodType={this.props.periodType}
@@ -287,8 +279,8 @@ class InfoChart extends React.Component {
                             <Button className="rangepicker-button" onClick={this.handleApplyPeriod} disabled={this.props.isInteractionDisabled}>
                                 <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton"/>
                             </Button>
-                            <Button className="rangepicker-button" onClick={this.toggleRangeManager } disabled={this.props.isInteractionDisabled}>
-                                <Message msgId={this.state.activeRangeManager === FIXED_RANGE
+                            <Button className="rangepicker-button" onClick={ this.props.onSwitchRangeManager } disabled={this.props.isInteractionDisabled}>
+                                <Message msgId={this.props.activeRangeManager === FIXED_RANGE
                                     ? "gcapp.fixedRangePicker.dateRangeButton"
                                     : "gcapp.freeRangePicker.dateRangeButton"}  />
                             </Button>
@@ -312,12 +304,11 @@ class InfoChart extends React.Component {
                     maxHeight: "990px",
                     left: "calc(50% - 440px)",
                     top: "0px",
-                    boxSizing: 'border-box',
                     width: this.state.widthResizable,
                     height: this.state.heightResizable,
                     position: 'relative'
                 }}
-                className={this.props.panelClassName} draggable>
+                className={this.props.panelClassName}>
                 {this.getHeader()}
                 <div role="body"
                     style={{
@@ -340,11 +331,10 @@ class InfoChart extends React.Component {
                         }}>
                         <div style={{ display: "flex", flexDirection: "column", width: this.state.widthResizable, height: this.state.heightResizable,  padding: '10px'}}>
                             <div style={{ position: "relative", top: "60px"}}>
-                                <Button onClick={() => this.setState({ isCollapsedFormGroup: !this.state.isCollapsedFormGroup })}
-                                    size="sm">
-                                    {this.state.isCollapsedFormGroup ? 'Espandi' : 'Collassa'}
+                                <Button onClick={this.props.onCollapseRangePicker}>
+                                    {this.props.isCollapsedFormGroup ? 'Espandi' : 'Collassa'}
                                 </Button>
-                                <Collapse in={!this.state.isCollapsedFormGroup}>
+                                <Collapse in={!this.props.isCollapsedFormGroup}>
                                     {this.getPanelFormGroup()}
                                 </Collapse>
                                 {this.showChart()}
@@ -423,7 +413,7 @@ class InfoChart extends React.Component {
         const fromData = moment(this.props.fromData).clone().format('YYYY-MM-DD');
         const toData = moment(this.props.toData).clone().format('YYYY-MM-DD');
         // Set the period key as the first in the list if necessary if FREE_RANGE
-        const periodKey = this.state.activeRangeManager === FIXED_RANGE ? this.props.periodType : PERIOD_TYPES[0]?.key;
+        const periodKey = this.props.activeRangeManager === FIXED_RANGE ? this.props.periodType : PERIOD_TYPES[0]?.key;
         const variableId = this.props.variable.id || this.props.variable;
         // Date validations
         if (!this.validateDateRange(fromData, toData)) {

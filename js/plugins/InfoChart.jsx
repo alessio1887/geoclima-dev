@@ -9,7 +9,7 @@
 import {connect} from 'react-redux';
 import { compose } from 'redux';
 import {setInfoChartVisibility, changeFixedRangeToData, fetchInfoChartData, fetchedInfoChartData, toggleInfoChart,
-    changeChartVariable, changePeriod, changeFromData, changeToData, resetInfoChartDates } from '../actions/infochart';
+    changeChartVariable, changePeriod, changeFromData, changeToData, resetInfoChartDates, collapseRangePicker, switchRangeManager } from '../actions/infochart';
 import InfoChartButton from '../components/buttons/InfoChartButton';
 import InfoChart from '../components/infochart/InfoChart';
 import { FROM_DATA, TO_DATA, PERIOD_TYPES } from '../utils/ManageDateUtils';
@@ -17,6 +17,7 @@ import { createPlugin } from '@mapstore/utils/PluginsUtils';
 import infoChartReducer from '../reducers/infochart';
 import * as infoChartEpic from '../epics/infochart';
 import assign from 'object-assign';
+import { FREE_RANGE } from '@js/utils/VariabiliMeteoUtils';
 
 const mapStateToProps = (state) => ({
     active: state && state.controls && state.controls.chartinfo && state.controls.chartinfo.enabled
@@ -55,7 +56,9 @@ const InfoChartPanel = connect((state) => ({
     // Initializes 'toData' based on Infochart's date range; defaults to a calculated date if missing
     toData: state.infochart?.toData || TO_DATA,
     periodType: state.infochart?.periodType || "1",
-    isInteractionDisabled: state.infochart?.isInteractionDisabled || false
+    isInteractionDisabled: state.infochart?.isInteractionDisabled || false,
+    isCollapsedFormGroup: state.infochart?.isCollapsedFormGroup || false,
+    activeRangeManager: state.infochart?.activeRangeManager || FREE_RANGE
 }), {
     onSetInfoChartVisibility: setInfoChartVisibility,
     onFetchInfoChartData: fetchInfoChartData,
@@ -65,7 +68,9 @@ const InfoChartPanel = connect((state) => ({
     onChangeFromData: compose(changeFromData, (event) => event),
     onChangeFixedRangeTodata: compose(changeFixedRangeToData, (event) => event),
     onChangePeriod: compose(changePeriod, (event) => event.key),
-    onResetInfoChartDates: compose(resetInfoChartDates, (event) => event)
+    onResetInfoChartDates: compose(resetInfoChartDates, (event) => event),
+    onCollapseRangePicker: collapseRangePicker,
+    onSwitchRangeManager: switchRangeManager
 })(InfoChart);
 
 
