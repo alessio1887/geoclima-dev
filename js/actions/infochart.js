@@ -20,6 +20,8 @@ export const COLLAPSE_RANGE_PICKER = 'INFOCHART:COLLAPSE_RANGE_PICKER';
 export const SWITCH_RANGE_MANAGER = 'INFOCHART:SWITCH_RANGE_MANAGER';
 export const OPEN_ALERT = 'INFOCHART:OPEN_ALERT';
 export const CLOSE_ALERT = 'INFOCHART:CLOSE_ALERT';
+export const SET_CHART_RELAYOUT = 'INFOCHART:SET_CHART_RELAYOUT';
+export const RESET_CHART_RELAYOUT = 'INFOCHART:RESET_CHART_RELAYOUT';
 
 export function changeChartVariable(variable) {
     return {
@@ -124,5 +126,18 @@ export function openAlert(alertMessage) {
 export function closeAlert() {
     return {
         type: CLOSE_ALERT
+    };
+}
+
+export function setChartRelayout(chartRelayout) {
+    return {
+        type: SET_CHART_RELAYOUT,
+        chartRelayout
+    };
+}
+
+export function resetChartRelayout() {
+    return {
+        type: RESET_CHART_RELAYOUT
     };
 }

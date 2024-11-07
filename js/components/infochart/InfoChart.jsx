@@ -45,6 +45,8 @@ class InfoChart extends React.Component {
         onFetchInfoChartData: PropTypes.func,
         onCollapseRangePicker: PropTypes.func,
         onResetInfoChartDates: PropTypes.func,
+        onSetChartRelayout: PropTypes.func,
+        onResetChartRelayout: PropTypes.func,
         show: PropTypes.bool,
         infoChartData: PropTypes.object,
         maskLoading: PropTypes.bool,
@@ -73,7 +75,8 @@ class InfoChart extends React.Component {
         isInteractionDisabled: PropTypes.bool,
         isCollapsedFormGroup: PropTypes.bool,
         activeRangeManager: PropTypes.string,
-        alertMessage: PropTypes.string
+        alertMessage: PropTypes.string,
+        chartRelayout: PropTypes.object
     }
     static defaultProps = {
         id: "mapstore-sarchart-panel",
@@ -84,6 +87,8 @@ class InfoChart extends React.Component {
         onCollapseRangePicker: () => {},
         onSwitchRangeManager: () => {},
         onResetInfoChartDates: () => {},
+        onSetChartRelayout: () => {},
+        onResetChartRelayout: () => {},
         show: false,
         infoChartData: {},
         maskLoading: true,
@@ -119,16 +124,6 @@ class InfoChart extends React.Component {
         isCollapsedFormGroup: false
     }
     state = {
-        // Stato locale per gestire quale range manager mostrare
-        zoomData: {
-            // x axis
-            startDate: null,
-            endDate: null,
-            // y axis
-            variabileStart: null,
-            variabileEnd: null
-        },
-        dragModeChart: null,
         widthResizable: 880,
         heightResizable: 800
     };
@@ -143,23 +138,19 @@ class InfoChart extends React.Component {
         });
     };
     handleRelayout = (eventData) => {
+        const zoomData = this.props.chartRelayout ? { ...this.props.chartRelayout } : {};
         if (eventData['xaxis.range[0]'] && eventData['xaxis.range[1]']) {
-            const zoomData = {
-                startDate: new Date(eventData['xaxis.range[0]']),
-                endDate: new Date(eventData['xaxis.range[1]'])
-            };
-            // set local state
-            this.setState({ zoomData });
+            zoomData.startDate = new Date(eventData['xaxis.range[0]']);
+            zoomData.endDate = new Date(eventData['xaxis.range[1]']);
         }
         if (eventData['yaxis.range[0]'] && eventData['yaxis.range[1]']) {
-            const { zoomData } = this.state; // Ottieni lo stato attuale
             zoomData.variabileStart = eventData['yaxis.range[0]'];
             zoomData.variabileEnd = eventData['yaxis.range[1]'];
-            this.setState({ zoomData });
         }
         if (eventData.dragmode) {
-            this.setState({ dragModeChart: eventData.dragmode });
+            zoomData.dragmode = eventData.dragmode;
         }
+        this.props.onSetChartRelayout(zoomData);
     };
     showChart = () => {
         if (!this.props.maskLoading) {
@@ -204,11 +195,11 @@ class InfoChart extends React.Component {
                 height: this.state.heightResizable - (this.props.isCollapsedFormGroup ? 110 : 400 ), // Set the height based on the collapse state of the FormGroup
                 xaxis: { // Dates format
                     tickformat: '%Y-%m-%d',
-                    range: [this.state.zoomData.startDate || Math.min(...dateObjects), this.state.zoomData.endDate || Math.max(...dateObjects)]
+                    range: [this.props.chartRelayout?.startDate || Math.min(...dateObjects), this.props.chartRelayout?.endDate || Math.max(...dateObjects)]
                 },
                 yaxis: {
                     title: TEMP_LIST.includes(this.props.infoChartData.variable)  ? 'Temperatura (°C)' : 'Valore (mm)',
-                    range: [this.state.zoomData.variabileStart || Math.min(...observedData), this.state.zoomData.variabileEnd || Math.max(...observedData)]
+                    range: [this.props.chartRelayout?.variabileStart || Math.min(...observedData), this.props.chartRelayout?.variabileEnd || Math.max(...observedData)]
                 },
                 margin: this.props.chartStyle.margin,
                 showlegend: true,
@@ -218,7 +209,7 @@ class InfoChart extends React.Component {
                     x: 0.5,
                     y: -0.2
                 },
-                dragmode: this.state.dragModeChart
+                dragmode: this.props.chartRelayout?.dragmode
             };
             return (
                 <Plot
@@ -361,7 +352,7 @@ class InfoChart extends React.Component {
     closePanel = () => {
         this.props.onSetInfoChartVisibility(false);
         this.props.onResetInfoChartDates();
-        this.resetChartZoom();
+        this.props.onResetChartRelayout();
     }
     formatDataCum(values) {
         let data = [];
@@ -431,7 +422,7 @@ class InfoChart extends React.Component {
             return;
         }
         // Clear alert message if validations pass
-        if (this.state.alertMessage !== null) {
+        if (this.state.alertMessage) {
             this.props.onCloseAlert();
         }
         // Ensure dates are in 'YYYY-MM-DD' format before making the fetch call
@@ -442,19 +433,7 @@ class InfoChart extends React.Component {
             variable: variableId,
             periodType: periodKey
         });
-        this.resetChartZoom();
-    }
-
-    resetChartZoom = () => {
-        const zoomData = {
-            // x axis
-            startDate: null,
-            endDate: null,
-            // y axis
-            variabileStart: null,
-            variabileEnd: null
-        };
-        this.setState({ zoomData });
+        this.props.onResetChartRelayout();
     }
 }
 
