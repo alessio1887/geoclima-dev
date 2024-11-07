@@ -173,14 +173,14 @@ class InfoChart extends React.Component {
             const climaLabel = "Climatologia " + unit;
             const currentYearLabel = "Anno in corso " + unit;
 
-            const dateObjects = chartData.map(item => new Date(item.data));
+            const dates = chartData.map(item => new Date(item.data));
             const observedData = chartData.map(item => item.st_value);
             const climatologicalData = chartData.map(item => item.st_value_clima);
-            const fillTraces = fillAreas(dateObjects, observedData, climatologicalData, this.props.infoChartData.variable);
+            const fillTraces = fillAreas(dates, observedData, climatologicalData, this.props.infoChartData.variable);
 
             const colorTraceObserved = this.props.infoChartData.variable === PREC ? 'rgba(0, 0, 255, 1)' : 'rgba(255, 0, 0, 1)';
             const trace1 = {
-                x: dateObjects,
+                x: dates,
                 y: climatologicalData,
                 mode: 'lines',
                 name: climaLabel,
@@ -188,7 +188,7 @@ class InfoChart extends React.Component {
             };
 
             const trace2 = {
-                x: dateObjects,
+                x: dates,
                 y: observedData,
                 mode: 'lines',
                 name: currentYearLabel,
@@ -200,11 +200,12 @@ class InfoChart extends React.Component {
                 height: this.state.heightResizable - (this.props.isCollapsedFormGroup ? 110 : 400 ), // Set the height based on the collapse state of the FormGroup
                 xaxis: { // Dates format
                     tickformat: '%Y-%m-%d',
-                    range: [this.props.chartRelayout?.startDate || Math.min(...dateObjects), this.props.chartRelayout?.endDate || Math.max(...dateObjects)]
+                    range: [this.props.chartRelayout?.startDate || Math.min(...dates), this.props.chartRelayout?.endDate || Math.max(...dates)]
                 },
                 yaxis: {
                     title: TEMP_LIST.includes(this.props.infoChartData.variable)  ? 'Temperatura (°C)' : 'Valore (mm)',
-                    range: [this.props.chartRelayout?.variabileStart || Math.min(...observedData), this.props.chartRelayout?.variabileEnd || Math.max(...observedData)]
+                    range: [this.props.chartRelayout?.variabileStart || Math.min(...observedData, ...climatologicalData),
+                        this.props.chartRelayout?.variabileEnd || Math.max(...observedData, ...climatologicalData)]
                 },
                 margin: this.props.chartStyle.margin,
                 showlegend: true,
