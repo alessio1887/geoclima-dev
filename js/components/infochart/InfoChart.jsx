@@ -105,10 +105,10 @@ class InfoChart extends React.Component {
         mapinfoActive: false,
         chartStyle: {
             margin: {
-                top: 5,
-                right: 5,
-                left: 5,
-                bottom: 5
+                t: 40,
+                r: 60,
+                l: 60,
+                b: 60
             },
             width: 850,
             height: 400
@@ -138,19 +138,24 @@ class InfoChart extends React.Component {
         });
     };
     handleRelayout = (eventData) => {
-        const zoomData = this.props.chartRelayout ? { ...this.props.chartRelayout } : {};
-        if (eventData['xaxis.range[0]'] && eventData['xaxis.range[1]']) {
-            zoomData.startDate = new Date(eventData['xaxis.range[0]']);
-            zoomData.endDate = new Date(eventData['xaxis.range[1]']);
+        // Autoscale case: reset zoom data to default values
+        if (eventData['xaxis.autorange'] || eventData['yaxis.autorange']) {
+            this.props.onResetChartRelayout();
+        } else {
+            const zoomData = this.props.chartRelayout ? { ...this.props.chartRelayout } : {};
+            if (eventData['xaxis.range[0]'] && eventData['xaxis.range[1]']) {
+                zoomData.startDate = new Date(eventData['xaxis.range[0]']);
+                zoomData.endDate = new Date(eventData['xaxis.range[1]']);
+            }
+            if (eventData['yaxis.range[0]'] && eventData['yaxis.range[1]']) {
+                zoomData.variabileStart = eventData['yaxis.range[0]'];
+                zoomData.variabileEnd = eventData['yaxis.range[1]'];
+            }
+            if (eventData.dragmode) {
+                zoomData.dragmode = eventData.dragmode;
+            }
+            this.props.onSetChartRelayout(zoomData);
         }
-        if (eventData['yaxis.range[0]'] && eventData['yaxis.range[1]']) {
-            zoomData.variabileStart = eventData['yaxis.range[0]'];
-            zoomData.variabileEnd = eventData['yaxis.range[1]'];
-        }
-        if (eventData.dragmode) {
-            zoomData.dragmode = eventData.dragmode;
-        }
-        this.props.onSetChartRelayout(zoomData);
     };
     showChart = () => {
         if (!this.props.maskLoading) {
@@ -219,7 +224,7 @@ class InfoChart extends React.Component {
                     onRelayout={this.handleRelayout}
                     config={{ // Chart toolbar config
                         displayModeBar: true,
-                        modeBarButtonsToRemove: ['autoScale2d'],
+                        modeBarButtonsToRemove: ['resetScale2d'],
                         autosizable: true
                     }}
                 />
