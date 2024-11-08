@@ -303,8 +303,7 @@ class InfoChart extends React.Component {
                     left: "calc(50% - 440px)",
                     top: "0px",
                     width: this.props.infoChartSize.widthResizable,
-                    height: this.props.infoChartSize.heightResizable,
-                    position: 'relative'
+                    height: "fit-content"
                 }}
                 className={this.props.panelClassName}>
                 {this.getHeader()}
@@ -323,12 +322,12 @@ class InfoChart extends React.Component {
                         minConstraints={[400, 600]}
                         style={{
                             flexDirection: "column",
-                            bottom: 68,
+                            top: 10,
                             right: 17
                         }}>
                         <div style={{ display: "flex", flexDirection: "column",
-                            width: this.props.infoChartSize.widthResizable, height: this.props.infoChartSize.heightResizable,  padding: '10px'}}>
-                            <div style={{ position: "relative", top: "60px"}}>
+                            width: this.props.infoChartSize.widthResizable,  padding: '10px'}}>
+                            <div style={{ position: "relative", top: "-15px"}}>
                                 <Button onClick={this.props.onCollapseRangePicker}>
                                     <Message msgId={this.props.isCollapsedFormGroup
                                         ? "gcapp.infochart.expand"
