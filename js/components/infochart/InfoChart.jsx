@@ -427,7 +427,7 @@ class InfoChart extends React.Component {
             return;
         }
         // Clear alert message if validations pass
-        if (this.state.alertMessage) {
+        if (this.props.alertMessage) {
             this.props.onCloseAlert();
         }
         // Ensure dates are in 'YYYY-MM-DD' format before making the fetch call
