@@ -10,7 +10,7 @@ import { FREE_RANGE, FIXED_RANGE } from '@js/utils/VariabiliMeteoUtils';
 import { CHARTVARIABLE_CHANGED, TODATA_FIXEDRANGE_CHANGED, FROMDATA_CHANGED,
     TODATA_CHANGED, CHART_PERIOD_CHANGED, SET_INFOCHART_VISIBILITY, FETCH_INFOCHART_DATA,
     FETCHED_INFOCHART_DATA, RESET_INFO_CHART_DATES, COLLAPSE_RANGE_PICKER, SWITCH_RANGE_MANAGER,
-    OPEN_ALERT, CLOSE_ALERT, SET_CHART_RELAYOUT, RESET_CHART_RELAYOUT } from '../actions/infochart';
+    OPEN_ALERT, CLOSE_ALERT, SET_CHART_RELAYOUT, RESET_CHART_RELAYOUT, RESIZE_INFOCHART } from '../actions/infochart';
 import DateAPI, { FROM_DATA, TO_DATA, PERIOD_TYPES } from '../utils/ManageDateUtils';
 import assign from 'object-assign';
 
@@ -38,6 +38,10 @@ const infoChartDefaultState = {
         variabileStart: null,
         variabileEnd: null,
         dragmode: null
+    },
+    infoChartSize: {
+        widthResizable: 880,
+        heightResizable: 880
     }
 };
 
@@ -122,6 +126,14 @@ function infochart(state = infoChartDefaultState, action) {
         return {
             ...state,
             chartRelayout: {}
+        };
+    case RESIZE_INFOCHART:
+        return  {
+            ...state,
+            infoChartSize: {
+                widthResizable: action.widthResizable,
+                heightResizable: action.heightResizable
+            }
         };
     default:
         return state;

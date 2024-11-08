@@ -10,7 +10,7 @@ import {connect} from 'react-redux';
 import { compose } from 'redux';
 import {setInfoChartVisibility, changeFixedRangeToData, fetchInfoChartData, fetchedInfoChartData, toggleInfoChart,
     changeChartVariable, changePeriod, changeFromData, changeToData, resetInfoChartDates, collapseRangePicker,
-    switchRangeManager, openAlert, closeAlert, setChartRelayout, resetChartRelayout } from '../actions/infochart';
+    switchRangeManager, openAlert, closeAlert, setChartRelayout, resetChartRelayout, resizeInfoChart } from '../actions/infochart';
 import InfoChartButton from '../components/buttons/InfoChartButton';
 import InfoChart from '../components/infochart/InfoChart';
 import { FROM_DATA, TO_DATA, PERIOD_TYPES } from '../utils/ManageDateUtils';
@@ -61,7 +61,8 @@ const InfoChartPanel = connect((state) => ({
     isCollapsedFormGroup: state.infochart?.isCollapsedFormGroup || false,
     activeRangeManager: state.infochart?.activeRangeManager || FREE_RANGE,
     alertMessage: state.infochart?.alertMessage || null,
-    chartRelayout: state.infochart?.chartRelayout
+    chartRelayout: state.infochart?.chartRelayout,
+    infoChartSize: state.infochart?.infoChartSize || { widthResizable: 880, heightResizable: 880 }
 }), {
     onSetInfoChartVisibility: setInfoChartVisibility,
     onFetchInfoChartData: fetchInfoChartData,
@@ -77,7 +78,8 @@ const InfoChartPanel = connect((state) => ({
     onOpenAlert: openAlert,
     onCloseAlert: closeAlert,
     onSetChartRelayout: compose(setChartRelayout, (event) => event),
-    onResetChartRelayout: resetChartRelayout
+    onResetChartRelayout: resetChartRelayout,
+    onResizeInfoChart: resizeInfoChart
 })(InfoChart);
 
 

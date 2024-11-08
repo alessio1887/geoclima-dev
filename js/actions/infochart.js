@@ -22,6 +22,7 @@ export const OPEN_ALERT = 'INFOCHART:OPEN_ALERT';
 export const CLOSE_ALERT = 'INFOCHART:CLOSE_ALERT';
 export const SET_CHART_RELAYOUT = 'INFOCHART:SET_CHART_RELAYOUT';
 export const RESET_CHART_RELAYOUT = 'INFOCHART:RESET_CHART_RELAYOUT';
+export const RESIZE_INFOCHART = 'RESIZE_INFOCHART';
 
 export function changeChartVariable(variable) {
     return {
@@ -139,5 +140,13 @@ export function setChartRelayout(chartRelayout) {
 export function resetChartRelayout() {
     return {
         type: RESET_CHART_RELAYOUT
+    };
+}
+
+export function resizeInfoChart(widthResizable, heightResizable) {
+    return {
+        type: RESIZE_INFOCHART,
+        widthResizable,
+        heightResizable
     };
 }

@@ -47,6 +47,7 @@ class InfoChart extends React.Component {
         onResetInfoChartDates: PropTypes.func,
         onSetChartRelayout: PropTypes.func,
         onResetChartRelayout: PropTypes.func,
+        onResizeInfoChart: PropTypes.func,
         show: PropTypes.bool,
         infoChartData: PropTypes.object,
         maskLoading: PropTypes.bool,
@@ -76,7 +77,8 @@ class InfoChart extends React.Component {
         isCollapsedFormGroup: PropTypes.bool,
         activeRangeManager: PropTypes.string,
         alertMessage: PropTypes.string,
-        chartRelayout: PropTypes.object
+        chartRelayout: PropTypes.object,
+        infoChartSize: PropTypes.object
     }
     static defaultProps = {
         id: "mapstore-sarchart-panel",
@@ -89,6 +91,7 @@ class InfoChart extends React.Component {
         onResetInfoChartDates: () => {},
         onSetChartRelayout: () => {},
         onResetChartRelayout: () => {},
+        onResizeInfoChart: () => {},
         show: false,
         infoChartData: {},
         maskLoading: true,
@@ -121,21 +124,17 @@ class InfoChart extends React.Component {
             position: 'absolute',
             height: '100%'
         },
-        isCollapsedFormGroup: false
+        isCollapsedFormGroup: false,
+        infoChartSize: {
+            widthResizable: 880,
+            heightResizable: 880
+        }
     }
-    state = {
-        widthResizable: 880,
-        heightResizable: 800
-    };
     shouldComponentUpdate(newProps) {
         return newProps.active || newProps.mapinfoActive || newProps.data.length > 0;
     }
-    //
-    onResize = (e, { size }) => {
-        this.setState({
-            widthResizable: size.width,
-            heightResizable: size.height
-        });
+    onResize = (event, { size }) => {
+        this.props.onResizeInfoChart(size.width, size.height);
     };
     handleRelayout = (eventData) => {
         // Autoscale case: reset zoom data to default values
@@ -196,8 +195,8 @@ class InfoChart extends React.Component {
             };
             const dataChart = [trace1, trace2].concat(fillTraces);
             const layoutChart = {
-                width: this.state.widthResizable - 10,
-                height: this.state.heightResizable - (this.props.isCollapsedFormGroup ? 110 : 400 ), // Set the height based on the collapse state of the FormGroup
+                width: this.props.infoChartSize.widthResizable - 10,
+                height: this.props.infoChartSize.heightResizable - (this.props.isCollapsedFormGroup ? 110 : 400 ), // Set the height based on the collapse state of the FormGroup
                 xaxis: { // Dates format
                     tickformat: '%Y-%m-%d',
                     range: [this.props.chartRelayout?.startDate || Math.min(...dates), this.props.chartRelayout?.endDate || Math.max(...dates)]
@@ -299,12 +298,12 @@ class InfoChart extends React.Component {
         return (
             <Dialog maskLoading={this.props.maskLoading} id={this.props.id}
                 style={{
-                    maxWidth: "1200px",
-                    maxHeight: "990px",
+                    maxWidth: "100vw",
+                    maxHeight: "100vh",
                     left: "calc(50% - 440px)",
                     top: "0px",
-                    width: this.state.widthResizable,
-                    height: this.state.heightResizable,
+                    width: this.props.infoChartSize.widthResizable,
+                    height: this.props.infoChartSize.heightResizable,
                     position: 'relative'
                 }}
                 className={this.props.panelClassName}>
@@ -318,17 +317,17 @@ class InfoChart extends React.Component {
                         height: '100%'
                     }}>
                     <Resizable
-                        width={this.state.widthResizable}
-                        height={this.state.heightResizable}
+                        width={this.props.infoChartSize.widthResizable}
+                        height={this.props.infoChartSize.heightResizable}
                         onResize={this.onResize}
-                        minConstraints={[300, 200]}
-                        maxConstraints={[1200, 990]}
+                        minConstraints={[400, 600]}
                         style={{
                             flexDirection: "column",
                             bottom: 68,
                             right: 17
                         }}>
-                        <div style={{ display: "flex", flexDirection: "column", width: this.state.widthResizable, height: this.state.heightResizable,  padding: '10px'}}>
+                        <div style={{ display: "flex", flexDirection: "column",
+                            width: this.props.infoChartSize.widthResizable, height: this.props.infoChartSize.heightResizable,  padding: '10px'}}>
                             <div style={{ position: "relative", top: "60px"}}>
                                 <Button onClick={this.props.onCollapseRangePicker}>
                                     <Message msgId={this.props.isCollapsedFormGroup
