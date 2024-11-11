@@ -25,7 +25,7 @@ const infoChartDefaultState = {
     },
     data: [],
     maskLoading: true,
-    variable: { "id": "prec", "name": "Precipitazione cumulata"},
+    variable: "prec",
     fromData: FROM_DATA,
     toData: TO_DATA,
     periodType: PERIOD_TYPES[0].key,
@@ -50,7 +50,7 @@ function infochart(state = infoChartDefaultState, action) {
     case CHARTVARIABLE_CHANGED:
         return {
             ...state,
-            variable: action.variable
+            variable: action.variable.id
         };
     case TODATA_CHANGED:
         return {
@@ -83,7 +83,9 @@ function infochart(state = infoChartDefaultState, action) {
             data: [],
             periodType: action.params.periodType,
             maskLoading: action.maskLoading,
-            isInteractionDisabled: !state.isInteractionDisabled});
+            isInteractionDisabled: !state.isInteractionDisabled,
+            variable: action.params.variable
+        });
     }
     case FETCHED_INFOCHART_DATA: {
         return assign({}, state, {data: action.data, maskLoading: action.maskLoading, isInteractionDisabled: !state.isInteractionDisabled});

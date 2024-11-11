@@ -69,7 +69,7 @@ class InfoChart extends React.Component {
         animated: PropTypes.bool,
         fromData: PropTypes.instanceOf(Date),
         toData: PropTypes.instanceOf(Date),
-        variable: PropTypes.object,
+        variable: PropTypes.string,
         periodType: PropTypes.string,
         classNameInfoChartDate: PropTypes.string,
         styleInfoChartDate: PropTypes.object,
