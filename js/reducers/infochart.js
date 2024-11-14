@@ -30,7 +30,7 @@ const infoChartDefaultState = {
     toData: TO_DATA,
     periodType: PERIOD_TYPES[0].key,
     isCollapsedFormGroup: false,
-    activeRangeManager: FIXED_RANGE,
+    activeRangeManager: FREE_RANGE,
     alertMessage: null,
     chartRelayout: {
         startDate: null,
@@ -84,6 +84,8 @@ function infochart(state = infoChartDefaultState, action) {
             periodType: action.params.periodType,
             maskLoading: action.maskLoading,
             isInteractionDisabled: !state.isInteractionDisabled,
+            fromData: action.params.fromData,
+            toData: action.params.toData,
             variable: action.params.variable
         });
     }

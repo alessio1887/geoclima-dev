@@ -19,16 +19,8 @@ import { CLICK_ON_MAP } from '../../MapStore2/web/client/actions/map';
 import { LOADING } from '@mapstore/actions/maps';
 import API from '../api/GeoClimaApi';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
+import { FROM_DATA, TO_DATA } from '../utils/ManageDateUtils';
 import moment from 'moment';
-
-/**
- * Show the infochart
- * @param  {external:Observable} action$ triggers on "FETCH_INFOCHART_DATA"
- * @param  {object} store   the store, to get current notifications
- * @memberof epics.infochart
- * @return {external:Observable} the stream of actions to trigger to fetch InfoChartData.
- */
-
 
 const getVisibleGroup = (groups) => {
     return groups
@@ -38,40 +30,48 @@ const getVisibleGroup = (groups) => {
 
 const getVisibleLayers = (layers) => {
     return layers
-        .filter(layer => layer.visibility && isVariabiliMeteoLayer(layer.name)) // Use isVariabiliMeteoLayer to check
-        .map(layer => layer.id);
+        .filter(layer => layer.visibility && isVariabiliMeteoLayer(layer.name));
 };
-/**
- * Determines the appropriate variable key based on visible map layers.
- *
- * This method checks if any visible layers (from `visibleLayers` and `visibleGroup`)
- * match the entries in the `idVariabiliLayers` object. If a match is found, it sets
- * `chartVariable` to the corresponding key in `idVariabiliLayers`. If no visible layer
- * matches any entry in `idVariabiliLayers`, it defaults to the first key.
- *
- * @param {Array} visibleLayers - List of currently visible layer IDs.
- * @param {Array} visibleGroup - Nested structure with visible layer groups and nodes.
- * @param {Object} idVariabiliLayers - Object mapping variable keys to their associated layer names.
- * @returns {string} - The matched variable key or the default key.
- */
-const setVisVariable = (visibleLayers, visibleGroup, idVariabiliLayers) => {
-    // Default to the first key in idVariabiliLayers if no match is found
-    let chartVariable = Object.keys(idVariabiliLayers)[0];
-    let visibleIdLayer = null;
 
+/**
+ * Function that finds the first visible layer from a list of layers based on the visible group data.
+ * It checks each group to see if any of its nodes (layer IDs) match an existing layer in the layers array.
+ * Once the first visible layer is found, it returns the corresponding layer object.
+ *
+ * @param  {Array} layers - Array of layer objects, each containing various properties, including `id`.
+ * @param  {Array} visibleGroup - Array of group objects, each containing a `nodes` property (an array of layer IDs).
+ * @return {Object|null} - The first visible layer object from the layers array, or `null` if no visible layer is found.
+ */
+const getVisibleLayer = (layers, visibleGroup) => {
+    let visibleLayer = null;
+    const idLayers = layers.map(layer => layer.id);
     // Find the first visible layer
     for (const group of visibleGroup) {
         for (const node of group.nodes) {
-            if (visibleLayers.includes(node)) {
-                visibleIdLayer = node;
+            if (idLayers.includes(node)) {
+                visibleLayer = node;
                 break; // Exit the loop once the first visible layer is found
             }
         }
-        if (visibleIdLayer) break; // Exit the outer loop if a layer is found
+        if (visibleLayer) break; // Exit the outer loop if a layer is found
     }
+    return layers.find(layer => layer.id === visibleLayer);
+};
 
-    // Return default if no visible layer is found
-    if (!visibleIdLayer) return chartVariable;
+/**
+ * Determines the appropriate variable key based on the visible map layer ID.
+ *
+ * This function sets `chartVariable` to the corresponding key in `idVariabiliLayers` based on
+ * a match with the `visibleIdLayer`. If no match is found, it defaults to the first key in
+ * `idVariabiliLayers`.
+ *
+ * @param {string} visibleIdLayer - The ID of the visible layer, which will be checked for a match.
+ * @param {Object} idVariabiliLayers - An object mapping variable keys to associated layer names (arrays).
+ * @returns {string} - The matched variable key from `idVariabiliLayers` or the default key if no match is found.
+ */
+const setVisVariable = (visibleIdLayer, idVariabiliLayers) => {
+    // Default to the first key in idVariabiliLayers if no match is found
+    let chartVariable = Object.keys(idVariabiliLayers)[0];
 
     const transformedVisibleIdLayer = visibleIdLayer.replace(/[_\s]/g, '').toLowerCase();
 
@@ -87,7 +87,6 @@ const setVisVariable = (visibleLayers, visibleGroup, idVariabiliLayers) => {
             break; // Exit loop once a match is found
         }
     }
-
     // Return the matched key or default
     return chartVariable;
 };
@@ -148,23 +147,28 @@ const toggleInfoChartEpic = (action$, store) =>
 const clickedPointCheckEpic = (action$, store) =>
     action$.ofType(CLICK_ON_MAP)
         .switchMap((action) => {
-            const appState = store.getState();
-            const layerVisibles = getVisibleLayers(appState.layers.flat);
-            const gropuVisibles = getVisibleGroup(appState.layers.groups);
-            const visVariable = setVisVariable(layerVisibles, gropuVisibles, appState.localConfig.idVariabiliLayers);
-
-            let fromData = {};
-            let toData = {};
+            // Initialize default variables for date range and variable selection
+            let fromData = FROM_DATA;
+            let toData = TO_DATA;
             let variable = '';
-            let periodType = '';
+            let periodType = "1";
 
-            if (appState.infochart.showInfoChartPanel) {
-                ({ toData, fromData, variable, periodType } = appState.infochart.infoChartData);
+            const appState = store.getState();
+            const idVariabiliLayers = appState.localConfig?.idVariabiliLayers || {};
+
+            // Get the visible layer and group based on the current app state
+            const visibleLayer = getVisibleLayer(getVisibleLayers(appState.layers.flat), getVisibleGroup(appState.layers.groups));
+
+            if (visibleLayer) {
+                variable = setVisVariable(visibleLayer.id, idVariabiliLayers);
+                fromData = visibleLayer.params?.fromData || FROM_DATA;
+                toData = visibleLayer.params?.toData || TO_DATA;
             } else {
-                ({ toData, fromData,  periodType } = appState.fixedrangepicker);
-                variable = visVariable;
+                // Case where no layers or groups are selected on the map
+                variable = Object.keys(idVariabiliLayers)[0] || ''; // Use the first variable or an empty string as fallback
             }
 
+            // Check if the chart information control is enabled
             const chartInfoEnabled = appState.controls.chartinfo.enabled;
             if (chartInfoEnabled) {
                 return Observable.of(
@@ -181,6 +185,18 @@ const clickedPointCheckEpic = (action$, store) =>
             return Observable.empty();
         });
 
+/**
+ * Epic that listens for the "FETCH_INFOCHART_DATA" action to fetch infochart data from an API
+ * and dispatches the resulting data.
+ *
+ * When the "FETCH_INFOCHART_DATA" action is triggered, this Epic retrieves data
+ * from the API and, once received, emits the `fetchedInfoChartData` action with the obtained data.
+ *
+ * @param  {external:Observable} action$ - Stream of actions that emits the "FETCH_INFOCHART_DATA" action.
+ * @param  {object} store - The Redux store to access the current state, including `infochart.infoChartData`.
+ * @memberof epics.infochart
+ * @return {external:Observable} - Stream of actions that emits the `fetchedInfoChartData` action with the infochart data.
+ */
 const loadInfoChartDataEpic = (action$, store) =>
     action$.ofType(FETCH_INFOCHART_DATA)
         .switchMap(() => Observable.fromPromise(
