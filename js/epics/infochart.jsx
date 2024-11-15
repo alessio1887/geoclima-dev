@@ -150,7 +150,7 @@ const clickedPointCheckEpic = (action$, store) =>
         .switchMap((action) => {
             const appState = store.getState();
             // Check if the chart information control is enabled
-            const chartInfoEnabled = appState.controls.chartinfo.enabled;
+            const chartInfoEnabled = appState.controls?.chartinfo?.enabled;
             if (chartInfoEnabled) {
                 // Initialize default variables for when no layers or groups are visible on the map
                 let fromData = FROM_DATA;
