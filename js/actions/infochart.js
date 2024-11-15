@@ -15,9 +15,10 @@ export const CHART_PERIOD_CHANGED = 'CHART_PERIOD_CHANGED';
 export const FETCH_INFOCHART_DATA = 'FETCH_INFOCHART_DATA';
 export const FETCHED_INFOCHART_DATA = 'FETCHED_INFOCHART_DATA';
 export const TOGGLE_INFOCHART = 'TOGGLE_INFOCHART';
-export const RESET_INFO_CHART_DATES = 'RESET_INFO_CHART_DATES';
+export const RESET_INFO_CHART_DATES = 'INFOCHARTRESET_INFO_CHART_DATES';
 export const COLLAPSE_RANGE_PICKER = 'INFOCHART:COLLAPSE_RANGE_PICKER';
 export const SWITCH_RANGE_MANAGER = 'INFOCHART:SWITCH_RANGE_MANAGER';
+export const SET_RANGE_MANAGER = 'INFOCHART:SET_RANGE_MANAGER';
 export const OPEN_ALERT = 'INFOCHART:OPEN_ALERT';
 export const CLOSE_ALERT = 'INFOCHART:CLOSE_ALERT';
 export const SET_CHART_RELAYOUT = 'INFOCHART:SET_CHART_RELAYOUT';
@@ -115,6 +116,13 @@ export function collapseRangePicker() {
 export function switchRangeManager() {
     return {
         type: SWITCH_RANGE_MANAGER
+    };
+}
+
+export function setRangeManager(rangeManager) {
+    return {
+        type: SET_RANGE_MANAGER,
+        rangeManager
     };
 }
 

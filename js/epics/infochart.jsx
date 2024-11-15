@@ -13,12 +13,13 @@ import {
     FETCH_INFOCHART_DATA,
     fetchedInfoChartData,
     setInfoChartVisibility,
-    fetchInfoChartData
+    fetchInfoChartData,
+    setRangeManager
 } from '../actions/infochart';
 import { CLICK_ON_MAP } from '../../MapStore2/web/client/actions/map';
 import { LOADING } from '@mapstore/actions/maps';
 import API from '../api/GeoClimaApi';
-import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
+import { FIXED_RANGE, FREE_RANGE, isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 import { FROM_DATA, TO_DATA } from '../utils/ManageDateUtils';
 import moment from 'moment';
 
@@ -147,31 +148,26 @@ const toggleInfoChartEpic = (action$, store) =>
 const clickedPointCheckEpic = (action$, store) =>
     action$.ofType(CLICK_ON_MAP)
         .switchMap((action) => {
-            // Initialize default variables for date range and variable selection
-            let fromData = FROM_DATA;
-            let toData = TO_DATA;
-            let variable = '';
-            let periodType = "1";
-
             const appState = store.getState();
-            const idVariabiliLayers = appState.localConfig?.idVariabiliLayers || {};
-
-            // Get the visible layer and group based on the current app state
-            const visibleLayer = getVisibleLayer(getVisibleLayers(appState.layers.flat), getVisibleGroup(appState.layers.groups));
-
-            if (visibleLayer) {
-                variable = setVisVariable(visibleLayer.id, idVariabiliLayers);
-                fromData = visibleLayer.params?.fromData || FROM_DATA;
-                toData = visibleLayer.params?.toData || TO_DATA;
-            } else {
-                // Case where no layers or groups are selected on the map
-                variable = Object.keys(idVariabiliLayers)[0] || ''; // Use the first variable or an empty string as fallback
-            }
-
             // Check if the chart information control is enabled
             const chartInfoEnabled = appState.controls.chartinfo.enabled;
             if (chartInfoEnabled) {
-                return Observable.of(
+                // Initialize default variables for when no layers or groups are visible on the map
+                let fromData = FROM_DATA;
+                let toData = TO_DATA;
+                let periodType = "1";
+                const idVariabiliLayers = appState.localConfig?.idVariabiliLayers || {};
+                let variable = Object.keys(idVariabiliLayers)[0] || '';
+
+                // Get the visible layer and group based on the current app state
+                const visibleLayer = getVisibleLayer(getVisibleLayers(appState.layers.flat), getVisibleGroup(appState.layers.groups));
+                if (visibleLayer) {
+                    variable = setVisVariable(visibleLayer.id, idVariabiliLayers);
+                    fromData = visibleLayer.params?.fromData || FROM_DATA;
+                    toData = visibleLayer.params?.toData || TO_DATA;
+                }
+                // Add setRangeManager only if the InfoChart panel is NOT currently open
+                const actions = [
                     setInfoChartVisibility(true),
                     fetchInfoChartData({
                         latlng: action.point.latlng,
@@ -180,7 +176,13 @@ const clickedPointCheckEpic = (action$, store) =>
                         variable,
                         periodType
                     })
-                );
+                ];
+                // Add setRangeManager only if InfoChart plugin is not open
+                if (!appState.infochart.showInfoChartPanel) {
+                    const rangeManager = appState.fixedrangepicker?.showFixedRangePicker ? FIXED_RANGE : FREE_RANGE;
+                    actions.push(setRangeManager(rangeManager));
+                }
+                return Observable.of(...actions);
             }
             return Observable.empty();
         });

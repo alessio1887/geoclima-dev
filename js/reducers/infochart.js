@@ -10,7 +10,7 @@ import { FREE_RANGE, FIXED_RANGE } from '@js/utils/VariabiliMeteoUtils';
 import { CHARTVARIABLE_CHANGED, TODATA_FIXEDRANGE_CHANGED, FROMDATA_CHANGED,
     TODATA_CHANGED, CHART_PERIOD_CHANGED, SET_INFOCHART_VISIBILITY, FETCH_INFOCHART_DATA,
     FETCHED_INFOCHART_DATA, RESET_INFO_CHART_DATES, COLLAPSE_RANGE_PICKER, SWITCH_RANGE_MANAGER,
-    OPEN_ALERT, CLOSE_ALERT, SET_CHART_RELAYOUT, RESET_CHART_RELAYOUT, RESIZE_INFOCHART } from '../actions/infochart';
+    OPEN_ALERT, CLOSE_ALERT, SET_CHART_RELAYOUT, RESET_CHART_RELAYOUT, RESIZE_INFOCHART, SET_RANGE_MANAGER } from '../actions/infochart';
 import DateAPI, { FROM_DATA, TO_DATA, PERIOD_TYPES } from '../utils/ManageDateUtils';
 import assign from 'object-assign';
 
@@ -81,11 +81,8 @@ function infochart(state = infoChartDefaultState, action) {
         return assign({}, state, {
             infoChartData: action.params,
             data: [],
-            periodType: action.params.periodType,
             maskLoading: action.maskLoading,
             isInteractionDisabled: !state.isInteractionDisabled,
-            fromData: action.params.fromData,
-            toData: action.params.toData,
             variable: action.params.variable
         });
     }
@@ -103,6 +100,12 @@ function infochart(state = infoChartDefaultState, action) {
         return {
             ...state,
             activeRangeManager: newRangeManager
+        };
+    }
+    case SET_RANGE_MANAGER: {
+        return {
+            ...state,
+            activeRangeManager: action.rangeManager
         };
     }
     case OPEN_ALERT:

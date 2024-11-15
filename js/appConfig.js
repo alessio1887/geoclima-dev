@@ -21,7 +21,6 @@ const freerangepicker = {
     isCollapsedPlugin: false,
     fromData: FROM_DATA,
     toData: TO_DATA,
-    showFreeRangePicker: false,
     isInteractionDisabled: true
 };
 
