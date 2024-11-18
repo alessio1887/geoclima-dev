@@ -24,6 +24,7 @@ import FixedRangeManager from '../components/datepickers/FixedRangeManager';
 
 import fixedrangepicker from '../reducers/fixedrangepicker';
 import layers from '../../MapStore2/web/client/reducers/layers';
+import loadMapConfigByDateRangeEpic from '../epics/mapConfigOnInit';
 
 
 class FixedRangePicker extends React.Component {
@@ -212,6 +213,7 @@ export default createPlugin(
         reducers: {
             fixedrangepicker: fixedrangepicker,
             layers: layers
-        }
+        },
+        epics: { loadMapConfigByDateRangeEpic }
     }
 );

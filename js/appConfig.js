@@ -7,7 +7,7 @@
  */
 import appConfigMS from '@mapstore/product/appConfig';
 import { FROM_DATA, TO_DATA } from './utils/ManageDateUtils';
-import MapViewerGC from './pages/MapViewerGC';
+// import MapViewerGC from './pages/MapViewerGC';
 
 const fixedrangepicker = {
     isCollapsedPlugin: false,
@@ -26,15 +26,16 @@ const freerangepicker = {
 
 export default {
     ...appConfigMS,
-    pages: [
-        // Added Custom Page
-        ...appConfigMS.pages.map(
-            page => page.name === "mapviewer" ? {
-                ...page,
-                component: MapViewerGC
-            } : page
-        )
-    ],
+    // Replaced with dynamic configuration logic in mapConfigOnInit.js
+    // pages: [
+    //     // Added Custom Page
+    //     ...appConfigMS.pages.map(
+    //         page => page.name === "mapviewer" ? {
+    //             ...page,
+    //             component: MapViewerGC
+    //         } : page
+    //     )
+    // ],
     initialState: {
         ...appConfigMS.initialState,
         defaultState: {
