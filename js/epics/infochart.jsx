@@ -14,7 +14,11 @@ import {
     fetchedInfoChartData,
     setInfoChartVisibility,
     fetchInfoChartData,
-    setRangeManager
+    setRangeManager,
+    changeFromData,
+    changeToData,
+    changeFixedRangeToData,
+    changePeriod
 } from '../actions/infochart';
 import { CLICK_ON_MAP } from '../../MapStore2/web/client/actions/map';
 import { LOADING } from '@mapstore/actions/maps';
@@ -91,6 +95,43 @@ const setVisVariable = (visibleIdLayer, idVariabiliLayers) => {
     // Return the matched key or default
     return chartVariable;
 };
+/**
+ * Calculates and returns the variables needed for configuring the InfoChart panel.
+ *
+ * @param {Object} appState - The global state of the application.
+ * @param {Object|null} visibleLayer - The currently selected visible layer, or `null` if none are available.
+ * @param {string} rangeManager - The type of range manager (e.g., FIXED_RANGE or FREE_RANGE).
+ * @param {Object} idVariabiliLayers - An object mapping layer IDs to their respective variables.
+ * @returns {Object} - An object containing:
+ *   - `variable` (string): The selected variable.
+ *   - `fromData` (string): The start date for the data range.
+ *   - `toData` (string): The end date for the data range.
+ *   - `periodType` (string): The type of period used for the data range.
+ */
+const getChartVariables = (appState, visibleLayer, rangeManager, idVariabiliLayers) => {
+    let variable = Object.keys(idVariabiliLayers)[0] || '';
+    let fromData = FROM_DATA;
+    let toData = TO_DATA;
+    let periodType = "1";
+
+    if (appState.infochart.showInfoChartPanel) {
+        variable = appState.infochart.infoChartData.variable;
+        fromData = appState.infochart.infoChartData.fromData;
+        toData = appState.infochart.infoChartData.toData;
+        periodType = rangeManager === FIXED_RANGE
+            ? appState.infochart.infoChartData.periodType
+            : "1";
+    } else if (visibleLayer && !appState.infochart.showInfoChartPanel) {
+        variable = setVisVariable(visibleLayer.id, idVariabiliLayers);
+        fromData = visibleLayer.params?.fromData || FROM_DATA;
+        toData = visibleLayer.params?.toData || TO_DATA;
+        periodType = appState.fixedrangepicker?.showFixedRangePicker
+            ? appState.fixedrangepicker?.periodType
+            : "1";
+    }
+    return { variable, fromData, toData, periodType };
+};
+
 
 const closeInfoChartPanel = (action$) =>
     action$.ofType(LOADING).switchMap(() => {
@@ -144,48 +185,54 @@ const toggleInfoChartEpic = (action$, store) =>
             toggleMapInfoState()
         );
     });
-
+/**
+ * Redux-Observable epic that listens for the CLICK_ON_MAP action and handles updating
+ * the InfoChart panel state and fetching its data.
+ *
+ * @param {Observable} action$ - The stream of Redux actions.
+ * @param {Object} store - The Redux store instance, used to access the current application state.
+ * @returns {Observable} - Emits a sequence of Redux actions to update the InfoChart panel state.
+ */
 const clickedPointCheckEpic = (action$, store) =>
     action$.ofType(CLICK_ON_MAP)
         .switchMap((action) => {
             const appState = store.getState();
-            // Check if the chart information control is enabled
             const chartInfoEnabled = appState.controls?.chartinfo?.enabled;
-            if (chartInfoEnabled) {
-                // Initialize default variables for when no layers or groups are visible on the map
-                let fromData = FROM_DATA;
-                let toData = TO_DATA;
-                let periodType = "1";
-                const idVariabiliLayers = appState.localConfig?.idVariabiliLayers || {};
-                let variable = Object.keys(idVariabiliLayers)[0] || '';
 
-                // Get the visible layer and group based on the current app state
-                const visibleLayer = getVisibleLayer(getVisibleLayers(appState.layers.flat), getVisibleGroup(appState.layers.groups));
-                if (visibleLayer) {
-                    variable = setVisVariable(visibleLayer.id, idVariabiliLayers);
-                    fromData = visibleLayer.params?.fromData || FROM_DATA;
-                    toData = visibleLayer.params?.toData || TO_DATA;
-                }
-                // Add setRangeManager only if the InfoChart panel is NOT currently open
-                const actions = [
-                    setInfoChartVisibility(true),
-                    fetchInfoChartData({
-                        latlng: action.point.latlng,
-                        toData: moment(toData).format('YYYY-MM-DD'),
-                        fromData: moment(fromData).format('YYYY-MM-DD'),
-                        variable,
-                        periodType
-                    })
-                ];
-                // Add setRangeManager only if InfoChart plugin is not open
+            if (chartInfoEnabled) {
+                const idVariabiliLayers = appState.localConfig?.idVariabiliLayers || {};
+                const visibleLayer = getVisibleLayer(
+                    getVisibleLayers(appState.layers.flat),
+                    getVisibleGroup(appState.layers.groups)
+                );
+                const rangeManager = appState.fixedrangepicker?.showFixedRangePicker ? FIXED_RANGE : FREE_RANGE;
+                const { variable, fromData, toData, periodType } = getChartVariables(
+                    appState,
+                    visibleLayer,
+                    rangeManager,
+                    idVariabiliLayers
+                );
+                let actions = [];
                 if (!appState.infochart.showInfoChartPanel) {
-                    const rangeManager = appState.fixedrangepicker?.showFixedRangePicker ? FIXED_RANGE : FREE_RANGE;
                     actions.push(setRangeManager(rangeManager));
+                    actions.push(changePeriod(periodType));
+                    actions.push(changeFixedRangeToData(new Date(toData)));
+                    actions.push(changeFromData(new Date(fromData)));
+                    actions.push(changeToData(new Date(toData)));
                 }
+                actions.push(setInfoChartVisibility(true));
+                actions.push(fetchInfoChartData({
+                    latlng: action.point.latlng,
+                    toData: moment(toData).format('YYYY-MM-DD'),
+                    fromData: moment(fromData).format('YYYY-MM-DD'),
+                    variable,
+                    periodType
+                }));
                 return Observable.of(...actions);
             }
             return Observable.empty();
         });
+
 
 /**
  * Epic that listens for the "FETCH_INFOCHART_DATA" action to fetch infochart data from an API

@@ -82,8 +82,7 @@ function infochart(state = infoChartDefaultState, action) {
             infoChartData: action.params,
             data: [],
             maskLoading: action.maskLoading,
-            isInteractionDisabled: !state.isInteractionDisabled,
-            variable: action.params.variable
+            isInteractionDisabled: !state.isInteractionDisabled
         });
     }
     case FETCHED_INFOCHART_DATA: {
