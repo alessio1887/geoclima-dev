@@ -25,17 +25,7 @@ import { fillAreas, FIXED_RANGE, FREE_RANGE }  from '../../utils/VariabiliMeteoU
 import 'react-resizable/css/styles.css';
 import './infochart.css';
 
-/**
-  * Component used to show a panel with the charts data sar
-  * @class InfoChart
-  * @memberof components
-  * @prop {function} onSetInfoChartVisibility
-  * @prop {function} onFetchInfoChartData
-  * @prop {object} infoChartData
-  * @prop {array} data
-  * @prop {bool} show
-  *
-  */
+
 class InfoChart extends React.Component {
     static propTypes = {
         id: PropTypes.string,
@@ -62,7 +52,6 @@ class InfoChart extends React.Component {
         tooltipPlace: PropTypes.string,
         className: PropTypes.string,
         bsStyle: PropTypes.string,
-        style: PropTypes.object,
         onToggleControl: PropTypes.func,
         active: PropTypes.bool,
         mapinfoActive: PropTypes.bool,
@@ -113,18 +102,10 @@ class InfoChart extends React.Component {
                 r: 60,
                 l: 60,
                 b: 60
-            },
-            width: 850,
-            height: 400
+            }
         },
         animated: true,
         classNameInfoChartDate: "mapstore-infochartdate",
-        styleInfoChartDate: {
-            top: 0,
-            left: "305px",
-            position: 'absolute',
-            height: '100%'
-        },
         isCollapsedFormGroup: false,
         infoChartSize: {
             widthResizable: 880,
@@ -306,7 +287,7 @@ class InfoChart extends React.Component {
                     maxWidth: "100vw",
                     maxHeight: "100vh",
                     left: "calc(50% - 440px)",
-                    top: "0px",
+                    top: "-100px",
                     width: this.props.infoChartSize.widthResizable,
                     height: "fit-content"
                 }}
