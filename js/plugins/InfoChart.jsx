@@ -10,7 +10,8 @@ import {connect} from 'react-redux';
 import { compose } from 'redux';
 import {setInfoChartVisibility, changeFixedRangeToData, fetchInfoChartData, fetchedInfoChartData, toggleInfoChart,
     changeChartVariable, changePeriod, changeFromData, changeToData, resetInfoChartDates, collapseRangePicker,
-    switchRangeManager, openAlert, closeAlert, setChartRelayout, resetChartRelayout, resizeInfoChart } from '../actions/infochart';
+    openAlert, closeAlert, setChartRelayout, resetChartRelayout, resizeInfoChart,
+    setRangeManager} from '../actions/infochart';
 import InfoChartButton from '../components/buttons/InfoChartButton';
 import InfoChart from '../components/infochart/InfoChart';
 import { FROM_DATA, TO_DATA, PERIOD_TYPES } from '../utils/ManageDateUtils';
@@ -74,7 +75,7 @@ const InfoChartPanel = connect((state) => ({
     onChangePeriod: compose(changePeriod, (event) => event.key),
     onResetInfoChartDates: resetInfoChartDates,
     onCollapseRangePicker: collapseRangePicker,
-    onSwitchRangeManager: switchRangeManager,
+    onSetRangeManager: setRangeManager,
     onOpenAlert: openAlert,
     onCloseAlert: closeAlert,
     onSetChartRelayout: compose(setChartRelayout, (event) => event),

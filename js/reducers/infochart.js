@@ -6,10 +6,10 @@
  * LICENSE file in the root directory of this source tree.
 */
 
-import { FREE_RANGE, FIXED_RANGE } from '@js/utils/VariabiliMeteoUtils';
+import { FREE_RANGE } from '@js/utils/VariabiliMeteoUtils';
 import { CHARTVARIABLE_CHANGED, TODATA_FIXEDRANGE_CHANGED, FROMDATA_CHANGED,
     TODATA_CHANGED, CHART_PERIOD_CHANGED, SET_INFOCHART_VISIBILITY, FETCH_INFOCHART_DATA,
-    FETCHED_INFOCHART_DATA, RESET_INFO_CHART_DATES, COLLAPSE_RANGE_PICKER, SWITCH_RANGE_MANAGER,
+    FETCHED_INFOCHART_DATA, RESET_INFO_CHART_DATES, COLLAPSE_RANGE_PICKER,
     OPEN_ALERT, CLOSE_ALERT, SET_CHART_RELAYOUT, RESET_CHART_RELAYOUT, RESIZE_INFOCHART, SET_RANGE_MANAGER } from '../actions/infochart';
 import DateAPI, { FROM_DATA, TO_DATA, PERIOD_TYPES } from '../utils/ManageDateUtils';
 import assign from 'object-assign';
@@ -82,7 +82,8 @@ function infochart(state = infoChartDefaultState, action) {
             infoChartData: action.params,
             data: [],
             maskLoading: action.maskLoading,
-            isInteractionDisabled: !state.isInteractionDisabled
+            isInteractionDisabled: !state.isInteractionDisabled,
+            variable: action.params.variable
         });
     }
     case FETCHED_INFOCHART_DATA: {
@@ -92,13 +93,6 @@ function infochart(state = infoChartDefaultState, action) {
         return {
             ...state,
             isCollapsedFormGroup: !state.isCollapsedFormGroup
-        };
-    }
-    case SWITCH_RANGE_MANAGER: {
-        const newRangeManager = state.activeRangeManager === FREE_RANGE ? FIXED_RANGE : FREE_RANGE;
-        return {
-            ...state,
-            activeRangeManager: newRangeManager
         };
     }
     case SET_RANGE_MANAGER: {

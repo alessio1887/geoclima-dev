@@ -20,7 +20,7 @@ import { DropdownList } from 'react-widgets';
 import FixedRangeManager from '../../components/datepickers/FixedRangeManager';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
 import DateAPI, { PERIOD_TYPES }  from '../../utils/ManageDateUtils';
-import { fillAreas, FIXED_RANGE }  from '../../utils/VariabiliMeteoUtils';
+import { fillAreas, FIXED_RANGE, FREE_RANGE }  from '../../utils/VariabiliMeteoUtils';
 
 import 'react-resizable/css/styles.css';
 import './infochart.css';
@@ -48,6 +48,7 @@ class InfoChart extends React.Component {
         onSetChartRelayout: PropTypes.func,
         onResetChartRelayout: PropTypes.func,
         onResizeInfoChart: PropTypes.func,
+        onSetRangeManager: PropTypes.func,
         show: PropTypes.bool,
         infoChartData: PropTypes.object,
         maskLoading: PropTypes.bool,
@@ -87,7 +88,7 @@ class InfoChart extends React.Component {
         onSetInfoChartVisibility: () => {},
         onFetchInfoChartData: () => {},
         onCollapseRangePicker: () => {},
-        onSwitchRangeManager: () => {},
+        onSetRangeManager: () => {},
         onResetInfoChartDates: () => {},
         onSetChartRelayout: () => {},
         onResetChartRelayout: () => {},
@@ -136,6 +137,10 @@ class InfoChart extends React.Component {
     onResize = (event, { size }) => {
         this.props.onResizeInfoChart(size.width, size.height);
     };
+    switchRangeManager = () => {
+        const newRangeManager = this.props.activeRangeManager === FIXED_RANGE ? FREE_RANGE : FIXED_RANGE;
+        this.props.onSetRangeManager(newRangeManager);
+    }
     handleRelayout = (eventData) => {
         // Autoscale case: reset zoom data to default values
         if (eventData['xaxis.autorange'] || eventData['yaxis.autorange']) {
@@ -277,7 +282,7 @@ class InfoChart extends React.Component {
                             <Button className="rangepicker-button" onClick={this.handleApplyPeriod} disabled={this.props.isInteractionDisabled}>
                                 <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton"/>
                             </Button>
-                            <Button className="rangepicker-button" onClick={ this.props.onSwitchRangeManager } disabled={this.props.isInteractionDisabled}>
+                            <Button className="rangepicker-button" onClick={ this.switchRangeManager } disabled={this.props.isInteractionDisabled}>
                                 <Message msgId={this.props.activeRangeManager === FIXED_RANGE
                                     ? "gcapp.fixedRangePicker.dateRangeButton"
                                     : "gcapp.freeRangePicker.dateRangeButton"}  />
