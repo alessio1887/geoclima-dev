@@ -24,8 +24,8 @@ import FixedRangeManager from '../components/datepickers/FixedRangeManager';
 
 import fixedrangepicker from '../reducers/fixedrangepicker';
 import layers from '../../MapStore2/web/client/reducers/layers';
-import loadMapConfigByDateRangeEpic from '../epics/mapConfigOnInit';
 
+import * as rangePickerEpics from '../epics/dateRangeConfig';
 
 class FixedRangePicker extends React.Component {
     static propTypes = {
@@ -46,7 +46,7 @@ class FixedRangePicker extends React.Component {
         periodType: PropTypes.string,
         periodTypes: PropTypes.array,
         map: PropTypes.string,
-        fixedRangePickerActive: PropTypes.bool, // serve per la visibilita del componente
+        showFixedRangePicker: PropTypes.bool, // serve per la visibilita del componente
         onToggleFixedRangePicker: PropTypes.func,
         alertMessage: PropTypes.string,
         onOpenAlert: PropTypes.func,
@@ -70,14 +70,14 @@ class FixedRangePicker extends React.Component {
             position: 'absolute',
             zIndex: 10
         },
-        fixedRangePickerActive: false,
+        showFixedRangePicker: false,
         alertMessage: null,
         isInteractionDisabled: true,
         shiftRight: false
     };
 
     render() {
-        if (!this.props.fixedRangePickerActive) {
+        if (!this.props.showFixedRangePicker) {
             return null;
         }
         const marginLeft = this.props.shiftRight ? '265px' : '5px';
@@ -180,7 +180,7 @@ const mapStateToProps = (state) => {
         periodTypes: state?.localConfig?.periodTypes,
         settings: state?.layers?.settings || { expanded: false, options: { opacity: 1 } },
         layers: state?.layers || {},
-        fixedRangePickerActive: (state?.fixedrangepicker?.showFixedRangePicker) ? true : false,
+        showFixedRangePicker: (state?.fixedrangepicker?.showFixedRangePicker) ? true : false,
         alertMessage: state?.fixedrangepicker?.alertMessage || null,
         isInteractionDisabled: state?.fixedrangepicker?.isInteractionDisabled || false,
         shiftRight: state.controls.drawer ? state.controls.drawer.enabled : false
@@ -214,6 +214,6 @@ export default createPlugin(
             fixedrangepicker: fixedrangepicker,
             layers: layers
         },
-        epics: { loadMapConfigByDateRangeEpic }
+        epics: rangePickerEpics
     }
 );

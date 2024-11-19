@@ -23,7 +23,7 @@ import layers from '../../MapStore2/web/client/reducers/layers';
 import freerangepicker from '@js/reducers/freerangepicker';
 import { toggleRangePickerPlugin } from '../actions/fixedrangepicker';
 import { changeFromData, changeToData, openAlert, closeAlert, collapsePlugin } from '@js/actions/freerangepicker';
-import loadMapConfigByDateRangeEpic from '../epics/mapConfigOnInit';
+import * as rangePickerEpics from '../epics/dateRangeConfig';
 
 import FreeRangeManager from '../components/datepickers/FreeRangeManager';
 import RangePickerInfo from '../components/datepickers/RangePickerInfo';
@@ -45,7 +45,7 @@ class FreeRangePicker extends React.Component {
         settings: PropTypes.object,
         layers: PropTypes.object,
         map: PropTypes.string,
-        freeRangePickerIsVisible: PropTypes.bool, // serve per la visibilita del componente
+        showFreeRangePicker: PropTypes.bool, // serve per la visibilita del componente
         onToggleFreeRangePicker: PropTypes.func,
         alertMessage: PropTypes.string,
         onOpenAlert: PropTypes.func,
@@ -67,14 +67,14 @@ class FreeRangePicker extends React.Component {
             position: 'absolute',
             zIndex: 10
         },
-        freeRangePickerIsVisible: false,
+        showFreeRangePicker: false,
         alertMessage: null,
         isInteractionDisabled: true,
         shiftRight: false
     };
 
     render() {
-        if (!this.props.freeRangePickerIsVisible) {
+        if (!this.props.showFreeRangePicker) {
             return null;
         }
         const marginLeft = this.props.shiftRight ? '265px' : '5px';
@@ -180,7 +180,7 @@ const mapStateToProps = (state) => {
         toData: state?.freerangepicker?.toData || TO_DATA,
         settings: state?.layers?.settings || {expanded: false, options: {opacity: 1}},
         layers: state?.layers || {},
-        freeRangePickerIsVisible: (!state?.fixedrangepicker?.showFixedRangePicker ) ? true : false,
+        showFreeRangePicker: (!state?.fixedrangepicker?.showFixedRangePicker ) ? true : false,
         alertMessage: state?.freerangepicker?.alertMessage || null,
         isInteractionDisabled: state?.freerangepicker?.isInteractionDisabled || false,
         shiftRight: state.controls.drawer ? state.controls.drawer.enabled : false
@@ -214,6 +214,6 @@ export default createPlugin(
             freerangepicker: freerangepicker,
             layers: layers
         },
-        epics: { loadMapConfigByDateRangeEpic }
+        epics: rangePickerEpics
     }
 );
