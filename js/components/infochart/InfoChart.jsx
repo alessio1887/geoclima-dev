@@ -182,7 +182,7 @@ class InfoChart extends React.Component {
             const dataChart = [trace1, trace2].concat(fillTraces);
             const layoutChart = {
                 width: this.props.infoChartSize.widthResizable - 10,
-                height: this.props.infoChartSize.heightResizable - (this.props.isCollapsedFormGroup ? 110 : 400 ), // Set the height based on the collapse state of the FormGroup
+                height: this.props.infoChartSize.heightResizable - (this.props.isCollapsedFormGroup ? 140 : 440 ), // Set the height based on the collapse state of the FormGroup
                 xaxis: { // Dates format
                     tickformat: '%Y-%m-%d',
                     range: [this.props.chartRelayout?.startDate || Math.min(...dates), this.props.chartRelayout?.endDate || Math.max(...dates)]
