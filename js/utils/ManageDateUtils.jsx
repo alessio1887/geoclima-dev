@@ -51,32 +51,54 @@ const Api = {
         return date;
     },
     /**
-     * Metodo che restituire il nome del mapfile da passare come parametro alla richiesta HTTP.
-     * Infatti, in base alla durata della cumulata i valori delle legende nel mapfile cambiano, ad esempio una cumulata
-     * di pioggia di un mese ha valori molto diversi di una cumulata di pioggia di un anno.
-     * Ogni mapfile ha una riclassificazione diversa della legenda. In allegato i vari mapfile che vengono usati adesso nell'applicazione online.
+     * Method that returns the name of the mapfile to be passed as a parameter in the HTTP request.
+     * This is because, depending on the duration of the cumulative data, the legend values in the mapfile change.
+     * For instance, a one-month rainfall cumulative has very different values compared to a one-year rainfall cumulative.
+     * Each mapfile has a different reclassification for the legend. Attached are the various mapfiles currently used in the online application.
      */
-    setGCMapFile(fromData, toData) {
-        let geoclimaMap = "geoclima";
+    setGCMapFile(fromData, toData, mapName) {
+        // Thresholds for mapping cumulative durations to mapfile suffixes
+        const thresholds = [
+            { min: 1, max: 3, suffix: "3" },    // Up to 3 months
+            { min: 3, max: 4, suffix: "4" },    // 4 months
+            { min: 4, max: 6, suffix: "6" },    // 5-6 months
+            { min: 6, max: Infinity, suffix: "12" } // More than 6 months
+        ];
+
+        // Extract valid suffixes from thresholds
+        const validSuffixes = thresholds.map(t => t.suffix);
+
+        // Remove any existing threshold suffix from the mapName
+        const cleanedMapName = validSuffixes.reduce((name, suffix) => {
+            const suffixPattern = new RegExp(suffix + '$'); // Match suffix at the end
+            return name.replace(suffixPattern, '');
+        }, mapName);
 
         const fromDataMoment = moment(fromData);
-        // const dayOfDecate = fromDataMoment.date();
         const toDataMoment = moment(toData);
+        const durationMonths = Math.floor(toDataMoment.diff(fromDataMoment, 'days') / 30);
+        // Determine the appropriate suffix based on duration
+        const threshold = thresholds.find(t => durationMonths > t.min && durationMonths <= t.max);
+        // Construct the mapfile name by appending the correct suffix
+        const mapfileName = threshold ? cleanedMapName + threshold.suffix : cleanedMapName;
+        return mapfileName;
+    },
+    validateDateRange(fromData, toData) {
+        const startDate = moment(fromData);
+        const endDate = moment(toData);
 
-        // const dayOfDecate = Api.startMonthDecade(fromData);
-
-        const durationMonths = toDataMoment.diff(fromDataMoment, 'months');
-
-        if (durationMonths > 1 && durationMonths <= 3) {
-            geoclimaMap = "geoclima3";
-        } else if (durationMonths > 3 && durationMonths <= 4) {
-            geoclimaMap = "geoclima4";
-        } else if (durationMonths > 4 && durationMonths <= 6) {
-            geoclimaMap = "geoclima6";
-        } else if (durationMonths > 6) {
-            geoclimaMap = "geoclima12";
+        if (startDate.isBefore(moment('1991-01-01'))) {
+            return { isValid: false, errorMessage: "gcapp.errorMessages.dateTooEarly" };
         }
-        return geoclimaMap;
+        if (endDate.isBefore(startDate)) {
+            return { isValid: false, errorMessage: "gcapp.errorMessages.endDateBefore" };
+        }
+        const oneYearFromStart = startDate.clone().add(1, 'year');
+        if (endDate.isAfter(oneYearFromStart)) {
+            return { isValid: false, errorMessage: "gcapp.errorMessages.rangeTooLarge" };
+        }
+        // Se tutte le verifiche passano
+        return { isValid: true, errorMessage: null };
     }
 };
 

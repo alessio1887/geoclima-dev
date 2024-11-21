@@ -374,25 +374,6 @@ class InfoChart extends React.Component {
         }, this);
         return data;
     }
-    // Date validations
-    validateDateRange = (fromData, toData) => {
-        const startDate = moment(fromData);
-        const endDate = moment(toData);
-
-        if (startDate.isBefore(moment('1991-01-01'))) {
-            this.props.onOpenAlert("gcapp.errorMessages.dateTooEarly");
-            return false;
-        }
-        if (endDate.isBefore(startDate)) {
-            this.props.onOpenAlert("gcapp.errorMessages.endDateBefore");
-            return false;
-        }
-        if (endDate.isAfter(startDate.clone().add(1, 'year'))) {
-            this.props.onOpenAlert("gcapp.errorMessages.rangeTooLarge");
-            return false;
-        }
-        return true;
-    };
     handleApplyPeriod = () => {
         // Set fromData, toData, periodKey and variabile meteo
         let fromData;
@@ -408,7 +389,9 @@ class InfoChart extends React.Component {
         }
         const variableId = this.props.variable.id || this.props.variable;
         // Date validations
-        if (!this.validateDateRange(fromData, toData)) {
+        const validation = DateAPI.validateDateRange(fromData, toData);
+        if (!validation.isValid) {
+            this.props.onOpenAlert(validation.errorMessage);
             return;
         }
         // Clear alert message if validations pass

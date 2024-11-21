@@ -44,7 +44,6 @@ class FreeRangePicker extends React.Component {
         onUpdateNode: PropTypes.func,
         settings: PropTypes.object,
         layers: PropTypes.object,
-        map: PropTypes.string,
         showFreeRangePicker: PropTypes.bool, // serve per la visibilita del componente
         onToggleFreeRangePicker: PropTypes.func,
         alertMessage: PropTypes.string,
@@ -59,7 +58,6 @@ class FreeRangePicker extends React.Component {
         onChangeToData: () => {},
         onUpdateSettings: () => {},
         onCollapsePlugin: () => { },
-        map: "geoclima",
         id: "mapstore-daterange",
         className: "mapstore-daterange",
         style: {
@@ -130,46 +128,38 @@ class FreeRangePicker extends React.Component {
         const { fromData, toData } = this.props;
 
         // Verifiche sulle date
-        const startDate = moment(fromData);
-        const endDate = moment(toData);
-        if (endDate.isBefore(startDate)) {
-            this.props.onOpenAlert("gcapp.errorMessages.endDateBefore");
+        const validation = DateAPI.validateDateRange(fromData, toData);
+        if (!validation.isValid) {
+            this.props.onOpenAlert(validation.errorMessage);
             return;
         }
-
-        const oneYearFromStart = startDate.clone().add(1, 'year');
-        if (endDate.isAfter(oneYearFromStart)) {
-            this.props.onOpenAlert("gcapp.errorMessages.rangeTooLarge");
-            return;
-        }
-        // Se le verifiche passano, procedi con l'aggiornamento dei parametri
         if (this.props.alertMessage !== null) {
             this.props.onCloseAlert();
         }
-        const mapFile = DateAPI.setGCMapFile(fromData, toData);
         this.updateParams({
-            params: {
-                map: mapFile,
-                fromData: moment(fromData).format('YYYY-MM-DD'),
-                toData: moment(toData).format('YYYY-MM-DD')
-            }
+            fromData: fromData,
+            toData: toData
         });
     }
-
-    updateParams(newParams, onUpdateNode = true) {
-        this.props.onUpdateSettings(newParams);
-        if (onUpdateNode) {
-            this.props.layers.flat.map((layer) => {
-                if (isVariabiliMeteoLayer(layer.name)) {
-                    // funzione che aggiorna la mappa
-                    this.props.onUpdateNode(
-                        layer.id,
-                        "layers",
-                        assign({}, this.props.settings.props, newParams)
-                    );
-                }
-            }, this);
-        }
+    updateParams(datesParam, onUpdateNode = true) {
+        this.props.layers.flat.map((layer) => {
+            if (onUpdateNode && isVariabiliMeteoLayer(layer.name)) {
+                const mapFile = DateAPI.setGCMapFile(datesParam.fromData, datesParam.toData, layer.params.map);
+                const newParams = {
+                    params: {
+                        map: mapFile,
+                        fromData: moment(datesParam.fromData).format('YYYY-MM-DD'),
+                        toData: moment(datesParam.toData).format('YYYY-MM-DD')
+                    }
+                };
+                this.props.onUpdateSettings(newParams);
+                this.props.onUpdateNode(
+                    layer.id,
+                    "layers",
+                    assign({}, this.props.settings.props, newParams)
+                );
+            }
+        });
     }
 }
 

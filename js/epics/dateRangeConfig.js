@@ -17,22 +17,23 @@ import moment from 'moment';
 
 
 // Function to get the layer configuration based on the date range
-const getMapLayersConfiguration = (configName, fromData, toData) => {
+const getMapLayersConfiguration = (configName) => {
     return axios.get(configName).then((response) => {
         if (typeof response.data === 'object' && response.data.map?.layers) {
             const updatedLayers = response.data.map.layers.map((data) => {
                 if (isVariabiliMeteoLayer(data?.name)) {
-                    const mapFile = DateAPI.setGCMapFile(
-                        moment(fromData).format('YYYY-MM-DD'),
-                        moment(toData).format('YYYY-MM-DD')
+                    const mapFileName = DateAPI.setGCMapFile(
+                        moment(FROM_DATA).format('YYYY-MM-DD'),
+                        moment(TO_DATA).format('YYYY-MM-DD'),
+                        data.params.map
                     );
                     return {
                         ...data,
                         params: {
                             ...data.params,
-                            map: mapFile,
-                            fromData: moment(fromData).format('YYYY-MM-DD'),
-                            toData: moment(toData).format('YYYY-MM-DD')
+                            map: mapFileName,
+                            fromData: moment(FROM_DATA).format('YYYY-MM-DD'),
+                            toData: moment(TO_DATA).format('YYYY-MM-DD')
                         }
                     };
                 }
@@ -77,7 +78,7 @@ const loadMapConfigByDateRangeEpic = (action$) =>
             if (!action.config) {
                 const configName = action.configName;
                 const mapId = action.mapId;
-                return Observable.fromPromise(getMapLayersConfiguration(configName, FROM_DATA, TO_DATA))
+                return Observable.fromPromise(getMapLayersConfiguration(configName))
                     .switchMap((data) => Observable.of(loadMapConfig(configName, mapId, data))) // Loads the map configuration with updated layers
                     .catch((error) => Observable.of(configureError(error.message || error, mapId))); // Handles the error
             }
