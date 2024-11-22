@@ -237,7 +237,7 @@ class InfoChart extends React.Component {
                             valueField = "id"
                             textField = "name"
                             value={this.props.variable}
-                            onChange={this.props.onChangeChartVariable}/>
+                            onChange={(value) => { this.handleChangeChartVariable(value); }} />
                         {/* Alterna tra FixedRangeManager e FreeRangeManager in base a activeRangeManager */}
                         {this.props.activeRangeManager === FIXED_RANGE ? (
                             <FixedRangeManager
@@ -260,7 +260,7 @@ class InfoChart extends React.Component {
                             />
                         )}
                         <ButtonGroup className="button-group-wrapper">
-                            <Button className="rangepicker-button" onClick={this.handleApplyPeriod} disabled={this.props.isInteractionDisabled}>
+                            <Button className="rangepicker-button" onClick={() => this.handleApplyPeriod(this.props.variable)} disabled={this.props.isInteractionDisabled}>
                                 <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton"/>
                             </Button>
                             <Button className="rangepicker-button" onClick={ this.switchRangeManager } disabled={this.props.isInteractionDisabled}>
@@ -374,7 +374,11 @@ class InfoChart extends React.Component {
         }, this);
         return data;
     }
-    handleApplyPeriod = () => {
+    handleChangeChartVariable = (selectedVariable) => {
+        this.props.onChangeChartVariable(selectedVariable);
+        this.handleApplyPeriod(selectedVariable);
+    }
+    handleApplyPeriod = (selectedVariable) => {
         // Set fromData, toData, periodKey and variabile meteo
         let fromData;
         let periodKey;
@@ -387,7 +391,7 @@ class InfoChart extends React.Component {
             // set default period
             periodKey = PERIOD_TYPES[0]?.key;
         }
-        const variableId = this.props.variable.id || this.props.variable;
+        const variableId = selectedVariable.id || selectedVariable;
         // Date validations
         const validation = DateAPI.validateDateRange(fromData, toData);
         if (!validation.isValid) {
