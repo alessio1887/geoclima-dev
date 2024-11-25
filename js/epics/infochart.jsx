@@ -27,10 +27,13 @@ import { FIXED_RANGE, FREE_RANGE, isVariabiliMeteoLayer } from '../utils/Variabi
 import { FROM_DATA, TO_DATA } from '../utils/ManageDateUtils';
 import moment from 'moment';
 
-const getVisibleGroup = (groups) => {
-    return groups
-        .map(group => group.nodes.filter(node => node.visibility === true))
-        .flat();
+const getVisibleGroups = (groupMS2List = []) => {
+    if (!Array.isArray(groupMS2List)) {
+        return [];
+    }
+    return groupMS2List
+        .filter(group => group.visibility)
+        .flatMap(group => group.nodes);
 };
 
 const getVisibleLayers = (layers) => {
@@ -38,30 +41,51 @@ const getVisibleLayers = (layers) => {
         .filter(layer => layer.visibility && isVariabiliMeteoLayer(layer.name));
 };
 
+
 /**
- * Function that finds the first visible layer from a list of layers based on the visible group data.
- * It checks each group to see if any of its nodes (layer IDs) match an existing layer in the layers array.
- * Once the first visible layer is found, it returns the corresponding layer object.
+ * This method returns the first visible layer from an array of layers,
+ * considering visibility defined either as an independent layer ID
+ * or within a group of layers with a visibility property.
  *
- * @param  {Array} layers - Array of layer objects, each containing various properties, including `id`.
- * @param  {Array} visibleGroup - Array of group objects, each containing a `nodes` property (an array of layer IDs).
- * @return {Object|null} - The first visible layer object from the layers array, or `null` if no visible layer is found.
+ * @param  {Array} layers - An array of layer objects, each containing various properties,
+ *                           including `id`, `visibility`, and `name`.
+ * @param  {Array} [groups=[]] - An optional array of groups. Each group can be:
+ *   - A string representing the ID of an independent layer (standalone).
+ *   - An object with `nodes` (array of layer IDs) and `visibility` (boolean).
+ * @return {Object|null} - The first visible layer object, or `null` if no visible layer is found.
  */
-const getVisibleLayer = (layers, visibleGroup) => {
-    let visibleLayer = null;
-    const idLayers = layers.map(layer => layer.id);
-    // Find the first visible layer
-    for (const group of visibleGroup) {
-        for (const node of group.nodes) {
-            if (idLayers.includes(node)) {
-                visibleLayer = node;
-                break; // Exit the loop once the first visible layer is found
+const getFirstVisibleLayer = (layers, groups = []) => {
+    if (!Array.isArray(layers)) {
+        return null;
+    }
+    // Copy and reverse the array to start checking the last layers first, then iterate through them
+    const reversedLayers = [...layers].reverse();
+    for (const layer of reversedLayers) {
+        let groupOfLayer = null;
+        let standaloneVisibleLayer = false;
+
+        for (const group of groups) {
+            if (typeof group === 'string' && group === layer.id) {
+                // If the layer is a standalone ID (not part of any group)
+                standaloneVisibleLayer = true;
+                break;
+            } else if (typeof group !== 'string') {
+                // If the layer is part of a group, check if it's among the group's nodes
+                for (const nodeId of group.nodes) {
+                    if (layer.id === nodeId) {
+                        groupOfLayer = group;
+                        break;
+                    }
+                }
             }
         }
-        if (visibleLayer) break; // Exit the outer loop if a layer is found
+        if (standaloneVisibleLayer || (groupOfLayer && groupOfLayer.visibility)) {
+            return layer;
+        }
     }
-    return layers.find(layer => layer.id === visibleLayer);
+    return null;  // If no visible layer is found, return null
 };
+
 
 /**
  * Determines the appropriate variable key based on the visible map layer ID.
@@ -201,10 +225,8 @@ const clickedPointCheckEpic = (action$, store) =>
 
             if (chartInfoEnabled) {
                 const idVariabiliLayers = appState.localConfig?.idVariabiliLayers || {};
-                const visibleLayer = getVisibleLayer(
-                    getVisibleLayers(appState.layers.flat),
-                    getVisibleGroup(appState.layers.groups)
-                );
+                const visibleLayer = getFirstVisibleLayer(getVisibleLayers(appState.layers.flat), getVisibleGroups(appState.layers.groups));
+
                 const rangeManager = appState.fixedrangepicker?.showFixedRangePicker ? FIXED_RANGE : FREE_RANGE;
                 const { variable, fromData, toData, periodType } = getChartVariables(
                     appState,
