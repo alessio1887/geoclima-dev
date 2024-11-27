@@ -69,9 +69,10 @@ class InfoChart extends React.Component {
         alertMessage: PropTypes.string,
         chartRelayout: PropTypes.object,
         infoChartSize: PropTypes.object,
-        variabileChartPrecipitazione: PropTypes.string,
-        variabileChartEvotrasporazione: PropTypes.string,
-        variabiliChartTemperatura: PropTypes.array
+        variablePrecipitazione: PropTypes.string,
+        variableEvotrasporazione: PropTypes.string,
+        variableTemperaturaList: PropTypes.array,
+        variableChartList: PropTypes.array
     }
     static defaultProps = {
         id: "mapstore-sarchart-panel",
@@ -85,9 +86,10 @@ class InfoChart extends React.Component {
         onSetChartRelayout: () => {},
         onResetChartRelayout: () => {},
         onResizeInfoChart: () => {},
-        variabileChartPrecipitazione: "",
-        variabileChartEvotrasporazione: "",
-        variabiliChartTemperatura: [],
+        variablePrecipitazione: "",
+        variableEvotrasporazione: "",
+        variableTemperaturaList: [],
+        variableChartList: [],
         show: false,
         infoChartData: {},
         maskLoading: true,
@@ -151,9 +153,9 @@ class InfoChart extends React.Component {
     showChart = () => {
         if (!this.props.maskLoading) {
             // These three values are retrieved from 'infoChartData' in 'props', which is configured based on settings in localConfig.json
-            const PREC = this.props.variabileChartPrecipitazione;
-            const RET = this.props.variabileChartEvotrasporazione;
-            const TEMP_LIST = this.props.variabiliChartTemperatura;
+            const PREC = this.props.variablePrecipitazione;
+            const RET = this.props.variableEvotrasporazione;
+            const TEMP_LIST = this.props.variableTemperaturalist;
 
             const chartData = this.props.infoChartData.variable === PREC || this.props.infoChartData.variable === RET
                 ? this.formatDataCum(this.props.data)
@@ -239,7 +241,7 @@ class InfoChart extends React.Component {
                         <Label className="labels-infochart"><Message msgId="infochart.selectMeteoVariable"/></Label>
                         <DropdownList
                             key="charts"
-                            data={this.props.infoChartData?.variableList}
+                            data={this.props.variableChartList}
                             valueField = "id"
                             textField = "name"
                             value={this.props.variable}

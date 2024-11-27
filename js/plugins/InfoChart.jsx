@@ -42,8 +42,7 @@ const InfoChartPanel = connect((state) => ({
         variable: state.infochart?.infoChartData?.variable,
         latlng: state.infochart?.infoChartData?.latlng || {},
         periodType: state.infochart?.infoChartData?.periodType || PERIOD_TYPES[0].key,
-        periodTypes: state?.localConfig?.periodTypes || PERIOD_TYPES,
-        variableList: state?.localConfig?.variabiliChartList
+        periodTypes: state?.localConfig?.periodTypes || PERIOD_TYPES
     },
     data: state.infochart?.data || '',
     maskLoading: state.infochart?.maskLoading,
