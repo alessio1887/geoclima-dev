@@ -61,6 +61,7 @@ class InfoChart extends React.Component {
         toData: PropTypes.instanceOf(Date),
         variable: PropTypes.string,
         periodType: PropTypes.string,
+        periodTypes: PropTypes.array,
         classNameInfoChartDate: PropTypes.string,
         styleInfoChartDate: PropTypes.object,
         isInteractionDisabled: PropTypes.bool,
@@ -72,7 +73,7 @@ class InfoChart extends React.Component {
         variablePrecipitazione: PropTypes.string,
         variableEvotrasporazione: PropTypes.string,
         variableTemperaturaList: PropTypes.array,
-        variableChartList: PropTypes.array
+        variableList: PropTypes.array
     }
     static defaultProps = {
         id: "mapstore-sarchart-panel",
@@ -89,7 +90,8 @@ class InfoChart extends React.Component {
         variablePrecipitazione: "",
         variableEvotrasporazione: "",
         variableTemperaturaList: [],
-        variableChartList: [],
+        variableList: [],
+        periodTypes: [],
         show: false,
         infoChartData: {},
         maskLoading: true,
@@ -155,7 +157,7 @@ class InfoChart extends React.Component {
             // These three values are retrieved from 'infoChartData' in 'props', which is configured based on settings in localConfig.json
             const PREC = this.props.variablePrecipitazione;
             const RET = this.props.variableEvotrasporazione;
-            const TEMP_LIST = this.props.variableTemperaturalist;
+            const TEMP_LIST = this.props.variableTemperaturaList;
 
             const chartData = this.props.infoChartData.variable === PREC || this.props.infoChartData.variable === RET
                 ? this.formatDataCum(this.props.data)
@@ -241,7 +243,7 @@ class InfoChart extends React.Component {
                         <Label className="labels-infochart"><Message msgId="infochart.selectMeteoVariable"/></Label>
                         <DropdownList
                             key="charts"
-                            data={this.props.variableChartList}
+                            data={this.props.variableList}
                             valueField = "id"
                             textField = "name"
                             value={this.props.variable}
@@ -251,7 +253,7 @@ class InfoChart extends React.Component {
                             <FixedRangeManager
                                 toData={this.props.toData}
                                 periodType={this.props.periodType}
-                                periodTypes={this.props.infoChartData?.periodTypes}
+                                periodTypes={this.props.periodTypes}
                                 onChangeToData={this.props.onChangeFixedRangeTodata}
                                 onChangePeriod={this.props.onChangePeriod}
                                 isInteractionDisabled={false}
@@ -397,7 +399,7 @@ class InfoChart extends React.Component {
         } else {
             fromData = moment(this.props.fromData).clone().format('YYYY-MM-DD');
             // set default period
-            periodKey = PERIOD_TYPES[0]?.key;
+            periodKey = this.props.periodTypes[0]?.key;
         }
         const variableId = selectedVariable.id || selectedVariable;
         // Date validations

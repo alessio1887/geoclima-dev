@@ -41,8 +41,7 @@ const InfoChartPanel = connect((state) => ({
         toData: state.infochart?.infoChartData?.toData || TO_DATA,
         variable: state.infochart?.infoChartData?.variable,
         latlng: state.infochart?.infoChartData?.latlng || {},
-        periodType: state.infochart?.infoChartData?.periodType || PERIOD_TYPES[0].key,
-        periodTypes: state?.localConfig?.periodTypes || PERIOD_TYPES
+        periodType: state.infochart?.infoChartData?.periodType
     },
     data: state.infochart?.data || '',
     maskLoading: state.infochart?.maskLoading,
@@ -53,7 +52,7 @@ const InfoChartPanel = connect((state) => ({
     fromData: state.infochart?.fromData || FROM_DATA,
     // Initializes 'toData' based on Infochart's date range; defaults to a calculated date if missing
     toData: state.infochart?.toData || TO_DATA,
-    periodType: state.infochart?.periodType || PERIOD_TYPES[0].key,
+    periodType: state.infochart?.periodType,
     isInteractionDisabled: state.infochart?.isInteractionDisabled || false,
     isCollapsedFormGroup: state.infochart?.isCollapsedFormGroup || false,
     activeRangeManager: state.infochart?.activeRangeManager || FREE_RANGE,
