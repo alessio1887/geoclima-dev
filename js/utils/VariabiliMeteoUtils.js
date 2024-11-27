@@ -48,11 +48,10 @@ function getIntersection(x1, y1, x2, y2, clim_y1, clim_y2) {
  * one color if the observed values are below climatology, and another color if they are above.
  * It also handles intersections between the two curves.
  */
-export function fillAreas(dateObjects, observed, climatological, variabile) {
+export function fillAreas(dateObjects, observed, climatological, variabile, PREC) {
     let fillTraces = [];
     let  upperColor;
     let  belowColor;
-    const PREC = ConfigUtils.getConfigProp('variabileChartPrecipitazione');
     if (PREC === variabile ) {
         upperColor = 'rgba(0, 0, 255, 0.5)';
         belowColor = 'rgba(255, 0, 0, 0.5)';

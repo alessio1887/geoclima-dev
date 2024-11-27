@@ -39,7 +39,7 @@ const InfoChartPanel = connect((state) => ({
     infoChartData: {
         fromData: state.infochart?.infoChartData?.fromData || FROM_DATA,
         toData: state.infochart?.infoChartData?.toData || TO_DATA,
-        variable: state.infochart?.infoChartData?.variable || state?.localConfig?.variabileChartPrecipitazione,
+        variable: state.infochart?.infoChartData?.variable,
         latlng: state.infochart?.infoChartData?.latlng || {},
         periodType: state.infochart?.infoChartData?.periodType || PERIOD_TYPES[0].key,
         periodTypes: state?.localConfig?.periodTypes || PERIOD_TYPES,
@@ -49,10 +49,7 @@ const InfoChartPanel = connect((state) => ({
     maskLoading: state.infochart?.maskLoading,
     active: state.controls?.chartinfo?.enabled || false,
     mapinfoActive: state.mapInfo?.enabled || false,
-    variabileChartPrecipitazione: state?.localConfig?.variabileChartPrecipitazione,
-    variabileChartEvotrasporazione: state?.localConfig?.variabileChartEvotrasporazione,
-    variabiliChartTemperatura: state?.localConfig?.variabiliChartTemperatura,
-    variable: state.infochart?.variable || state?.localConfig?.variabileChartPrecipitazione,
+    variable: state.infochart?.variable,
     // Initializes 'fromData' based on Infochart's date range; defaults to a calculated date if missing
     fromData: state.infochart?.fromData || FROM_DATA,
     // Initializes 'toData' based on Infochart's date range; defaults to a calculated date if missing

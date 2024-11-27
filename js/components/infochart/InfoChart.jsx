@@ -68,7 +68,10 @@ class InfoChart extends React.Component {
         activeRangeManager: PropTypes.string,
         alertMessage: PropTypes.string,
         chartRelayout: PropTypes.object,
-        infoChartSize: PropTypes.object
+        infoChartSize: PropTypes.object,
+        variabileChartPrecipitazione: PropTypes.string,
+        variabileChartEvotrasporazione: PropTypes.string,
+        variabiliChartTemperatura: PropTypes.array
     }
     static defaultProps = {
         id: "mapstore-sarchart-panel",
@@ -82,6 +85,9 @@ class InfoChart extends React.Component {
         onSetChartRelayout: () => {},
         onResetChartRelayout: () => {},
         onResizeInfoChart: () => {},
+        variabileChartPrecipitazione: "",
+        variabileChartEvotrasporazione: "",
+        variabiliChartTemperatura: [],
         show: false,
         infoChartData: {},
         maskLoading: true,
@@ -161,7 +167,7 @@ class InfoChart extends React.Component {
             const dates = chartData.map(item => new Date(item.data));
             const observedData = chartData.map(item => item.st_value);
             const climatologicalData = chartData.map(item => item.st_value_clima);
-            const fillTraces = fillAreas(dates, observedData, climatologicalData, this.props.infoChartData.variable);
+            const fillTraces = fillAreas(dates, observedData, climatologicalData, this.props.infoChartData.variable, PREC);
 
             const colorTraceObserved = this.props.infoChartData.variable === PREC ? 'rgba(0, 0, 255, 1)' : 'rgba(255, 0, 0, 1)';
             const trace1 = {
