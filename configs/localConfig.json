@@ -373,7 +373,15 @@
           {
             "name": "FixedRangePicker",
             "cfg" : {
-              "id": "mapstore-fixedrangepicker-map"
+              "id": "mapstore-fixedrangepicker-map",
+              "periodTypes": [
+                      { "key": "1", "label": "1 Mese" },
+                      { "key": "3", "label": "3 Mesi" },
+                      { "key": "4", "label": "4 Mesi" },
+                      { "key": "6", "label": "6 Mesi" },
+                      { "key": "12", "label": "12 Mesi" },
+                      { "key": "10", "label": "dal 1° Ottobre" }
+                  ]
             }
           },
           {
@@ -567,16 +575,7 @@
                     "tmed",
                     "tmax",
                     "tmin"
-                  ],
-                  "idVariabiliLayers": {
-                    "prec": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima"],
-                    "tmed": ["Temperatura_Media", "Temperatura_Media_Anomalia", "Temperatura_Media_clima"],
-                    "tmin": ["Temperatura_Minima", "Temperatura_Minima_Anomalia", "Temperatura_Minima_clima"],
-                    "tmax": [ "Temperatura_Massima", "Temperatura_Massima_Anomalia", "Temperatura_Massima_clima"],
-                    "ret": ["Evapotraspirazione", "Evapotraspirazione_Anomalia_mm", "Evapotraspirazione_Anomalia_perc", "Evapotraspirazione_clima"],
-                    "bis": ["BilancioIdricoSemplificato", "BilancioIdricoSemplificato_Anomalia_mm", "BilancioIdricoSemplificato_Anomalia_perc",
-                            "BilancioIdricoSemplificato_clima"]
-                  }
+                  ]
               },
               "override": {
                 "Toolbar": {

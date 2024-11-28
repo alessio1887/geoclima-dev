@@ -61,6 +61,7 @@ class FixedRangePicker extends React.Component {
         onUpdateSettings: () => { },
         onCollapsePlugin: () => { },
         periodType: "1",
+        periodTypes: [],
         id: "mapstore-fixederange",
         className: "mapstore-fixederange",
         style: {
@@ -173,7 +174,6 @@ const mapStateToProps = (state) => {
         fromData: state?.fixedrangepicker?.fromData || FROM_DATA,
         toData: state?.fixedrangepicker?.toData || TO_DATA,
         periodType: state?.fixedrangepicker?.periodType || "1",
-        periodTypes: state?.localConfig?.periodTypes,
         settings: state?.layers?.settings || { expanded: false, options: { opacity: 1 } },
         layers: state?.layers || {},
         showFixedRangePicker: (state?.fixedrangepicker?.showFixedRangePicker) ? true : false,
