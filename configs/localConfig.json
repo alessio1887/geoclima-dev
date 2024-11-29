@@ -381,7 +381,8 @@
                       { "key": "6", "label": "6 Mesi" },
                       { "key": "12", "label": "12 Mesi" },
                       { "key": "10", "label": "dal 1° Ottobre" }
-                  ]
+                  ],
+                  "showRangePicker": true
             }
           },
           {

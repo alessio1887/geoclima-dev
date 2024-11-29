@@ -7,7 +7,8 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-bootstrap';
+import { Label, Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-bootstrap';
+import { DateTimePicker } from 'react-widgets';
 import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
 import { compose } from 'redux';
@@ -19,6 +20,7 @@ import assign from 'object-assign';
 import moment from 'moment';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
 import './rangepicker.css';
+import './dailydatepicker.css';
 import RangePickerInfo from '../components/datepickers/RangePickerInfo';
 import FixedRangeManager from '../components/datepickers/FixedRangeManager';
 
@@ -51,7 +53,8 @@ class FixedRangePicker extends React.Component {
         onOpenAlert: PropTypes.func,
         onCloseAlert: PropTypes.func,
         isInteractionDisabled: PropTypes.bool,
-        shiftRight: PropTypes.bool
+        shiftRight: PropTypes.bool,
+        showRangePicker: PropTypes.bool
     };
     static defaultProps = {
         isCollapsedPlugin: true,
@@ -70,6 +73,7 @@ class FixedRangePicker extends React.Component {
             zIndex: 10
         },
         showFixedRangePicker: false,
+        showRangePicker: true,
         alertMessage: null,
         isInteractionDisabled: true,
         shiftRight: false
@@ -94,40 +98,83 @@ class FixedRangePicker extends React.Component {
                 </Button>
                 <Collapse in={!this.props.isCollapsedPlugin}  style={{ zIndex: 100,  position: "absolute", top: "30px"  }}>
                     <FormGroup style={{ marginBottom: "0px" }} bsSize="sm">
-                        <div className="ms-fixedrangepicker-action">
-                            <RangePickerInfo
-                                labelTitleId="gcapp.fixedRangePicker.titlePeriod"
-                                fromData={this.props.fromData}
-                                toData={this.props.toData}
-                            />
-                            <FixedRangeManager
-                                toData={this.props.toData}
-                                onChangeToData={this.props.onChangeYear}
-                                isInteractionDisabled={this.props.isInteractionDisabled}
-                                periodType={this.props.periodType}
-                                periodTypes={this.props.periodTypes}
-                                onChangePeriod={this.props.onChangePeriod}
-                                styleLabels="labels-fixedrangepicker"
-                            />
-                            <ButtonGroup id="button-rangepicker-container">
-                                <Button onClick={this.handleApplyPeriod} disabled={this.props.isInteractionDisabled}>
-                                    <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton" />
-                                </Button>
-                                <Button onClick={this.props.onToggleFixedRangePicker} disabled={this.props.isInteractionDisabled}>
-                                    <Message msgId="gcapp.fixedRangePicker.dateRangeButton" />
-                                </Button>
-                            </ButtonGroup>
-                            {this.props.alertMessage && (
-                                <div className="alert-date" >
-                                    <strong><Message msgId="warning"/></strong>
-                                    <span ><Message msgId={this.props.alertMessage}/></span>
-                                </div>
-                            )}
-                        </div>
+                        {
+                            this.props.showRangePicker
+                                ? this.showFixedRangeManager()
+                                : this.showDailyDatePicker()
+                        }
                     </FormGroup>
                 </Collapse>
             </div>
         );
+    }
+    showFixedRangeManager = () => {
+        return (
+            <div className="ms-fixedrangepicker-action">
+                <RangePickerInfo
+                    labelTitleId="gcapp.fixedRangePicker.titlePeriod"
+                    fromData={this.props.fromData}
+                    toData={this.props.toData}
+                />
+                <FixedRangeManager
+                    toData={this.props.toData}
+                    onChangeToData={this.props.onChangeYear}
+                    isInteractionDisabled={this.props.isInteractionDisabled}
+                    periodType={this.props.periodType}
+                    periodTypes={this.props.periodTypes}
+                    onChangePeriod={this.props.onChangePeriod}
+                    styleLabels="labels-fixedrangepicker"
+                />
+                <ButtonGroup id="button-rangepicker-container">
+                    <Button onClick={this.handleApplyPeriod} disabled={this.props.isInteractionDisabled}>
+                        <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton" />
+                    </Button>
+                    <Button onClick={this.props.onToggleFixedRangePicker} disabled={this.props.isInteractionDisabled}>
+                        <Message msgId="gcapp.fixedRangePicker.dateRangeButton" />
+                    </Button>
+                </ButtonGroup>
+                {this.props.alertMessage && (
+                    <div className="alert-date" >
+                        <strong><Message msgId="warning"/></strong>
+                        <span ><Message msgId={this.props.alertMessage}/></span>
+                    </div>
+                )}
+            </div>
+        );
+    }
+    showDailyDatePicker = () => {
+        return (
+            <div className="ms-dailydatepicker-action">
+                <Label className="labels-dailydatepicker">
+                    <Message msgId="gcapp.dailyDatePicker"/>
+                </Label>
+                <div className="dailydatepicker-container">
+                    <Button disabled={this.props.isInteractionDisabled}>
+                        <Glyphicon glyph="glyphicon glyphicon-chevron-left" />
+                    </Button>
+                    <DateTimePicker
+                        culture="it"
+                        time={false}
+                        min={new Date("1991-01-01")}
+                        max={moment().subtract(1, 'day')._d}
+                        format={"DD MMMM, YYYY"}
+                        editFormat={"YYYY-MM-DD"}
+                        value={new Date(this.props.toData)}
+                        onChange={(value) => { this.handleChangeToData(value); }}
+                        disabled={this.props.isInteractionDisabled} />
+                    <Button disabled={this.props.isInteractionDisabled}>
+                        <Glyphicon glyph="glyphicon glyphicon-chevron-right" />
+                    </Button>
+                </div>
+            </div>
+        );
+    }
+    handleChangeToData = (toData) => {
+        this.props.onChangeYear(toData);
+        this.updateParams({
+            fromData: moment(toData).clone().subtract(1, 'day'),
+            toData: toData
+        });
     }
     handleApplyPeriod = () => {
         const { fromData, toData } = this.props;

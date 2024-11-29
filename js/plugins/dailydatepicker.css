@@ -1,0 +1,63 @@
+.ms-dailydatepicker-action {
+  -webkit-box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  -moz-box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  background-color: #FFFFFF;
+  /* overflow: hidden; */
+  display: flex;
+  left: 4px;
+  /* height: 200px; */
+  flex-direction: column;
+  margin: 0;
+  border: none;
+  z-index: 10;
+  top: 4px;
+  width: 280px;
+  border-radius: 4px;
+}
+
+
+.ms-dailydatepicker-action .dailydatepicker-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: auto;
+}
+
+.ms-dailydatepicker-action .dailydatepicker-container Button {
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    margin: 0;
+}
+
+.ms-dailydatepicker-action .dailydatepicker-container .react-datepicker-wrapper {
+    flex-grow: 1; /* Assicura che il date picker occupi lo spazio disponibile */
+    text-align: center;
+}
+
+.labels-dailydatepicker {
+    border-radius: 0%;
+    padding: 10px;
+    font-size: 14px;
+    flex: 1
+}
+
+
+@media (max-width: 768px) {
+    .ms-dailydatepicker-action .dailydatepicker-container {
+        flex-direction: column; /* Cambia layout a colonna su schermi stretti */
+        align-items: center;
+        gap: 12px; /* Spaziatura maggiore tra gli elementi */
+    }
+
+    .ms-dailydatepicker-action .dailydatepicker-container Button {
+        width: 100%; /* Pulsanti larghi su schermi stretti */
+        max-width: 200px; /* Evita che diventino troppo grandi */
+    }
+
+    .ms-dailydatepicker-action .dailydatepicker-container .react-datepicker-wrapper {
+        width: 100%;
+    }
+}

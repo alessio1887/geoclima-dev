@@ -22,6 +22,7 @@
               "dateTooEarly": "La data selezionata non può essere precedente al 1-01-1991."
             },
             "applyPeriodButton": " Applica periodo",
+            "dailyDatePicker": "Seleziona una data",
             "infochart": {
               "collapse": "Collassa",
               "expand": "Espandi"
