@@ -149,7 +149,7 @@ class FixedRangePicker extends React.Component {
                     <Message msgId="gcapp.dailyDatePicker"/>
                 </Label>
                 <div className="dailydatepicker-container">
-                    <Button disabled={this.props.isInteractionDisabled}>
+                    <Button  onClick={this.decrementDate} disabled={this.props.isInteractionDisabled}>
                         <Glyphicon glyph="glyphicon glyphicon-chevron-left" />
                     </Button>
                     <DateTimePicker
@@ -162,12 +162,30 @@ class FixedRangePicker extends React.Component {
                         value={new Date(this.props.toData)}
                         onChange={(value) => { this.handleChangeToData(value); }}
                         disabled={this.props.isInteractionDisabled} />
-                    <Button disabled={this.props.isInteractionDisabled}>
+                    <Button onClick={this.incrementDate} disabled={this.props.isInteractionDisabled}>
                         <Glyphicon glyph="glyphicon glyphicon-chevron-right" />
                     </Button>
                 </div>
             </div>
         );
+    }
+    incrementDate = () => {
+        // Incrementa la data di 1 giorno
+        const newToData = moment(this.props.toData).add(1, 'days').toDate();
+        this.props.onChangeYear(newToData); // Chiama il metodo per aggiornare la data
+        this.updateParams({
+            fromData: moment(newToData).clone().subtract(1, 'day'),
+            toData: newToData
+        });
+    }
+    decrementDate = () => {
+        // Decrementa la data di 1 giorno
+        const newToData = moment(this.props.toData).subtract(1, 'days').toDate();
+        this.props.onChangeYear(newToData); // Chiama il metodo per aggiornare la data
+        this.updateParams({
+            fromData: moment(newToData).clone().subtract(1, 'day'),
+            toData: newToData
+        });
     }
     handleChangeToData = (toData) => {
         this.props.onChangeYear(toData);
