@@ -90,37 +90,42 @@ class FreeRangePicker extends React.Component {
                 </Button>
                 <Collapse in={!this.props.isCollapsedPlugin} style={{ zIndex: 100,  position: "absolute", top: "30px"  }}>
                     <FormGroup style={{marginBottom: "0px"}} bsSize="sm">
-                        <div className="ms-freerangepicker-action">
-                            <RangePickerInfo
-                                labelTitleId="gcapp.freeRangePicker.titlePeriod"
-                                fromData={this.props.fromData}
-                                toData={this.props.toData}
-                            />
-                            <FreeRangeManager
-                                fromData={this.props.fromData}
-                                toData={this.props.toData}
-                                onChangeFromData={this.props.onChangeFromData}
-                                onChangeToData={this.props.onChangeToData}
-                                isInteractionDisabled={this.props.isInteractionDisabled}
-                                styleLabels="labels-freerangepicker"
-                            />
-                            <ButtonGroup id="button-rangepicker-container">
-                                <Button onClick={this.handleApplyPeriod}  disabled={this.props.isInteractionDisabled}>
-                                    <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton"/>
-                                </Button>
-                                <Button variant="primary" onClick={this.props.onToggleFreeRangePicker} disabled={this.props.isInteractionDisabled}>
-                                    <Message msgId="gcapp.freeRangePicker.dateRangeButton"/>
-                                </Button>
-                            </ButtonGroup>
-                            {this.props.alertMessage && (
-                                <div className="alert-date" >
-                                    <strong><Message msgId="warning"/></strong>
-                                    <span ><Message msgId={this.props.alertMessage}/></span>
-                                </div>
-                            )}
-                        </div>
+                        {this.showRangePicker()}
                     </FormGroup>
                 </Collapse>
+            </div>
+        );
+    }
+    showRangePicker = () => {
+        return (
+            <div className="ms-freerangepicker-action">
+                <RangePickerInfo
+                    labelTitleId="gcapp.freeRangePicker.titlePeriod"
+                    fromData={this.props.fromData}
+                    toData={this.props.toData}
+                />
+                <FreeRangeManager
+                    fromData={this.props.fromData}
+                    toData={this.props.toData}
+                    onChangeFromData={this.props.onChangeFromData}
+                    onChangeToData={this.props.onChangeToData}
+                    isInteractionDisabled={this.props.isInteractionDisabled}
+                    styleLabels="labels-freerangepicker"
+                />
+                <ButtonGroup id="button-rangepicker-container">
+                    <Button onClick={this.handleApplyPeriod}  disabled={this.props.isInteractionDisabled}>
+                        <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton"/>
+                    </Button>
+                    <Button variant="primary" onClick={this.props.onToggleFreeRangePicker} disabled={this.props.isInteractionDisabled}>
+                        <Message msgId="gcapp.freeRangePicker.dateRangeButton"/>
+                    </Button>
+                </ButtonGroup>
+                {this.props.alertMessage && (
+                    <div className="alert-date" >
+                        <strong><Message msgId="warning"/></strong>
+                        <span ><Message msgId={this.props.alertMessage}/></span>
+                    </div>
+                )}
             </div>
         );
     }

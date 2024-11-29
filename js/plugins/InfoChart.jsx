@@ -14,7 +14,7 @@ import {setInfoChartVisibility, changeFixedRangeToData, fetchInfoChartData, fetc
     setRangeManager} from '../actions/infochart';
 import InfoChartButton from '../components/buttons/InfoChartButton';
 import InfoChart from '../components/infochart/InfoChart';
-import { FROM_DATA, TO_DATA, PERIOD_TYPES } from '../utils/ManageDateUtils';
+import { FROM_DATA, TO_DATA } from '../utils/ManageDateUtils';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
 import infoChartReducer from '../reducers/infochart';
 import * as infoChartEpic from '../epics/infochart';

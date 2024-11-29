@@ -19,7 +19,7 @@ import moment from 'moment';
 import { DropdownList } from 'react-widgets';
 import FixedRangeManager from '../../components/datepickers/FixedRangeManager';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
-import DateAPI, { PERIOD_TYPES }  from '../../utils/ManageDateUtils';
+import DateAPI from '../../utils/ManageDateUtils';
 import { fillAreas, FIXED_RANGE, FREE_RANGE }  from '../../utils/VariabiliMeteoUtils';
 
 import 'react-resizable/css/styles.css';
