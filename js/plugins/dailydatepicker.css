@@ -1,63 +1,53 @@
-.ms-dailydatepicker-action {
-  -webkit-box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-  -moz-box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-  background-color: #FFFFFF;
-  /* overflow: hidden; */
-  display: flex;
-  left: 4px;
-  /* height: 200px; */
-  flex-direction: column;
-  margin: 0;
-  border: none;
-  z-index: 10;
-  top: 4px;
-  width: 280px;
-  border-radius: 4px;
-}
-
-
-.ms-dailydatepicker-action .dailydatepicker-container {
+.ms-dailydatepicker {
+    -webkit-box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+    -moz-box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+    background-color: #FFFFFF;
     display: flex;
-    flex-direction: row;
+    flex-direction: row; /* Cambia in row per layout orizzontale */
     align-items: center;
     justify-content: space-between;
-    width: auto;
-}
+    left: 4px;
+    top: 4px;
+    width: 280px;
+    border-radius: 4px;
+    margin: 0;
+    border: none;
+    z-index: 10;
+  }
 
-.ms-dailydatepicker-action .dailydatepicker-container Button {
+  .ms-dailydatepicker Button {
     align-items: center;
     justify-content: center;
     border-radius: 4px;
     margin: 0;
-}
+  }
 
-.ms-dailydatepicker-action .dailydatepicker-container .react-datepicker-wrapper {
+  .ms-dailydatepicker .react-datepicker-wrapper {
     flex-grow: 1; /* Assicura che il date picker occupi lo spazio disponibile */
     text-align: center;
-}
+  }
 
-.labels-dailydatepicker {
+  .labels-dailydatepicker {
     border-radius: 0%;
     padding: 10px;
     font-size: 14px;
-    flex: 1
-}
+    flex: 1;
+  }
 
-
-@media (max-width: 768px) {
-    .ms-dailydatepicker-action .dailydatepicker-container {
-        flex-direction: column; /* Cambia layout a colonna su schermi stretti */
-        align-items: center;
-        gap: 12px; /* Spaziatura maggiore tra gli elementi */
+  @media (max-width: 768px) {
+    .ms-dailydatepicker {
+      flex-direction: column; /* Cambia layout a colonna su schermi stretti */
+      align-items: center;
+      gap: 12px; /* Spaziatura maggiore tra gli elementi */
     }
 
-    .ms-dailydatepicker-action .dailydatepicker-container Button {
-        width: 100%; /* Pulsanti larghi su schermi stretti */
-        max-width: 200px; /* Evita che diventino troppo grandi */
+    .ms-dailydatepicker Button {
+      width: 100%; /* Pulsanti larghi su schermi stretti */
+      max-width: 200px; /* Evita che diventino troppo grandi */
     }
 
-    .ms-dailydatepicker-action .dailydatepicker-container .react-datepicker-wrapper {
-        width: 100%;
+    .ms-dailydatepicker .react-datepicker-wrapper {
+      width: 100%;
     }
-}
+  }

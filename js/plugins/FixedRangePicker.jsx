@@ -7,7 +7,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Label, Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-bootstrap';
+import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-bootstrap';
 import { DateTimePicker } from 'react-widgets';
 import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
@@ -28,6 +28,8 @@ import fixedrangepicker from '../reducers/fixedrangepicker';
 import layers from '../../MapStore2/web/client/reducers/layers';
 
 import * as rangePickerEpics from '../epics/dateRangeConfig';
+import momentLocaliser from 'react-widgets/lib/localizers/moment';
+momentLocaliser(moment);
 
 class FixedRangePicker extends React.Component {
     static propTypes = {
@@ -150,28 +152,23 @@ class FixedRangePicker extends React.Component {
         const isIncrementDisabled = this.props.isInteractionDisabled ||
                                 moment(this.props.toData).isSameOrAfter(TO_DATA, 'day');
         return (
-            <div className="ms-dailydatepicker-action">
-                <Label className="labels-dailydatepicker">
-                    <Message msgId="gcapp.dailyDatePicker"/>
-                </Label>
-                <div className="dailydatepicker-container">
-                    <Button  onClick={this.decrementDate} disabled={isDecrementDisabled}>
-                        <Glyphicon glyph="glyphicon glyphicon-chevron-left" />
-                    </Button>
-                    <DateTimePicker
-                        culture="it"
-                        time={false}
-                        min={new Date("1991-01-01")}
-                        max={moment().subtract(1, 'day')._d}
-                        format={"DD MMMM, YYYY"}
-                        editFormat={"YYYY-MM-DD"}
-                        value={new Date(this.props.toData)}
-                        onChange={(value) => { this.handlechangePeriodToData(value); }}
-                        disabled={this.props.isInteractionDisabled} />
-                    <Button onClick={this.incrementDate} disabled={isIncrementDisabled}>
-                        <Glyphicon glyph="glyphicon glyphicon-chevron-right" />
-                    </Button>
-                </div>
+            <div className="ms-dailydatepicker">
+                <Button  onClick={this.decrementDate} disabled={isDecrementDisabled}>
+                    <Glyphicon glyph="glyphicon glyphicon-chevron-left" />
+                </Button>
+                <DateTimePicker
+                    culture="it"
+                    time={false}
+                    min={new Date("1991-01-01")}
+                    max={moment().subtract(1, 'day')._d}
+                    format={"DD MMMM, YYYY"}
+                    editFormat={"YYYY-MM-DD"}
+                    value={new Date(this.props.toData)}
+                    onChange={(value) => { this.handlechangePeriodToData(value); }}
+                    disabled={this.props.isInteractionDisabled} />
+                <Button onClick={this.incrementDate} disabled={isIncrementDisabled}>
+                    <Glyphicon glyph="glyphicon glyphicon-chevron-right" />
+                </Button>
             </div>
         );
     }
