@@ -12,7 +12,7 @@ import { DateTimePicker } from 'react-widgets';
 import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
 import { compose } from 'redux';
-import { changeYear, changePeriod, toggleRangePickerPlugin, openAlert, closeAlert, collapsePlugin } from '../actions/fixedrangepicker';
+import { changePeriodToData, changePeriod, toggleRangePickerPlugin, openAlert, closeAlert, collapsePlugin } from '../actions/fixedrangepicker';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 import DateAPI, { FROM_DATA, TO_DATA } from '../utils/ManageDateUtils';
 import { connect } from 'react-redux';
@@ -38,7 +38,7 @@ class FixedRangePicker extends React.Component {
         onCollapsePlugin: PropTypes.func,
         fromData: PropTypes.instanceOf(Date),
         toData: PropTypes.instanceOf(Date),
-        onChangeYear: PropTypes.func,
+        onChangePeriodToData: PropTypes.func,
         onChangeMonth: PropTypes.func,
         onChangePeriod: PropTypes.func,
         onUpdateSettings: PropTypes.func,
@@ -58,7 +58,7 @@ class FixedRangePicker extends React.Component {
     };
     static defaultProps = {
         isCollapsedPlugin: true,
-        onChangeYear: () => { },
+        onChangePeriodToData: () => { },
         onChangeMonth: () => { },
         onChangePeriod: () => { },
         onUpdateSettings: () => { },
@@ -93,7 +93,9 @@ class FixedRangePicker extends React.Component {
         return (
             <div className={this.props.className} style={pluginStyle}>
                 <Button  onClick= {this.props.onCollapsePlugin} style={this.props.style}>
-                    <Message msgId="gcapp.fixedRangePicker.collapsePlugin"/>{' '}
+                    <Message msgId={this.props.showRangePicker
+                        ? "gcapp.fixedRangePicker.collapsePlugin"
+                        : "gcapp.dailyDatePicker"}  />{' '}
                     <span className="collapse-rangepicker-icon" style={{ transform: rotateIcon }}>&#9650;</span>
                 </Button>
                 <Collapse in={!this.props.isCollapsedPlugin}  style={{ zIndex: 100,  position: "absolute", top: "30px"  }}>
@@ -118,7 +120,7 @@ class FixedRangePicker extends React.Component {
                 />
                 <FixedRangeManager
                     toData={this.props.toData}
-                    onChangeToData={this.props.onChangeYear}
+                    onChangeToData={this.props.onChangePeriodToData}
                     isInteractionDisabled={this.props.isInteractionDisabled}
                     periodType={this.props.periodType}
                     periodTypes={this.props.periodTypes}
@@ -143,13 +145,17 @@ class FixedRangePicker extends React.Component {
         );
     }
     showDailyDatePicker = () => {
+        const isDecrementDisabled = this.props.isInteractionDisabled ||
+                                moment(this.props.toData).isSameOrBefore("1991-01-01", 'day');
+        const isIncrementDisabled = this.props.isInteractionDisabled ||
+                                moment(this.props.toData).isSameOrAfter(TO_DATA, 'day');
         return (
             <div className="ms-dailydatepicker-action">
                 <Label className="labels-dailydatepicker">
                     <Message msgId="gcapp.dailyDatePicker"/>
                 </Label>
                 <div className="dailydatepicker-container">
-                    <Button  onClick={this.decrementDate} disabled={this.props.isInteractionDisabled}>
+                    <Button  onClick={this.decrementDate} disabled={isDecrementDisabled}>
                         <Glyphicon glyph="glyphicon glyphicon-chevron-left" />
                     </Button>
                     <DateTimePicker
@@ -160,35 +166,35 @@ class FixedRangePicker extends React.Component {
                         format={"DD MMMM, YYYY"}
                         editFormat={"YYYY-MM-DD"}
                         value={new Date(this.props.toData)}
-                        onChange={(value) => { this.handleChangeToData(value); }}
+                        onChange={(value) => { this.handlechangePeriodToData(value); }}
                         disabled={this.props.isInteractionDisabled} />
-                    <Button onClick={this.incrementDate} disabled={this.props.isInteractionDisabled}>
+                    <Button onClick={this.incrementDate} disabled={isIncrementDisabled}>
                         <Glyphicon glyph="glyphicon glyphicon-chevron-right" />
                     </Button>
                 </div>
             </div>
         );
     }
+    // Increment the date by 1 day
     incrementDate = () => {
-        // Incrementa la data di 1 giorno
         const newToData = moment(this.props.toData).add(1, 'days').toDate();
-        this.props.onChangeYear(newToData); // Chiama il metodo per aggiornare la data
+        this.props.onChangePeriodToData(newToData);
         this.updateParams({
             fromData: moment(newToData).clone().subtract(1, 'day'),
             toData: newToData
         });
     }
+    // Decrement the date by 1 day
     decrementDate = () => {
-        // Decrementa la data di 1 giorno
         const newToData = moment(this.props.toData).subtract(1, 'days').toDate();
-        this.props.onChangeYear(newToData); // Chiama il metodo per aggiornare la data
+        this.props.onChangePeriodToData(newToData);
         this.updateParams({
             fromData: moment(newToData).clone().subtract(1, 'day'),
             toData: newToData
         });
     }
-    handleChangeToData = (toData) => {
-        this.props.onChangeYear(toData);
+    handlechangePeriodToData = (toData) => {
+        this.props.onChangePeriodToData(toData);
         this.updateParams({
             fromData: moment(toData).clone().subtract(1, 'day'),
             toData: toData
@@ -250,7 +256,7 @@ const mapStateToProps = (state) => {
 
 const FixedRangePickerPlugin = connect(mapStateToProps, {
     onCollapsePlugin: collapsePlugin,
-    onChangeYear: compose(changeYear, (event) => event),
+    onChangePeriodToData: compose(changePeriodToData, (event) => event),
     onChangePeriod: compose(changePeriod, (event) => event.key),
     onUpdateSettings: updateSettings,
     onUpdateNode: updateNode,

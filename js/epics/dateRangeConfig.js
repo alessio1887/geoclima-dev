@@ -12,7 +12,7 @@ import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 import { LOADING } from '@mapstore/actions/maps';
 import DateAPI, { FROM_DATA, TO_DATA } from '../utils/ManageDateUtils';
 import { changeFromData, changeToData } from '../actions/freerangepicker';
-import { changeYear, changePeriod, toggleRangePickerPlugin } from '../actions/fixedrangepicker';
+import { changePeriodToData, changePeriod, toggleRangePickerPlugin } from '../actions/fixedrangepicker';
 import moment from 'moment';
 
 
@@ -63,7 +63,7 @@ const restoreDefaultsOnHome = (action$, store) =>
         const appState = store.getState();
         rangePickerActions.push(changeFromData(FROM_DATA));
         rangePickerActions.push(changeToData(TO_DATA));
-        rangePickerActions.push(changeYear(TO_DATA));
+        rangePickerActions.push(changePeriodToData(TO_DATA));
         rangePickerActions.push(changePeriod("1"));
         if (!appState.fixedrangepicker.showFixedRangePicker) {
             rangePickerActions.push(toggleRangePickerPlugin());

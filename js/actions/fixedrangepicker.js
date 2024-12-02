@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-export const MAP_YEAR_CHANGED = 'MAP_YEAR_CHANGED';
+export const TODATA_CHANGED = 'TODATA_CHANGED';
 export const MAP_PERIOD_CHANGED = 'MAP_PERIOD_CHANGED';
 export const TOGGLE_PLUGIN = 'TOGGLE_PLUGIN';
 export const CLICK_THUMBNAIL_HOME = 'CLICK_THUMBNAIL_HOME';
@@ -14,9 +14,9 @@ export const OPEN_ALERT = 'FIXEDRANGE:OPEN_ALERT';
 export const CLOSE_ALERT = 'FIXEDRANGE:CLOSE_ALERT';
 export const COLLAPSE_RANGE_PICKER = 'FIXEDRANGE:COLLAPSE_RANGE_PICKER';
 
-export function changeYear(toData) {
+export function changePeriodToData(toData) {
     return {
-        type: MAP_YEAR_CHANGED,
+        type: TODATA_CHANGED,
         toData
     };
 }

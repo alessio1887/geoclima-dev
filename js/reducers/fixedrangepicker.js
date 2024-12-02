@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
 */
 import { LAYER_LOADING, LAYER_LOAD, LAYER_ERROR} from '@mapstore/actions/layers';
-import {MAP_YEAR_CHANGED, MAP_PERIOD_CHANGED, TOGGLE_PLUGIN, OPEN_ALERT, CLOSE_ALERT, COLLAPSE_RANGE_PICKER } from '../actions/fixedrangepicker';
+import {TODATA_CHANGED, MAP_PERIOD_CHANGED, TOGGLE_PLUGIN, OPEN_ALERT, CLOSE_ALERT, COLLAPSE_RANGE_PICKER } from '../actions/fixedrangepicker';
 import DateAPI, { FROM_DATA, TO_DATA } from '../utils/ManageDateUtils';
 
 const defaultState = {
@@ -23,7 +23,7 @@ const defaultState = {
 
 function fixedrangepicker(state = defaultState, action) {
     switch (action.type) {
-    case MAP_YEAR_CHANGED:
+    case TODATA_CHANGED:
         return {
             ...state,
             fromData: new Date(DateAPI.calculateDateFromKeyReal(state.periodType, action.toData).fromData),

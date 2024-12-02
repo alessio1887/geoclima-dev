@@ -248,7 +248,7 @@ class InfoChart extends React.Component {
                             textField = "name"
                             value={this.props.variable}
                             onChange={(value) => { this.handleChangeChartVariable(value); }} />
-                        {/* Alterna tra FixedRangeManager e FreeRangeManager in base a activeRangeManager */}
+                        {/* Toggle between FixedRangeManager and FreeRangeManager based on activeRangeManager*/}
                         {this.props.activeRangeManager === FIXED_RANGE ? (
                             <FixedRangeManager
                                 toData={this.props.toData}

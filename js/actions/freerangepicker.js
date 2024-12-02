@@ -6,8 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-export const FROMDATA_CHANGED = 'FROMDATA_CHANGED';
-export const TODATA_CHANGED = 'TODATA_CHANGED';
+export const FROMDATA_CHANGED = 'FREERANGE:FROMDATA_CHANGED';
+export const TODATA_CHANGED = 'FREERANGE:TODATA_CHANGED';
 export const CLICK_THUMBNAIL_HOME = 'CLICK_THUMBNAIL_HOME';
 export const OPEN_ALERT = 'FREERANGE:OPEN_ALERT';
 export const CLOSE_ALERT = 'FREERANGE:CLOSE_ALERT';
