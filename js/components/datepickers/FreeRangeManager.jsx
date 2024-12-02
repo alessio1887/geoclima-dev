@@ -10,6 +10,8 @@ import { DateTimePicker } from 'react-widgets';
 import { Label } from 'react-bootstrap';
 import Message from '../../../MapStore2/web/client/components/I18N/Message';
 import moment from 'moment';
+import momentLocaliser from 'react-widgets/lib/localizers/moment';
+momentLocaliser(moment);
 
 import './rangemanager.css';
 
@@ -31,9 +33,9 @@ const FreeRangeManager = ({
                 time={false}
                 min={new Date("1991-01-01")}
                 max={moment().subtract(1, 'day')._d}
-                format={"DD MMMM, YYYY"}
+                format={"YYYY-MM-DD"}
                 editFormat={"YYYY-MM-DD"}
-                value={new Date(fromData)}
+                value={moment(fromData, "YYYY-MM-DD").toDate()}
                 onChange={onChangeFromData}
                 disabled={isInteractionDisabled}
             />
@@ -45,9 +47,9 @@ const FreeRangeManager = ({
                 time={false}
                 min={new Date("1991-01-02")}
                 max={moment().subtract(1, 'day')._d}
-                format={"DD MMMM, YYYY"}
+                format={"YYYY-MM-DD"}
                 editFormat={"YYYY-MM-DD"}
-                value={new Date(toData)}
+                value={moment(toData, "YYYY-MM-DD").toDate()}
                 onChange={onChangeToData}
                 disabled={isInteractionDisabled}
             />

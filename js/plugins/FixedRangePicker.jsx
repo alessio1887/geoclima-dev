@@ -140,7 +140,7 @@ class FixedRangePicker extends React.Component {
                 {this.props.alertMessage && (
                     <div className="alert-date" >
                         <strong><Message msgId="warning"/></strong>
-                        <span ><Message msgId={this.props.alertMessage}/></span>
+                        <span ><Message msgId={this.props.alertMessage} msgParams={{toData: moment(TO_DATA).format("DD-MM-YYYY")}}/></span>
                     </div>
                 )}
             </div>
@@ -161,9 +161,9 @@ class FixedRangePicker extends React.Component {
                     time={false}
                     min={new Date("1991-01-01")}
                     max={moment().subtract(1, 'day')._d}
-                    format={"DD MMMM, YYYY"}
+                    format={"YYYY-MM-DD"}
                     editFormat={"YYYY-MM-DD"}
-                    value={new Date(this.props.toData)}
+                    value={moment(this.props.toData, "YYYY-MM-DD").toDate()}
                     onChange={(value) => { this.handlechangePeriodToData(value); }}
                     disabled={this.props.isInteractionDisabled} />
                 <Button onClick={this.incrementDate} disabled={isIncrementDisabled}>

@@ -27,6 +27,8 @@ import * as rangePickerEpics from '../epics/dateRangeConfig';
 
 import FreeRangeManager from '../components/datepickers/FreeRangeManager';
 import RangePickerInfo from '../components/datepickers/RangePickerInfo';
+import momentLocaliser from 'react-widgets/lib/localizers/moment';
+momentLocaliser(moment);
 
 
 class FreeRangePicker extends React.Component {
@@ -123,7 +125,7 @@ class FreeRangePicker extends React.Component {
                 {this.props.alertMessage && (
                     <div className="alert-date" >
                         <strong><Message msgId="warning"/></strong>
-                        <span ><Message msgId={this.props.alertMessage}/></span>
+                        <span ><Message msgId={this.props.alertMessage} msgParams={{toData: moment(TO_DATA).format("DD-MM-YYYY")}}/></span>
                     </div>
                 )}
             </div>

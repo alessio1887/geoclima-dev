@@ -10,6 +10,8 @@ import { DateTimePicker, DropdownList } from 'react-widgets';
 import { Label } from 'react-bootstrap';
 import Message from '../../../MapStore2/web/client/components/I18N/Message';
 import moment from 'moment';
+import momentLocaliser from 'react-widgets/lib/localizers/moment';
+momentLocaliser(moment);
 
 import './rangemanager.css';
 
@@ -20,11 +22,11 @@ const FixedRangeManager = (props) => {
             <DateTimePicker
                 culture="it"
                 time={false}
-                min={new Date("1991-01-01")}
+                min={new Date("1991-01-02")}
                 max={moment().subtract(1, 'day')._d}
-                format={"DD MMMM, YYYY"}
+                format={"YYYY-MM-DD"}
                 editFormat={"YYYY-MM-DD"}
-                value={new Date(props.toData)}
+                value={moment(props.toData, "YYYY-MM-DD").toDate()}
                 onChange={props.onChangeToData}
                 disabled={props.isInteractionDisabled} />
             <Label className={props.styleLabels}><Message msgId="gcapp.fixedRangePicker.selectCumulativePeriod" /></Label>

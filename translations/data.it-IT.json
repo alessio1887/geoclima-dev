@@ -19,7 +19,8 @@
             "errorMessages": {
               "endDateBefore": "La data fine non può essere minore della data inizio.",
               "rangeTooLarge": "L'intervallo di date non può superare un anno.",
-              "dateTooEarly": "La data selezionata non può essere precedente al 1-01-1991."
+              "dateTooEarly": "La data selezionata non può essere precedente al 1-01-1991.",
+              "rangeExceedsBoundary": "La data selezionata non può superare il {toData}"
             },
             "applyPeriodButton": " Applica periodo",
             "dailyDatePicker": "Seleziona una data",

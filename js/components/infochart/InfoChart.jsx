@@ -19,12 +19,13 @@ import moment from 'moment';
 import { DropdownList } from 'react-widgets';
 import FixedRangeManager from '../../components/datepickers/FixedRangeManager';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
-import DateAPI from '../../utils/ManageDateUtils';
+import DateAPI, { TO_DATA } from '../../utils/ManageDateUtils';
 import { fillAreas, FIXED_RANGE, FREE_RANGE }  from '../../utils/VariabiliMeteoUtils';
+import momentLocaliser from 'react-widgets/lib/localizers/moment';
+momentLocaliser(moment);
 
 import 'react-resizable/css/styles.css';
 import './infochart.css';
-
 
 class InfoChart extends React.Component {
     static propTypes = {
@@ -283,7 +284,7 @@ class InfoChart extends React.Component {
                     {this.props.alertMessage && (
                         <div className="alert-date" >
                             <strong><Message msgId="warning"/></strong>
-                            <span ><Message msgId={this.props.alertMessage}/></span>
+                            <span ><Message msgId={this.props.alertMessage} msgParams={{toData: moment(TO_DATA).format("DD-MM-YYYY")}}/></span>
                         </div>
                     )}
                 </Grid>

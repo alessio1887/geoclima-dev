@@ -6,6 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 import moment from 'moment';
+import momentLocaliser from 'react-widgets/lib/localizers/moment';
+momentLocaliser(moment);
 
 export const PERIOD_TYPES = [
     { key: "1", label: "1 Mese" },
@@ -15,6 +17,10 @@ export const PERIOD_TYPES = [
     { key: "12", label: "12 Mesi" },
     { key: "10", label: "dal 1° Ottobre" }
 ];
+
+const yesterday = moment().subtract(1, 'day').toDate();
+export const FROM_DATA = new Date(moment(yesterday).clone().subtract(1, 'month'));
+export const TO_DATA = new Date(yesterday);
 
 const Api = {
     calculateDateFromKeyReal(key, toData) {
@@ -87,7 +93,7 @@ const Api = {
         const startDate = moment(fromData);
         const endDate = moment(toData);
 
-        if (startDate.isBefore(moment('1991-01-01'))) {
+        if (startDate.isBefore(moment('1991-01-01')) || endDate.isBefore(moment('1991-01-01'))) {
             return { isValid: false, errorMessage: "gcapp.errorMessages.dateTooEarly" };
         }
         if (endDate.isBefore(startDate)) {
@@ -97,14 +103,12 @@ const Api = {
         if (endDate.isAfter(oneYearFromStart)) {
             return { isValid: false, errorMessage: "gcapp.errorMessages.rangeTooLarge" };
         }
+        if (endDate.isAfter(TO_DATA)) {
+            return { isValid: false, errorMessage: "gcapp.errorMessages.rangeExceedsBoundary"};
+        }
         // Se tutte le verifiche passano
         return { isValid: true, errorMessage: null };
     }
 };
-
-const yesterday = moment().subtract(1, 'day').toDate();
-const { fromData, toData } = Api.calculateDateFromKeyReal("1", yesterday);
-export const FROM_DATA = new Date(fromData);
-export const TO_DATA = new Date(toData);
 
 export default Api;
