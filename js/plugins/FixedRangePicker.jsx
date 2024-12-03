@@ -93,20 +93,27 @@ class FixedRangePicker extends React.Component {
         };
         const rotateIcon = this.props.isCollapsedPlugin ? 'rotate(180deg)' : 'rotate(0deg)';
         return (
-            <div className={this.props.className} style={pluginStyle}>
+            <div className="ms-fixedrangepicker-action" style={pluginStyle}>
                 <Button  onClick= {this.props.onCollapsePlugin} style={this.props.style}>
                     <Message msgId={this.props.showRangePicker
                         ? "gcapp.fixedRangePicker.collapsePlugin"
                         : "gcapp.dailyDatePicker"}  />{' '}
                     <span className="collapse-rangepicker-icon" style={{ transform: rotateIcon }}>&#9650;</span>
                 </Button>
-                <Collapse in={!this.props.isCollapsedPlugin}  style={{ zIndex: 100,  position: "absolute", top: "30px"  }}>
+                <Collapse in={!this.props.isCollapsedPlugin} style={{ zIndex: 100,  position: "absolute", top: "30px",
+                    boxShadow: "0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22)", backgroundColor: "#FFFFFF"  }}>
                     <FormGroup style={{ marginBottom: "0px" }} bsSize="sm">
                         {
                             this.props.showRangePicker
                                 ? this.showFixedRangeManager()
                                 : this.showDailyDatePicker()
                         }
+                        {this.props.alertMessage && (
+                            <div className="alert-date" >
+                                <strong><Message msgId="warning"/></strong>
+                                <span ><Message msgId={this.props.alertMessage} msgParams={{toData: moment(TO_DATA).format("DD-MM-YYYY")}}/></span>
+                            </div>
+                        )}
                     </FormGroup>
                 </Collapse>
             </div>
@@ -137,12 +144,6 @@ class FixedRangePicker extends React.Component {
                         <Message msgId="gcapp.fixedRangePicker.dateRangeButton" />
                     </Button>
                 </ButtonGroup>
-                {this.props.alertMessage && (
-                    <div className="alert-date" >
-                        <strong><Message msgId="warning"/></strong>
-                        <span ><Message msgId={this.props.alertMessage} msgParams={{toData: moment(TO_DATA).format("DD-MM-YYYY")}}/></span>
-                    </div>
-                )}
             </div>
         );
     }
@@ -164,7 +165,7 @@ class FixedRangePicker extends React.Component {
                     format={"YYYY-MM-DD"}
                     editFormat={"YYYY-MM-DD"}
                     value={moment(this.props.toData, "YYYY-MM-DD").toDate()}
-                    onChange={(value) => { this.handlechangePeriodToData(value); }}
+                    onChange={(value) => { this.handleChangeDay(value); }}
                     disabled={this.props.isInteractionDisabled} />
                 <Button onClick={this.incrementDate} disabled={isIncrementDisabled}>
                     <Glyphicon glyph="glyphicon glyphicon-chevron-right" />
@@ -190,8 +191,16 @@ class FixedRangePicker extends React.Component {
             toData: newToData
         });
     }
-    handlechangePeriodToData = (toData) => {
+    handleChangeDay = (toData) => {
         this.props.onChangePeriodToData(toData);
+        const validation = DateAPI.validateDay(toData);
+        if (!validation.isValid) {
+            this.props.onOpenAlert(validation.errorMessage);
+            return;
+        }
+        if (this.props.alertMessage !== null) {
+            this.props.onCloseAlert();
+        }
         this.updateParams({
             fromData: moment(toData).clone().subtract(1, 'day'),
             toData: toData

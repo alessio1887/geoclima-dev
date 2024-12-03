@@ -90,7 +90,8 @@ class FreeRangePicker extends React.Component {
                     <Message msgId="gcapp.freeRangePicker.collapsePlugin"/>{' '}
                     <span className="collapse-rangepicker-icon" style={{ transform: rotateIcon }}>&#9650;</span>
                 </Button>
-                <Collapse in={!this.props.isCollapsedPlugin} style={{ zIndex: 100,  position: "absolute", top: "30px"  }}>
+                <Collapse in={!this.props.isCollapsedPlugin} style={{ zIndex: 100,  position: "absolute", top: "30px",
+                    boxShadow: "0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22)", backgroundColor: "#FFFFFF"  }}>
                     <FormGroup style={{marginBottom: "0px"}} bsSize="sm">
                         {this.showRangePicker()}
                     </FormGroup>

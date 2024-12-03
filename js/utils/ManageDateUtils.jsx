@@ -103,7 +103,19 @@ const Api = {
         if (endDate.isAfter(oneYearFromStart)) {
             return { isValid: false, errorMessage: "gcapp.errorMessages.rangeTooLarge" };
         }
-        if (endDate.isAfter(TO_DATA)) {
+        if (startDate.isAfter(TO_DATA) || endDate.isAfter(TO_DATA)) {
+            return { isValid: false, errorMessage: "gcapp.errorMessages.rangeExceedsBoundary"};
+        }
+        // Se tutte le verifiche passano
+        return { isValid: true, errorMessage: null };
+    },
+    validateDay(toData) {
+        const day = moment(toData);
+
+        if (day.isBefore(moment('1991-01-01'))) {
+            return { isValid: false, errorMessage: "gcapp.errorMessages.dateTooEarly" };
+        }
+        if (day.isAfter(TO_DATA)) {
             return { isValid: false, errorMessage: "gcapp.errorMessages.rangeExceedsBoundary"};
         }
         // Se tutte le verifiche passano
