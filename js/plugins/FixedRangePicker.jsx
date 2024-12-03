@@ -81,6 +81,12 @@ class FixedRangePicker extends React.Component {
         shiftRight: false
     };
 
+    state = {
+        // Default date values to use in case of invalid or missing date input
+        defaultFromData: new Date(FROM_DATA),
+        defaultToData: new Date(TO_DATA)
+    }
+
     render() {
         if (!this.props.showFixedRangePicker) {
             return null;
@@ -208,7 +214,11 @@ class FixedRangePicker extends React.Component {
     }
     handleApplyPeriod = () => {
         const { fromData, toData } = this.props;
-
+        if (!fromData || !toData || isNaN(fromData) || isNaN(toData) || !(toData instanceof Date) || !(fromData instanceof Date)) {
+            // restore defult values
+            this.props.onChangePeriodToData(new Date(this.state.defaultToData));
+            return;
+        }
         // Verifiche sulle date
         const validation = DateAPI.validateDateRange(fromData, toData);
         if (!validation.isValid) {
@@ -222,6 +232,9 @@ class FixedRangePicker extends React.Component {
             fromData: fromData,
             toData: toData
         });
+        // set default values
+        this.setState({ defaultFromData: new Date(fromData)});
+        this.setState({ defaultToData: new Date(toData)});
     }
     updateParams(datesParam, onUpdateNode = true) {
         this.props.layers.flat.map((layer) => {

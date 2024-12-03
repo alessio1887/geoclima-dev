@@ -19,7 +19,7 @@ import moment from 'moment';
 import { DropdownList } from 'react-widgets';
 import FixedRangeManager from '../../components/datepickers/FixedRangeManager';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
-import DateAPI, { TO_DATA } from '../../utils/ManageDateUtils';
+import DateAPI, { FROM_DATA, TO_DATA } from '../../utils/ManageDateUtils';
 import { fillAreas, FIXED_RANGE, FREE_RANGE }  from '../../utils/VariabiliMeteoUtils';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -123,6 +123,13 @@ class InfoChart extends React.Component {
             heightResizable: 880
         }
     }
+
+    state = {
+        // Default date values to use in case of invalid or missing date input
+        defaultFromData: new Date(FROM_DATA),
+        defaultToData: new Date(TO_DATA)
+    }
+
     shouldComponentUpdate(newProps) {
         return newProps.active || newProps.mapinfoActive || newProps.data.length > 0;
     }
@@ -390,10 +397,15 @@ class InfoChart extends React.Component {
         this.handleApplyPeriod(selectedVariable);
     }
     handleApplyPeriod = (selectedVariable) => {
+        let { fromData, toData } = this.props;
+        if (!fromData || !toData || isNaN(fromData) || isNaN(toData) || !(toData instanceof Date) || !(fromData instanceof Date)) {
+            // restore defult values
+            this.props.onChangePeriodToData(new Date(this.state.defaultToData));
+            return;
+        }
         // Set fromData, toData, periodKey and variabile meteo
-        let fromData;
         let periodKey;
-        let toData = moment(this.props.toData).clone().format('YYYY-MM-DD');
+        toData = moment(this.props.toData).clone().format('YYYY-MM-DD');
         if ( this.props.activeRangeManager === FIXED_RANGE) {
             fromData = DateAPI.calculateDateFromKeyReal( this.props.periodType, toData).fromData;
             periodKey = this.props.periodType;
@@ -422,6 +434,9 @@ class InfoChart extends React.Component {
             periodType: periodKey
         });
         this.props.onResetChartRelayout();
+        // set default values
+        this.setState({ defaultFromData: new Date(fromData)});
+        this.setState({ defaultToData: new Date(toData)});
     }
 }
 
