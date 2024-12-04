@@ -9,14 +9,6 @@
             "http://spatialreference.org/ref/epsg/3003/proj4/"
         ]
     },
-    "periodTypes": [
-        { "key": "1", "label": "1 Mese" },
-        { "key": "3", "label": "3 Mesi" },
-        { "key": "4", "label": "4 Mesi" },
-        { "key": "6", "label": "6 Mesi" },
-        { "key": "12", "label": "12 Mesi" },
-        { "key": "10", "label": "dal 1° Ottobre" }
-    ],
     "variabiliMeteo": {
       "precipitazione": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima","Pioggia_Cumulata_Giornaliera"],
       "temperatura": ["Temperatura_Media", "Temperatura_Media_Anomalia", "Temperatura_Minima", "Temperatura_Minima_Anomalia",
