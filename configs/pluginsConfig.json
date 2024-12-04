@@ -637,7 +637,7 @@
       "hidden": true
     },{
       "name": "FixedRangePicker",
-      "cfg" : {
+      "defaultConfig" : {
         "id": "mapstore-fixedrangepicker-map",
         "periodTypes": [
                 { "key": "1", "label": "1 Mese" },
@@ -652,18 +652,18 @@
     },
     {
       "name": "FreeRangePicker",
-      "cfg" : {
+      "defaultConfig" : {
         "id": "mapstore-freerangepicker-map"
       }
     },
     {
       "name": "DateRangeLabel",
-      "cfg" : {
+      "defaultConfig" : {
         "id": "mapstore-daterangelabel-map"
       }
     }, {
       "name":"InfoChart",
-      "cfg": {
+      "defaultConfig": {
           "periodTypes": [
               { "key": "1", "label": "1 Mese" },
               { "key": "3", "label": "3 Mesi" },

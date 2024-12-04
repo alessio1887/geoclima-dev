@@ -371,33 +371,6 @@
         ],
         "desktop": [
           {
-            "name": "FixedRangePicker",
-            "cfg" : {
-              "id": "mapstore-fixedrangepicker-map",
-              "periodTypes": [
-                      { "key": "1", "label": "1 Mese" },
-                      { "key": "3", "label": "3 Mesi" },
-                      { "key": "4", "label": "4 Mesi" },
-                      { "key": "6", "label": "6 Mesi" },
-                      { "key": "12", "label": "12 Mesi" },
-                      { "key": "10", "label": "dal 1° Ottobre" }
-                  ],
-                  "showRangePicker": true
-            }
-          },
-          {
-            "name": "FreeRangePicker",
-            "cfg" : {
-              "id": "mapstore-freerangepicker-map"
-            }
-          },
-          {
-            "name": "DateRangeLabel",
-            "cfg" : {
-              "id": "mapstore-daterangelabel-map"
-            }
-          },
-          {
             "name": "Map",
             "cfg": {
               "mapOptions": {
@@ -552,38 +525,6 @@
                 }
             },
             "ScaleBox", {
-              "name":"InfoChart",
-              "cfg": {
-                  "periodTypes": [
-                      { "key": "1", "label": "1 Mese" },
-                      { "key": "3", "label": "3 Mesi" },
-                      { "key": "4", "label": "4 Mesi" },
-                      { "key": "6", "label": "6 Mesi" },
-                      { "key": "12", "label": "12 Mesi" },
-                      { "key": "10", "label": "dal 1° Ottobre" }
-                  ],
-                  "variableList": [
-                    { "id": "prec", "name": "Precipitazione" },
-                    { "id": "tmed", "name": "Temperatura Media" },
-                    { "id": "tmax", "name": "Temperatura Massima" },
-                    { "id": "tmin", "name": "Temperatura Minima" },
-                    { "id": "ret", "name": "Evapotraspirazione Potenziale" },
-                    { "id": "bis", "name": "Bilancio Idrico Semplificato" }
-                  ],
-                  "variablePrecipitazione": "prec",
-                  "variableEvotrasporazione": "ret",
-                  "variableTemperaturaList": [
-                    "tmed",
-                    "tmax",
-                    "tmin"
-                  ]
-              },
-              "override": {
-                "Toolbar": {
-                  "alwaysVisible": true
-                }
-              }
-            }, {
               "name":"ZoomAll",
               "override": {
                 "Toolbar": {
