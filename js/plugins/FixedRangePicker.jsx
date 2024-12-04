@@ -8,7 +8,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-bootstrap';
-import { DateTimePicker } from 'react-widgets';
 import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
 import { compose } from 'redux';
@@ -20,7 +19,6 @@ import assign from 'object-assign';
 import moment from 'moment';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
 import './rangepicker.css';
-import './dailydatepicker.css';
 import RangePickerInfo from '../components/datepickers/RangePickerInfo';
 import FixedRangeManager from '../components/datepickers/FixedRangeManager';
 
@@ -49,7 +47,7 @@ class FixedRangePicker extends React.Component {
         layers: PropTypes.object,
         periodType: PropTypes.string,
         periodTypes: PropTypes.array,
-        showFixedRangePicker: PropTypes.bool, // serve per la visibilita del componente
+        showFixedRangePicker: PropTypes.bool, // If true, show this plugin; otherwise, show FreeRangePlugin if inserted in context
         onToggleFixedRangePicker: PropTypes.func,
         alertMessage: PropTypes.string,
         onOpenAlert: PropTypes.func,
@@ -159,58 +157,18 @@ class FixedRangePicker extends React.Component {
         const isIncrementDisabled = this.props.isInteractionDisabled ||
                                 moment(this.props.toData).isSameOrAfter(TO_DATA, 'day');
         return (
-            <div className="ms-dailydatepicker">
-                <Button  onClick={this.decrementDate} disabled={isDecrementDisabled}>
-                    <Glyphicon glyph="glyphicon glyphicon-chevron-left" />
-                </Button>
-                <DateTimePicker
-                    culture="it"
-                    time={false}
-                    min={new Date("1991-01-01")}
-                    max={moment().subtract(1, 'day')._d}
-                    format={"YYYY-MM-DD"}
-                    editFormat={"YYYY-MM-DD"}
-                    value={moment(this.props.toData, "YYYY-MM-DD").toDate()}
-                    onChange={(value) => { this.handleChangeDay(value); }}
-                    disabled={this.props.isInteractionDisabled} />
-                <Button onClick={this.incrementDate} disabled={isIncrementDisabled}>
-                    <Glyphicon glyph="glyphicon glyphicon-chevron-right" />
-                </Button>
-            </div>
+            <DailyManager
+                toData={this.props.toData}
+                isInteractionDisabled={this.props.isInteractionDisabled}
+                isDecrementDisabled = {isDecrementDisabled}
+                isIncrementDisabled = {isIncrementDisabled}
+                onChangePeriodToData={this.props.onChangePeriodToData}
+                updateParams={this.updateParams}
+                alertMessage={this.props.alertMessage}
+                onOpenAlert={this.props.onOpenAlert}
+                onCloseAlert={this.props.onCloseAlert}
+            />
         );
-    }
-    // Increment the date by 1 day
-    incrementDate = () => {
-        const newToData = moment(this.props.toData).add(1, 'days').toDate();
-        this.props.onChangePeriodToData(newToData);
-        this.updateParams({
-            fromData: moment(newToData).clone().subtract(1, 'day'),
-            toData: newToData
-        });
-    }
-    // Decrement the date by 1 day
-    decrementDate = () => {
-        const newToData = moment(this.props.toData).subtract(1, 'days').toDate();
-        this.props.onChangePeriodToData(newToData);
-        this.updateParams({
-            fromData: moment(newToData).clone().subtract(1, 'day'),
-            toData: newToData
-        });
-    }
-    handleChangeDay = (toData) => {
-        this.props.onChangePeriodToData(toData);
-        const validation = DateAPI.validateDay(toData);
-        if (!validation.isValid) {
-            this.props.onOpenAlert(validation.errorMessage);
-            return;
-        }
-        if (this.props.alertMessage !== null) {
-            this.props.onCloseAlert();
-        }
-        this.updateParams({
-            fromData: moment(toData).clone().subtract(1, 'day'),
-            toData: toData
-        });
     }
     handleApplyPeriod = () => {
         const { fromData, toData } = this.props;
@@ -236,7 +194,7 @@ class FixedRangePicker extends React.Component {
         this.setState({ defaultFromData: new Date(fromData)});
         this.setState({ defaultToData: new Date(toData)});
     }
-    updateParams(datesParam, onUpdateNode = true) {
+    updateParams = (datesParam, onUpdateNode = true) => {
         this.props.layers.flat.map((layer) => {
             if (onUpdateNode && isVariabiliMeteoLayer(layer.name)) {
                 const mapFile = DateAPI.setGCMapFile(datesParam.fromData, datesParam.toData, layer.params.map);

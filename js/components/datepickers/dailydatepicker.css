@@ -1,4 +1,8 @@
-.ms-dailydatepicker {
+.ms-dailydatepicker-container {
+    flex-direction: column;
+    align-items: center;
+}
+.ms-dailydatepicker-calendar {
     background-color: #FFFFFF;
     display: flex;
     flex-direction: row; /* Cambia in row per layout orizzontale */
@@ -12,25 +16,13 @@
     border: none;
     z-index: 10;
   }
-
-  .ms-dailydatepicker Button {
+#button-dailydatepicker-button {
+    display: flex; /* Make the container a flexbox */
+    justify-content: center; /* Arrange buttons horizontally */
     align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-    margin: 0;
-  }
-
-  .ms-dailydatepicker .react-datepicker-wrapper {
-    flex-grow: 1; /* Assicura che il date picker occupi lo spazio disponibile */
-    text-align: center;
-  }
-
-  .labels-dailydatepicker {
-    border-radius: 0%;
-    padding: 10px;
-    font-size: 14px;
-    flex: 1;
-  }
+    border-radius: 3px;      /* Arrotonda gli angoli */
+    margin: 10px 70px;
+}
 
   @media (max-width: 768px) {
     .ms-dailydatepicker {
