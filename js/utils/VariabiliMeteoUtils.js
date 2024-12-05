@@ -5,19 +5,23 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import ConfigUtils from '@mapstore/utils/ConfigUtils';
+// import ConfigUtils from '@mapstore/utils/ConfigUtils';
 
 
 export const FIXED_RANGE = "fixed_range_picker";
 export const FREE_RANGE = "free_range_picker";
 
-export function isVariabiliMeteoLayer(layerName) {
-    const VARIABILI_METEO = ConfigUtils.getConfigProp('variabiliMeteo');
+export function isVariabiliMeteoLayer(layerName, variabiliMeteo) {
+    // const VARIABILI_METEO = ConfigUtils.getConfigProp('variabiliMeteo');
     let check = false;
+    // Check undefined\null
+    if (!variabiliMeteo) {
+        return check;
+    }
     // Iterate through the VARIABILI_METEO object
-    for (const nomeVariabile in VARIABILI_METEO) {
+    for (const nomeVariabile in variabiliMeteo) {
         // VARIABILI_METEO[nomeVariabile] should be an array of meteorological variables
-        if (VARIABILI_METEO[nomeVariabile].includes(layerName)) {
+        if (variabiliMeteo[nomeVariabile].includes(layerName)) {
             check = true;
             break;
         }

@@ -21,6 +21,7 @@ import { createPlugin } from '@mapstore/utils/PluginsUtils';
 import './rangepicker.css';
 import RangePickerInfo from '../components/datepickers/RangePickerInfo';
 import FixedRangeManager from '../components/datepickers/FixedRangeManager';
+import DailyManager from '@js/components/datepickers/DailyManager';
 
 import fixedrangepicker from '../reducers/fixedrangepicker';
 import layers from '../../MapStore2/web/client/reducers/layers';
@@ -45,6 +46,7 @@ class FixedRangePicker extends React.Component {
         onUpdateNode: PropTypes.func,
         settings: PropTypes.object,
         layers: PropTypes.object,
+        variabiliMeteo: PropTypes.object,
         periodType: PropTypes.string,
         periodTypes: PropTypes.array,
         showFixedRangePicker: PropTypes.bool, // If true, show this plugin; otherwise, show FreeRangePlugin if inserted in context
@@ -66,6 +68,7 @@ class FixedRangePicker extends React.Component {
         periodType: "1",
         periodTypes: [],
         id: "mapstore-fixederange",
+        variabiliMeteo: {},
         className: "mapstore-fixederange",
         style: {
             top: 0,
@@ -196,7 +199,7 @@ class FixedRangePicker extends React.Component {
     }
     updateParams = (datesParam, onUpdateNode = true) => {
         this.props.layers.flat.map((layer) => {
-            if (onUpdateNode && isVariabiliMeteoLayer(layer.name)) {
+            if (onUpdateNode && isVariabiliMeteoLayer(layer.name, this.props.variabiliMeteo)) {
                 const mapFile = DateAPI.setGCMapFile(datesParam.fromData, datesParam.toData, layer.params.map);
                 const newParams = {
                     params: {

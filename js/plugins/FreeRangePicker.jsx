@@ -46,6 +46,7 @@ class FreeRangePicker extends React.Component {
         onUpdateNode: PropTypes.func,
         settings: PropTypes.object,
         layers: PropTypes.object,
+        variabiliMeteo: PropTypes.object,
         showFreeRangePicker: PropTypes.bool, // serve per la visibilita del componente
         onToggleFreeRangePicker: PropTypes.func,
         alertMessage: PropTypes.string,
@@ -62,6 +63,7 @@ class FreeRangePicker extends React.Component {
         onCollapsePlugin: () => { },
         id: "mapstore-daterange",
         className: "mapstore-daterange",
+        variabiliMeteo: {},
         style: {
             top: 0,
             position: 'absolute',
@@ -165,7 +167,7 @@ class FreeRangePicker extends React.Component {
     }
     updateParams(datesParam, onUpdateNode = true) {
         this.props.layers.flat.map((layer) => {
-            if (onUpdateNode && isVariabiliMeteoLayer(layer.name)) {
+            if (onUpdateNode && isVariabiliMeteoLayer(layer.name, this.props.variabiliMeteo)) {
                 const mapFile = DateAPI.setGCMapFile(datesParam.fromData, datesParam.toData, layer.params.map);
                 const newParams = {
                     params: {

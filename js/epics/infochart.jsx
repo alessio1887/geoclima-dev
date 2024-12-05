@@ -24,8 +24,11 @@ import { CLICK_ON_MAP } from '../../MapStore2/web/client/actions/map';
 import { LOADING } from '@mapstore/actions/maps';
 import API from '../api/GeoClimaApi';
 import { FIXED_RANGE, FREE_RANGE, isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
+import defaultConfig from '../../configs/pluginsConfig.json';
 import { FROM_DATA, TO_DATA } from '../utils/ManageDateUtils';
 import moment from 'moment';
+import momentLocaliser from 'react-widgets/lib/localizers/moment';
+momentLocaliser(moment);
 
 const getVisibleGroups = (groupMS2List = []) => {
     if (!Array.isArray(groupMS2List)) {
@@ -37,8 +40,9 @@ const getVisibleGroups = (groupMS2List = []) => {
 };
 
 const getVisibleLayers = (layers) => {
+    const infoChartConfig = defaultConfig.plugins.find(plugin => plugin.name === "InfoChart");
     return layers
-        .filter(layer => layer.visibility && isVariabiliMeteoLayer(layer.name));
+        .filter(layer => layer.visibility && isVariabiliMeteoLayer(layer.name, infoChartConfig?.defaultConfig?.variabiliMeteo));
 };
 
 

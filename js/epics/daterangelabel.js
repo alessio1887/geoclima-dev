@@ -9,6 +9,7 @@ import { Observable } from 'rxjs';
 import { LAYER_LOAD } from '@mapstore/actions/layers';
 import { updateRangeLabelDates, errorLayerNotFound, errorLayerDateMissing } from '../actions/daterangelabel';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
+import defaultConfig from '../../configs/pluginsConfig.json';
 
 const updateDateLabelEpic = (action$, store) =>
     action$.ofType(LAYER_LOAD)
@@ -19,7 +20,8 @@ const updateDateLabelEpic = (action$, store) =>
             if (!activeLayer) {
                 return Observable.of(errorLayerNotFound(layerId));
             }
-            if (!isVariabiliMeteoLayer(activeLayer?.name)) {
+            const dateRangeLabelConfig = defaultConfig.plugins.find(plugin => plugin.name === "DateRangeLabel");
+            if (!isVariabiliMeteoLayer(activeLayer?.name, dateRangeLabelConfig.defaultConfig?.variabiliMeteo)) {
                 // do nothing
                 return Observable.empty();
             }

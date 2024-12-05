@@ -13,15 +13,18 @@ import { LOADING } from '@mapstore/actions/maps';
 import DateAPI, { FROM_DATA, TO_DATA } from '../utils/ManageDateUtils';
 import { changeFromData, changeToData } from '../actions/freerangepicker';
 import { changePeriodToData, changePeriod, toggleRangePickerPlugin } from '../actions/fixedrangepicker';
+import defaultConfig from '../../configs/pluginsConfig.json';
 import moment from 'moment';
-
+import momentLocaliser from 'react-widgets/lib/localizers/moment';
+momentLocaliser(moment);
 
 // Function to get the layer configuration based on the date range
 const getMapLayersConfiguration = (configName) => {
     return axios.get(configName).then((response) => {
         if (typeof response.data === 'object' && response.data.map?.layers) {
+            const dateRangeLabelConfig = defaultConfig.plugins.find(plugin => plugin.name === "DateRangeLabel");
             const updatedLayers = response.data.map.layers.map((data) => {
-                if (isVariabiliMeteoLayer(data?.name)) {
+                if (isVariabiliMeteoLayer(data?.name, dateRangeLabelConfig?.defaultConfig?.variabiliMeteo)) {
                     const mapFileName = DateAPI.setGCMapFile(
                         moment(FROM_DATA).format('YYYY-MM-DD'),
                         moment(TO_DATA).format('YYYY-MM-DD'),
