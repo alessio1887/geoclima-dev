@@ -19,7 +19,7 @@ import moment from 'moment';
 import { DropdownList } from 'react-widgets';
 import FixedRangeManager from '../../components/datepickers/FixedRangeManager';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
-import DateAPI, { FROM_DATA, TO_DATA } from '../../utils/ManageDateUtils';
+import DateAPI from '../../utils/ManageDateUtils';
 import { fillAreas, FIXED_RANGE, FREE_RANGE }  from '../../utils/VariabiliMeteoUtils';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -35,7 +35,7 @@ class InfoChart extends React.Component {
         onSetInfoChartVisibility: PropTypes.func,
         onFetchInfoChartData: PropTypes.func,
         onCollapseRangePicker: PropTypes.func,
-        onResetInfoChartDates: PropTypes.func,
+        onSetInfoChartDates: PropTypes.func,
         onSetChartRelayout: PropTypes.func,
         onResetChartRelayout: PropTypes.func,
         onResizeInfoChart: PropTypes.func,
@@ -75,7 +75,9 @@ class InfoChart extends React.Component {
         variableEvotrasporazione: PropTypes.string,
         variableTemperaturaList: PropTypes.array,
         variableList: PropTypes.array,
-        idVariabiliLayers: PropTypes.object
+        idVariabiliLayers: PropTypes.object,
+        lastAvailableToData: PropTypes.instanceOf(Date),
+        defaultUrlGeoclimaChart: PropTypes.string
     }
     static defaultProps = {
         id: "mapstore-sarchart-panel",
@@ -85,7 +87,7 @@ class InfoChart extends React.Component {
         onFetchInfoChartData: () => {},
         onCollapseRangePicker: () => {},
         onSetRangeManager: () => {},
-        onResetInfoChartDates: () => {},
+        onSetInfoChartDates: () => {},
         onSetChartRelayout: () => {},
         onResetChartRelayout: () => {},
         onResizeInfoChart: () => {},
@@ -121,6 +123,7 @@ class InfoChart extends React.Component {
             "bis": ["BilancioIdricoSemplificato", "BilancioIdricoSemplificato_Anomalia_mm", "BilancioIdricoSemplificato_Anomalia_perc",
                 "BilancioIdricoSemplificato_clima"]
         },
+        defaultUrlGeoclimaChart: 'geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/geoclima_chart.py',
         show: false,
         infoChartData: {},
         maskLoading: true,
@@ -149,18 +152,21 @@ class InfoChart extends React.Component {
         infoChartSize: {
             widthResizable: 880,
             heightResizable: 880
-        }
+        },
+        lastAvailableToData: moment().subtract(1, 'day').startOf('day').toDate()
     }
 
     state = {
         // Default date values to use in case of invalid or missing date input
-        defaultFromData: new Date(FROM_DATA),
-        defaultToData: new Date(TO_DATA)
+        defaultFromData: new Date(moment(this.props.lastAvailableToData).clone().subtract(1, 'month').startOf('day')),
+        defaultToData: new Date(this.props.lastAvailableToData)
     }
-
+    // Set some props to the plugin's state
     componentDidMount() {
-        // TODO: settare lastAvailableToData con la chiamata ajax selectDate: action-ajax -> another action -> reducer
         this.props.onSetIdVariabiliLayers(this.props.idVariabiliLayers);
+        this.props.onSetDefaultUrlGeoclimaChart(this.props.defaultUrlGeoclimaChart);
+        // TODO: Implementare il recupero di `lastAvailableToData` con la chiamata AJAX
+        this.props.onSetInfoChartDates(this.props.lastAvailableToData, this.props.periodTypes);
     }
 
     shouldComponentUpdate(newProps) {
@@ -324,7 +330,7 @@ class InfoChart extends React.Component {
                     {this.props.alertMessage && (
                         <div className="alert-date" >
                             <strong><Message msgId="warning"/></strong>
-                            <span ><Message msgId={this.props.alertMessage} msgParams={{toData: moment(TO_DATA).format("DD-MM-YYYY")}}/></span>
+                            <span ><Message msgId={this.props.alertMessage} msgParams={{toData: moment(this.props.lastAvailableToData).format("DD-MM-YYYY")}}/></span>
                         </div>
                     )}
                 </Grid>
@@ -392,7 +398,7 @@ class InfoChart extends React.Component {
 
     closePanel = () => {
         this.props.onSetInfoChartVisibility(false);
-        this.props.onResetInfoChartDates();
+        this.props.onSetInfoChartDates(this.props.lastAvailableToData, this.props.periodTypes );
         this.props.onResetChartRelayout();
     }
     formatDataCum(values) {

@@ -9,21 +9,24 @@
 import {connect} from 'react-redux';
 import { compose } from 'redux';
 import {setInfoChartVisibility, changeFixedRangeToData, fetchInfoChartData, fetchedInfoChartData, toggleInfoChart,
-    changeChartVariable, changePeriod, changeFromData, changeToData, resetInfoChartDates, collapseRangePicker,
+    changeChartVariable, changePeriod, changeFromData, changeToData, setDefaultDates, collapseRangePicker,
     openAlert, closeAlert, setChartRelayout, resetChartRelayout, resizeInfoChart, setIdVariabiliLayers,
-    setRangeManager} from '../actions/infochart';
+    setRangeManager, setDefaultUrlGeoclimaChart} from '../actions/infochart';
 import InfoChartButton from '../components/buttons/InfoChartButton';
 import InfoChart from '../components/infochart/InfoChart';
-import { FROM_DATA, TO_DATA } from '../utils/ManageDateUtils';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
 import infoChartReducer from '../reducers/infochart';
 import * as infoChartEpic from '../epics/infochart';
 import assign from 'object-assign';
 import { FREE_RANGE } from '@js/utils/VariabiliMeteoUtils';
+import moment from 'moment';
+import momentLocaliser from 'react-widgets/lib/localizers/moment';
+momentLocaliser(moment);
 
 /*
 Plugin configuration
 "name":"InfoChart",
+      "defaultUrlGeoclimaChart": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/geoclima_chart.py",
       "defaultConfig": {
           "periodTypes": [
               { "key": "1", "label": "1 Mese" },
@@ -94,8 +97,8 @@ const InfoChartPlugin = connect(
 const InfoChartPanel = connect((state) => ({
     show: state.infochart && state.infochart.showInfoChartPanel || false,
     infoChartData: {
-        fromData: state.infochart?.infoChartData?.fromData || FROM_DATA,
-        toData: state.infochart?.infoChartData?.toData || TO_DATA,
+        fromData: state.infochart?.infoChartData?.fromData,
+        toData: state.infochart?.infoChartData?.toData,
         variable: state.infochart?.infoChartData?.variable,
         latlng: state.infochart?.infoChartData?.latlng || {},
         periodType: state.infochart?.infoChartData?.periodType
@@ -106,16 +109,18 @@ const InfoChartPanel = connect((state) => ({
     mapinfoActive: state.mapInfo?.enabled || false,
     variable: state.infochart?.variable,
     // Initializes 'fromData' based on Infochart's date range; defaults to a calculated date if missing
-    fromData: state.infochart?.fromData || FROM_DATA,
+    fromData: state.infochart?.fromData,
     // Initializes 'toData' based on Infochart's date range; defaults to a calculated date if missing
-    toData: state.infochart?.toData || TO_DATA,
+    toData: state.infochart?.toData,
     periodType: state.infochart?.periodType,
     isInteractionDisabled: state.infochart?.isInteractionDisabled || false,
     isCollapsedFormGroup: state.infochart?.isCollapsedFormGroup || false,
     activeRangeManager: state.infochart?.activeRangeManager || FREE_RANGE,
     alertMessage: state.infochart?.alertMessage || null,
     chartRelayout: state.infochart?.chartRelayout,
-    infoChartSize: state.infochart?.infoChartSize || { widthResizable: 880, heightResizable: 880 }
+    infoChartSize: state.infochart?.infoChartSize || { widthResizable: 880, heightResizable: 880 },
+    defaultUrlGeoclimaChart: state.infochart?.defaultUrlGeoclimaChart,
+    lastAvailableToData: state.infochart?.lastAvailableToData
 }), {
     onSetInfoChartVisibility: setInfoChartVisibility,
     onFetchInfoChartData: fetchInfoChartData,
@@ -125,7 +130,7 @@ const InfoChartPanel = connect((state) => ({
     onChangeFromData: compose(changeFromData, (event) => event),
     onChangeFixedRangeTodata: compose(changeFixedRangeToData, (event) => event),
     onChangePeriod: compose(changePeriod, (event) => event.key),
-    onResetInfoChartDates: resetInfoChartDates,
+    onSetInfoChartDates: setDefaultDates,
     onCollapseRangePicker: collapseRangePicker,
     onSetRangeManager: setRangeManager,
     onOpenAlert: openAlert,
@@ -133,7 +138,8 @@ const InfoChartPanel = connect((state) => ({
     onSetChartRelayout: compose(setChartRelayout, (event) => event),
     onResetChartRelayout: resetChartRelayout,
     onResizeInfoChart: resizeInfoChart,
-    onSetIdVariabiliLayers: setIdVariabiliLayers
+    onSetIdVariabiliLayers: setIdVariabiliLayers,
+    onSetDefaultUrlGeoclimaChart: setDefaultUrlGeoclimaChart
 })(InfoChart);
 
 

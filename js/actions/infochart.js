@@ -15,7 +15,6 @@ export const CHART_PERIOD_CHANGED = 'CHART_PERIOD_CHANGED';
 export const FETCH_INFOCHART_DATA = 'FETCH_INFOCHART_DATA';
 export const FETCHED_INFOCHART_DATA = 'FETCHED_INFOCHART_DATA';
 export const TOGGLE_INFOCHART = 'TOGGLE_INFOCHART';
-export const RESET_INFO_CHART_DATES = 'INFOCHARTRESET_INFO_CHART_DATES';
 export const COLLAPSE_RANGE_PICKER = 'INFOCHART:COLLAPSE_RANGE_PICKER';
 export const SET_RANGE_MANAGER = 'INFOCHART:SET_RANGE_MANAGER';
 export const OPEN_ALERT = 'INFOCHART:OPEN_ALERT';
@@ -24,6 +23,8 @@ export const SET_CHART_RELAYOUT = 'INFOCHART:SET_CHART_RELAYOUT';
 export const RESET_CHART_RELAYOUT = 'INFOCHART:RESET_CHART_RELAYOUT';
 export const RESIZE_INFOCHART = 'RESIZE_INFOCHART';
 export const SET_IDVARIABILI_LAYERS = 'SET_ID_VARIABILI_LAYERS';
+export const SET_DEFAULT_URL = 'INFOCHART:SET_DEFULT_URL';
+export const SET_DEFAULT_DATES = 'INFOCHART:SET_DEFULT_DATES';
 
 export function changeChartVariable(variable) {
     return {
@@ -83,14 +84,6 @@ export function fetchedInfoChartData(data, maskLoading) {
         maskLoading
     };
 }
-
-
-export function resetInfoChartDates() {
-    return {
-        type: RESET_INFO_CHART_DATES
-    };
-}
-
 
 /**
  * when fullscreen have to be toggled
@@ -157,5 +150,20 @@ export function setIdVariabiliLayers(idVariabiliLayers) {
     return {
         type: SET_IDVARIABILI_LAYERS,
         idVariabiliLayers
+    };
+}
+
+export function setDefaultUrlGeoclimaChart(defaultUrlGeoclimaChart) {
+    return {
+        type: SET_DEFAULT_URL,
+        defaultUrlGeoclimaChart
+    };
+}
+
+export function setDefaultDates(toData, periodTypes) {
+    return {
+        type: SET_DEFAULT_DATES,
+        toData,
+        periodTypes
     };
 }

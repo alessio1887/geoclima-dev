@@ -694,6 +694,7 @@
     }, {
       "name":"InfoChart",
       "defaultConfig": {
+        "defaultUrlGeoclimaChart": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/geoclima_chart.py",
           "periodTypes": [
               { "key": "1", "label": "1 Mese" },
               { "key": "3", "label": "3 Mesi" },

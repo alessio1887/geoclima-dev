@@ -9,27 +9,30 @@
 import { FREE_RANGE } from '@js/utils/VariabiliMeteoUtils';
 import { CHARTVARIABLE_CHANGED, TODATA_FIXEDRANGE_CHANGED, FROMDATA_CHANGED,
     TODATA_CHANGED, CHART_PERIOD_CHANGED, SET_INFOCHART_VISIBILITY, FETCH_INFOCHART_DATA,
-    FETCHED_INFOCHART_DATA, RESET_INFO_CHART_DATES, COLLAPSE_RANGE_PICKER,
+    FETCHED_INFOCHART_DATA, COLLAPSE_RANGE_PICKER,
     OPEN_ALERT, CLOSE_ALERT, SET_CHART_RELAYOUT, RESET_CHART_RELAYOUT, RESIZE_INFOCHART,
-    SET_RANGE_MANAGER, SET_IDVARIABILI_LAYERS } from '../actions/infochart';
-import DateAPI, { FROM_DATA, TO_DATA, PERIOD_TYPES  } from '../utils/ManageDateUtils';
+    SET_RANGE_MANAGER, SET_IDVARIABILI_LAYERS, SET_DEFAULT_URL, SET_DEFAULT_DATES } from '../actions/infochart';
+import DateAPI, { PERIOD_TYPES } from '../utils/ManageDateUtils';
 import assign from 'object-assign';
+import moment from 'moment';
+import momentLocaliser from 'react-widgets/lib/localizers/moment';
+momentLocaliser(moment);
 
 const infoChartDefaultState = {
     showInfoChartPanel: false,
     infoChartData: {
-        fromData: FROM_DATA,
-        toData: TO_DATA,
-        variable: { "id": "prec", "name": "Precipitazione cumulata"},
+        fromData: moment().subtract(1, 'month').startOf('day').toDate(),
+        toData: moment().subtract(1, 'day').startOf('day').toDate(),
+        variable: PERIOD_TYPES[0],
         latlng: {lat: 0, lng: 0},
-        periodType: PERIOD_TYPES[0].key
+        periodType: PERIOD_TYPES[0]
     },
     data: [],
     maskLoading: true,
     variable: "prec",
-    fromData: FROM_DATA,
-    toData: TO_DATA,
-    periodType: PERIOD_TYPES[0].key,
+    fromData: moment().subtract(1, 'month').startOf('day').toDate(),
+    toData: moment().subtract(1, 'day').startOf('day').toDate(),
+    periodType: PERIOD_TYPES[0],
     isCollapsedFormGroup: false,
     activeRangeManager: FREE_RANGE,
     alertMessage: null,
@@ -52,7 +55,9 @@ const infoChartDefaultState = {
         "ret": ["Evapotraspirazione", "Evapotraspirazione_Anomalia_mm", "Evapotraspirazione_Anomalia_perc", "Evapotraspirazione_clima"],
         "bis": ["BilancioIdricoSemplificato", "BilancioIdricoSemplificato_Anomalia_mm", "BilancioIdricoSemplificato_Anomalia_perc",
             "BilancioIdricoSemplificato_clima"]
-    }
+    },
+    defaultUrlGeoclimaChart: 'geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/geoclima_chart.py',
+    lastAvailableToData: moment().subtract(1, 'day').startOf('day').toDate()
 };
 
 function infochart(state = infoChartDefaultState, action) {
@@ -121,9 +126,6 @@ function infochart(state = infoChartDefaultState, action) {
             ...state,
             alertMessage: null
         };
-    case RESET_INFO_CHART_DATES: {
-        return { ...infoChartDefaultState }; // Creates and returns a copy of the object
-    }
     case SET_CHART_RELAYOUT:
         return {
             ...state,
@@ -149,6 +151,26 @@ function infochart(state = infoChartDefaultState, action) {
         return {
             ...state,
             idVariabiliLayers: action.idVariabiliLayers
+        };
+    case SET_DEFAULT_URL:
+        return {
+            ...state,
+            defaultUrlGeoclimaChart: action.defaultUrlGeoclimaChart
+        };
+    case SET_DEFAULT_DATES:
+        const newToData = action.toData;
+        const newFromData = moment(newToData).subtract(1, 'month').toDate();
+        return {
+            ...state,
+            toData: newToData,
+            fromData: newFromData,
+            lastAvailableToData: newToData,
+            infoChartData: {
+                ...state.infoChartData,
+                toData: newToData,
+                fromData: newFromData,
+                periodType: action.periodTypes[0]
+            }
         };
     default:
         return state;

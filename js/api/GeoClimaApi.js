@@ -8,7 +8,7 @@
 import axios from '../../MapStore2/web/client/libs/ajax';
 import assign from 'object-assign';
 import urlUtil from 'url';
-const DEFAULT_URL_GEOCLIMA_CHART = 'geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/geoclima_chart.py';
+// const DEFAULT_URL_GEOCLIMA_CHART = 'geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/geoclima_chart.py';
 
 // const defaultOptions = {
 //     format: 'json',
@@ -21,11 +21,11 @@ const DEFAULT_URL_GEOCLIMA_CHART = 'geoportale.lamma.rete.toscana.it/cgi-bin/geo
  * The proxy URL and allowed CORS domains are defined in localConfig.json
  */
 const Api = {
-    geoclimachart: function(data, options) {
+    geoclimachart: function(data, defaultUrlGeoclimaChart, options) {
         var params = assign({lat: data.latlng.lat, lng: data.latlng.lng, toData: data.toData, fromData: data.fromData, variable: data.variable}, options || {});
         var url = urlUtil.format({
             protocol: window.location.hostname === 'localhost' ? 'https:' : window.location.protocol,
-            host: DEFAULT_URL_GEOCLIMA_CHART,
+            host: defaultUrlGeoclimaChart,
             query: params
         });
         return axios.get(url); // TODO the jsonp method returns .promise and .cancel method,the last can be called when user cancel the query

@@ -25,7 +25,6 @@ import { LOADING } from '@mapstore/actions/maps';
 import API from '../api/GeoClimaApi';
 import { FIXED_RANGE, FREE_RANGE, isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 import defaultConfig from '../../configs/pluginsConfig.json';
-import { FROM_DATA, TO_DATA } from '../utils/ManageDateUtils';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -138,8 +137,8 @@ const setVisVariable = (visibleIdLayer, idVariabiliLayers) => {
  */
 const getChartVariables = (appState, visibleLayer, rangeManager, idVariabiliLayers) => {
     let variable = Object.keys(idVariabiliLayers)[0] || '';
-    let fromData = FROM_DATA;
-    let toData = TO_DATA;
+    let toData = appState.infochart.lastAvailableToData;
+    let fromData = moment(toData).subtract(1, 'month').toDate();
     let periodType = "1";
 
     if (appState.infochart.showInfoChartPanel) {
@@ -151,8 +150,8 @@ const getChartVariables = (appState, visibleLayer, rangeManager, idVariabiliLaye
             : "1";
     } else if (visibleLayer && !appState.infochart.showInfoChartPanel) {
         variable = setVisVariable(visibleLayer.id, idVariabiliLayers);
-        fromData = visibleLayer.params?.fromData || FROM_DATA;
-        toData = visibleLayer.params?.toData || TO_DATA;
+        fromData = visibleLayer.params?.fromData || fromData;
+        toData = visibleLayer.params?.toData || toData;
         periodType = appState.fixedrangepicker?.showFixedRangePicker
             ? appState.fixedrangepicker?.periodType
             : "1";
@@ -275,7 +274,7 @@ const clickedPointCheckEpic = (action$, store) =>
 const loadInfoChartDataEpic = (action$, store) =>
     action$.ofType(FETCH_INFOCHART_DATA)
         .switchMap(() => Observable.fromPromise(
-            API.geoclimachart(store.getState().infochart.infoChartData)
+            API.geoclimachart(store.getState().infochart.infoChartData, store.getState().infochart.defaultUrlGeoclimaChart)
                 .then(res => res.data)
         ))
         .switchMap(data => Observable.of(fetchedInfoChartData(data, false)));
