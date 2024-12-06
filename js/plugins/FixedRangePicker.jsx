@@ -29,7 +29,32 @@ import layers from '../../MapStore2/web/client/reducers/layers';
 import * as rangePickerEpics from '../epics/dateRangeConfig';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
-
+/*
+Plugin configuration
+"name": "FixedRangePicker",
+          "cfg" : {
+            "id": "mapstore-fixedrangepicker-map",
+            "periodTypes": [
+                    { "key": "1", "label": "1 Mese" },
+                    { "key": "3", "label": "3 Mesi" },
+                    { "key": "4", "label": "4 Mesi" },
+                    { "key": "6", "label": "6 Mesi" },
+                    { "key": "12", "label": "12 Mesi" },
+                    { "key": "10", "label": "dal 1° Ottobre" }
+                ],
+            "variabiliMeteo": {
+                  "precipitazione": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima","Pioggia_Cumulata_Giornaliera"],
+                  "temperatura": ["Temperatura_Media", "Temperatura_Media_Anomalia", "Temperatura_Minima", "Temperatura_Minima_Anomalia",
+                          "Temperatura_Massima", "Temperatura_Massima_Anomalia", "Temperatura_Media_clima", "Temperatura_Massima_clima", "Temperatura_Minima_clima"],
+                  "evapotraspirazione": ["Evapotraspirazione", "Evapotraspirazione_Anomalia_mm", "Evapotraspirazione_Anomalia_perc", "Evapotraspirazione_clima"],
+                  "bilancioIdricoSemplificato": ["BilancioIdricoSemplificato", "BilancioIdricoSemplificato_Anomalia_mm", "BilancioIdricoSemplificato_Anomalia_perc",
+                          "BilancioIdricoSemplificato_clima"],
+                  "spi": [ "spi1", "spi3", "spi6", "spi12"],
+                  "spei":[ "spei1", "spei3", "spei6", "spei12"]
+            },
+            "showRangePicker": true
+          }
+*/
 class FixedRangePicker extends React.Component {
     static propTypes = {
         style: PropTypes.object,
@@ -66,7 +91,14 @@ class FixedRangePicker extends React.Component {
         onUpdateSettings: () => { },
         onCollapsePlugin: () => { },
         periodType: "1",
-        periodTypes: [],
+        periodTypes: [
+            { "key": "1", "label": "1 Mese" },
+            { "key": "3", "label": "3 Mesi" },
+            { "key": "4", "label": "4 Mesi" },
+            { "key": "6", "label": "6 Mesi" },
+            { "key": "12", "label": "12 Mesi" },
+            { "key": "10", "label": "dal 1° Ottobre" }
+        ],
         id: "mapstore-fixederange",
         variabiliMeteo: {},
         className: "mapstore-fixederange",
@@ -79,13 +111,17 @@ class FixedRangePicker extends React.Component {
         showRangePicker: true,
         alertMessage: null,
         isInteractionDisabled: true,
-        shiftRight: false
+        lastAvailableToData: moment().subtract(1, 'day').toDate()
     };
 
     state = {
         // Default date values to use in case of invalid or missing date input
-        defaultFromData: new Date(FROM_DATA),
-        defaultToData: new Date(TO_DATA)
+        defaultFromData: new Date(moment(this.props.lastAvailableToData).clone().subtract(1, 'month')),
+        defaultToData: new Date(this.props.lastAvailableToData)
+    }
+
+    componentDidMount() {
+        // TODO: settare lastAvailableToData con la chiamata ajax selectDate: action-ajax -> another action -> reducer
     }
 
     render() {
@@ -118,7 +154,9 @@ class FixedRangePicker extends React.Component {
                         {this.props.alertMessage && (
                             <div className="alert-date" >
                                 <strong><Message msgId="warning"/></strong>
-                                <span ><Message msgId={this.props.alertMessage} msgParams={{toData: moment(TO_DATA).format("DD-MM-YYYY")}}/></span>
+                                <span ><Message msgId={this.props.alertMessage}
+                                    msgParams={{toData: moment(this.props.lastAvailableToData).format("DD-MM-YYYY")}}/>
+                                </span>
                             </div>
                         )}
                     </FormGroup>
@@ -158,7 +196,7 @@ class FixedRangePicker extends React.Component {
         const isDecrementDisabled = this.props.isInteractionDisabled ||
                                 moment(this.props.toData).isSameOrBefore("1991-01-01", 'day');
         const isIncrementDisabled = this.props.isInteractionDisabled ||
-                                moment(this.props.toData).isSameOrAfter(TO_DATA, 'day');
+                                moment(this.props.toData).isSameOrAfter(moment(this.props.lastAvailableToData).clone().subtract(1, 'month'), 'day');
         return (
             <DailyManager
                 toData={this.props.toData}
@@ -222,8 +260,8 @@ class FixedRangePicker extends React.Component {
 const mapStateToProps = (state) => {
     return {
         isCollapsedPlugin: state?.fixedrangepicker?.isCollapsedPlugin,
-        fromData: state?.fixedrangepicker?.fromData || FROM_DATA,
-        toData: state?.fixedrangepicker?.toData || TO_DATA,
+        fromData: state?.fixedrangepicker?.fromData || moment(this.props.lastAvailableToData).clone().subtract(1, 'month'),
+        toData: state?.fixedrangepicker?.toData || this.props.lastAvailableToData,
         periodType: state?.fixedrangepicker?.periodType || "1",
         settings: state?.layers?.settings || { expanded: false, options: { opacity: 1 } },
         layers: state?.layers || {},

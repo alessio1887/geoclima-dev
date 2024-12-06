@@ -81,6 +81,10 @@ class FreeRangePicker extends React.Component {
         defaultToData: new Date(TO_DATA)
     }
 
+    componentDidMount() {
+        // TODO: settare lastAvailableToData con la chiamata ajax selectDate: action-ajax -> another action -> reducer
+    }
+
     render() {
         if (!this.props.showFreeRangePicker) {
             return null;

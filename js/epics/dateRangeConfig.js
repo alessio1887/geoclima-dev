@@ -8,12 +8,10 @@
 import { Observable } from 'rxjs';
 import axios from '../../MapStore2/web/client/libs/ajax';
 import { loadMapConfig, configureError, LOAD_MAP_CONFIG } from '@mapstore/actions/config';
-import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 import { LOADING } from '@mapstore/actions/maps';
-import DateAPI, { FROM_DATA, TO_DATA } from '../utils/ManageDateUtils';
+import DateAPI from '../utils/ManageDateUtils';
 import { changeFromData, changeToData } from '../actions/freerangepicker';
 import { changePeriodToData, changePeriod, toggleRangePickerPlugin } from '../actions/fixedrangepicker';
-import defaultConfig from '../../configs/pluginsConfig.json';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -22,9 +20,11 @@ momentLocaliser(moment);
 const getMapLayersConfiguration = (configName) => {
     return axios.get(configName).then((response) => {
         if (typeof response.data === 'object' && response.data.map?.layers) {
-            const dateRangeLabelConfig = defaultConfig.plugins.find(plugin => plugin.name === "DateRangeLabel");
+            // TODO: recuperare TO_DATA con la chiamata ajax selectDate
+            const TO_DATA = moment().subtract(1, 'day').toDate();
+            const FROM_DATA = new Date(moment(TO_DATA).clone().subtract(1, 'month'));
             const updatedLayers = response.data.map.layers.map((data) => {
-                if (isVariabiliMeteoLayer(data?.name, dateRangeLabelConfig?.defaultConfig?.variabiliMeteo)) {
+                if (data.params) {
                     const mapFileName = DateAPI.setGCMapFile(
                         moment(FROM_DATA).format('YYYY-MM-DD'),
                         moment(TO_DATA).format('YYYY-MM-DD'),
@@ -64,6 +64,9 @@ const restoreDefaultsOnHome = (action$, store) =>
     action$.ofType(LOADING).switchMap(() => {
         let rangePickerActions = [];
         const appState = store.getState();
+        // TODO: recuperare TO_DATA con la chiamata ajax selectDate
+        const TO_DATA = moment().subtract(1, 'day').toDate();
+        const FROM_DATA = new Date(moment(TO_DATA).clone().subtract(1, 'month'));
         rangePickerActions.push(changeFromData(FROM_DATA));
         rangePickerActions.push(changeToData(TO_DATA));
         rangePickerActions.push(changePeriodToData(TO_DATA));
