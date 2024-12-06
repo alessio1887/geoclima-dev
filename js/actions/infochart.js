@@ -23,6 +23,7 @@ export const CLOSE_ALERT = 'INFOCHART:CLOSE_ALERT';
 export const SET_CHART_RELAYOUT = 'INFOCHART:SET_CHART_RELAYOUT';
 export const RESET_CHART_RELAYOUT = 'INFOCHART:RESET_CHART_RELAYOUT';
 export const RESIZE_INFOCHART = 'RESIZE_INFOCHART';
+export const SET_IDVARIABILI_LAYERS = 'SET_ID_VARIABILI_LAYERS';
 
 export function changeChartVariable(variable) {
     return {
@@ -149,5 +150,12 @@ export function resizeInfoChart(widthResizable, heightResizable) {
         type: RESIZE_INFOCHART,
         widthResizable,
         heightResizable
+    };
+}
+
+export function setIdVariabiliLayers(idVariabiliLayers) {
+    return {
+        type: SET_IDVARIABILI_LAYERS,
+        idVariabiliLayers
     };
 }

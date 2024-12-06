@@ -228,7 +228,7 @@ const clickedPointCheckEpic = (action$, store) =>
             const chartInfoEnabled = appState.controls?.chartinfo?.enabled;
 
             if (chartInfoEnabled) {
-                const idVariabiliLayers = appState.localConfig?.idVariabiliLayers || {};
+                const idVariabiliLayers = appState.infochart.idVariabiliLayers;
                 const visibleLayer = getFirstVisibleLayer(getVisibleLayers(appState.layers.flat), getVisibleGroups(appState.layers.groups));
 
                 const rangeManager = appState.fixedrangepicker?.showFixedRangePicker ? FIXED_RANGE : FREE_RANGE;

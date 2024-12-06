@@ -74,7 +74,8 @@ class InfoChart extends React.Component {
         variablePrecipitazione: PropTypes.string,
         variableEvotrasporazione: PropTypes.string,
         variableTemperaturaList: PropTypes.array,
-        variableList: PropTypes.array
+        variableList: PropTypes.array,
+        idVariabiliLayers: PropTypes.object
     }
     static defaultProps = {
         id: "mapstore-sarchart-panel",
@@ -88,11 +89,38 @@ class InfoChart extends React.Component {
         onSetChartRelayout: () => {},
         onResetChartRelayout: () => {},
         onResizeInfoChart: () => {},
-        variablePrecipitazione: "",
-        variableEvotrasporazione: "",
-        variableTemperaturaList: [],
-        variableList: [],
-        periodTypes: [],
+        variablePrecipitazione: "prec",
+        variableEvotrasporazione: "ret",
+        variableTemperaturaList: [
+            "tmed",
+            "tmax",
+            "tmin"
+        ],
+        variableList: [
+            { "id": "prec", "name": "Precipitazione" },
+            { "id": "tmed", "name": "Temperatura Media" },
+            { "id": "tmax", "name": "Temperatura Massima" },
+            { "id": "tmin", "name": "Temperatura Minima" },
+            { "id": "ret", "name": "Evapotraspirazione Potenziale" },
+            { "id": "bis", "name": "Bilancio Idrico Semplificato" }
+        ],
+        periodTypes: [
+            { "key": "1", "label": "1 Mese" },
+            { "key": "3", "label": "3 Mesi" },
+            { "key": "4", "label": "4 Mesi" },
+            { "key": "6", "label": "6 Mesi" },
+            { "key": "12", "label": "12 Mesi" },
+            { "key": "10", "label": "dal 1° Ottobre" }
+        ],
+        idVariabiliLayers: {
+            "prec": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima"],
+            "tmed": ["Temperatura_Media", "Temperatura_Media_Anomalia", "Temperatura_Media_clima"],
+            "tmin": ["Temperatura_Minima", "Temperatura_Minima_Anomalia", "Temperatura_Minima_clima"],
+            "tmax": [ "Temperatura_Massima", "Temperatura_Massima_Anomalia", "Temperatura_Massima_clima"],
+            "ret": ["Evapotraspirazione", "Evapotraspirazione_Anomalia_mm", "Evapotraspirazione_Anomalia_perc", "Evapotraspirazione_clima"],
+            "bis": ["BilancioIdricoSemplificato", "BilancioIdricoSemplificato_Anomalia_mm", "BilancioIdricoSemplificato_Anomalia_perc",
+                "BilancioIdricoSemplificato_clima"]
+        },
         show: false,
         infoChartData: {},
         maskLoading: true,
@@ -128,6 +156,11 @@ class InfoChart extends React.Component {
         // Default date values to use in case of invalid or missing date input
         defaultFromData: new Date(FROM_DATA),
         defaultToData: new Date(TO_DATA)
+    }
+
+    componentDidMount() {
+        // TODO: settare lastAvailableToData con la chiamata ajax selectDate: action-ajax -> another action -> reducer
+        this.props.onSetIdVariabiliLayers(this.props.idVariabiliLayers);
     }
 
     shouldComponentUpdate(newProps) {

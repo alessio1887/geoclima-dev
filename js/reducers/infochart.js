@@ -10,8 +10,9 @@ import { FREE_RANGE } from '@js/utils/VariabiliMeteoUtils';
 import { CHARTVARIABLE_CHANGED, TODATA_FIXEDRANGE_CHANGED, FROMDATA_CHANGED,
     TODATA_CHANGED, CHART_PERIOD_CHANGED, SET_INFOCHART_VISIBILITY, FETCH_INFOCHART_DATA,
     FETCHED_INFOCHART_DATA, RESET_INFO_CHART_DATES, COLLAPSE_RANGE_PICKER,
-    OPEN_ALERT, CLOSE_ALERT, SET_CHART_RELAYOUT, RESET_CHART_RELAYOUT, RESIZE_INFOCHART, SET_RANGE_MANAGER } from '../actions/infochart';
-import DateAPI, { FROM_DATA, TO_DATA, PERIOD_TYPES } from '../utils/ManageDateUtils';
+    OPEN_ALERT, CLOSE_ALERT, SET_CHART_RELAYOUT, RESET_CHART_RELAYOUT, RESIZE_INFOCHART,
+    SET_RANGE_MANAGER, SET_IDVARIABILI_LAYERS } from '../actions/infochart';
+import DateAPI, { FROM_DATA, TO_DATA, PERIOD_TYPES  } from '../utils/ManageDateUtils';
 import assign from 'object-assign';
 
 const infoChartDefaultState = {
@@ -42,6 +43,15 @@ const infoChartDefaultState = {
     infoChartSize: {
         widthResizable: 880,
         heightResizable: 880
+    },
+    idVariabiliLayers: {
+        "prec": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima"],
+        "tmed": ["Temperatura_Media", "Temperatura_Media_Anomalia", "Temperatura_Media_clima"],
+        "tmin": ["Temperatura_Minima", "Temperatura_Minima_Anomalia", "Temperatura_Minima_clima"],
+        "tmax": [ "Temperatura_Massima", "Temperatura_Massima_Anomalia", "Temperatura_Massima_clima"],
+        "ret": ["Evapotraspirazione", "Evapotraspirazione_Anomalia_mm", "Evapotraspirazione_Anomalia_perc", "Evapotraspirazione_clima"],
+        "bis": ["BilancioIdricoSemplificato", "BilancioIdricoSemplificato_Anomalia_mm", "BilancioIdricoSemplificato_Anomalia_perc",
+            "BilancioIdricoSemplificato_clima"]
     }
 };
 
@@ -134,6 +144,11 @@ function infochart(state = infoChartDefaultState, action) {
                 widthResizable: action.widthResizable,
                 heightResizable: action.heightResizable
             }
+        };
+    case SET_IDVARIABILI_LAYERS:
+        return {
+            ...state,
+            idVariabiliLayers: action.idVariabiliLayers
         };
     default:
         return state;

@@ -10,7 +10,7 @@ import {connect} from 'react-redux';
 import { compose } from 'redux';
 import {setInfoChartVisibility, changeFixedRangeToData, fetchInfoChartData, fetchedInfoChartData, toggleInfoChart,
     changeChartVariable, changePeriod, changeFromData, changeToData, resetInfoChartDates, collapseRangePicker,
-    openAlert, closeAlert, setChartRelayout, resetChartRelayout, resizeInfoChart,
+    openAlert, closeAlert, setChartRelayout, resetChartRelayout, resizeInfoChart, setIdVariabiliLayers,
     setRangeManager} from '../actions/infochart';
 import InfoChartButton from '../components/buttons/InfoChartButton';
 import InfoChart from '../components/infochart/InfoChart';
@@ -21,6 +21,63 @@ import * as infoChartEpic from '../epics/infochart';
 import assign from 'object-assign';
 import { FREE_RANGE } from '@js/utils/VariabiliMeteoUtils';
 
+/*
+Plugin configuration
+"name":"InfoChart",
+      "defaultConfig": {
+          "periodTypes": [
+              { "key": "1", "label": "1 Mese" },
+              { "key": "3", "label": "3 Mesi" },
+              { "key": "4", "label": "4 Mesi" },
+              { "key": "6", "label": "6 Mesi" },
+              { "key": "12", "label": "12 Mesi" },
+              { "key": "10", "label": "dal 1° Ottobre" }
+          ],
+          "variabiliMeteo": {
+            "precipitazione": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima","Pioggia_Cumulata_Giornaliera"],
+            "temperatura": ["Temperatura_Media", "Temperatura_Media_Anomalia", "Temperatura_Minima", "Temperatura_Minima_Anomalia",
+                    "Temperatura_Massima", "Temperatura_Massima_Anomalia", "Temperatura_Media_clima", "Temperatura_Massima_clima", "Temperatura_Minima_clima"],
+            "evapotraspirazione": ["Evapotraspirazione", "Evapotraspirazione_Anomalia_mm", "Evapotraspirazione_Anomalia_perc", "Evapotraspirazione_clima"],
+            "bilancioIdricoSemplificato": ["BilancioIdricoSemplificato", "BilancioIdricoSemplificato_Anomalia_mm", "BilancioIdricoSemplificato_Anomalia_perc",
+                    "BilancioIdricoSemplificato_clima"],
+            "spi": [ "spi1", "spi3", "spi6", "spi12"],
+            "spei":[ "spei1", "spei3", "spei6", "spei12"]
+          },
+          "variableList": [
+            { "id": "prec", "name": "Precipitazione" },
+            { "id": "tmed", "name": "Temperatura Media" },
+            { "id": "tmax", "name": "Temperatura Massima" },
+            { "id": "tmin", "name": "Temperatura Minima" },
+            { "id": "ret", "name": "Evapotraspirazione Potenziale" },
+            { "id": "bis", "name": "Bilancio Idrico Semplificato" }
+          ],
+          "idVariabiliLayers": {
+            "prec": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima"],
+            "tmed": ["Temperatura_Media", "Temperatura_Media_Anomalia", "Temperatura_Media_clima"],
+            "tmin": ["Temperatura_Minima", "Temperatura_Minima_Anomalia", "Temperatura_Minima_clima"],
+            "tmax": [ "Temperatura_Massima", "Temperatura_Massima_Anomalia", "Temperatura_Massima_clima"],
+            "ret": ["Evapotraspirazione", "Evapotraspirazione_Anomalia_mm", "Evapotraspirazione_Anomalia_perc", "Evapotraspirazione_clima"],
+            "bis": ["BilancioIdricoSemplificato", "BilancioIdricoSemplificato_Anomalia_mm", "BilancioIdricoSemplificato_Anomalia_perc",
+                    "BilancioIdricoSemplificato_clima"]
+          },
+          "variablePrecipitazione": "prec",
+          "variableEvotrasporazione": "ret",
+          "variableTemperaturaList": [
+            "tmed",
+            "tmax",
+            "tmin"
+          ]
+      },
+      "override": {
+        "Toolbar": {
+          "alwaysVisible": true
+        }
+      },
+      "dependencies": [
+        "Toolbar",
+        "Expander"
+      ]
+*/
 const mapStateToProps = (state) => ({
     active: state && state.controls && state.controls.chartinfo && state.controls.chartinfo.enabled
 });
@@ -75,7 +132,8 @@ const InfoChartPanel = connect((state) => ({
     onCloseAlert: closeAlert,
     onSetChartRelayout: compose(setChartRelayout, (event) => event),
     onResetChartRelayout: resetChartRelayout,
-    onResizeInfoChart: resizeInfoChart
+    onResizeInfoChart: resizeInfoChart,
+    onSetIdVariabiliLayers: setIdVariabiliLayers
 })(InfoChart);
 
 
