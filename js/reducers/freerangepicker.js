@@ -7,7 +7,8 @@
 */
 import { LAYER_LOADING, LAYER_LOAD, LAYER_ERROR} from '@mapstore/actions/layers';
 import { FROM_DATA, TO_DATA } from '../utils/ManageDateUtils';
-import {FROMDATA_CHANGED, TODATA_CHANGED, OPEN_ALERT, CLOSE_ALERT, COLLAPSE_RANGE_PICKER} from '../actions/freerangepicker';
+import {FROMDATA_CHANGED, TODATA_CHANGED, OPEN_ALERT, CLOSE_ALERT, PLUGIN_NOT_LOADED,
+    PLUGIN_LOADED, COLLAPSE_RANGE_PICKER} from '../actions/freerangepicker';
 
 const defaultState = {
     isCollapsedPlugin: false,
@@ -16,7 +17,8 @@ const defaultState = {
     showModal: false,
     imgSrc: "",
     map: "geoclima",
-    alertMessage: null
+    alertMessage: null,
+    isPluginLoaded: false
 };
 
 function freerangepicker(state = defaultState, action) {
@@ -60,6 +62,16 @@ function freerangepicker(state = defaultState, action) {
         return {
             ...state,
             isCollapsedPlugin: !state.isCollapsedPlugin
+        };
+    case PLUGIN_LOADED:
+        return {
+            ...state,
+            isPluginLoaded: true
+        };
+    case PLUGIN_NOT_LOADED:
+        return {
+            ...state,
+            isPluginLoaded: false
         };
     default:
         return state;

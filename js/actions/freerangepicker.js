@@ -12,6 +12,8 @@ export const CLICK_THUMBNAIL_HOME = 'CLICK_THUMBNAIL_HOME';
 export const OPEN_ALERT = 'FREERANGE:OPEN_ALERT';
 export const CLOSE_ALERT = 'FREERANGE:CLOSE_ALERT';
 export const COLLAPSE_RANGE_PICKER = 'FREERANGE:COLLAPSE_RANGE_PICKER';
+export const PLUGIN_LOADED = 'FREERANGE:PLUGIN_LOADED';
+export const PLUGIN_NOT_LOADED = 'FREERANGE:PLUGIN_NOT_LOADED';
 
 export function changeFromData(fromData) {
     return {
@@ -41,5 +43,17 @@ export function closeAlert() {
 export function collapsePlugin() {
     return {
         type: COLLAPSE_RANGE_PICKER
+    };
+}
+
+export function markFreeRangeAsLoaded() {
+    return {
+        type: PLUGIN_LOADED
+    };
+}
+
+export function markFreeRangeAsNotLoaded() {
+    return {
+        type: PLUGIN_NOT_LOADED
     };
 }

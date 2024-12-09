@@ -11,9 +11,10 @@ import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-boots
 import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
 import { compose } from 'redux';
-import { changePeriodToData, changePeriod, toggleRangePickerPlugin, openAlert, closeAlert, collapsePlugin } from '../actions/fixedrangepicker';
+import { changePeriodToData, changePeriod, toggleRangePickerPlugin, openAlert,
+    closeAlert, collapsePlugin, markFixedRangeAsLoaded } from '../actions/fixedrangepicker';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
-import DateAPI, { FROM_DATA, TO_DATA } from '../utils/ManageDateUtils';
+import DateAPI from '../utils/ManageDateUtils';
 import { connect } from 'react-redux';
 import assign from 'object-assign';
 import moment from 'moment';
@@ -69,6 +70,7 @@ class FixedRangePicker extends React.Component {
         onChangePeriod: PropTypes.func,
         onUpdateSettings: PropTypes.func,
         onUpdateNode: PropTypes.func,
+        onMarkPluginAsLoaded: PropTypes.func,
         settings: PropTypes.object,
         layers: PropTypes.object,
         variabiliMeteo: PropTypes.object,
@@ -81,7 +83,10 @@ class FixedRangePicker extends React.Component {
         onCloseAlert: PropTypes.func,
         isInteractionDisabled: PropTypes.bool,
         shiftRight: PropTypes.bool,
-        showRangePicker: PropTypes.bool
+        showRangePicker: PropTypes.bool,  // defined in pluginsConfig
+        showChangeRangePickerButton: PropTypes.bool,
+        lastAvailableToData: PropTypes.instanceOf(Date),
+        isPluginLoaded: PropTypes.bool
     };
     static defaultProps = {
         isCollapsedPlugin: true,
@@ -100,7 +105,16 @@ class FixedRangePicker extends React.Component {
             { "key": "10", "label": "dal 1° Ottobre" }
         ],
         id: "mapstore-fixederange",
-        variabiliMeteo: {},
+        variabiliMeteo: {
+            "precipitazione": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima", "Pioggia_Cumulata_Giornaliera"],
+            "temperatura": ["Temperatura_Media", "Temperatura_Media_Anomalia", "Temperatura_Minima", "Temperatura_Minima_Anomalia",
+                "Temperatura_Massima", "Temperatura_Massima_Anomalia", "Temperatura_Media_clima", "Temperatura_Massima_clima", "Temperatura_Minima_clima"],
+            "evapotraspirazione": ["Evapotraspirazione", "Evapotraspirazione_Anomalia_mm", "Evapotraspirazione_Anomalia_perc", "Evapotraspirazione_clima"],
+            "bilancioIdricoSemplificato": ["BilancioIdricoSemplificato", "BilancioIdricoSemplificato_Anomalia_mm", "BilancioIdricoSemplificato_Anomalia_perc",
+                "BilancioIdricoSemplificato_clima"],
+            "spi": [ "spi1", "spi3", "spi6", "spi12"],
+            "spei": [ "spei1", "spei3", "spei6", "spei12"]
+        },
         className: "mapstore-fixederange",
         style: {
             top: 0,
@@ -111,7 +125,10 @@ class FixedRangePicker extends React.Component {
         showRangePicker: true,
         alertMessage: null,
         isInteractionDisabled: true,
-        lastAvailableToData: moment().subtract(1, 'day').toDate()
+        shiftRight: false,
+        showChangeRangePickerButton: false,
+        lastAvailableToData: moment().subtract(1, 'day').toDate(),
+        isPluginLoaded: PropTypes.bool
     };
 
     state = {
@@ -121,7 +138,8 @@ class FixedRangePicker extends React.Component {
     }
 
     componentDidMount() {
-        // TODO: settare lastAvailableToData con la chiamata ajax selectDate: action-ajax -> another action -> reducer
+        this.props.onToggleFixedRangePicker();
+        this.props.onMarkPluginAsLoaded();
     }
 
     render() {
@@ -185,9 +203,11 @@ class FixedRangePicker extends React.Component {
                     <Button onClick={this.handleApplyPeriod} disabled={this.props.isInteractionDisabled}>
                         <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton" />
                     </Button>
-                    <Button onClick={this.props.onToggleFixedRangePicker} disabled={this.props.isInteractionDisabled}>
-                        <Message msgId="gcapp.fixedRangePicker.dateRangeButton" />
-                    </Button>
+                    { this.props.showChangeRangePickerButton && (
+                        <Button onClick={this.props.onToggleFixedRangePicker} disabled={this.props.isInteractionDisabled}>
+                            <Message msgId="gcapp.fixedRangePicker.dateRangeButton" />
+                        </Button>
+                    )}
                 </ButtonGroup>
             </div>
         );
@@ -268,11 +288,14 @@ const mapStateToProps = (state) => {
         showFixedRangePicker: (state?.fixedrangepicker?.showFixedRangePicker) ? true : false,
         alertMessage: state?.fixedrangepicker?.alertMessage || null,
         isInteractionDisabled: state?.fixedrangepicker?.isInteractionDisabled || false,
-        shiftRight: state.controls.drawer ? state.controls.drawer.enabled : false
+        shiftRight: state.controls.drawer ? state.controls.drawer.enabled : false,
+        showChangeRangePickerButton: state.freerangepicker?.isPluginLoaded ? true : false,
+        isPluginLoaded: state?.fixedrangepicker?.isPluginLoaded
     };
 };
 
 const FixedRangePickerPlugin = connect(mapStateToProps, {
+    onMarkPluginAsLoaded: markFixedRangeAsLoaded,
     onCollapsePlugin: collapsePlugin,
     onChangePeriodToData: compose(changePeriodToData, (event) => event),
     onChangePeriod: compose(changePeriod, (event) => event.key),

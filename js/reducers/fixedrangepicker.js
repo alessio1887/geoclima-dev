@@ -6,7 +6,8 @@
  * LICENSE file in the root directory of this source tree.
 */
 import { LAYER_LOADING, LAYER_LOAD, LAYER_ERROR} from '@mapstore/actions/layers';
-import {TODATA_CHANGED, MAP_PERIOD_CHANGED, TOGGLE_PLUGIN, OPEN_ALERT, CLOSE_ALERT, COLLAPSE_RANGE_PICKER } from '../actions/fixedrangepicker';
+import {TODATA_CHANGED, MAP_PERIOD_CHANGED, TOGGLE_PLUGIN, OPEN_ALERT, CLOSE_ALERT,
+    PLUGIN_LOADED, PLUGIN_NOT_LOADED, COLLAPSE_RANGE_PICKER } from '../actions/fixedrangepicker';
 import DateAPI, { FROM_DATA, TO_DATA } from '../utils/ManageDateUtils';
 
 const defaultState = {
@@ -17,8 +18,9 @@ const defaultState = {
     showModal: false,
     imgSrc: "",
     map: "geoclima",
-    showFixedRangePicker: true,
-    isInteractionDisabled: false
+    showFixedRangePicker: false,
+    isInteractionDisabled: false,
+    isPluginLoaded: false
 };
 
 function fixedrangepicker(state = defaultState, action) {
@@ -67,6 +69,16 @@ function fixedrangepicker(state = defaultState, action) {
         return {
             ...state,
             isCollapsedPlugin: !state.isCollapsedPlugin
+        };
+    case PLUGIN_LOADED:
+        return {
+            ...state,
+            isPluginLoaded: true
+        };
+    case PLUGIN_NOT_LOADED:
+        return {
+            ...state,
+            isPluginLoaded: false
         };
     default:
         return state;

@@ -10,8 +10,8 @@ import axios from '../../MapStore2/web/client/libs/ajax';
 import { loadMapConfig, configureError, LOAD_MAP_CONFIG } from '@mapstore/actions/config';
 import { LOADING } from '@mapstore/actions/maps';
 import DateAPI from '../utils/ManageDateUtils';
-import { changeFromData, changeToData } from '../actions/freerangepicker';
-import { changePeriodToData, changePeriod, toggleRangePickerPlugin } from '../actions/fixedrangepicker';
+import { changeFromData, changeToData, markFreeRangeAsNotLoaded } from '../actions/freerangepicker';
+import { changePeriodToData, changePeriod, toggleRangePickerPlugin, markFixedRangeAsNotLoaded } from '../actions/fixedrangepicker';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -71,8 +71,14 @@ const restoreDefaultsOnHome = (action$, store) =>
         rangePickerActions.push(changeToData(TO_DATA));
         rangePickerActions.push(changePeriodToData(TO_DATA));
         rangePickerActions.push(changePeriod("1"));
-        if (!appState.fixedrangepicker.showFixedRangePicker) {
+        if (appState.fixedrangepicker.showFixedRangePicker) {
             rangePickerActions.push(toggleRangePickerPlugin());
+        }
+        if (appState.fixedrangepicker.isPluginLoaded) {
+            rangePickerActions.push(markFixedRangeAsNotLoaded());
+        }
+        if (appState.freerangepicker.isPluginLoaded) {
+            rangePickerActions.push(markFreeRangeAsNotLoaded());
         }
         return Observable.of(...rangePickerActions);
     });

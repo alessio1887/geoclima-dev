@@ -22,7 +22,7 @@ import './rangepicker.css';
 import layers from '../../MapStore2/web/client/reducers/layers';
 import freerangepicker from '@js/reducers/freerangepicker';
 import { toggleRangePickerPlugin } from '../actions/fixedrangepicker';
-import { changeFromData, changeToData, openAlert, closeAlert, collapsePlugin } from '@js/actions/freerangepicker';
+import { changeFromData, changeToData, openAlert, closeAlert, collapsePlugin, markFreeRangeAsLoaded } from '@js/actions/freerangepicker';
 import * as rangePickerEpics from '../epics/dateRangeConfig';
 
 import FreeRangeManager from '../components/datepickers/FreeRangeManager';
@@ -30,7 +30,23 @@ import RangePickerInfo from '../components/datepickers/RangePickerInfo';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
 
-
+/*
+Plugin configuration
+"name": "FreeRangePicker",
+      "defaultConfig" : {
+        "id": "mapstore-freerangepicker-map",
+        "variabiliMeteo": {
+          "precipitazione": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima","Pioggia_Cumulata_Giornaliera"],
+          "temperatura": ["Temperatura_Media", "Temperatura_Media_Anomalia", "Temperatura_Minima", "Temperatura_Minima_Anomalia",
+                  "Temperatura_Massima", "Temperatura_Massima_Anomalia", "Temperatura_Media_clima", "Temperatura_Massima_clima", "Temperatura_Minima_clima"],
+          "evapotraspirazione": ["Evapotraspirazione", "Evapotraspirazione_Anomalia_mm", "Evapotraspirazione_Anomalia_perc", "Evapotraspirazione_clima"],
+          "bilancioIdricoSemplificato": ["BilancioIdricoSemplificato", "BilancioIdricoSemplificato_Anomalia_mm", "BilancioIdricoSemplificato_Anomalia_perc",
+                  "BilancioIdricoSemplificato_clima"],
+          "spi": [ "spi1", "spi3", "spi6", "spi12"],
+          "spei":[ "spei1", "spei3", "spei6", "spei12"]
+        }
+      }
+*/
 class FreeRangePicker extends React.Component {
     static propTypes = {
         style: PropTypes.object,
@@ -44,6 +60,7 @@ class FreeRangePicker extends React.Component {
         onChangeToData: PropTypes.func,
         onUpdateSettings: PropTypes.func,
         onUpdateNode: PropTypes.func,
+        onMarkPluginAsLoaded: PropTypes.func,
         settings: PropTypes.object,
         layers: PropTypes.object,
         variabiliMeteo: PropTypes.object,
@@ -53,7 +70,9 @@ class FreeRangePicker extends React.Component {
         onOpenAlert: PropTypes.func,
         onCloseAlert: PropTypes.func,
         isInteractionDisabled: PropTypes.bool,
-        shiftRight: PropTypes.bool
+        shiftRight: PropTypes.bool,
+        isPluginLoaded: PropTypes.bool,
+        showChangeRangePickerButton: PropTypes.bool
     };
     static defaultProps = {
         isCollapsedPlugin: false,
@@ -63,7 +82,16 @@ class FreeRangePicker extends React.Component {
         onCollapsePlugin: () => { },
         id: "mapstore-daterange",
         className: "mapstore-daterange",
-        variabiliMeteo: {},
+        variabiliMeteo: {
+            "precipitazione": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima", "Pioggia_Cumulata_Giornaliera"],
+            "temperatura": ["Temperatura_Media", "Temperatura_Media_Anomalia", "Temperatura_Minima", "Temperatura_Minima_Anomalia",
+                "Temperatura_Massima", "Temperatura_Massima_Anomalia", "Temperatura_Media_clima", "Temperatura_Massima_clima", "Temperatura_Minima_clima"],
+            "evapotraspirazione": ["Evapotraspirazione", "Evapotraspirazione_Anomalia_mm", "Evapotraspirazione_Anomalia_perc", "Evapotraspirazione_clima"],
+            "bilancioIdricoSemplificato": ["BilancioIdricoSemplificato", "BilancioIdricoSemplificato_Anomalia_mm", "BilancioIdricoSemplificato_Anomalia_perc",
+                "BilancioIdricoSemplificato_clima"],
+            "spi": [ "spi1", "spi3", "spi6", "spi12"],
+            "spei": [ "spei1", "spei3", "spei6", "spei12"]
+        },
         style: {
             top: 0,
             position: 'absolute',
@@ -72,7 +100,9 @@ class FreeRangePicker extends React.Component {
         showFreeRangePicker: false,
         alertMessage: null,
         isInteractionDisabled: true,
-        shiftRight: false
+        shiftRight: false,
+        showChangeRangePickerButton: true,
+        isPluginLoaded: false
     };
 
     state = {
@@ -82,7 +112,7 @@ class FreeRangePicker extends React.Component {
     }
 
     componentDidMount() {
-        // TODO: settare lastAvailableToData con la chiamata ajax selectDate: action-ajax -> another action -> reducer
+        this.props.onMarkPluginAsLoaded();
     }
 
     render() {
@@ -131,9 +161,11 @@ class FreeRangePicker extends React.Component {
                     <Button onClick={this.handleApplyPeriod}  disabled={this.props.isInteractionDisabled}>
                         <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton"/>
                     </Button>
-                    <Button variant="primary" onClick={this.props.onToggleFreeRangePicker} disabled={this.props.isInteractionDisabled}>
-                        <Message msgId="gcapp.freeRangePicker.dateRangeButton"/>
-                    </Button>
+                    { this.props.showChangeRangePickerButton && (
+                        <Button variant="primary" onClick={this.props.onToggleFreeRangePicker} disabled={this.props.isInteractionDisabled}>
+                            <Message msgId="gcapp.freeRangePicker.dateRangeButton"/>
+                        </Button>
+                    )}
                 </ButtonGroup>
                 {this.props.alertMessage && (
                     <div className="alert-date" >
@@ -201,11 +233,14 @@ const mapStateToProps = (state) => {
         showFreeRangePicker: (!state?.fixedrangepicker?.showFixedRangePicker ) ? true : false,
         alertMessage: state?.freerangepicker?.alertMessage || null,
         isInteractionDisabled: state?.freerangepicker?.isInteractionDisabled || false,
-        shiftRight: state.controls.drawer ? state.controls.drawer.enabled : false
+        shiftRight: state.controls.drawer ? state.controls.drawer.enabled : false,
+        showChangeRangePickerButton: state.fixedrangepicker.isPluginLoaded ? true : false,
+        isPluginLoaded: state?.freerangepicker?.isPluginLoaded
     };
 };
 
 const FreeRangePickerPlugin = connect(mapStateToProps, {
+    onMarkPluginAsLoaded: markFreeRangeAsLoaded,
     onCollapsePlugin: collapsePlugin,
     onChangeFromData: compose(changeFromData, (event) => event),
     onChangeToData: compose(changeToData, (event) => event),

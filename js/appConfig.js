@@ -14,7 +14,7 @@ const fixedrangepicker = {
     fromData: FROM_DATA,
     toData: TO_DATA,
     periodType: "1",
-    showFixedRangePicker: true,
+    showFixedRangePicker: false,
     isInteractionDisabled: true
 };
 const freerangepicker = {

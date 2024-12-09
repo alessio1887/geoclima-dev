@@ -13,6 +13,8 @@ export const CLICK_THUMBNAIL_HOME = 'CLICK_THUMBNAIL_HOME';
 export const OPEN_ALERT = 'FIXEDRANGE:OPEN_ALERT';
 export const CLOSE_ALERT = 'FIXEDRANGE:CLOSE_ALERT';
 export const COLLAPSE_RANGE_PICKER = 'FIXEDRANGE:COLLAPSE_RANGE_PICKER';
+export const PLUGIN_LOADED = 'FIXEDRANGE:PLUGIN_LOADED';
+export const PLUGIN_NOT_LOADED = 'FIXEDRANGE:PLUGIN_NOT_LOADED';
 
 export function changePeriodToData(toData) {
     return {
@@ -55,5 +57,18 @@ export function closeAlert() {
 export function collapsePlugin() {
     return {
         type: COLLAPSE_RANGE_PICKER
+    };
+}
+
+
+export function markFixedRangeAsLoaded() {
+    return {
+        type: PLUGIN_LOADED
+    };
+}
+
+export function markFixedRangeAsNotLoaded() {
+    return {
+        type: PLUGIN_NOT_LOADED
     };
 }
