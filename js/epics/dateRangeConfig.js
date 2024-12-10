@@ -85,4 +85,4 @@ const loadMapConfigByDateRangeEpic = (action$) =>
             return Observable.empty();
         });
 
-export { restoreDefaultsOnHome, loadMapConfigByDateRangeEpic };
+export { loadMapConfigByDateRangeEpic };
