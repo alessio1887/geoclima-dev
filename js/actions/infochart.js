@@ -5,6 +5,7 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
 */
+import GeoClimaAPI from '../api/GeoClimaApi';
 
 export const CHARTVARIABLE_CHANGED = 'CHARTVARIABLE_CHANGED';
 export const TODATA_CHANGED = 'INFOCHART:TODATA_CHANGED';
@@ -25,6 +26,7 @@ export const RESIZE_INFOCHART = 'RESIZE_INFOCHART';
 export const SET_IDVARIABILI_LAYERS = 'SET_ID_VARIABILI_LAYERS';
 export const SET_DEFAULT_URL = 'INFOCHART:SET_DEFULT_URL';
 export const SET_DEFAULT_DATES = 'INFOCHART:SET_DEFULT_DATES';
+export const INFOCHART_ERROR_FETCH = 'INFOCHART_ERROR_FETCH';
 
 export function changeChartVariable(variable) {
     return {
@@ -167,3 +169,23 @@ export function setDefaultDates(toData, periodTypes) {
         periodTypes
     };
 }
+
+export function apiError(errorMessage) {
+    return {
+        type: INFOCHART_ERROR_FETCH,
+        errorMessage
+    };
+}
+
+export const fetchLastAvailableData = (variabileLastAvailableData, urlGetLastAvailableData, periodTypes) => {
+    return (dispatch) => {
+        GeoClimaAPI.getLastAvailableData(variabileLastAvailableData, urlGetLastAvailableData)
+            .then(response => {
+                const lastAvailableData = new Date(response.data[0].data);
+                dispatch(setDefaultDates(lastAvailableData, periodTypes));
+            })
+            .catch(error => {
+                dispatch(apiError(error));
+            });
+    };
+};

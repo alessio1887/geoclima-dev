@@ -158,7 +158,7 @@ function infochart(state = infoChartDefaultState, action) {
             defaultUrlGeoclimaChart: action.defaultUrlGeoclimaChart
         };
     case SET_DEFAULT_DATES:
-        const newToData = action.toData;
+        const newToData = action.toData || moment().subtract(1, 'day').startOf('day').toDate();
         const newFromData = moment(newToData).subtract(1, 'month').toDate();
         return {
             ...state,
@@ -169,7 +169,7 @@ function infochart(state = infoChartDefaultState, action) {
                 ...state.infoChartData,
                 toData: newToData,
                 fromData: newFromData,
-                periodType: action.periodTypes[0]
+                periodType: action.periodTypes?.[0] || PERIOD_TYPES[0]
             }
         };
     default:

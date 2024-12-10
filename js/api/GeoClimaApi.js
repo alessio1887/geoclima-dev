@@ -29,6 +29,15 @@ const Api = {
             query: params
         });
         return axios.get(url); // TODO the jsonp method returns .promise and .cancel method,the last can be called when user cancel the query
+    },
+    getLastAvailableData: function(variable, defaultUrlSelectDate, options) {
+        var params = assign({ variable: variable}, options || {});
+        var url = urlUtil.format({
+            protocol: window.location.hostname === 'localhost' ? 'https:' : window.location.protocol,
+            host: defaultUrlSelectDate,
+            query: params
+        });
+        return axios.get(url);
     }
 };
 

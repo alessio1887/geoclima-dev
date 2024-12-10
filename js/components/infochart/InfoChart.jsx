@@ -40,6 +40,7 @@ class InfoChart extends React.Component {
         onResetChartRelayout: PropTypes.func,
         onResizeInfoChart: PropTypes.func,
         onSetRangeManager: PropTypes.func,
+        onFetchLastAvailableData: PropTypes.func,
         show: PropTypes.bool,
         infoChartData: PropTypes.object,
         maskLoading: PropTypes.bool,
@@ -77,7 +78,9 @@ class InfoChart extends React.Component {
         variableList: PropTypes.array,
         idVariabiliLayers: PropTypes.object,
         lastAvailableToData: PropTypes.instanceOf(Date),
-        defaultUrlGeoclimaChart: PropTypes.string
+        defaultUrlGeoclimaChart: PropTypes.string,
+        defaultUrlGetLastAvailableData: PropTypes.string,
+        variabileLastAvailableData: PropTypes.string
     }
     static defaultProps = {
         id: "mapstore-sarchart-panel",
@@ -124,6 +127,8 @@ class InfoChart extends React.Component {
                 "BilancioIdricoSemplificato_clima"]
         },
         defaultUrlGeoclimaChart: 'geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/geoclima_chart.py',
+        defaultUrlGetLastAvailableData: "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
+        variabileLastAvailableData: "prec",
         show: false,
         infoChartData: {},
         maskLoading: true,
@@ -165,8 +170,8 @@ class InfoChart extends React.Component {
     componentDidMount() {
         this.props.onSetIdVariabiliLayers(this.props.idVariabiliLayers);
         this.props.onSetDefaultUrlGeoclimaChart(this.props.defaultUrlGeoclimaChart);
-        // TODO: Implementare il recupero di `lastAvailableToData` con la chiamata AJAX
-        this.props.onSetInfoChartDates(this.props.lastAvailableToData, this.props.periodTypes);
+        this.props.onFetchLastAvailableData(this.props.variabileLastAvailableData,
+            this.props.defaultUrlGetLastAvailableData, this.props.periodTypes);
     }
 
     shouldComponentUpdate(newProps) {

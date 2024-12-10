@@ -5,6 +5,7 @@
           "http://geoportale.lamma.rete.toscana.it/geoserver_sar",
             "https://geoportale.lamma.rete.toscana.it/geoserver_sar",
             "https://geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/geoclima_chart.py?",
+            "https://geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py?",
             "https://nominatim.openstreetmap.org",
             "http://spatialreference.org/ref/epsg/3003/proj4/"
         ]
