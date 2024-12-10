@@ -8,10 +8,7 @@
 import { Observable } from 'rxjs';
 import axios from '../../MapStore2/web/client/libs/ajax';
 import { loadMapConfig, configureError, LOAD_MAP_CONFIG } from '@mapstore/actions/config';
-import { LOADING } from '@mapstore/actions/maps';
 import DateAPI from '../utils/ManageDateUtils';
-import { changeFromData, changeToData, markFreeRangeAsNotLoaded } from '../actions/freerangepicker';
-import { changePeriodToData, changePeriod, toggleRangePickerPlugin, markFixedRangeAsNotLoaded } from '../actions/fixedrangepicker';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -50,38 +47,29 @@ const getMapLayersConfiguration = (configName) => {
     });
 };
 
-/**
- * Epic triggered when the user navigates back to the Home Page.
- * Resets plugins and application state to their default values,
- * including the range picker, selected year, and active period.
- * Ensures a consistent initial state for the user interface.
- *
- * @param {Observable} action$ - Stream of Redux actions.
- * @param {Object} store - The Redux store, used to access the current state.
- * @returns {Observable} - Stream of actions to dispatch to Redux.
- */
-const restoreDefaultsOnHome = (action$, store) =>
-    action$.ofType(LOADING).switchMap(() => {
-        let rangePickerActions = [];
-        const appState = store.getState();
-        // TODO: recuperare TO_DATA con la chiamata ajax selectDate
-        const TO_DATA = moment().subtract(1, 'day').toDate();
-        const FROM_DATA = new Date(moment(TO_DATA).clone().subtract(1, 'month'));
-        rangePickerActions.push(changeFromData(FROM_DATA));
-        rangePickerActions.push(changeToData(TO_DATA));
-        rangePickerActions.push(changePeriodToData(TO_DATA));
-        rangePickerActions.push(changePeriod("1"));
-        if (appState.fixedrangepicker.showFixedRangePicker) {
-            rangePickerActions.push(toggleRangePickerPlugin());
-        }
-        if (appState.fixedrangepicker.isPluginLoaded) {
-            rangePickerActions.push(markFixedRangeAsNotLoaded());
-        }
-        if (appState.freerangepicker.isPluginLoaded) {
-            rangePickerActions.push(markFreeRangeAsNotLoaded());
-        }
-        return Observable.of(...rangePickerActions);
-    });
+// Resets the plugin and application's state to default values when navigating back to the Home Page
+// const restoreDefaultsOnHome = (action$, store) =>
+//     action$.ofType(LOADING).switchMap(() => {
+//         let rangePickerActions = [];
+//         const appState = store.getState();
+//         // TODO: recuperare TO_DATA con la chiamata ajax selectDate
+//         const TO_DATA = moment().subtract(1, 'day').toDate();
+//         const FROM_DATA = new Date(moment(TO_DATA).clone().subtract(1, 'month'));
+//         rangePickerActions.push(changeFromData(FROM_DATA));
+//         rangePickerActions.push(changeToData(TO_DATA));
+//         rangePickerActions.push(changePeriodToData(TO_DATA));
+//         rangePickerActions.push(changePeriod("1"));
+//         if (appState.fixedrangepicker.showFixedRangePicker) {
+//             rangePickerActions.push(toggleRangePickerPlugin());
+//         }
+//         if (appState.fixedrangepicker.isPluginLoaded) {
+//             rangePickerActions.push(markFixedRangeAsNotLoaded());
+//         }
+//         if (appState.freerangepicker.isPluginLoaded) {
+//             rangePickerActions.push(markFreeRangeAsNotLoaded());
+//         }
+//         return Observable.of(...rangePickerActions);
+//     });
 
 
 const loadMapConfigByDateRangeEpic = (action$) =>

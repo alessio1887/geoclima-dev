@@ -11,7 +11,7 @@ import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-boots
 import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
 import { compose } from 'redux';
-import DateAPI, { FROM_DATA, TO_DATA} from '../utils/ManageDateUtils';
+import DateAPI from '../utils/ManageDateUtils';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 import { connect } from 'react-redux';
 import assign from 'object-assign';
@@ -22,7 +22,8 @@ import './rangepicker.css';
 import layers from '../../MapStore2/web/client/reducers/layers';
 import freerangepicker from '@js/reducers/freerangepicker';
 import { toggleRangePickerPlugin } from '../actions/fixedrangepicker';
-import { changeFromData, changeToData, openAlert, closeAlert, collapsePlugin, markFreeRangeAsLoaded } from '@js/actions/freerangepicker';
+import { changeFromData, changeToData, openAlert, closeAlert, collapsePlugin,
+    markFreeRangeAsLoaded, markFreeRangeAsNotLoaded } from '@js/actions/freerangepicker';
 import * as rangePickerEpics from '../epics/dateRangeConfig';
 
 import FreeRangeManager from '../components/datepickers/FreeRangeManager';
@@ -56,11 +57,13 @@ class FreeRangePicker extends React.Component {
         onCollapsePlugin: PropTypes.func,
         fromData: PropTypes.instanceOf(Date),
         toData: PropTypes.instanceOf(Date),
+        lastAvailableToData: PropTypes.instanceOf(Date),
         onChangeFromData: PropTypes.func,
         onChangeToData: PropTypes.func,
         onUpdateSettings: PropTypes.func,
         onUpdateNode: PropTypes.func,
         onMarkPluginAsLoaded: PropTypes.func,
+        onMarkPluginAsNotLoaded: PropTypes.func,
         settings: PropTypes.object,
         layers: PropTypes.object,
         variabiliMeteo: PropTypes.object,
@@ -102,17 +105,27 @@ class FreeRangePicker extends React.Component {
         isInteractionDisabled: true,
         shiftRight: false,
         showChangeRangePickerButton: true,
-        isPluginLoaded: false
+        isPluginLoaded: false,
+        lastAvailableToData: moment().subtract(1, 'day').startOf('day').toDate()
     };
 
     state = {
         // Default date values to use in case of invalid or missing date input
-        defaultFromData: new Date(FROM_DATA),
-        defaultToData: new Date(TO_DATA)
+        defaultFromData: this.props.lastAvailableToData,
+        defaultToData: moment(this.props.lastAvailableToData).clone().subtract(1, 'month').startOf('day').toDate()
     }
 
     componentDidMount() {
         this.props.onMarkPluginAsLoaded();
+    }
+
+    // Resets the plugin's state to default values when navigating back to the Home Page
+    componentWillUnmount() {
+        const TO_DATA = this.props.lastAvailableToData;
+        const FROM_DATA = moment(TO_DATA).clone().subtract(1, 'month').startOf('day').toDate();
+        this.props.onChangeToData(TO_DATA);
+        this.props.onChangeFromData(FROM_DATA);
+        this.props.onMarkPluginAsNotLoaded();
     }
 
     render() {
@@ -170,7 +183,9 @@ class FreeRangePicker extends React.Component {
                 {this.props.alertMessage && (
                     <div className="alert-date" >
                         <strong><Message msgId="warning"/></strong>
-                        <span ><Message msgId={this.props.alertMessage} msgParams={{toData: moment(TO_DATA).format("DD-MM-YYYY")}}/></span>
+                        <span ><Message msgId={this.props.alertMessage}
+                            msgParams={{toData: moment(this.prop.lastAvailableToData).format("DD-MM-YYYY")}}/>
+                        </span>
                     </div>
                 )}
             </div>
@@ -226,8 +241,8 @@ class FreeRangePicker extends React.Component {
 const mapStateToProps = (state) => {
     return {
         isCollapsedPlugin: state?.freerangepicker?.isCollapsedPlugin,
-        fromData: state?.freerangepicker?.fromData || FROM_DATA,
-        toData: state?.freerangepicker?.toData || TO_DATA,
+        fromData: state?.freerangepicker?.fromData,
+        toData: state?.freerangepicker?.toData,
         settings: state?.layers?.settings || {expanded: false, options: {opacity: 1}},
         layers: state?.layers || {},
         showFreeRangePicker: (!state?.fixedrangepicker?.showFixedRangePicker ) ? true : false,
@@ -241,6 +256,7 @@ const mapStateToProps = (state) => {
 
 const FreeRangePickerPlugin = connect(mapStateToProps, {
     onMarkPluginAsLoaded: markFreeRangeAsLoaded,
+    onMarkPluginAsNotLoaded: markFreeRangeAsNotLoaded,
     onCollapsePlugin: collapsePlugin,
     onChangeFromData: compose(changeFromData, (event) => event),
     onChangeToData: compose(changeToData, (event) => event),

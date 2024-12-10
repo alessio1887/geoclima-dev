@@ -66,11 +66,11 @@ class FixedRangePicker extends React.Component {
         fromData: PropTypes.instanceOf(Date),
         toData: PropTypes.instanceOf(Date),
         onChangePeriodToData: PropTypes.func,
-        onChangeMonth: PropTypes.func,
         onChangePeriod: PropTypes.func,
         onUpdateSettings: PropTypes.func,
         onUpdateNode: PropTypes.func,
         onMarkPluginAsLoaded: PropTypes.func,
+        onMarkFixedRangeAsNotLoaded: PropTypes.func,
         settings: PropTypes.object,
         layers: PropTypes.object,
         variabiliMeteo: PropTypes.object,
@@ -91,10 +91,10 @@ class FixedRangePicker extends React.Component {
     static defaultProps = {
         isCollapsedPlugin: true,
         onChangePeriodToData: () => { },
-        onChangeMonth: () => { },
         onChangePeriod: () => { },
         onUpdateSettings: () => { },
         onCollapsePlugin: () => { },
+        onMarkFixedRangeAsNotLoaded: () => { },
         periodType: "1",
         periodTypes: [
             { "key": "1", "label": "1 Mese" },
@@ -140,6 +140,17 @@ class FixedRangePicker extends React.Component {
     componentDidMount() {
         this.props.onToggleFixedRangePicker();
         this.props.onMarkPluginAsLoaded();
+    }
+
+    // Resets the plugin's state to default values when navigating back to the Home Page
+    componentWillUnmount() {
+        const TO_DATA = this.props.lastAvailableToData;
+        this.props.onChangePeriodToData(TO_DATA);
+        this.props.onChangePeriod("1");
+        this.props.onMarkFixedRangeAsNotLoaded();
+        if (this.props.showFixedRangePicker) {
+            this.props.onToggleFixedRangePicker();
+        }
     }
 
     render() {
@@ -296,6 +307,7 @@ const mapStateToProps = (state) => {
 
 const FixedRangePickerPlugin = connect(mapStateToProps, {
     onMarkPluginAsLoaded: markFixedRangeAsLoaded,
+    onMarkFixedRangeAsNotLoaded: markFixedRangeAsNotLoaded,
     onCollapsePlugin: collapsePlugin,
     onChangePeriodToData: compose(changePeriodToData, (event) => event),
     onChangePeriod: compose(changePeriod, (event) => event.key),
