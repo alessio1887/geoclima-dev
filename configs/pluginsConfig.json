@@ -658,7 +658,7 @@
               "spi": [ "spi1", "spi3", "spi6", "spi12"],
               "spei":[ "spei1", "spei3", "spei6", "spei12"]
         },
-        "showRangePicker": true
+        "showOneDatePicker": false
       }
     },
     {

@@ -83,7 +83,7 @@ class FixedRangePicker extends React.Component {
         onCloseAlert: PropTypes.func,
         isInteractionDisabled: PropTypes.bool,
         shiftRight: PropTypes.bool,
-        showRangePicker: PropTypes.bool,  // defined in pluginsConfig
+        showOneDatePicker: PropTypes.bool,
         showChangeRangePickerButton: PropTypes.bool,
         lastAvailableToData: PropTypes.instanceOf(Date),
         isPluginLoaded: PropTypes.bool
@@ -122,7 +122,7 @@ class FixedRangePicker extends React.Component {
             zIndex: 10
         },
         showFixedRangePicker: false,
-        showRangePicker: true,
+        showOneDatePicker: false,
         alertMessage: null,
         isInteractionDisabled: true,
         shiftRight: false,
@@ -167,7 +167,7 @@ class FixedRangePicker extends React.Component {
         return (
             <div className="ms-fixedrangepicker-action" style={pluginStyle}>
                 <Button  onClick= {this.props.onCollapsePlugin} style={this.props.style}>
-                    <Message msgId={this.props.showRangePicker
+                    <Message msgId={!this.props.showOneDatePicker
                         ? "gcapp.fixedRangePicker.collapsePlugin"
                         : "gcapp.dailyDatePicker"}  />{' '}
                     <span className="collapse-rangepicker-icon" style={{ transform: rotateIcon }}>&#9650;</span>
@@ -176,7 +176,7 @@ class FixedRangePicker extends React.Component {
                     boxShadow: "0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22)", backgroundColor: "#FFFFFF"  }}>
                     <FormGroup style={{ marginBottom: "0px" }} bsSize="sm">
                         {
-                            this.props.showRangePicker
+                            !this.props.showOneDatePicker
                                 ? this.showFixedRangeManager()
                                 : this.showDailyDatePicker()
                         }
