@@ -120,7 +120,7 @@ const InfoChartPanel = connect((state) => ({
     chartRelayout: state.infochart?.chartRelayout,
     infoChartSize: state.infochart?.infoChartSize || { widthResizable: 880, heightResizable: 880 },
     defaultUrlGeoclimaChart: state.infochart?.defaultUrlGeoclimaChart,
-    lastAvailableToData: state.infochart?.lastAvailableToData
+    lastAvailableData: state.infochart?.lastAvailableData
 }), {
     onSetInfoChartVisibility: setInfoChartVisibility,
     onFetchInfoChartData: fetchInfoChartData,

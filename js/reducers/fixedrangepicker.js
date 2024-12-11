@@ -7,14 +7,17 @@
 */
 import { LAYER_LOADING, LAYER_LOAD, LAYER_ERROR} from '@mapstore/actions/layers';
 import {TODATA_CHANGED, MAP_PERIOD_CHANGED, TOGGLE_PLUGIN, OPEN_ALERT, CLOSE_ALERT,
-    PLUGIN_LOADED, PLUGIN_NOT_LOADED, COLLAPSE_RANGE_PICKER } from '../actions/fixedrangepicker';
-import DateAPI, { FROM_DATA, TO_DATA } from '../utils/ManageDateUtils';
+    PLUGIN_LOADED, PLUGIN_NOT_LOADED, COLLAPSE_RANGE_PICKER, SET_SELECT_DATE } from '../actions/fixedrangepicker';
+import DateAPI, { DEFAULT_DATA_FINE } from '../utils/ManageDateUtils';
+import moment from 'moment';
+import momentLocaliser from 'react-widgets/lib/localizers/moment';
+momentLocaliser(moment);
 
 const defaultState = {
     isCollapsedPlugin: false,
     periodType: "1",
-    fromData: FROM_DATA,
-    toData: TO_DATA,
+    fromData: moment(DEFAULT_DATA_FINE).clone().subtract(1, 'month').startOf('day').toDate(),
+    toData: DEFAULT_DATA_FINE,
     showModal: false,
     imgSrc: "",
     map: "geoclima",
@@ -79,6 +82,12 @@ function fixedrangepicker(state = defaultState, action) {
         return {
             ...state,
             isPluginLoaded: false
+        };
+    case SET_SELECT_DATE:
+        return {
+            ...state,
+            firstAvalableDate: action.dataInizio,
+            lastAvalableDate: action.dataFine
         };
     default:
         return state;

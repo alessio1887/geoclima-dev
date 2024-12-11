@@ -15,6 +15,7 @@ export const CLOSE_ALERT = 'FIXEDRANGE:CLOSE_ALERT';
 export const COLLAPSE_RANGE_PICKER = 'FIXEDRANGE:COLLAPSE_RANGE_PICKER';
 export const PLUGIN_LOADED = 'FIXEDRANGE:PLUGIN_LOADED';
 export const PLUGIN_NOT_LOADED = 'FIXEDRANGE:PLUGIN_NOT_LOADED';
+export const SET_SELECT_DATE = 'FIXEDRANGE:SET_LAST_AVAILABLE_DATA';
 
 export function changePeriodToData(toData) {
     return {
@@ -70,5 +71,13 @@ export function markFixedRangeAsLoaded() {
 export function markFixedRangeAsNotLoaded() {
     return {
         type: PLUGIN_NOT_LOADED
+    };
+}
+
+export function setSelectDate(dataInizio, dataFine) {
+    return {
+        type: SET_SELECT_DATE,
+        dataInizio,
+        dataFine
     };
 }

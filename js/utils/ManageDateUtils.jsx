@@ -19,8 +19,10 @@ export const PERIOD_TYPES = [
 ];
 
 const yesterday = moment().subtract(1, 'day').toDate();
-export const FROM_DATA = new Date(moment(yesterday).clone().subtract(1, 'month'));
-export const TO_DATA = new Date(yesterday);
+// export const FROM_DATA = new Date(moment(yesterday).clone().subtract(1, 'month'));
+// export const TO_DATA = new Date(yesterday);
+export const DEFAULT_DATA_INIZIO = new Date("1991-01-01");
+export const DEFAULT_DATA_FINE = yesterday;
 
 const Api = {
     calculateDateFromKeyReal(key, toData) {
@@ -89,11 +91,11 @@ const Api = {
         const mapfileName = threshold ? cleanedMapName + threshold.suffix : cleanedMapName;
         return mapfileName;
     },
-    validateDateRange(fromData, toData) {
+    validateDateRange(fromData, toData, firstAvailableData, lastAvailableData) {
         const startDate = moment(fromData);
         const endDate = moment(toData);
 
-        if (startDate.isBefore(moment('1991-01-01')) || endDate.isBefore(moment('1991-01-01'))) {
+        if (startDate.isBefore(firstAvailableData) || endDate.isBefore(firstAvailableData)) {
             return { isValid: false, errorMessage: "gcapp.errorMessages.dateTooEarly" };
         }
         if (endDate.isBefore(startDate)) {
@@ -103,19 +105,19 @@ const Api = {
         if (endDate.isAfter(oneYearFromStart)) {
             return { isValid: false, errorMessage: "gcapp.errorMessages.rangeTooLarge" };
         }
-        if (startDate.isAfter(TO_DATA) || endDate.isAfter(TO_DATA)) {
+        if (startDate.isAfter(lastAvailableData) || endDate.isAfter(lastAvailableData)) {
             return { isValid: false, errorMessage: "gcapp.errorMessages.rangeExceedsBoundary"};
         }
         // Se tutte le verifiche passano
         return { isValid: true, errorMessage: null };
     },
-    validateDay(toData) {
+    validateDay(toData, firstAvailableData, lastAvailableData) {
         const day = moment(toData);
 
-        if (day.isBefore(moment('1991-01-01'))) {
+        if (day.isBefore(firstAvailableData)) {
             return { isValid: false, errorMessage: "gcapp.errorMessages.dateTooEarly" };
         }
-        if (day.isAfter(TO_DATA)) {
+        if (day.isAfter(lastAvailableData)) {
             return { isValid: false, errorMessage: "gcapp.errorMessages.rangeExceedsBoundary"};
         }
         // Se tutte le verifiche passano

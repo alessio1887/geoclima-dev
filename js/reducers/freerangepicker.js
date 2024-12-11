@@ -6,19 +6,24 @@
  * LICENSE file in the root directory of this source tree.
 */
 import { LAYER_LOADING, LAYER_LOAD, LAYER_ERROR} from '@mapstore/actions/layers';
-import { FROM_DATA, TO_DATA } from '../utils/ManageDateUtils';
+import { DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../utils/ManageDateUtils';
 import {FROMDATA_CHANGED, TODATA_CHANGED, OPEN_ALERT, CLOSE_ALERT, PLUGIN_NOT_LOADED,
-    PLUGIN_LOADED, COLLAPSE_RANGE_PICKER} from '../actions/freerangepicker';
+    PLUGIN_LOADED, COLLAPSE_RANGE_PICKER, SET_SELECT_DATE} from '../actions/freerangepicker';
+import moment from 'moment';
+import momentLocaliser from 'react-widgets/lib/localizers/moment';
+momentLocaliser(moment);
 
 const defaultState = {
     isCollapsedPlugin: false,
-    fromData: FROM_DATA,
-    toData: TO_DATA,
+    fromData: moment(DEFAULT_DATA_FINE).clone().subtract(1, 'month').startOf('day').toDate(),
+    toData: DEFAULT_DATA_FINE,
     showModal: false,
     imgSrc: "",
     map: "geoclima",
     alertMessage: null,
-    isPluginLoaded: false
+    isPluginLoaded: false,
+    firstAvalableDate: DEFAULT_DATA_INIZIO,
+    lastAvalableDate: DEFAULT_DATA_FINE
 };
 
 function freerangepicker(state = defaultState, action) {
@@ -72,6 +77,12 @@ function freerangepicker(state = defaultState, action) {
         return {
             ...state,
             isPluginLoaded: false
+        };
+    case SET_SELECT_DATE:
+        return {
+            ...state,
+            firstAvalableDate: action.dataInizio,
+            lastAvalableDate: action.dataFine
         };
     default:
         return state;

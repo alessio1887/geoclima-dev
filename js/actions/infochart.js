@@ -27,6 +27,7 @@ export const SET_IDVARIABILI_LAYERS = 'SET_ID_VARIABILI_LAYERS';
 export const SET_DEFAULT_URL = 'INFOCHART:SET_DEFULT_URL';
 export const SET_DEFAULT_DATES = 'INFOCHART:SET_DEFULT_DATES';
 export const INFOCHART_ERROR_FETCH = 'INFOCHART_ERROR_FETCH';
+export const SET_SELECT_DATE = 'INFOCHART:SET_LAST_AVAILABLE_DATA';
 
 export function changeChartVariable(variable) {
     return {
@@ -189,3 +190,11 @@ export const fetchLastAvailableData = (variabileLastAvailableData, urlGetLastAva
             });
     };
 };
+
+export function setSelectDate(dataInizio, dataFine) {
+    return {
+        type: SET_SELECT_DATE,
+        dataInizio,
+        dataFine
+    };
+}

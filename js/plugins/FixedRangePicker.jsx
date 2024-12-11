@@ -12,9 +12,11 @@ import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
 import { compose } from 'redux';
 import { changePeriodToData, changePeriod, toggleRangePickerPlugin, openAlert,
-    closeAlert, collapsePlugin, markFixedRangeAsLoaded } from '../actions/fixedrangepicker';
+    closeAlert, collapsePlugin, markFixedRangeAsLoaded, markFixedRangeAsNotLoaded,
+    setSelectDate } from '../actions/fixedrangepicker';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
-import DateAPI from '../utils/ManageDateUtils';
+// import ConfigUtils from '@mapstore/utils/ConfigUtils';
+import DateAPI, { DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../utils/ManageDateUtils';
 import { connect } from 'react-redux';
 import assign from 'object-assign';
 import moment from 'moment';
@@ -53,7 +55,7 @@ Plugin configuration
                   "spi": [ "spi1", "spi3", "spi6", "spi12"],
                   "spei":[ "spei1", "spei3", "spei6", "spei12"]
             },
-            "showRangePicker": true
+            "showOneDatePicker": false
           }
 */
 class FixedRangePicker extends React.Component {
@@ -65,6 +67,9 @@ class FixedRangePicker extends React.Component {
         onCollapsePlugin: PropTypes.func,
         fromData: PropTypes.instanceOf(Date),
         toData: PropTypes.instanceOf(Date),
+        firstAvailableData: DEFAULT_DATA_INIZIO,
+        lastAvailableData: DEFAULT_DATA_FINE,
+        onSetSelectDate: PropTypes.func,
         onChangePeriodToData: PropTypes.func,
         onChangePeriod: PropTypes.func,
         onUpdateSettings: PropTypes.func,
@@ -72,6 +77,7 @@ class FixedRangePicker extends React.Component {
         onMarkPluginAsLoaded: PropTypes.func,
         onMarkFixedRangeAsNotLoaded: PropTypes.func,
         settings: PropTypes.object,
+        // mapId: PropTypes.string,
         layers: PropTypes.object,
         variabiliMeteo: PropTypes.object,
         periodType: PropTypes.string,
@@ -85,7 +91,6 @@ class FixedRangePicker extends React.Component {
         shiftRight: PropTypes.bool,
         showOneDatePicker: PropTypes.bool,
         showChangeRangePickerButton: PropTypes.bool,
-        lastAvailableToData: PropTypes.instanceOf(Date),
         isPluginLoaded: PropTypes.bool
     };
     static defaultProps = {
@@ -127,24 +132,36 @@ class FixedRangePicker extends React.Component {
         isInteractionDisabled: true,
         shiftRight: false,
         showChangeRangePickerButton: false,
-        lastAvailableToData: moment().subtract(1, 'day').toDate(),
+        firstAvailableData: DEFAULT_DATA_INIZIO,
+        lastAvailableData: DEFAULT_DATA_FINE,
         isPluginLoaded: PropTypes.bool
     };
 
     state = {
         // Default date values to use in case of invalid or missing date input
-        defaultFromData: new Date(moment(this.props.lastAvailableToData).clone().subtract(1, 'month')),
-        defaultToData: new Date(this.props.lastAvailableToData)
+        defaultFromData: new Date(moment(this.props.lastAvailableData).clone().subtract(1, 'month')),
+        defaultToData: new Date(this.props.lastAvailableData)
     }
 
     componentDidMount() {
         this.props.onToggleFixedRangePicker();
         this.props.onMarkPluginAsLoaded();
+
+        // const url = require('url');
+        // const urlQuery = url.parse(window.location.href, true).query;
+        // const mapId = this.props.mapId;
+        // // if 0 it loads config.json
+        // // if mapId is a string it loads mapId.json
+        // // if it is a number it loads the config from geostore
+        // // let mapId = id === '0' ? null : id;
+        // let config = urlQuery && urlQuery.config || null;
+        // const { configUrl } = ConfigUtils.getConfigUrl({ mapId, config });
+        // console.log('url map:', configUrl);
     }
 
     // Resets the plugin's state to default values when navigating back to the Home Page
     componentWillUnmount() {
-        const TO_DATA = this.props.lastAvailableToData;
+        const TO_DATA = this.props.lastAvailableData;
         this.props.onChangePeriodToData(TO_DATA);
         this.props.onChangePeriod("1");
         this.props.onMarkFixedRangeAsNotLoaded();
@@ -184,7 +201,7 @@ class FixedRangePicker extends React.Component {
                             <div className="alert-date" >
                                 <strong><Message msgId="warning"/></strong>
                                 <span ><Message msgId={this.props.alertMessage}
-                                    msgParams={{toData: moment(this.props.lastAvailableToData).format("DD-MM-YYYY")}}/>
+                                    msgParams={{toData: moment(this.props.lastAvailableData).format("DD-MM-YYYY")}}/>
                                 </span>
                             </div>
                         )}
@@ -225,9 +242,9 @@ class FixedRangePicker extends React.Component {
     }
     showDailyDatePicker = () => {
         const isDecrementDisabled = this.props.isInteractionDisabled ||
-                                moment(this.props.toData).isSameOrBefore("1991-01-01", 'day');
+                                moment(this.props.toData).isSameOrBefore(this.props.firstAvailableData);
         const isIncrementDisabled = this.props.isInteractionDisabled ||
-                                moment(this.props.toData).isSameOrAfter(moment(this.props.lastAvailableToData).clone().subtract(1, 'month'), 'day');
+                                moment(this.props.toData).isSameOrAfter(moment(this.props.lastAvailableData).clone().subtract(1, 'month'), 'day');
         return (
             <DailyManager
                 toData={this.props.toData}
@@ -250,7 +267,7 @@ class FixedRangePicker extends React.Component {
             return;
         }
         // Verifiche sulle date
-        const validation = DateAPI.validateDateRange(fromData, toData);
+        const validation = DateAPI.validateDateRange(fromData, toData, this.props.firstAvailableData, this.props.lastAvailableData);
         if (!validation.isValid) {
             this.props.onOpenAlert(validation.errorMessage);
             return;
@@ -291,8 +308,8 @@ class FixedRangePicker extends React.Component {
 const mapStateToProps = (state) => {
     return {
         isCollapsedPlugin: state?.fixedrangepicker?.isCollapsedPlugin,
-        fromData: state?.fixedrangepicker?.fromData || moment(this.props.lastAvailableToData).clone().subtract(1, 'month'),
-        toData: state?.fixedrangepicker?.toData || this.props.lastAvailableToData,
+        fromData: state?.fixedrangepicker?.fromData || moment(this.props.lastAvailableData).clone().subtract(1, 'month'),
+        toData: state?.fixedrangepicker?.toData || this.props.lastAvailableData,
         periodType: state?.fixedrangepicker?.periodType || "1",
         settings: state?.layers?.settings || { expanded: false, options: { opacity: 1 } },
         layers: state?.layers || {},
@@ -315,7 +332,8 @@ const FixedRangePickerPlugin = connect(mapStateToProps, {
     onUpdateNode: updateNode,
     onToggleFixedRangePicker: toggleRangePickerPlugin,
     onOpenAlert: openAlert,
-    onCloseAlert: closeAlert
+    onCloseAlert: closeAlert,
+    onSetSelectDate: setSelectDate
 })(FixedRangePicker);
 
 export default createPlugin(

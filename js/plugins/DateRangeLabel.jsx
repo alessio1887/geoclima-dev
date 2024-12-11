@@ -27,8 +27,8 @@ class DateRangeLabel extends React.Component {
         id: "mapstore-daterangelabel",
         style: {
             position: "absolute",
-            left: "53%",           // Centra l'elemento orizzontalmente
-            transform: "translateX(-50%)"  // Sposta l'elemento indietro della metà della sua larghezza per centrarlo esattamente
+            left: "53%",
+            transform: "translateX(-50%)"
         }
     };
     render() {

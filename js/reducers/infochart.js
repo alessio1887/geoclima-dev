@@ -12,7 +12,7 @@ import { CHARTVARIABLE_CHANGED, TODATA_FIXEDRANGE_CHANGED, FROMDATA_CHANGED,
     FETCHED_INFOCHART_DATA, COLLAPSE_RANGE_PICKER,
     OPEN_ALERT, CLOSE_ALERT, SET_CHART_RELAYOUT, RESET_CHART_RELAYOUT, RESIZE_INFOCHART,
     SET_RANGE_MANAGER, SET_IDVARIABILI_LAYERS, SET_DEFAULT_URL, SET_DEFAULT_DATES } from '../actions/infochart';
-import DateAPI, { PERIOD_TYPES } from '../utils/ManageDateUtils';
+import DateAPI, { DEFAULT_DATA_FINE, PERIOD_TYPES } from '../utils/ManageDateUtils';
 import assign from 'object-assign';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
@@ -22,7 +22,7 @@ const infoChartDefaultState = {
     showInfoChartPanel: false,
     infoChartData: {
         fromData: moment().subtract(1, 'month').startOf('day').toDate(),
-        toData: moment().subtract(1, 'day').startOf('day').toDate(),
+        toData: DEFAULT_DATA_FINE,
         variable: PERIOD_TYPES[0],
         latlng: {lat: 0, lng: 0},
         periodType: PERIOD_TYPES[0]
@@ -31,7 +31,7 @@ const infoChartDefaultState = {
     maskLoading: true,
     variable: "prec",
     fromData: moment().subtract(1, 'month').startOf('day').toDate(),
-    toData: moment().subtract(1, 'day').startOf('day').toDate(),
+    toData: DEFAULT_DATA_FINE,
     periodType: PERIOD_TYPES[0],
     isCollapsedFormGroup: false,
     activeRangeManager: FREE_RANGE,
@@ -57,7 +57,7 @@ const infoChartDefaultState = {
             "BilancioIdricoSemplificato_clima"]
     },
     defaultUrlGeoclimaChart: 'geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/geoclima_chart.py',
-    lastAvailableToData: moment().subtract(1, 'day').startOf('day').toDate()
+    lastAvailableData: DEFAULT_DATA_FINE
 };
 
 function infochart(state = infoChartDefaultState, action) {
@@ -164,7 +164,7 @@ function infochart(state = infoChartDefaultState, action) {
             ...state,
             toData: newToData,
             fromData: newFromData,
-            lastAvailableToData: newToData,
+            lastAvailableData: newToData,
             infoChartData: {
                 ...state.infoChartData,
                 toData: newToData,

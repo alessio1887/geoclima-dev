@@ -6,21 +6,24 @@
  * LICENSE file in the root directory of this source tree.
  */
 import appConfigMS from '@mapstore/product/appConfig';
-import { FROM_DATA, TO_DATA } from './utils/ManageDateUtils';
+import { DEFAULT_DATA_FINE } from './utils/ManageDateUtils';
+import moment from 'moment';
+import momentLocaliser from 'react-widgets/lib/localizers/moment';
+momentLocaliser(moment);
 // import MapViewerGC from './pages/MapViewerGC';
 
 const fixedrangepicker = {
     isCollapsedPlugin: false,
-    fromData: FROM_DATA,
-    toData: TO_DATA,
+    fromData: moment(DEFAULT_DATA_FINE).clone().subtract(1, 'month').startOf('day').toDate(),
+    toData: DEFAULT_DATA_FINE,
     periodType: "1",
     showFixedRangePicker: false,
     isInteractionDisabled: true
 };
 const freerangepicker = {
     isCollapsedPlugin: false,
-    fromData: FROM_DATA,
-    toData: TO_DATA,
+    fromData: moment(DEFAULT_DATA_FINE).clone().subtract(1, 'month').startOf('day').toDate(),
+    toData: DEFAULT_DATA_FINE,
     isInteractionDisabled: true
 };
 

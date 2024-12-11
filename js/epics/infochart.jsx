@@ -137,7 +137,7 @@ const setVisVariable = (visibleIdLayer, idVariabiliLayers) => {
  */
 const getChartVariables = (appState, visibleLayer, rangeManager, idVariabiliLayers) => {
     let variable = Object.keys(idVariabiliLayers)[0] || '';
-    let toData = appState.infochart.lastAvailableToData;
+    let toData = appState.infochart.lastAvailableData;
     let fromData = moment(toData).subtract(1, 'month').toDate();
     let periodType = "1";
 

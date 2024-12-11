@@ -11,7 +11,7 @@ import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-boots
 import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
 import { compose } from 'redux';
-import DateAPI from '../utils/ManageDateUtils';
+import DateAPI, { DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO} from '../utils/ManageDateUtils';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 import { connect } from 'react-redux';
 import assign from 'object-assign';
@@ -57,7 +57,8 @@ class FreeRangePicker extends React.Component {
         onCollapsePlugin: PropTypes.func,
         fromData: PropTypes.instanceOf(Date),
         toData: PropTypes.instanceOf(Date),
-        lastAvailableToData: PropTypes.instanceOf(Date),
+        firstAvailableData: PropTypes.instanceOf(Date),
+        lastAvailableData: PropTypes.instanceOf(Date),
         onChangeFromData: PropTypes.func,
         onChangeToData: PropTypes.func,
         onUpdateSettings: PropTypes.func,
@@ -106,13 +107,14 @@ class FreeRangePicker extends React.Component {
         shiftRight: false,
         showChangeRangePickerButton: true,
         isPluginLoaded: false,
-        lastAvailableToData: moment().subtract(1, 'day').startOf('day').toDate()
+        firstAvailableData: DEFAULT_DATA_INIZIO,
+        lastAvailableData: DEFAULT_DATA_FINE
     };
 
     state = {
         // Default date values to use in case of invalid or missing date input
-        defaultFromData: this.props.lastAvailableToData,
-        defaultToData: moment(this.props.lastAvailableToData).clone().subtract(1, 'month').startOf('day').toDate()
+        defaultFromData: this.props.lastAvailableData,
+        defaultToData: moment(this.props.lastAvailableData).clone().subtract(1, 'month').startOf('day').toDate()
     }
 
     componentDidMount() {
@@ -121,7 +123,7 @@ class FreeRangePicker extends React.Component {
 
     // Resets the plugin's state to default values when navigating back to the Home Page
     componentWillUnmount() {
-        const TO_DATA = this.props.lastAvailableToData;
+        const TO_DATA = this.props.lastAvailableData;
         const FROM_DATA = moment(TO_DATA).clone().subtract(1, 'month').startOf('day').toDate();
         this.props.onChangeToData(TO_DATA);
         this.props.onChangeFromData(FROM_DATA);
@@ -184,7 +186,7 @@ class FreeRangePicker extends React.Component {
                     <div className="alert-date" >
                         <strong><Message msgId="warning"/></strong>
                         <span ><Message msgId={this.props.alertMessage}
-                            msgParams={{toData: moment(this.prop.lastAvailableToData).format("DD-MM-YYYY")}}/>
+                            msgParams={{toData: moment(this.prop.lastAvailableData).format("DD-MM-YYYY")}}/>
                         </span>
                     </div>
                 )}
@@ -200,7 +202,7 @@ class FreeRangePicker extends React.Component {
             return;
         }
         // Verifiche sulle date
-        const validation = DateAPI.validateDateRange(fromData, toData);
+        const validation = DateAPI.validateDateRange(fromData, toData, this.props.firstAvailableData, this.props.lastAvailableData);
         if (!validation.isValid) {
             this.props.onOpenAlert(validation.errorMessage);
             return;

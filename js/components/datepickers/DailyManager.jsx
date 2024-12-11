@@ -9,7 +9,7 @@ import React, { useState } from 'react';
 import { DateTimePicker } from 'react-widgets';
 import { Button, Glyphicon } from 'react-bootstrap';
 import Message from '../../../MapStore2/web/client/components/I18N/Message';
-import DateAPI, { TO_DATA } from '../../utils/ManageDateUtils';
+import DateAPI from '../../utils/ManageDateUtils';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -17,6 +17,8 @@ momentLocaliser(moment);
 import './dailydatepicker.css';
 
 const DailyManager = ({
+    minDate,
+    maxDate,
     toData,
     isInteractionDisabled,
     isDecrementDisabled,
@@ -27,7 +29,7 @@ const DailyManager = ({
     onOpenAlert,
     onCloseAlert
 }) => {
-    const [defaultToData, setDefaultToData] = useState(new Date(TO_DATA));
+    const [defaultToData, setDefaultToData] = useState(new Date(maxDate));
 
     // Increment the date by 1 day
     const incrementDate = () => {
@@ -53,7 +55,7 @@ const DailyManager = ({
             onChangePeriodToData(new Date(defaultToData));
             return;
         }
-        const validation = DateAPI.validateDay(toData);
+        const validation = DateAPI.validateDay(toData, minDate, maxDate);
         if (!validation.isValid) {
             onOpenAlert(validation.errorMessage);
             return;
@@ -79,8 +81,8 @@ const DailyManager = ({
                 <DateTimePicker
                     culture="it"
                     time={false}
-                    min={new Date("1991-01-01")}
-                    max={moment().subtract(1, 'day')._d}
+                    min={minDate}
+                    max={maxDate}
                     format={"YYYY-MM-DD"}
                     editFormat={"YYYY-MM-DD"}
                     value={moment(toData, "YYYY-MM-DD").toDate()}

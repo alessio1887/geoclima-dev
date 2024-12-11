@@ -639,7 +639,6 @@
       "name": "FixedRangePicker",
       "defaultConfig" : {
         "id": "mapstore-fixedrangepicker-map",
-        "urlLastAvailableData": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
         "periodTypes": [
                 { "key": "1", "label": "1 Mese" },
                 { "key": "3", "label": "3 Mesi" },
@@ -696,8 +695,8 @@
       "name":"InfoChart",
       "defaultConfig": {
         "defaultUrlGeoclimaChart": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/geoclima_chart.py",
-        "urlGetLastAvailableData": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
-        "variabileLastAvailableData": "prec",
+        "defaultUrlSelectDate": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
+        "variabileSelectDate": "prec",
           "periodTypes": [
               { "key": "1", "label": "1 Mese" },
               { "key": "3", "label": "3 Mesi" },
