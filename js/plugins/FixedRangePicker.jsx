@@ -134,7 +134,7 @@ class FixedRangePicker extends React.Component {
         showChangeRangePickerButton: false,
         firstAvailableData: DEFAULT_DATA_INIZIO,
         lastAvailableData: DEFAULT_DATA_FINE,
-        isPluginLoaded: PropTypes.bool
+        isPluginLoaded: false
     };
 
     state = {
