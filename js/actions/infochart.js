@@ -178,18 +178,18 @@ export function apiError(errorMessage) {
     };
 }
 
-export const fetchLastAvailableData = (variabileLastAvailableData, urlGetLastAvailableData, periodTypes) => {
-    return (dispatch) => {
-        GeoClimaAPI.getLastAvailableData(variabileLastAvailableData, urlGetLastAvailableData)
-            .then(response => {
-                const lastAvailableData = new Date(response.data[0].data);
-                dispatch(setDefaultDates(lastAvailableData, periodTypes));
-            })
-            .catch(error => {
-                dispatch(apiError(error));
-            });
-    };
-};
+// export const fetchLastAvailableData = (variabileLastAvailableData, urlGetLastAvailableData, periodTypes) => {
+//     return (dispatch) => {
+//         GeoClimaAPI.getAvailableDates(variabileLastAvailableData, urlGetLastAvailableData)
+//             .then(response => {
+//                 const lastAvailableData = new Date(response.data[0].data);
+//                 dispatch(setDefaultDates(lastAvailableData, periodTypes));
+//             })
+//             .catch(error => {
+//                 dispatch(apiError(error));
+//             });
+//     };
+// };
 
 export function setSelectDate(dataInizio, dataFine) {
     return {

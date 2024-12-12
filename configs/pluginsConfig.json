@@ -639,6 +639,8 @@
       "name": "FixedRangePicker",
       "defaultConfig" : {
         "id": "mapstore-fixedrangepicker-map",
+        "defaultUrlSelectDate": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
+        "variabileSelectDate": "prec",
         "periodTypes": [
                 { "key": "1", "label": "1 Mese" },
                 { "key": "3", "label": "3 Mesi" },
@@ -664,6 +666,8 @@
       "name": "FreeRangePicker",
       "defaultConfig" : {
         "id": "mapstore-freerangepicker-map",
+        "defaultUrlSelectDate": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
+        "variabileSelectDate": "prec",
         "variabiliMeteo": {
           "precipitazione": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima","Pioggia_Cumulata_Giornaliera"],
           "temperatura": ["Temperatura_Media", "Temperatura_Media_Anomalia", "Temperatura_Minima", "Temperatura_Minima_Anomalia",

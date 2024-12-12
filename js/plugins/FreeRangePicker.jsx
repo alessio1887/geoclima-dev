@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-bootstrap';
 import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
+import ConfigUtils from '@mapstore/utils/ConfigUtils';
 import { compose } from 'redux';
 import DateAPI, { DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO} from '../utils/ManageDateUtils';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
@@ -23,7 +24,7 @@ import layers from '../../MapStore2/web/client/reducers/layers';
 import freerangepicker from '@js/reducers/freerangepicker';
 import { toggleRangePickerPlugin } from '../actions/fixedrangepicker';
 import { changeFromData, changeToData, openAlert, closeAlert, collapsePlugin,
-    markFreeRangeAsLoaded, markFreeRangeAsNotLoaded } from '@js/actions/freerangepicker';
+    markFreeRangeAsLoaded, markFreeRangeAsNotLoaded, checkLaunchSelectDateQuery } from '@js/actions/freerangepicker';
 import * as rangePickerEpics from '../epics/dateRangeConfig';
 
 import FreeRangeManager from '../components/datepickers/FreeRangeManager';
@@ -65,7 +66,11 @@ class FreeRangePicker extends React.Component {
         onUpdateNode: PropTypes.func,
         onMarkPluginAsLoaded: PropTypes.func,
         onMarkPluginAsNotLoaded: PropTypes.func,
+        onCheckLaunchSelectDateQuery: PropTypes.func,
         settings: PropTypes.object,
+        mapId: PropTypes.string,
+        defaultUrlSelectDate: PropTypes.string,
+        variabileSelectDate: PropTypes.string,
         layers: PropTypes.object,
         variabiliMeteo: PropTypes.object,
         showFreeRangePicker: PropTypes.bool, // serve per la visibilita del componente
@@ -96,6 +101,8 @@ class FreeRangePicker extends React.Component {
             "spi": [ "spi1", "spi3", "spi6", "spi12"],
             "spei": [ "spei1", "spei3", "spei6", "spei12"]
         },
+        defaultUrlSelectDate: "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
+        variabileSelectDate: "prec",
         style: {
             top: 0,
             position: 'absolute',
@@ -119,6 +126,12 @@ class FreeRangePicker extends React.Component {
 
     componentDidMount() {
         this.props.onMarkPluginAsLoaded();
+        const url = require('url');
+        const urlQuery = url.parse(window.location.href, true).query;
+        const mapId = this.props.mapId;
+        let config = urlQuery && urlQuery.config || null;
+        const { configUrl } = ConfigUtils.getConfigUrl({ mapId, config });
+        this.props.onCheckLaunchSelectDateQuery(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, mapId, configUrl);
     }
 
     // Resets the plugin's state to default values when navigating back to the Home Page
@@ -266,7 +279,8 @@ const FreeRangePickerPlugin = connect(mapStateToProps, {
     onUpdateNode: updateNode,
     onToggleFreeRangePicker: toggleRangePickerPlugin,
     onOpenAlert: openAlert,
-    onCloseAlert: closeAlert
+    onCloseAlert: closeAlert,
+    onCheckLaunchSelectDateQuery: checkLaunchSelectDateQuery
 })(FreeRangePicker);
 
 export default createPlugin(

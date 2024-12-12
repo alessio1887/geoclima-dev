@@ -40,7 +40,6 @@ class InfoChart extends React.Component {
         onResetChartRelayout: PropTypes.func,
         onResizeInfoChart: PropTypes.func,
         onSetRangeManager: PropTypes.func,
-        onFetchLastAvailableData: PropTypes.func,
         show: PropTypes.bool,
         infoChartData: PropTypes.object,
         maskLoading: PropTypes.bool,

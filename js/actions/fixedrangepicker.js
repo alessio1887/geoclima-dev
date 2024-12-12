@@ -5,6 +5,7 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
+import GeoClimaAPI from '../api/GeoClimaApi';
 
 export const TODATA_CHANGED = 'TODATA_CHANGED';
 export const MAP_PERIOD_CHANGED = 'MAP_PERIOD_CHANGED';
@@ -15,7 +16,10 @@ export const CLOSE_ALERT = 'FIXEDRANGE:CLOSE_ALERT';
 export const COLLAPSE_RANGE_PICKER = 'FIXEDRANGE:COLLAPSE_RANGE_PICKER';
 export const PLUGIN_LOADED = 'FIXEDRANGE:PLUGIN_LOADED';
 export const PLUGIN_NOT_LOADED = 'FIXEDRANGE:PLUGIN_NOT_LOADED';
-export const SET_SELECT_DATE = 'FIXEDRANGE:SET_LAST_AVAILABLE_DATA';
+export const SET_SELECT_DATE = 'FIXEDRANGE:SET_SELECT_DATE';
+export const FIXEDRANGE_ERROR_FETCH = 'FIXEDRANGE_ERROR_FETCH';
+export const FETCH_SELECT_DATE = 'FIXEDRANGE:FETCH_SELECT_DATE';
+export const FIXEDRANGE_MAP_CONFIG = 'FIXEDRANGE:LOAD_SELECT_DATE_MAP_CONFIG';
 
 export function changePeriodToData(toData) {
     return {
@@ -74,10 +78,42 @@ export function markFixedRangeAsNotLoaded() {
     };
 }
 
+export function apiError(errorMessage) {
+    return {
+        type: FIXEDRANGE_ERROR_FETCH,
+        errorMessage
+    };
+}
+
+
 export function setSelectDate(dataInizio, dataFine) {
     return {
         type: SET_SELECT_DATE,
         dataInizio,
         dataFine
+    };
+}
+
+export const loadMapConfig = (lastAvailableData, mapId, configName) => {
+    return {
+        type: FIXEDRANGE_MAP_CONFIG,
+        lastAvailableData,
+        mapId,
+        configName
+    };
+};
+
+export function fetchSelectDate(variabileLastAvailableData, urlGetLastAvailableData, mapId, mapConfig) {
+    return (dispatch) => {
+        GeoClimaAPI.getAvailableDates(variabileLastAvailableData, urlGetLastAvailableData)
+            .then(response => {
+                const dataFine = new Date(response.data[0].data_fine);
+                const dataInizio = new Date(response.data[0].data_inizio);
+                dispatch(setSelectDate(dataInizio, dataFine));
+                dispatch(loadMapConfig(dataFine, mapId, mapConfig));
+            })
+            .catch(error => {
+                dispatch(apiError(error));
+            });
     };
 }

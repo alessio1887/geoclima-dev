@@ -7,37 +7,39 @@
 */
 import { Observable } from 'rxjs';
 import axios from '../../MapStore2/web/client/libs/ajax';
-import { loadMapConfig, configureError, LOAD_MAP_CONFIG } from '@mapstore/actions/config';
+import { loadMapConfig, configureError } from '@mapstore/actions/config';
+import { FIXEDRANGE_MAP_CONFIG, SET_SELECT_DATE } from '../actions/fixedrangepicker';
+import { FREERANGE_MAP_CONFIG, CHECK_LAUNCH_SELECT_DATE, setSelectDate as setSelectDateFreeRange,
+    fetchSelectDate } from '../actions/freerangepicker';
 import DateAPI from '../utils/ManageDateUtils';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
 
 // Function to get the layer configuration based on the date range
-const getMapLayersConfiguration = (configName) => {
+const getMapLayersConfiguration = (configName, toData) => {
     return axios.get(configName).then((response) => {
-        if (typeof response.data === 'object' && response.data.map?.layers) {
-            // TODO: recuperare TO_DATA con la chiamata ajax selectDate
-            const TO_DATA = moment().subtract(1, 'day').toDate();
-            const FROM_DATA = new Date(moment(TO_DATA).clone().subtract(1, 'month'));
-            const updatedLayers = response.data.map.layers.map((data) => {
-                if (data.params) {
+        if (response.data && typeof response.data === 'object' && response.data.map?.layers) {
+            const toDataFormatted = moment(toData).format('YYYY-MM-DD');
+            const fromDataFormatted = moment(toData).clone().subtract(1, 'month').format('YYYY-MM-DD');
+            const updatedLayers = response.data.map.layers.map((layer) => {
+                if (layer.params) {
                     const mapFileName = DateAPI.setGCMapFile(
-                        moment(FROM_DATA).format('YYYY-MM-DD'),
-                        moment(TO_DATA).format('YYYY-MM-DD'),
-                        data.params.map
+                        fromDataFormatted,
+                        toDataFormatted,
+                        layer.params.map
                     );
                     return {
-                        ...data,
+                        ...layer,
                         params: {
-                            ...data.params,
+                            ...layer.params,
                             map: mapFileName,
-                            fromData: moment(FROM_DATA).format('YYYY-MM-DD'),
-                            toData: moment(TO_DATA).format('YYYY-MM-DD')
+                            fromData: fromDataFormatted,
+                            toData: toDataFormatted
                         }
                     };
                 }
-                return data;
+                return layer;
             });
             // Returns the new configuration with updated layers
             return { ...response.data, map: { ...response.data.map, layers: updatedLayers } };
@@ -72,17 +74,50 @@ const getMapLayersConfiguration = (configName) => {
 //     });
 
 
+// const loadMapConfigByDateRangeEpic = (action$) =>
+//     action$.ofType(LOAD_MAP_CONFIG)
+//         .switchMap((action) => {
+//             if (!action.config) {
+//                 const configName = action.configName;
+//                 const mapId = action.mapId;
+//                 return Observable.fromPromise(getMapLayersConfiguration(configName))
+//                     .switchMap((data) => Observable.of(loadMapConfig(configName, mapId, data))) // Loads the map configuration with updated layers
+//                     .catch((error) => Observable.of(configureError(error.message || error, mapId))); // Handles the error
+//             }
+//             return Observable.empty();
+//         });
+
 const loadMapConfigByDateRangeEpic = (action$) =>
-    action$.ofType(LOAD_MAP_CONFIG)
+    action$.ofType(FIXEDRANGE_MAP_CONFIG, FREERANGE_MAP_CONFIG)
         .switchMap((action) => {
-            if (!action.config) {
-                const configName = action.configName;
-                const mapId = action.mapId;
-                return Observable.fromPromise(getMapLayersConfiguration(configName))
-                    .switchMap((data) => Observable.of(loadMapConfig(configName, mapId, data))) // Loads the map configuration with updated layers
-                    .catch((error) => Observable.of(configureError(error.message || error, mapId))); // Handles the error
+            const configName = action.configName;
+            const mapId = action.mapId;
+            const toData = action.lastAvailableData;
+            return Observable.fromPromise(getMapLayersConfiguration(configName, toData))
+                .switchMap((data) => Observable.of(loadMapConfig(configName, mapId, data))) // Loads the map configuration with updated layers
+                .catch((error) => Observable.of(configureError(error.message || error, mapId))); // Handles the error
+        });
+
+const checkSelectDateEpic = (action$, store) =>
+    action$.ofType(CHECK_LAUNCH_SELECT_DATE)
+        .switchMap((action) => {
+            const appState = store.getState();
+            if (!appState.fixedrangepicker?.isPluginLoaded) {
+                return Observable.of(fetchSelectDate(action.variableSelectDate,
+                    action.urlSelectDate, action.mapId, action.mapConfig));
             }
             return Observable.empty();
         });
 
-export { loadMapConfigByDateRangeEpic };
+const checkSetDateFreeRangePlugin = (action$, store) =>
+    action$.ofType(SET_SELECT_DATE)
+        .switchMap((action) => {
+            const appState = store.getState();
+            if (appState.freerangepicker?.isPluginLoaded) {
+                return Observable.of(setSelectDateFreeRange(action.dataInizio,
+                    action.dataFine));
+            }
+            return Observable.empty();
+        });
+
+export { loadMapConfigByDateRangeEpic, checkSelectDateEpic, checkSetDateFreeRangePlugin };

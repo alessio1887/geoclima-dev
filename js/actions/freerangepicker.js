@@ -5,6 +5,7 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
+import GeoClimaAPI from '../api/GeoClimaApi';
 
 export const FROMDATA_CHANGED = 'FREERANGE:FROMDATA_CHANGED';
 export const TODATA_CHANGED = 'FREERANGE:TODATA_CHANGED';
@@ -15,6 +16,10 @@ export const COLLAPSE_RANGE_PICKER = 'FREERANGE:COLLAPSE_RANGE_PICKER';
 export const PLUGIN_LOADED = 'FREERANGE:PLUGIN_LOADED';
 export const PLUGIN_NOT_LOADED = 'FREERANGE:PLUGIN_NOT_LOADED';
 export const SET_SELECT_DATE = 'FREERANGE:SET_LAST_AVAILABLE_DATA';
+export const CHECK_LAUNCH_SELECT_DATE = 'FREERANGE:CHECK_LAUNCH_SELECT_DATE';
+export const FREERANGE_ERROR_FETCH = 'FREERANGE_ERROR_FETCH';
+export const FETCH_SELECT_DATE = 'FREERANGE:FETCH_SELECT_DATE';
+export const FREERANGE_MAP_CONFIG = 'FREERANGE:LOAD_SELECT_DATE_MAP_CONFIG';
 
 export function changeFromData(fromData) {
     return {
@@ -64,5 +69,46 @@ export function setSelectDate(dataInizio, dataFine) {
         type: SET_SELECT_DATE,
         dataInizio,
         dataFine
+    };
+}
+
+export const checkLaunchSelectDateQuery = (variableSelectDate, urlSelectDate, mapId, mapConfig) => {
+    return {
+        type: CHECK_LAUNCH_SELECT_DATE,
+        variableSelectDate,
+        urlSelectDate,
+        mapId,
+        mapConfig
+    };
+};
+
+export function apiError(errorMessage) {
+    return {
+        type: FREERANGE_ERROR_FETCH,
+        errorMessage
+    };
+}
+
+export const loadMapConfig = (lastAvailableData, mapId, configName) => {
+    return {
+        type: FREERANGE_MAP_CONFIG,
+        lastAvailableData,
+        mapId,
+        configName
+    };
+};
+
+export function fetchSelectDate(variabileLastAvailableData, urlGetLastAvailableData, mapId, mapConfig) {
+    return (dispatch) => {
+        GeoClimaAPI.getAvailableDates(variabileLastAvailableData, urlGetLastAvailableData)
+            .then(response => {
+                const dataFine = new Date(response.data[0].data_fine);
+                const dataInizio = new Date(response.data[0].data_inizio);
+                dispatch(setSelectDate(dataInizio, dataFine));
+                dispatch(loadMapConfig(dataFine, mapId, mapConfig));
+            })
+            .catch(error => {
+                dispatch(apiError(error));
+            });
     };
 }

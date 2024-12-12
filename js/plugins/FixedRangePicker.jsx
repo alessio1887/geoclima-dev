@@ -13,9 +13,9 @@ import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/l
 import { compose } from 'redux';
 import { changePeriodToData, changePeriod, toggleRangePickerPlugin, openAlert,
     closeAlert, collapsePlugin, markFixedRangeAsLoaded, markFixedRangeAsNotLoaded,
-    setSelectDate } from '../actions/fixedrangepicker';
+    fetchSelectDate, setSelectDate } from '../actions/fixedrangepicker';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
-// import ConfigUtils from '@mapstore/utils/ConfigUtils';
+import ConfigUtils from '@mapstore/utils/ConfigUtils';
 import DateAPI, { DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../utils/ManageDateUtils';
 import { connect } from 'react-redux';
 import assign from 'object-assign';
@@ -67,8 +67,9 @@ class FixedRangePicker extends React.Component {
         onCollapsePlugin: PropTypes.func,
         fromData: PropTypes.instanceOf(Date),
         toData: PropTypes.instanceOf(Date),
-        firstAvailableData: DEFAULT_DATA_INIZIO,
-        lastAvailableData: DEFAULT_DATA_FINE,
+        firstAvailableData: PropTypes.instanceOf(Date),
+        lastAvailableData: PropTypes.instanceOf(Date),
+        onFetchSelectDate: PropTypes.func,
         onSetSelectDate: PropTypes.func,
         onChangePeriodToData: PropTypes.func,
         onChangePeriod: PropTypes.func,
@@ -76,8 +77,10 @@ class FixedRangePicker extends React.Component {
         onUpdateNode: PropTypes.func,
         onMarkPluginAsLoaded: PropTypes.func,
         onMarkFixedRangeAsNotLoaded: PropTypes.func,
+        defaultUrlSelectDate: PropTypes.string,
+        variabileSelectDate: PropTypes.string,
         settings: PropTypes.object,
-        // mapId: PropTypes.string,
+        mapId: PropTypes.string,
         layers: PropTypes.object,
         variabiliMeteo: PropTypes.object,
         periodType: PropTypes.string,
@@ -120,6 +123,8 @@ class FixedRangePicker extends React.Component {
             "spi": [ "spi1", "spi3", "spi6", "spi12"],
             "spei": [ "spei1", "spei3", "spei6", "spei12"]
         },
+        defaultUrlSelectDate: "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
+        variabileSelectDate: "prec",
         className: "mapstore-fixederange",
         style: {
             top: 0,
@@ -146,17 +151,12 @@ class FixedRangePicker extends React.Component {
     componentDidMount() {
         this.props.onToggleFixedRangePicker();
         this.props.onMarkPluginAsLoaded();
-
-        // const url = require('url');
-        // const urlQuery = url.parse(window.location.href, true).query;
-        // const mapId = this.props.mapId;
-        // // if 0 it loads config.json
-        // // if mapId is a string it loads mapId.json
-        // // if it is a number it loads the config from geostore
-        // // let mapId = id === '0' ? null : id;
-        // let config = urlQuery && urlQuery.config || null;
-        // const { configUrl } = ConfigUtils.getConfigUrl({ mapId, config });
-        // console.log('url map:', configUrl);
+        const url = require('url');
+        const urlQuery = url.parse(window.location.href, true).query;
+        const mapId = this.props.mapId;
+        let config = urlQuery && urlQuery.config || null;
+        const { configUrl } = ConfigUtils.getConfigUrl({ mapId, config });
+        this.props.onFetchSelectDate(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, mapId, configUrl);
     }
 
     // Resets the plugin's state to default values when navigating back to the Home Page
@@ -333,6 +333,7 @@ const FixedRangePickerPlugin = connect(mapStateToProps, {
     onToggleFixedRangePicker: toggleRangePickerPlugin,
     onOpenAlert: openAlert,
     onCloseAlert: closeAlert,
+    onFetchSelectDate: fetchSelectDate,
     onSetSelectDate: setSelectDate
 })(FixedRangePicker);
 

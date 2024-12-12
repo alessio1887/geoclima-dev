@@ -79,10 +79,15 @@ function freerangepicker(state = defaultState, action) {
             isPluginLoaded: false
         };
     case SET_SELECT_DATE:
+        const newDataFine = action.dataFine || DEFAULT_DATA_FINE;
+        const newDataInizio = action.dataInizio || DEFAULT_DATA_INIZIO;
+        const newFromData = moment(newDataFine).subtract(1, 'month').toDate();
         return {
             ...state,
-            firstAvalableDate: action.dataInizio,
-            lastAvalableDate: action.dataFine
+            toData: newDataFine,
+            fromData: newFromData,
+            firstAvalableDate: newDataInizio,
+            lastAvalableDate: newDataFine
         };
     default:
         return state;
