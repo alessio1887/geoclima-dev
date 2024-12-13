@@ -8,7 +8,7 @@
 import { LAYER_LOADING, LAYER_LOAD, LAYER_ERROR} from '@mapstore/actions/layers';
 import { DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../utils/ManageDateUtils';
 import {FROMDATA_CHANGED, TODATA_CHANGED, OPEN_ALERT, CLOSE_ALERT, PLUGIN_NOT_LOADED,
-    PLUGIN_LOADED, COLLAPSE_RANGE_PICKER, SET_SELECT_DATE} from '../actions/freerangepicker';
+    PLUGIN_LOADED, COLLAPSE_RANGE_PICKER, FREERANGE_SET_AVALABLE_DATES } from '../actions/freerangepicker';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -78,7 +78,7 @@ function freerangepicker(state = defaultState, action) {
             ...state,
             isPluginLoaded: false
         };
-    case SET_SELECT_DATE:
+    case FREERANGE_SET_AVALABLE_DATES:
         const newDataFine = action.dataFine || DEFAULT_DATA_FINE;
         const newDataInizio = action.dataInizio || DEFAULT_DATA_INIZIO;
         const newFromData = moment(newDataFine).subtract(1, 'month').toDate();

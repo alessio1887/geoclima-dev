@@ -7,7 +7,7 @@
 */
 import { LAYER_LOADING, LAYER_LOAD, LAYER_ERROR} from '@mapstore/actions/layers';
 import {TODATA_CHANGED, MAP_PERIOD_CHANGED, TOGGLE_PLUGIN, OPEN_ALERT, CLOSE_ALERT,
-    PLUGIN_LOADED, PLUGIN_NOT_LOADED, COLLAPSE_RANGE_PICKER, SET_SELECT_DATE } from '../actions/fixedrangepicker';
+    PLUGIN_LOADED, PLUGIN_NOT_LOADED, COLLAPSE_RANGE_PICKER, FIXEDRANGE_SET_AVALABLE_DATES } from '../actions/fixedrangepicker';
 import DateAPI, { DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO } from '../utils/ManageDateUtils';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
@@ -83,7 +83,7 @@ function fixedrangepicker(state = defaultState, action) {
             ...state,
             isPluginLoaded: false
         };
-    case SET_SELECT_DATE:
+    case FIXEDRANGE_SET_AVALABLE_DATES:
         const newDataFine = action.dataFine || DEFAULT_DATA_FINE;
         const newDataInizio = action.dataInizio || DEFAULT_DATA_INIZIO;
         const newFromData = moment(newDataFine).subtract(1, 'month').toDate();

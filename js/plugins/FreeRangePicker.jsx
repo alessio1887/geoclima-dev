@@ -68,7 +68,6 @@ class FreeRangePicker extends React.Component {
         onMarkPluginAsNotLoaded: PropTypes.func,
         onCheckLaunchSelectDateQuery: PropTypes.func,
         settings: PropTypes.object,
-        mapId: PropTypes.string,
         defaultUrlSelectDate: PropTypes.string,
         variabileSelectDate: PropTypes.string,
         layers: PropTypes.object,
@@ -126,12 +125,7 @@ class FreeRangePicker extends React.Component {
 
     componentDidMount() {
         this.props.onMarkPluginAsLoaded();
-        const url = require('url');
-        const urlQuery = url.parse(window.location.href, true).query;
-        const mapId = this.props.mapId;
-        let config = urlQuery && urlQuery.config || null;
-        const { configUrl } = ConfigUtils.getConfigUrl({ mapId, config });
-        this.props.onCheckLaunchSelectDateQuery(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, mapId, configUrl);
+        this.props.onCheckLaunchSelectDateQuery(this.props.variabileSelectDate, this.props.defaultUrlSelectDate);
     }
 
     // Resets the plugin's state to default values when navigating back to the Home Page

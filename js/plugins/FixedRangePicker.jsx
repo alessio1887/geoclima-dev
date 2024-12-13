@@ -13,9 +13,8 @@ import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/l
 import { compose } from 'redux';
 import { changePeriodToData, changePeriod, toggleRangePickerPlugin, openAlert,
     closeAlert, collapsePlugin, markFixedRangeAsLoaded, markFixedRangeAsNotLoaded,
-    fetchSelectDate, setSelectDate } from '../actions/fixedrangepicker';
+    fetchSelectDate } from '../actions/fixedrangepicker';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
-import ConfigUtils from '@mapstore/utils/ConfigUtils';
 import DateAPI, { DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../utils/ManageDateUtils';
 import { connect } from 'react-redux';
 import assign from 'object-assign';
@@ -80,7 +79,6 @@ class FixedRangePicker extends React.Component {
         defaultUrlSelectDate: PropTypes.string,
         variabileSelectDate: PropTypes.string,
         settings: PropTypes.object,
-        mapId: PropTypes.string,
         layers: PropTypes.object,
         variabiliMeteo: PropTypes.object,
         periodType: PropTypes.string,
@@ -151,12 +149,7 @@ class FixedRangePicker extends React.Component {
     componentDidMount() {
         this.props.onToggleFixedRangePicker();
         this.props.onMarkPluginAsLoaded();
-        const url = require('url');
-        const urlQuery = url.parse(window.location.href, true).query;
-        const mapId = this.props.mapId;
-        let config = urlQuery && urlQuery.config || null;
-        const { configUrl } = ConfigUtils.getConfigUrl({ mapId, config });
-        this.props.onFetchSelectDate(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, mapId, configUrl);
+        this.props.onFetchSelectDate(this.props.variabileSelectDate, this.props.defaultUrlSelectDate);
     }
 
     // Resets the plugin's state to default values when navigating back to the Home Page
@@ -337,8 +330,7 @@ const FixedRangePickerPlugin = connect(mapStateToProps, {
     onToggleFixedRangePicker: toggleRangePickerPlugin,
     onOpenAlert: openAlert,
     onCloseAlert: closeAlert,
-    onFetchSelectDate: fetchSelectDate,
-    onSetSelectDate: setSelectDate
+    onFetchSelectDate: fetchSelectDate
 })(FixedRangePicker);
 
 export default createPlugin(

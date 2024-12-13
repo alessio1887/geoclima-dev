@@ -16,10 +16,10 @@ export const CLOSE_ALERT = 'FIXEDRANGE:CLOSE_ALERT';
 export const COLLAPSE_RANGE_PICKER = 'FIXEDRANGE:COLLAPSE_RANGE_PICKER';
 export const PLUGIN_LOADED = 'FIXEDRANGE:PLUGIN_LOADED';
 export const PLUGIN_NOT_LOADED = 'FIXEDRANGE:PLUGIN_NOT_LOADED';
-export const SET_SELECT_DATE = 'FIXEDRANGE:SET_SELECT_DATE';
+export const FIXEDRANGE_SET_AVALABLE_DATES = 'FIXEDRANGE:SET_SELECT_DATE';
 export const FIXEDRANGE_ERROR_FETCH = 'FIXEDRANGE_ERROR_FETCH';
 export const FETCH_SELECT_DATE = 'FIXEDRANGE:FETCH_SELECT_DATE';
-export const FIXEDRANGE_MAP_CONFIG = 'FIXEDRANGE:LOAD_SELECT_DATE_MAP_CONFIG';
+export const UPDATE_DATE_PARAMS_FIXEDRANGE = 'FIXEDRANGE:UPDATE_DATE_PARAMS';
 
 export function changePeriodToData(toData) {
     return {
@@ -86,31 +86,38 @@ export function apiError(errorMessage) {
 }
 
 
-export function setSelectDate(dataInizio, dataFine) {
+export function setAvailableDatesFixedRange(dataInizio, dataFine) {
     return {
-        type: SET_SELECT_DATE,
+        type: FIXEDRANGE_SET_AVALABLE_DATES,
         dataInizio,
         dataFine
     };
 }
 
-export const loadMapConfig = (lastAvailableData, mapId, configName) => {
-    return {
-        type: FIXEDRANGE_MAP_CONFIG,
-        lastAvailableData,
-        mapId,
-        configName
-    };
-};
+// export const loadMapConfig = (lastAvailableData, mapId, configName) => {
+//     return {
+//         type: FIXEDRANGE_MAP_CONFIG,
+//         lastAvailableData,
+//         mapId,
+//         configName
+//     };
+// };
 
-export function fetchSelectDate(variabileLastAvailableData, urlGetLastAvailableData, mapId, mapConfig) {
+export function updateParamsFixedRange(dataFine) {
+    return {
+        type: UPDATE_DATE_PARAMS_FIXEDRANGE,
+        dataFine: dataFine
+    };
+}
+
+export function fetchSelectDate(variabileLastAvailableData, urlGetLastAvailableData) {
     return (dispatch) => {
         GeoClimaAPI.getAvailableDates(variabileLastAvailableData, urlGetLastAvailableData)
             .then(response => {
                 const dataFine = new Date(response.data[0].data_fine);
                 const dataInizio = new Date(response.data[0].data_inizio);
-                dispatch(setSelectDate(dataInizio, dataFine));
-                dispatch(loadMapConfig(dataFine, mapId, mapConfig));
+                dispatch(setAvailableDatesFixedRange(dataInizio, dataFine));
+                dispatch(updateParamsFixedRange(dataFine));
             })
             .catch(error => {
                 dispatch(apiError(error));

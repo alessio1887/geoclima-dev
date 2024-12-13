@@ -15,11 +15,11 @@ export const CLOSE_ALERT = 'FREERANGE:CLOSE_ALERT';
 export const COLLAPSE_RANGE_PICKER = 'FREERANGE:COLLAPSE_RANGE_PICKER';
 export const PLUGIN_LOADED = 'FREERANGE:PLUGIN_LOADED';
 export const PLUGIN_NOT_LOADED = 'FREERANGE:PLUGIN_NOT_LOADED';
-export const SET_SELECT_DATE = 'FREERANGE:SET_LAST_AVAILABLE_DATA';
+export const FREERANGE_SET_AVALABLE_DATES = 'FREERANGE:SET_SELECT_DATE';
 export const CHECK_LAUNCH_SELECT_DATE = 'FREERANGE:CHECK_LAUNCH_SELECT_DATE';
 export const FREERANGE_ERROR_FETCH = 'FREERANGE_ERROR_FETCH';
 export const FETCH_SELECT_DATE = 'FREERANGE:FETCH_SELECT_DATE';
-export const FREERANGE_MAP_CONFIG = 'FREERANGE:LOAD_SELECT_DATE_MAP_CONFIG';
+export const UPDATE_DATE_PARAMS_FEERANGE = 'FREEANGE:UPDATE_DATE_PARAMS';
 
 export function changeFromData(fromData) {
     return {
@@ -64,9 +64,9 @@ export function markFreeRangeAsNotLoaded() {
     };
 }
 
-export function setSelectDate(dataInizio, dataFine) {
+export function setAvailableDatesFreeRange(dataInizio, dataFine) {
     return {
-        type: SET_SELECT_DATE,
+        type: FREERANGE_SET_AVALABLE_DATES,
         dataInizio,
         dataFine
     };
@@ -89,23 +89,30 @@ export function apiError(errorMessage) {
     };
 }
 
-export const loadMapConfig = (lastAvailableData, mapId, configName) => {
-    return {
-        type: FREERANGE_MAP_CONFIG,
-        lastAvailableData,
-        mapId,
-        configName
-    };
-};
+// export const loadMapConfig = (lastAvailableData, mapId, configName) => {
+//     return {
+//         type: FREERANGE_MAP_CONFIG,
+//         lastAvailableData,
+//         mapId,
+//         configName
+//     };
+// };
 
-export function fetchSelectDate(variabileLastAvailableData, urlGetLastAvailableData, mapId, mapConfig) {
+export function updateParamsFreeRange(dataFine) {
+    return {
+        type: UPDATE_DATE_PARAMS_FEERANGE,
+        dataFine: dataFine
+    };
+}
+
+export function fetchSelectDate(variabileLastAvailableData, urlGetLastAvailableData) {
     return (dispatch) => {
         GeoClimaAPI.getAvailableDates(variabileLastAvailableData, urlGetLastAvailableData)
             .then(response => {
                 const dataFine = new Date(response.data[0].data_fine);
                 const dataInizio = new Date(response.data[0].data_inizio);
-                dispatch(setSelectDate(dataInizio, dataFine));
-                dispatch(loadMapConfig(dataFine, mapId, mapConfig));
+                dispatch(setAvailableDatesFreeRange(dataInizio, dataFine));
+                dispatch(updateParamsFreeRange(dataFine));
             })
             .catch(error => {
                 dispatch(apiError(error));
