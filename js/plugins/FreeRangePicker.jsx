@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-bootstrap';
 import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
-import ConfigUtils from '@mapstore/utils/ConfigUtils';
 import { compose } from 'redux';
 import DateAPI, { DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO} from '../utils/ManageDateUtils';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
