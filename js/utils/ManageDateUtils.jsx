@@ -92,8 +92,8 @@ const Api = {
         return mapfileName;
     },
     validateDateRange(fromData, toData, firstAvailableData, lastAvailableData) {
-        const startDate = moment(fromData);
-        const endDate = moment(toData);
+        const startDate = moment(fromData).startOf('day');
+        const endDate = moment(toData).startOf('day');
 
         if (startDate.isBefore(firstAvailableData) || endDate.isBefore(firstAvailableData)) {
             return { isValid: false, errorMessage: "gcapp.errorMessages.dateTooEarly" };
