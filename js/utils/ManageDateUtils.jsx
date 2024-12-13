@@ -18,7 +18,7 @@ export const PERIOD_TYPES = [
     { key: "10", label: "dal 1° Ottobre" }
 ];
 
-const yesterday = moment().subtract(1, 'day').toDate();
+const yesterday = moment().subtract(1, 'day').startOf('day').toDate();
 // export const FROM_DATA = new Date(moment(yesterday).clone().subtract(1, 'month'));
 // export const TO_DATA = new Date(yesterday);
 export const DEFAULT_DATA_INIZIO = new Date("1991-01-01");

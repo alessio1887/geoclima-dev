@@ -265,7 +265,9 @@ const mapStateToProps = (state) => {
         isInteractionDisabled: state?.freerangepicker?.isInteractionDisabled || false,
         shiftRight: state.controls.drawer ? state.controls.drawer.enabled : false,
         showChangeRangePickerButton: state.fixedrangepicker.isPluginLoaded ? true : false,
-        isPluginLoaded: state?.freerangepicker?.isPluginLoaded
+        isPluginLoaded: state?.freerangepicker?.isPluginLoaded,
+        firstAvailableData: state?.freerangepicker?.firstAvailableData,
+        lastAvailableData: state?.freerangepicker?.lastAvailableData
     };
 };
 

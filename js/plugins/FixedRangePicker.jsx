@@ -244,10 +244,12 @@ class FixedRangePicker extends React.Component {
         const isDecrementDisabled = this.props.isInteractionDisabled ||
                                 moment(this.props.toData).isSameOrBefore(this.props.firstAvailableData);
         const isIncrementDisabled = this.props.isInteractionDisabled ||
-                                moment(this.props.toData).isSameOrAfter(moment(this.props.lastAvailableData).clone().subtract(1, 'month'), 'day');
+                                moment(this.props.toData).isSameOrAfter(moment(this.props.lastAvailableData).clone().subtract(1, 'day'));
         return (
             <DailyManager
                 toData={this.props.toData}
+                minDate={this.props.firstAvailableData}
+                maxDate={this.props.lastAvailableData}
                 isInteractionDisabled={this.props.isInteractionDisabled}
                 isDecrementDisabled = {isDecrementDisabled}
                 isIncrementDisabled = {isIncrementDisabled}
@@ -318,7 +320,9 @@ const mapStateToProps = (state) => {
         isInteractionDisabled: state?.fixedrangepicker?.isInteractionDisabled || false,
         shiftRight: state.controls.drawer ? state.controls.drawer.enabled : false,
         showChangeRangePickerButton: state.freerangepicker?.isPluginLoaded ? true : false,
-        isPluginLoaded: state?.fixedrangepicker?.isPluginLoaded
+        isPluginLoaded: state?.fixedrangepicker?.isPluginLoaded,
+        firstAvailableData: state?.fixedrangepicker?.firstAvailableData,
+        lastAvailableData: state?.fixedrangepicker?.lastAvailableData
     };
 };
 
