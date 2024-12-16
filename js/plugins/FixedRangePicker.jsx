@@ -156,7 +156,7 @@ class FixedRangePicker extends React.Component {
     componentWillUnmount() {
         const TO_DATA = this.props.lastAvailableDate;
         this.props.onChangePeriodToData(TO_DATA);
-        this.props.onChangePeriod("1");
+        this.props.onChangePeriod(this.props.periodTypes[0]);
         this.props.onMarkFixedRangeAsNotLoaded();
         if (this.props.showFixedRangePicker) {
             this.props.onToggleFixedRangePicker();
