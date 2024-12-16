@@ -60,8 +60,8 @@ class InfoChart extends React.Component {
         animated: PropTypes.bool,
         fromData: PropTypes.instanceOf(Date),
         toData: PropTypes.instanceOf(Date),
-        firstAvailableData: PropTypes.instanceOf(Date),
-        lastAvailableData: PropTypes.instanceOf(Date),
+        firstAvailableDate: PropTypes.instanceOf(Date),
+        lastAvailableDate: PropTypes.instanceOf(Date),
         variable: PropTypes.string,
         periodType: PropTypes.string,
         periodTypes: PropTypes.array,
@@ -158,14 +158,14 @@ class InfoChart extends React.Component {
             widthResizable: 880,
             heightResizable: 880
         },
-        firstAvailableData: DEFAULT_DATA_INIZIO,
-        lastAvailableData: DEFAULT_DATA_FINE
+        firstAvailableDate: DEFAULT_DATA_INIZIO,
+        lastAvailableDate: DEFAULT_DATA_FINE
     }
 
     state = {
         // Default date values to use in case of invalid or missing date input
-        defaultFromData: new Date(moment(this.props.lastAvailableData).clone().subtract(1, 'month').startOf('day')),
-        defaultToData: new Date(this.props.lastAvailableData)
+        defaultFromData: new Date(moment(this.props.lastAvailableDate).clone().subtract(1, 'month').startOf('day')),
+        defaultToData: new Date(this.props.lastAvailableDate)
     }
     // Set some props to the plugin's state
     componentDidMount() {
@@ -304,6 +304,8 @@ class InfoChart extends React.Component {
                         {/* Toggle between FixedRangeManager and FreeRangeManager based on activeRangeManager*/}
                         {this.props.activeRangeManager === FIXED_RANGE ? (
                             <FixedRangeManager
+                                minDate={this.props.firstAvailableDate}
+                                maxDate={this.props.lastAvailableDate}
                                 toData={this.props.toData}
                                 periodType={this.props.periodType}
                                 periodTypes={this.props.periodTypes}
@@ -314,6 +316,8 @@ class InfoChart extends React.Component {
                             />
                         ) : (
                             <FreeRangeManager
+                                minDate={this.props.firstAvailableDate}
+                                maxDate={this.props.lastAvailableDate}
                                 fromData={this.props.fromData}
                                 toData={this.props.toData}
                                 onChangeFromData={this.props.onChangeFromData}
@@ -336,7 +340,7 @@ class InfoChart extends React.Component {
                     {this.props.alertMessage && (
                         <div className="alert-date" >
                             <strong><Message msgId="warning"/></strong>
-                            <span ><Message msgId={this.props.alertMessage} msgParams={{toData: moment(this.props.lastAvailableData).format("DD-MM-YYYY")}}/></span>
+                            <span ><Message msgId={this.props.alertMessage} msgParams={{toData: moment(this.props.lastAvailableDate).format("DD-MM-YYYY")}}/></span>
                         </div>
                     )}
                 </Grid>
@@ -404,7 +408,7 @@ class InfoChart extends React.Component {
 
     closePanel = () => {
         this.props.onSetInfoChartVisibility(false);
-        this.props.onSetInfoChartDates(this.props.lastAvailableData, this.props.periodTypes );
+        this.props.onSetInfoChartDates(this.props.lastAvailableDate, this.props.periodTypes );
         this.props.onResetChartRelayout();
     }
     formatDataCum(values) {
@@ -461,7 +465,7 @@ class InfoChart extends React.Component {
         }
         const variableId = selectedVariable.id || selectedVariable;
         // Date validations
-        const validation = DateAPI.validateDateRange(fromData, toData, this.props.firstAvailableData, this.props.lastAvailableData);
+        const validation = DateAPI.validateDateRange(fromData, toData, this.props.firstAvailableDate, this.props.lastAvailableDate);
         if (!validation.isValid) {
             this.props.onOpenAlert(validation.errorMessage);
             return;

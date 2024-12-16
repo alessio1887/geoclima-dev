@@ -15,7 +15,7 @@ export const CLOSE_ALERT = 'FREERANGE:CLOSE_ALERT';
 export const COLLAPSE_RANGE_PICKER = 'FREERANGE:COLLAPSE_RANGE_PICKER';
 export const PLUGIN_LOADED = 'FREERANGE:PLUGIN_LOADED';
 export const PLUGIN_NOT_LOADED = 'FREERANGE:PLUGIN_NOT_LOADED';
-export const FREERANGE_SET_AVALABLE_DATES = 'FREERANGE:SET_SELECT_DATE';
+export const FREERANGE_SET_AVAILABLE_DATES = 'FREERANGE:SET_SELECT_DATE';
 export const CHECK_LAUNCH_SELECT_DATE = 'FREERANGE:CHECK_LAUNCH_SELECT_DATE';
 export const FREERANGE_ERROR_FETCH = 'FREERANGE_ERROR_FETCH';
 export const FETCH_SELECT_DATE = 'FREERANGE:FETCH_SELECT_DATE';
@@ -66,7 +66,7 @@ export function markFreeRangeAsNotLoaded() {
 
 export function setAvailableDatesFreeRange(dataInizio, dataFine) {
     return {
-        type: FREERANGE_SET_AVALABLE_DATES,
+        type: FREERANGE_SET_AVAILABLE_DATES,
         dataInizio,
         dataFine
     };
@@ -98,10 +98,11 @@ export function apiError(errorMessage) {
 //     };
 // };
 
-export function updateParamsFreeRange(dataFine) {
+export function updateParamsFreeRange(dataInizio, dataFine) {
     return {
         type: UPDATE_DATE_PARAMS_FEERANGE,
-        dataFine: dataFine
+        dataInizio,
+        dataFine
     };
 }
 
@@ -112,7 +113,7 @@ export function fetchSelectDate(variabileLastAvailableData, urlGetLastAvailableD
                 const dataFine = new Date(response.data[0].data_fine);
                 const dataInizio = new Date(response.data[0].data_inizio);
                 dispatch(setAvailableDatesFreeRange(dataInizio, dataFine));
-                dispatch(updateParamsFreeRange(dataFine));
+                dispatch(updateParamsFreeRange(dataInizio, dataFine));
             })
             .catch(error => {
                 dispatch(apiError(error));

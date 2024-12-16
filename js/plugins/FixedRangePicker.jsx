@@ -66,8 +66,8 @@ class FixedRangePicker extends React.Component {
         onCollapsePlugin: PropTypes.func,
         fromData: PropTypes.instanceOf(Date),
         toData: PropTypes.instanceOf(Date),
-        firstAvailableData: PropTypes.instanceOf(Date),
-        lastAvailableData: PropTypes.instanceOf(Date),
+        firstAvailableDate: PropTypes.instanceOf(Date),
+        lastAvailableDate: PropTypes.instanceOf(Date),
         onFetchSelectDate: PropTypes.func,
         onSetSelectDate: PropTypes.func,
         onChangePeriodToData: PropTypes.func,
@@ -135,15 +135,15 @@ class FixedRangePicker extends React.Component {
         isInteractionDisabled: true,
         shiftRight: false,
         showChangeRangePickerButton: false,
-        firstAvailableData: DEFAULT_DATA_INIZIO,
-        lastAvailableData: DEFAULT_DATA_FINE,
+        firstAvailableDate: DEFAULT_DATA_INIZIO,
+        lastAvailableDate: DEFAULT_DATA_FINE,
         isPluginLoaded: false
     };
 
     state = {
         // Default date values to use in case of invalid or missing date input
-        defaultFromData: new Date(moment(this.props.lastAvailableData).clone().subtract(1, 'month')),
-        defaultToData: new Date(this.props.lastAvailableData)
+        defaultFromData: new Date(moment(this.props.lastAvailableDate).clone().subtract(1, 'month')),
+        defaultToData: new Date(this.props.lastAvailableDate)
     }
 
     componentDidMount() {
@@ -154,7 +154,7 @@ class FixedRangePicker extends React.Component {
 
     // Resets the plugin's state to default values when navigating back to the Home Page
     componentWillUnmount() {
-        const TO_DATA = this.props.lastAvailableData;
+        const TO_DATA = this.props.lastAvailableDate;
         this.props.onChangePeriodToData(TO_DATA);
         this.props.onChangePeriod("1");
         this.props.onMarkFixedRangeAsNotLoaded();
@@ -194,7 +194,7 @@ class FixedRangePicker extends React.Component {
                             <div className="alert-date" >
                                 <strong><Message msgId="warning"/></strong>
                                 <span ><Message msgId={this.props.alertMessage}
-                                    msgParams={{toData: moment(this.props.lastAvailableData).format("DD-MM-YYYY")}}/>
+                                    msgParams={{toData: moment(this.props.lastAvailableDate).format("DD-MM-YYYY")}}/>
                                 </span>
                             </div>
                         )}
@@ -212,6 +212,8 @@ class FixedRangePicker extends React.Component {
                     toData={this.props.toData}
                 />
                 <FixedRangeManager
+                    minDate={this.props.firstAvailableDate}
+                    maxDate={this.props.lastAvailableDate}
                     toData={this.props.toData}
                     onChangeToData={this.props.onChangePeriodToData}
                     isInteractionDisabled={this.props.isInteractionDisabled}
@@ -235,14 +237,14 @@ class FixedRangePicker extends React.Component {
     }
     showDailyDatePicker = () => {
         const isDecrementDisabled = this.props.isInteractionDisabled ||
-                                moment(this.props.toData).isSameOrBefore(this.props.firstAvailableData);
+                                moment(this.props.toData).isSameOrBefore(this.props.firstAvailableDate);
         const isIncrementDisabled = this.props.isInteractionDisabled ||
-                                moment(this.props.toData).isSameOrAfter(moment(this.props.lastAvailableData).clone().subtract(1, 'day'));
+                                moment(this.props.toData).isSameOrAfter(moment(this.props.lastAvailableDate).clone().subtract(1, 'day'));
         return (
             <DailyManager
                 toData={this.props.toData}
-                minDate={this.props.firstAvailableData}
-                maxDate={this.props.lastAvailableData}
+                minDate={this.props.firstAvailableDate}
+                maxDate={this.props.lastAvailableDate}
                 isInteractionDisabled={this.props.isInteractionDisabled}
                 isDecrementDisabled = {isDecrementDisabled}
                 isIncrementDisabled = {isIncrementDisabled}
@@ -262,7 +264,7 @@ class FixedRangePicker extends React.Component {
             return;
         }
         // Verifiche sulle date
-        const validation = DateAPI.validateDateRange(fromData, toData, this.props.firstAvailableData, this.props.lastAvailableData);
+        const validation = DateAPI.validateDateRange(fromData, toData, this.props.firstAvailableDate, this.props.lastAvailableDate);
         if (!validation.isValid) {
             this.props.onOpenAlert(validation.errorMessage);
             return;
@@ -303,8 +305,8 @@ class FixedRangePicker extends React.Component {
 const mapStateToProps = (state) => {
     return {
         isCollapsedPlugin: state?.fixedrangepicker?.isCollapsedPlugin,
-        fromData: state?.fixedrangepicker?.fromData || moment(this.props.lastAvailableData).clone().subtract(1, 'month'),
-        toData: state?.fixedrangepicker?.toData || this.props.lastAvailableData,
+        fromData: state?.fixedrangepicker?.fromData || moment(this.props.lastAvailableDate).clone().subtract(1, 'month'),
+        toData: state?.fixedrangepicker?.toData || this.props.lastAvailableDate,
         periodType: state?.fixedrangepicker?.periodType || "1",
         settings: state?.layers?.settings || { expanded: false, options: { opacity: 1 } },
         layers: state?.layers || {},
@@ -314,8 +316,8 @@ const mapStateToProps = (state) => {
         shiftRight: state.controls.drawer ? state.controls.drawer.enabled : false,
         showChangeRangePickerButton: state.freerangepicker?.isPluginLoaded ? true : false,
         isPluginLoaded: state?.fixedrangepicker?.isPluginLoaded,
-        firstAvailableData: state?.fixedrangepicker?.firstAvailableData,
-        lastAvailableData: state?.fixedrangepicker?.lastAvailableData
+        firstAvailableDate: state?.fixedrangepicker?.firstAvailableDate,
+        lastAvailableDate: state?.fixedrangepicker?.lastAvailableDate
     };
 };
 

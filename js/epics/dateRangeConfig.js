@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 import { combineLatest } from 'rxjs/observable/combineLatest';
 import { MAP_CONFIG_LOADED } from '@mapstore/actions/config';
 import { updateSettings, updateNode } from '@mapstore/actions/layers';
-import { FIXEDRANGE_SET_AVALABLE_DATES, UPDATE_DATE_PARAMS_FIXEDRANGE } from '../actions/fixedrangepicker';
+import { FIXEDRANGE_SET_AVAILABLE_DATES, UPDATE_DATE_PARAMS_FIXEDRANGE } from '../actions/fixedrangepicker';
 import { UPDATE_DATE_PARAMS_FEERANGE, CHECK_LAUNCH_SELECT_DATE, setAvailableDatesFreeRange,
     fetchSelectDate } from '../actions/freerangepicker';
 import DateAPI from '../utils/ManageDateUtils';
@@ -151,7 +151,7 @@ const combinedDateMapConfigEpic = (action$) => {
 //             return Observable.empty();
 //         });
 
-const checkFetchAvalableDatesEpic = (action$, store) =>
+const checkFetchAvailableDatesEpic = (action$, store) =>
     action$.ofType(CHECK_LAUNCH_SELECT_DATE)
         .switchMap((action) => {
             const appState = store.getState();
@@ -163,7 +163,7 @@ const checkFetchAvalableDatesEpic = (action$, store) =>
         });
 
 const checkSetDateFreeRangePlugin = (action$, store) =>
-    action$.ofType(FIXEDRANGE_SET_AVALABLE_DATES)
+    action$.ofType(FIXEDRANGE_SET_AVAILABLE_DATES)
         .switchMap((action) => {
             const appState = store.getState();
             if (appState.freerangepicker?.isPluginLoaded) {
@@ -174,7 +174,7 @@ const checkSetDateFreeRangePlugin = (action$, store) =>
         });
 
 export {
-    checkFetchAvalableDatesEpic,
+    checkFetchAvailableDatesEpic,
     checkSetDateFreeRangePlugin,
     combinedDateMapConfigEpic,
     updateParamsByDateRangeEpic

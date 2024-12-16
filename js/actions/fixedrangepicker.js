@@ -16,7 +16,7 @@ export const CLOSE_ALERT = 'FIXEDRANGE:CLOSE_ALERT';
 export const COLLAPSE_RANGE_PICKER = 'FIXEDRANGE:COLLAPSE_RANGE_PICKER';
 export const PLUGIN_LOADED = 'FIXEDRANGE:PLUGIN_LOADED';
 export const PLUGIN_NOT_LOADED = 'FIXEDRANGE:PLUGIN_NOT_LOADED';
-export const FIXEDRANGE_SET_AVALABLE_DATES = 'FIXEDRANGE:SET_SELECT_DATE';
+export const FIXEDRANGE_SET_AVAILABLE_DATES = 'FIXEDRANGE:SET_SELECT_DATE';
 export const FIXEDRANGE_ERROR_FETCH = 'FIXEDRANGE_ERROR_FETCH';
 export const FETCH_SELECT_DATE = 'FIXEDRANGE:FETCH_SELECT_DATE';
 export const UPDATE_DATE_PARAMS_FIXEDRANGE = 'FIXEDRANGE:UPDATE_DATE_PARAMS';
@@ -88,7 +88,7 @@ export function apiError(errorMessage) {
 
 export function setAvailableDatesFixedRange(dataInizio, dataFine) {
     return {
-        type: FIXEDRANGE_SET_AVALABLE_DATES,
+        type: FIXEDRANGE_SET_AVAILABLE_DATES,
         dataInizio,
         dataFine
     };
@@ -103,10 +103,11 @@ export function setAvailableDatesFixedRange(dataInizio, dataFine) {
 //     };
 // };
 
-export function updateParamsFixedRange(dataFine) {
+export function updateParamsFixedRange(dataInizio, dataFine) {
     return {
         type: UPDATE_DATE_PARAMS_FIXEDRANGE,
-        dataFine: dataFine
+        dataInizio,
+        dataFine
     };
 }
 
@@ -117,7 +118,7 @@ export function fetchSelectDate(variabileLastAvailableData, urlGetLastAvailableD
                 const dataFine = new Date(response.data[0].data_fine);
                 const dataInizio = new Date(response.data[0].data_inizio);
                 dispatch(setAvailableDatesFixedRange(dataInizio, dataFine));
-                dispatch(updateParamsFixedRange(dataFine));
+                dispatch(updateParamsFixedRange(dataInizio, dataFine));
             })
             .catch(error => {
                 dispatch(apiError(error));

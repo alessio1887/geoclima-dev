@@ -8,7 +8,7 @@
 import { LAYER_LOADING, LAYER_LOAD, LAYER_ERROR} from '@mapstore/actions/layers';
 import { DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../utils/ManageDateUtils';
 import {FROMDATA_CHANGED, TODATA_CHANGED, OPEN_ALERT, CLOSE_ALERT, PLUGIN_NOT_LOADED,
-    PLUGIN_LOADED, COLLAPSE_RANGE_PICKER, FREERANGE_SET_AVALABLE_DATES } from '../actions/freerangepicker';
+    PLUGIN_LOADED, COLLAPSE_RANGE_PICKER, FREERANGE_SET_AVAILABLE_DATES } from '../actions/freerangepicker';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -22,8 +22,8 @@ const defaultState = {
     map: "geoclima",
     alertMessage: null,
     isPluginLoaded: false,
-    firstAvalableDate: DEFAULT_DATA_INIZIO,
-    lastAvalableDate: DEFAULT_DATA_FINE
+    firstAvailableDate: DEFAULT_DATA_INIZIO,
+    lastAvailableDate: DEFAULT_DATA_FINE
 };
 
 function freerangepicker(state = defaultState, action) {
@@ -78,7 +78,7 @@ function freerangepicker(state = defaultState, action) {
             ...state,
             isPluginLoaded: false
         };
-    case FREERANGE_SET_AVALABLE_DATES:
+    case FREERANGE_SET_AVAILABLE_DATES:
         const newDataFine = action.dataFine || DEFAULT_DATA_FINE;
         const newDataInizio = action.dataInizio || DEFAULT_DATA_INIZIO;
         const newFromData = moment(newDataFine).subtract(1, 'month').toDate();
@@ -86,8 +86,8 @@ function freerangepicker(state = defaultState, action) {
             ...state,
             toData: newDataFine,
             fromData: newFromData,
-            firstAvalableDate: newDataInizio,
-            lastAvalableDate: newDataFine
+            firstAvailableDate: newDataInizio,
+            lastAvailableDate: newDataFine
         };
     default:
         return state;

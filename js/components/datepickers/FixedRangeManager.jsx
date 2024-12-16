@@ -22,8 +22,8 @@ const FixedRangeManager = (props) => {
             <DateTimePicker
                 culture="it"
                 time={false}
-                min={new Date("1991-01-02")}
-                max={moment().subtract(1, 'day')._d}
+                min={props.minDate}
+                max={props.maxDate}
                 format={"YYYY-MM-DD"}
                 editFormat={"YYYY-MM-DD"}
                 value={moment(props.toData, "YYYY-MM-DD").toDate()}

@@ -18,6 +18,8 @@ import './rangemanager.css';
 const FreeRangeManager = ({
     fromData,
     toData,
+    minDate,
+    maxDate,
     onChangeFromData,
     onChangeToData,
     isInteractionDisabled,
@@ -31,8 +33,8 @@ const FreeRangeManager = ({
             <DateTimePicker
                 culture="it"
                 time={false}
-                min={new Date("1991-01-01")}
-                max={moment().subtract(1, 'day')._d}
+                min={minDate}
+                max={maxDate}
                 format={"YYYY-MM-DD"}
                 editFormat={"YYYY-MM-DD"}
                 value={moment(fromData, "YYYY-MM-DD").toDate()}
@@ -45,8 +47,8 @@ const FreeRangeManager = ({
             <DateTimePicker
                 culture="it"
                 time={false}
-                min={new Date("1991-01-02")}
-                max={moment().subtract(1, 'day')._d}
+                min={minDate}
+                max={maxDate}
                 format={"YYYY-MM-DD"}
                 editFormat={"YYYY-MM-DD"}
                 value={moment(toData, "YYYY-MM-DD").toDate()}

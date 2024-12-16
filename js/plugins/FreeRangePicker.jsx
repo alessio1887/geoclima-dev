@@ -57,8 +57,8 @@ class FreeRangePicker extends React.Component {
         onCollapsePlugin: PropTypes.func,
         fromData: PropTypes.instanceOf(Date),
         toData: PropTypes.instanceOf(Date),
-        firstAvailableData: PropTypes.instanceOf(Date),
-        lastAvailableData: PropTypes.instanceOf(Date),
+        firstAvailableDate: PropTypes.instanceOf(Date),
+        lastAvailableDate: PropTypes.instanceOf(Date),
         onChangeFromData: PropTypes.func,
         onChangeToData: PropTypes.func,
         onUpdateSettings: PropTypes.func,
@@ -111,15 +111,15 @@ class FreeRangePicker extends React.Component {
         isInteractionDisabled: true,
         shiftRight: false,
         showChangeRangePickerButton: true,
-        isPluginLoaded: false,
-        firstAvailableData: DEFAULT_DATA_INIZIO,
-        lastAvailableData: DEFAULT_DATA_FINE
+        firstAvailableDate: DEFAULT_DATA_INIZIO,
+        lastAvailableDate: DEFAULT_DATA_FINE,
+        isPluginLoaded: false
     };
 
     state = {
         // Default date values to use in case of invalid or missing date input
-        defaultFromData: this.props.lastAvailableData,
-        defaultToData: moment(this.props.lastAvailableData).clone().subtract(1, 'month').startOf('day').toDate()
+        defaultFromData: this.props.lastAvailableDate,
+        defaultToData: moment(this.props.lastAvailableDate).clone().subtract(1, 'month').startOf('day').toDate()
     }
 
     componentDidMount() {
@@ -129,7 +129,7 @@ class FreeRangePicker extends React.Component {
 
     // Resets the plugin's state to default values when navigating back to the Home Page
     componentWillUnmount() {
-        const TO_DATA = this.props.lastAvailableData;
+        const TO_DATA = this.props.lastAvailableDate;
         const FROM_DATA = moment(TO_DATA).clone().subtract(1, 'month').startOf('day').toDate();
         this.props.onChangeToData(TO_DATA);
         this.props.onChangeFromData(FROM_DATA);
@@ -171,6 +171,8 @@ class FreeRangePicker extends React.Component {
                     toData={this.props.toData}
                 />
                 <FreeRangeManager
+                    minDate={this.props.firstAvailableDate}
+                    maxDate={this.props.lastAvailableDate}
                     fromData={this.props.fromData}
                     toData={this.props.toData}
                     onChangeFromData={this.props.onChangeFromData}
@@ -192,7 +194,7 @@ class FreeRangePicker extends React.Component {
                     <div className="alert-date" >
                         <strong><Message msgId="warning"/></strong>
                         <span ><Message msgId={this.props.alertMessage}
-                            msgParams={{toData: moment(this.prop.lastAvailableData).format("DD-MM-YYYY")}}/>
+                            msgParams={{toData: moment(this.props.lastAvailableDate).format("DD-MM-YYYY")}}/>
                         </span>
                     </div>
                 )}
@@ -208,7 +210,7 @@ class FreeRangePicker extends React.Component {
             return;
         }
         // Verifiche sulle date
-        const validation = DateAPI.validateDateRange(fromData, toData, this.props.firstAvailableData, this.props.lastAvailableData);
+        const validation = DateAPI.validateDateRange(fromData, toData, this.props.firstAvailableDate, this.props.lastAvailableDate);
         if (!validation.isValid) {
             this.props.onOpenAlert(validation.errorMessage);
             return;
@@ -259,8 +261,8 @@ const mapStateToProps = (state) => {
         shiftRight: state.controls.drawer ? state.controls.drawer.enabled : false,
         showChangeRangePickerButton: state.fixedrangepicker.isPluginLoaded ? true : false,
         isPluginLoaded: state?.freerangepicker?.isPluginLoaded,
-        firstAvailableData: state?.freerangepicker?.firstAvailableData,
-        lastAvailableData: state?.freerangepicker?.lastAvailableData
+        firstAvailableDate: state?.freerangepicker?.firstAvailableDate,
+        lastAvailableDate: state?.freerangepicker?.lastAvailableDate
     };
 };
 
