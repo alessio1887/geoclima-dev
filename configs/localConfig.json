@@ -677,8 +677,14 @@
                 "enableContextManager": true
             }
         }, "Login","Language", "NavMenu", "Attribution", "ScrollTop", "Notifications"],
-        "maps": ["HomeDescription", "Fork", "MapSearch", "CreateNewMap", "FeaturedMaps", "ContentTabs",
-
+        "maps": [
+          {
+          "name":"HomeDescription",
+          "cfg": {
+            "name": "Consorzio LaMMA"
+          }
+          },
+          "MapSearch", "CreateNewMap", "FeaturedMaps", "ContentTabs",
           {
             "name": "Maps",
             "cfg": {
