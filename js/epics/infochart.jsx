@@ -11,6 +11,7 @@ import { TOGGLE_MAPINFO_STATE, changeMapInfoState, toggleMapInfoState } from '..
 import {
     TOGGLE_INFOCHART,
     FETCH_INFOCHART_DATA,
+    CHECK_FETCH_AVAILABLE_DATES,
     fetchedInfoChartData,
     setInfoChartVisibility,
     fetchInfoChartData,
@@ -18,8 +19,11 @@ import {
     changeFromData,
     changeToData,
     changeFixedRangeToData,
-    changePeriod
+    changePeriod, setAvailableDates,
+    fetchSelectDate
 } from '../actions/infochart';
+import { UPDATE_DATE_PARAMS_FIXEDRANGE } from '../actions/fixedrangepicker';
+import { UPDATE_DATE_PARAMS_FEERANGE } from '../actions/freerangepicker';
 import { CLICK_ON_MAP } from '../../MapStore2/web/client/actions/map';
 import { LOADING } from '@mapstore/actions/maps';
 import API from '../api/GeoClimaApi';
@@ -28,6 +32,22 @@ import defaultConfig from '../../configs/pluginsConfig.json';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
+
+const setAvailableDatesEpic = (action$) =>
+    action$.ofType(UPDATE_DATE_PARAMS_FIXEDRANGE, UPDATE_DATE_PARAMS_FEERANGE)
+        .switchMap((action) => {
+            return Observable.of(setAvailableDates(action.dataInizio, action.dataFine));
+        });
+
+const checkSelectDateEpic = (action$, store) =>
+    action$.ofType(CHECK_FETCH_AVAILABLE_DATES)
+        .switchMap((action) => {
+            const appState = store.getState();
+            if (!appState.fixedrangepicker?.isPluginLoaded && !appState.freerangepicker?.isPluginLoaded) {
+                return Observable.of(fetchSelectDate(action.variableSelectDate, action.urlSelectDate));
+            }
+            return Observable.empty();
+        });
 
 const getVisibleGroups = (groupMS2List = []) => {
     if (!Array.isArray(groupMS2List)) {
@@ -284,5 +304,7 @@ export {
     toggleInfoChartEpic,
     clickedPointCheckEpic,
     loadInfoChartDataEpic,
-    closeInfoChartPanel
+    closeInfoChartPanel,
+    setAvailableDatesEpic,
+    checkSelectDateEpic
 };

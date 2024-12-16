@@ -34,6 +34,7 @@ class InfoChart extends React.Component {
         closeGlyph: PropTypes.string,
         onSetInfoChartVisibility: PropTypes.func,
         onFetchInfoChartData: PropTypes.func,
+        onChechFetchAvailableDates: PropTypes.func,
         onCollapseRangePicker: PropTypes.func,
         onSetInfoChartDates: PropTypes.func,
         onSetChartRelayout: PropTypes.func,
@@ -171,8 +172,7 @@ class InfoChart extends React.Component {
     componentDidMount() {
         this.props.onSetIdVariabiliLayers(this.props.idVariabiliLayers);
         this.props.onSetDefaultUrlGeoclimaChart(this.props.defaultUrlGeoclimaChart);
-        // this.props.onFetchLastAvailableData(this.props.variabileSelectDate,
-        //     this.props.defaultUrlSelectDate);
+        this.props.onChechFetchAvailableDates(this.props.variabileSelectDate, this.props.defaultUrlSelectDate);
     }
 
     shouldComponentUpdate(newProps) {

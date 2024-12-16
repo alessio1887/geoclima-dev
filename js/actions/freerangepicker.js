@@ -72,13 +72,11 @@ export function setAvailableDatesFreeRange(dataInizio, dataFine) {
     };
 }
 
-export const checkLaunchSelectDateQuery = (variableSelectDate, urlSelectDate, mapId, mapConfig) => {
+export const checkLaunchSelectDateQuery = (variableSelectDate, urlSelectDate) => {
     return {
         type: CHECK_LAUNCH_SELECT_DATE,
         variableSelectDate,
-        urlSelectDate,
-        mapId,
-        mapConfig
+        urlSelectDate
     };
 };
 

@@ -27,7 +27,8 @@ export const SET_IDVARIABILI_LAYERS = 'SET_ID_VARIABILI_LAYERS';
 export const SET_DEFAULT_URL = 'INFOCHART:SET_DEFULT_URL';
 export const SET_DEFAULT_DATES = 'INFOCHART:SET_DEFULT_DATES';
 export const INFOCHART_ERROR_FETCH = 'INFOCHART_ERROR_FETCH';
-export const SET_SELECT_DATE = 'INFOCHART:SET_LAST_AVAILABLE_DATA';
+export const SET_AVAILABLE_DATES = 'INFOCHART:SET_AVAILABLE_DATES';
+export const CHECK_FETCH_AVAILABLE_DATES = 'INFOCHART:CHECK_FETCH_AVAILABLE_DATES';
 
 export function changeChartVariable(variable) {
     return {
@@ -178,23 +179,32 @@ export function apiError(errorMessage) {
     };
 }
 
-// export const fetchLastAvailableData = (variabileLastAvailableData, urlGetLastAvailableData, periodTypes) => {
-//     return (dispatch) => {
-//         GeoClimaAPI.getAvailableDates(variabileLastAvailableData, urlGetLastAvailableData)
-//             .then(response => {
-//                 const lastAvailableData = new Date(response.data[0].data);
-//                 dispatch(setDefaultDates(lastAvailableData, periodTypes));
-//             })
-//             .catch(error => {
-//                 dispatch(apiError(error));
-//             });
-//     };
-// };
-
-export function setSelectDate(dataInizio, dataFine) {
+export function setAvailableDates(dataInizio, dataFine) {
     return {
-        type: SET_SELECT_DATE,
+        type: SET_AVAILABLE_DATES,
         dataInizio,
         dataFine
     };
 }
+
+export function fetchSelectDate(variabileLastAvailableData, urlGetLastAvailableData) {
+    return (dispatch) => {
+        GeoClimaAPI.getAvailableDates(variabileLastAvailableData, urlGetLastAvailableData)
+            .then(response => {
+                const dataFine = new Date(response.data[0].data_fine);
+                const dataInizio = new Date(response.data[0].data_inizio);
+                dispatch(setAvailableDates(dataInizio, dataFine));
+            })
+            .catch(error => {
+                dispatch(apiError(error));
+            });
+    };
+}
+
+export const checkLaunchSelectDateQuery = (variableSelectDate, urlSelectDate) => {
+    return {
+        type: CHECK_FETCH_AVAILABLE_DATES,
+        variableSelectDate,
+        urlSelectDate
+    };
+};

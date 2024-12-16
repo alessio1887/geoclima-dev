@@ -9,10 +9,10 @@
 import { FREE_RANGE } from '@js/utils/VariabiliMeteoUtils';
 import { CHARTVARIABLE_CHANGED, TODATA_FIXEDRANGE_CHANGED, FROMDATA_CHANGED,
     TODATA_CHANGED, CHART_PERIOD_CHANGED, SET_INFOCHART_VISIBILITY, FETCH_INFOCHART_DATA,
-    FETCHED_INFOCHART_DATA, COLLAPSE_RANGE_PICKER,
+    FETCHED_INFOCHART_DATA, COLLAPSE_RANGE_PICKER, SET_AVAILABLE_DATES,
     OPEN_ALERT, CLOSE_ALERT, SET_CHART_RELAYOUT, RESET_CHART_RELAYOUT, RESIZE_INFOCHART,
     SET_RANGE_MANAGER, SET_IDVARIABILI_LAYERS, SET_DEFAULT_URL, SET_DEFAULT_DATES } from '../actions/infochart';
-import DateAPI, { DEFAULT_DATA_FINE, PERIOD_TYPES } from '../utils/ManageDateUtils';
+import DateAPI, { DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO, PERIOD_TYPES } from '../utils/ManageDateUtils';
 import assign from 'object-assign';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
@@ -57,7 +57,8 @@ const infoChartDefaultState = {
             "BilancioIdricoSemplificato_clima"]
     },
     defaultUrlGeoclimaChart: 'geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/geoclima_chart.py',
-    lastAvailableData: DEFAULT_DATA_FINE
+    firstAvailableDate: DEFAULT_DATA_INIZIO,
+    lastAvailableDate: DEFAULT_DATA_FINE
 };
 
 function infochart(state = infoChartDefaultState, action) {
@@ -156,6 +157,12 @@ function infochart(state = infoChartDefaultState, action) {
         return {
             ...state,
             defaultUrlGeoclimaChart: action.defaultUrlGeoclimaChart
+        };
+    case SET_AVAILABLE_DATES:
+        return {
+            ...state,
+            firstAvailableDate: action.dataInizio,
+            lastAvailableDate: action.dataFine
         };
     case SET_DEFAULT_DATES:
         const newToData = action.toData || moment().subtract(1, 'day').startOf('day').toDate();
