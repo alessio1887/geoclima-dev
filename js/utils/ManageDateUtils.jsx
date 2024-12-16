@@ -94,7 +94,6 @@ const Api = {
     validateDateRange(fromData, toData, firstAvailableData, lastAvailableData) {
         const startDate = moment(fromData).startOf('day');
         const endDate = moment(toData).startOf('day');
-
         if (startDate.isBefore(firstAvailableData) || endDate.isBefore(firstAvailableData)) {
             return { isValid: false, errorMessage: "gcapp.errorMessages.dateTooEarly" };
         }
@@ -112,12 +111,11 @@ const Api = {
         return { isValid: true, errorMessage: null };
     },
     validateDay(toData, firstAvailableData, lastAvailableData) {
-        const day = moment(toData);
-
-        if (day.isBefore(firstAvailableData)) {
+        const normalizedDate = moment(toData).startOf('day');
+        if (normalizedDate.isBefore(firstAvailableData)) {
             return { isValid: false, errorMessage: "gcapp.errorMessages.dateTooEarly" };
         }
-        if (day.isAfter(lastAvailableData)) {
+        if (normalizedDate.isAfter(lastAvailableData)) {
             return { isValid: false, errorMessage: "gcapp.errorMessages.rangeExceedsBoundary"};
         }
         // Se tutte le verifiche passano

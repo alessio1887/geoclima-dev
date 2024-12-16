@@ -236,10 +236,11 @@ class FixedRangePicker extends React.Component {
         );
     }
     showDailyDatePicker = () => {
+        const normalizedDate = moment(this.props.toData).startOf('day').toDate();
         const isDecrementDisabled = this.props.isInteractionDisabled ||
-                                moment(this.props.toData).isSameOrBefore(this.props.firstAvailableDate);
+                                moment(normalizedDate).isSameOrBefore(this.props.firstAvailableDate);
         const isIncrementDisabled = this.props.isInteractionDisabled ||
-                                moment(this.props.toData).isSameOrAfter(moment(this.props.lastAvailableDate).clone().subtract(1, 'day'));
+                                moment(normalizedDate).isSameOrAfter(moment(this.props.lastAvailableDate));
         return (
             <DailyManager
                 toData={this.props.toData}
