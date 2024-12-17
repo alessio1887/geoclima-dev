@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
 */
 import { Observable } from 'rxjs';
-import { combineLatest } from 'rxjs/observable/combineLatest';
+import { zip } from 'rxjs/observable/zip';
 import { MAP_CONFIG_LOADED } from '@mapstore/actions/config';
 import { updateSettings, updateNode } from '@mapstore/actions/layers';
 import { FIXEDRANGE_SET_AVAILABLE_DATES, UPDATE_DATE_PARAMS_FIXEDRANGE } from '../actions/fixedrangepicker';
@@ -66,7 +66,7 @@ const combinedDateMapConfigEpic = (action$) => {
     // Second observable: listens for MAP_CONFIG_LOADED
     const mapConfigLoaded$ = action$.ofType(MAP_CONFIG_LOADED);
     // Combine both observables
-    return combineLatest(
+    return zip(
         lastAvailableDate$,
         mapConfigLoaded$
     )
