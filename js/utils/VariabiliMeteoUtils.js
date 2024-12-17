@@ -123,3 +123,34 @@ export function fillAreas(dateObjects, observed, climatological, variabile, PREC
     return fillTraces;
 }
 
+
+export function formatDataCum(values) {
+    let data = [];
+    let cum = 0;
+    let cumClima = 0;
+    values.forEach(function(o) {
+        data.push(
+            {
+                "data": o.data.substring(0, 10),
+                "st_value": parseFloat(cum.toFixed(1)),
+                "st_value_clima": parseFloat(cumClima.toFixed(1))
+            }
+        );
+        cum += o.st_value;
+        cumClima += o.st_value_clima;
+    }, this);
+    return data;
+}
+
+export function formatDataTemp(values) {
+    return values.map(o => ({
+        data: o.data.substring(0, 10),
+        st_value: (o.st_value !== null && o.st_value !== undefined)
+            ? parseFloat(o.st_value.toFixed(1))
+            : 0,
+        st_value_clima: (o.st_value_clima !== null && o.st_value_clima !== undefined)
+            ? parseFloat(o.st_value_clima.toFixed(1))
+            : 0
+    }));
+}
+

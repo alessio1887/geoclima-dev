@@ -19,8 +19,8 @@ import moment from 'moment';
 import { DropdownList } from 'react-widgets';
 import FixedRangeManager from '../../components/datepickers/FixedRangeManager';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
-import DateAPI, { DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../../utils/ManageDateUtils';
-import { fillAreas, FIXED_RANGE, FREE_RANGE }  from '../../utils/VariabiliMeteoUtils';
+import DateAPI, { DATE_FORMAT, DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../../utils/ManageDateUtils';
+import { fillAreas, formatDataCum, formatDataTemp, FIXED_RANGE, FREE_RANGE }  from '../../utils/VariabiliMeteoUtils';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
 
@@ -218,8 +218,8 @@ class InfoChart extends React.Component {
             const TEMP_LIST = this.props.variableTemperaturaList;
 
             const chartData = this.props.infoChartData.variable === PREC || this.props.infoChartData.variable === RET
-                ? this.formatDataCum(this.props.data)
-                : this.formatDataTemp(this.props.data);
+                ? formatDataCum(this.props.data)
+                : formatDataTemp(this.props.data);
 
             // Definizione delle unità di misura dinamiche
             const unit = TEMP_LIST.includes(this.props.infoChartData.variable) ? '°C' : 'mm';
@@ -416,36 +416,6 @@ class InfoChart extends React.Component {
         this.props.onSetInfoChartDates(this.props.lastAvailableDate, this.props.periodTypes );
         this.props.onResetChartRelayout();
     }
-    formatDataCum(values) {
-        let data = [];
-        let cum = 0;
-        let cumClima = 0;
-        values.forEach(function(o) {
-            data.push(
-                {
-                    "data": o.data.substring(0, 10),
-                    "st_value": parseFloat(cum.toFixed(1)),
-                    "st_value_clima": parseFloat(cumClima.toFixed(1))
-                }
-            );
-            cum += o.st_value;
-            cumClima += o.st_value_clima;
-        }, this);
-        return data;
-    }
-    formatDataTemp(values) {
-        let data = [];
-        values.forEach(function(o) {
-            data.push(
-                {
-                    "data": o.data.substring(0, 10),
-                    "st_value": parseFloat(o.st_value.toFixed(1)),
-                    "st_value_clima": parseFloat(o.st_value_clima.toFixed(1))
-                }
-            );
-        }, this);
-        return data;
-    }
     handleChangeChartVariable = (selectedVariable) => {
         this.props.onChangeChartVariable(selectedVariable);
         this.handleApplyPeriod(selectedVariable);
@@ -459,12 +429,12 @@ class InfoChart extends React.Component {
         }
         // Set fromData, toData, periodKey and variabile meteo
         let periodKey;
-        toData = moment(this.props.toData).clone().format('YYYY-MM-DD');
+        toData = moment(this.props.toData).clone().format(DATE_FORMAT);
         if ( this.props.activeRangeManager === FIXED_RANGE) {
             fromData = DateAPI.calculateDateFromKeyReal( this.props.periodType, toData).fromData;
             periodKey = this.props.periodType;
         } else {
-            fromData = moment(this.props.fromData).clone().format('YYYY-MM-DD');
+            fromData = moment(this.props.fromData).clone().format(DATE_FORMAT);
             // set default period
             periodKey = this.props.periodTypes[0]?.key;
         }
