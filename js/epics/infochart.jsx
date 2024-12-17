@@ -20,7 +20,7 @@ import {
     changeToData,
     changeFixedRangeToData,
     changePeriod, setAvailableDates,
-    fetchSelectDate
+    fetchSelectDate, markInfoChartAsNotLoaded
 } from '../actions/infochart';
 import { UPDATE_DATE_PARAMS_FIXEDRANGE } from '../actions/fixedrangepicker';
 import { UPDATE_DATE_PARAMS_FEERANGE } from '../actions/freerangepicker';
@@ -157,7 +157,7 @@ const setVisVariable = (visibleIdLayer, idVariabiliLayers) => {
  */
 const getChartVariables = (appState, visibleLayer, rangeManager, idVariabiliLayers) => {
     let variable = Object.keys(idVariabiliLayers)[0] || '';
-    let toData = appState.infochart.lastAvailableData;
+    let toData = appState.infochart.lastAvailableDate;
     let fromData = moment(toData).subtract(1, 'month').toDate();
     let periodType = "1";
 
@@ -180,13 +180,18 @@ const getChartVariables = (appState, visibleLayer, rangeManager, idVariabiliLaye
 };
 
 
-const closeInfoChartPanel = (action$) =>
+const closeInfoChartPanel = (action$, store) =>
     action$.ofType(LOADING).switchMap(() => {
-        return Observable.of(
-            setControlProperty("chartinfo", "enabled", false),
-            setInfoChartVisibility(false, []),
-            changeMapInfoState(true)
-        );
+        const storeState = store.getState();
+        if (storeState?.infochart?.isPluginLoaded) {
+            return Observable.of(
+                setControlProperty("chartinfo", "enabled", false),
+                setInfoChartVisibility(false, []),
+                changeMapInfoState(true),
+                markInfoChartAsNotLoaded()
+            );
+        }
+        return Observable.empty();
     });
 
 const toggleMapInfoEpic = (action$, store) =>

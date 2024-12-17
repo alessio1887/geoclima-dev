@@ -11,7 +11,8 @@ import { CHARTVARIABLE_CHANGED, TODATA_FIXEDRANGE_CHANGED, FROMDATA_CHANGED,
     TODATA_CHANGED, CHART_PERIOD_CHANGED, SET_INFOCHART_VISIBILITY, FETCH_INFOCHART_DATA,
     FETCHED_INFOCHART_DATA, COLLAPSE_RANGE_PICKER, SET_AVAILABLE_DATES,
     OPEN_ALERT, CLOSE_ALERT, SET_CHART_RELAYOUT, RESET_CHART_RELAYOUT, RESIZE_INFOCHART,
-    SET_RANGE_MANAGER, SET_IDVARIABILI_LAYERS, SET_DEFAULT_URL, SET_DEFAULT_DATES } from '../actions/infochart';
+    SET_RANGE_MANAGER, SET_IDVARIABILI_LAYERS, SET_DEFAULT_URL, SET_DEFAULT_DATES,
+    PLUGIN_LOADED, PLUGIN_NOT_LOADED } from '../actions/infochart';
 import DateAPI, { DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO, PERIOD_TYPES } from '../utils/ManageDateUtils';
 import assign from 'object-assign';
 import moment from 'moment';
@@ -171,13 +172,22 @@ function infochart(state = infoChartDefaultState, action) {
             ...state,
             toData: newToData,
             fromData: newFromData,
-            lastAvailableData: newToData,
             infoChartData: {
                 ...state.infoChartData,
                 toData: newToData,
                 fromData: newFromData,
                 periodType: action.periodTypes?.[0] || PERIOD_TYPES[0]
             }
+        };
+    case PLUGIN_LOADED:
+        return {
+            ...state,
+            isPluginLoaded: true
+        };
+    case PLUGIN_NOT_LOADED:
+        return {
+            ...state,
+            isPluginLoaded: false
         };
     default:
         return state;

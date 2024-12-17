@@ -11,7 +11,8 @@ import { compose } from 'redux';
 import {setInfoChartVisibility, changeFixedRangeToData, fetchInfoChartData, fetchedInfoChartData, toggleInfoChart,
     changeChartVariable, changePeriod, changeFromData, changeToData, setDefaultDates, collapseRangePicker,
     openAlert, closeAlert, setChartRelayout, resetChartRelayout, resizeInfoChart, setIdVariabiliLayers,
-    setRangeManager, setDefaultUrlGeoclimaChart, checkLaunchSelectDateQuery } from '../actions/infochart';
+    setRangeManager, setDefaultUrlGeoclimaChart, checkLaunchSelectDateQuery,
+    markInfoChartAsLoaded } from '../actions/infochart';
 import InfoChartButton from '../components/buttons/InfoChartButton';
 import InfoChart from '../components/infochart/InfoChart';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
@@ -121,7 +122,8 @@ const InfoChartPanel = connect((state) => ({
     infoChartSize: state.infochart?.infoChartSize || { widthResizable: 880, heightResizable: 880 },
     defaultUrlGeoclimaChart: state.infochart?.defaultUrlGeoclimaChart,
     firstAvailableDate: state?.infochart?.firstAvailableDate,
-    lastAvailableDate: state?.infochart?.lastAvailableDate
+    lastAvailableDate: state?.infochart?.lastAvailableDate,
+    isPluginLoaded: state?.infochart?.isPluginLoaded
 }), {
     onSetInfoChartVisibility: setInfoChartVisibility,
     onFetchInfoChartData: fetchInfoChartData,
@@ -141,7 +143,8 @@ const InfoChartPanel = connect((state) => ({
     onResizeInfoChart: resizeInfoChart,
     onSetIdVariabiliLayers: setIdVariabiliLayers,
     onSetDefaultUrlGeoclimaChart: setDefaultUrlGeoclimaChart,
-    onChechFetchAvailableDates: checkLaunchSelectDateQuery
+    onCheckFetchAvailableDates: checkLaunchSelectDateQuery,
+    onMarkPluginAsLoaded: markInfoChartAsLoaded
 })(InfoChart);
 
 

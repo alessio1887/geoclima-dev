@@ -87,15 +87,6 @@ export function apiError(errorMessage) {
     };
 }
 
-// export const loadMapConfig = (lastAvailableData, mapId, configName) => {
-//     return {
-//         type: FREERANGE_MAP_CONFIG,
-//         lastAvailableData,
-//         mapId,
-//         configName
-//     };
-// };
-
 export function updateParamsFreeRange(dataInizio, dataFine) {
     return {
         type: UPDATE_DATE_PARAMS_FEERANGE,

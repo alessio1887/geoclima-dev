@@ -94,15 +94,6 @@ export function setAvailableDatesFixedRange(dataInizio, dataFine) {
     };
 }
 
-// export const loadMapConfig = (lastAvailableData, mapId, configName) => {
-//     return {
-//         type: FIXEDRANGE_MAP_CONFIG,
-//         lastAvailableData,
-//         mapId,
-//         configName
-//     };
-// };
-
 export function updateParamsFixedRange(dataInizio, dataFine) {
     return {
         type: UPDATE_DATE_PARAMS_FIXEDRANGE,

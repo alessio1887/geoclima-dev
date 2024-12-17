@@ -34,7 +34,7 @@ class InfoChart extends React.Component {
         closeGlyph: PropTypes.string,
         onSetInfoChartVisibility: PropTypes.func,
         onFetchInfoChartData: PropTypes.func,
-        onChechFetchAvailableDates: PropTypes.func,
+        onCheckFetchAvailableDates: PropTypes.func,
         onCollapseRangePicker: PropTypes.func,
         onSetInfoChartDates: PropTypes.func,
         onSetChartRelayout: PropTypes.func,
@@ -81,7 +81,8 @@ class InfoChart extends React.Component {
         idVariabiliLayers: PropTypes.object,
         defaultUrlGeoclimaChart: PropTypes.string,
         defaultUrlSelectDate: PropTypes.string,
-        variabileSelectDate: PropTypes.string
+        variabileSelectDate: PropTypes.string,
+        isPluginLoaded: PropTypes.bool
     }
     static defaultProps = {
         id: "mapstore-sarchart-panel",
@@ -160,7 +161,8 @@ class InfoChart extends React.Component {
             heightResizable: 880
         },
         firstAvailableDate: DEFAULT_DATA_INIZIO,
-        lastAvailableDate: DEFAULT_DATA_FINE
+        lastAvailableDate: DEFAULT_DATA_FINE,
+        isPluginLoaded: false
     }
 
     state = {
@@ -170,9 +172,12 @@ class InfoChart extends React.Component {
     }
     // Set some props to the plugin's state
     componentDidMount() {
-        this.props.onSetIdVariabiliLayers(this.props.idVariabiliLayers);
-        this.props.onSetDefaultUrlGeoclimaChart(this.props.defaultUrlGeoclimaChart);
-        this.props.onChechFetchAvailableDates(this.props.variabileSelectDate, this.props.defaultUrlSelectDate);
+        if (!this.props.isPluginLoaded) {
+            this.props.onSetIdVariabiliLayers(this.props.idVariabiliLayers);
+            this.props.onSetDefaultUrlGeoclimaChart(this.props.defaultUrlGeoclimaChart);
+            this.props.onCheckFetchAvailableDates(this.props.variabileSelectDate, this.props.defaultUrlSelectDate);
+            this.props.onMarkPluginAsLoaded();
+        }
     }
 
     shouldComponentUpdate(newProps) {

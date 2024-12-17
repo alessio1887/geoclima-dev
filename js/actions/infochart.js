@@ -29,6 +29,8 @@ export const SET_DEFAULT_DATES = 'INFOCHART:SET_DEFULT_DATES';
 export const INFOCHART_ERROR_FETCH = 'INFOCHART_ERROR_FETCH';
 export const SET_AVAILABLE_DATES = 'INFOCHART:SET_AVAILABLE_DATES';
 export const CHECK_FETCH_AVAILABLE_DATES = 'INFOCHART:CHECK_FETCH_AVAILABLE_DATES';
+export const PLUGIN_LOADED = 'INFOCHART:PLUGIN_LOADED';
+export const PLUGIN_NOT_LOADED = 'INFOCHART:PLUGIN_NOT_LOADED';
 
 export function changeChartVariable(variable) {
     return {
@@ -208,3 +210,16 @@ export const checkLaunchSelectDateQuery = (variableSelectDate, urlSelectDate) =>
         urlSelectDate
     };
 };
+
+
+export function markInfoChartAsLoaded() {
+    return {
+        type: PLUGIN_LOADED
+    };
+}
+
+export function markInfoChartAsNotLoaded() {
+    return {
+        type: PLUGIN_NOT_LOADED
+    };
+}
