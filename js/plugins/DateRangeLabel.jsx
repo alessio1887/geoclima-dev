@@ -9,12 +9,13 @@ import { createPlugin } from '@mapstore/utils/PluginsUtils';
 import React from "react";
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { DATE_FORMAT } from '../utils/ManageDateUtils';
+import daterangelabel from '../reducers/daterangelabel';
 import assign from 'object-assign';
 import updateDateLabelEpic from '../epics/daterangelabel';
 import moment from 'moment';
-
-import daterangelabel from '../reducers/daterangelabel';
-
+import momentLocaliser from 'react-widgets/lib/localizers/moment';
+momentLocaliser(moment);
 
 class DateRangeLabel extends React.Component {
     static propTypes = {
@@ -35,8 +36,8 @@ class DateRangeLabel extends React.Component {
         return (
             <div className="daterangelabel" style={this.props.style}>
                 <div style={{ padding: "6px", textAlign: 'center' }}>
-                    <strong>Dal: <span>{moment(this.props.fromData).format('DD/MM/YYYY')}</span> -
-                    al: <span>{moment(this.props.toData).format('DD/MM/YYYY')}</span></strong>
+                    <strong>Dal: <span>{moment(this.props.fromData).format(DATE_FORMAT)}</span> -
+                    al: <span>{moment(this.props.toData).format(DATE_FORMAT)}</span></strong>
                 </div>
             </div>
         );

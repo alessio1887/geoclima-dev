@@ -15,7 +15,7 @@ import { changePeriodToData, changePeriod, toggleRangePickerPlugin, openAlert,
     closeAlert, collapsePlugin, markFixedRangeAsLoaded, markFixedRangeAsNotLoaded,
     fetchSelectDate } from '../actions/fixedrangepicker';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
-import DateAPI, { DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../utils/ManageDateUtils';
+import DateAPI, { DATE_FORMAT, DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../utils/ManageDateUtils';
 import { connect } from 'react-redux';
 import assign from 'object-assign';
 import moment from 'moment';
@@ -194,7 +194,7 @@ class FixedRangePicker extends React.Component {
                             <div className="alert-date" >
                                 <strong><Message msgId="warning"/></strong>
                                 <span ><Message msgId={this.props.alertMessage}
-                                    msgParams={{toData: moment(this.props.lastAvailableDate).format("DD-MM-YYYY")}}/>
+                                    msgParams={{toData: moment(this.props.lastAvailableDate).format(DATE_FORMAT)}}/>
                                 </span>
                             </div>
                         )}
@@ -288,8 +288,8 @@ class FixedRangePicker extends React.Component {
                 const newParams = {
                     params: {
                         map: mapFile,
-                        fromData: moment(datesParam.fromData).format('YYYY-MM-DD'),
-                        toData: moment(datesParam.toData).format('YYYY-MM-DD')
+                        fromData: moment(datesParam.fromData).format(DATE_FORMAT),
+                        toData: moment(datesParam.toData).format(DATE_FORMAT)
                     }
                 };
                 this.props.onUpdateSettings(newParams);
