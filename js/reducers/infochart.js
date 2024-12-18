@@ -7,10 +7,10 @@
 */
 
 import { FREE_RANGE } from '@js/utils/VariabiliMeteoUtils';
+import { FETCHED_AVAILABLE_DATES } from '../actions/updateDatesParams';
 import { CHARTVARIABLE_CHANGED, TODATA_FIXEDRANGE_CHANGED, FROMDATA_CHANGED,
     TODATA_CHANGED, CHART_PERIOD_CHANGED, SET_INFOCHART_VISIBILITY, FETCH_INFOCHART_DATA,
-    FETCHED_INFOCHART_DATA, COLLAPSE_RANGE_PICKER, SET_AVAILABLE_DATES,
-    OPEN_ALERT, CLOSE_ALERT, SET_CHART_RELAYOUT, RESET_CHART_RELAYOUT, RESIZE_INFOCHART,
+    FETCHED_INFOCHART_DATA, COLLAPSE_RANGE_PICKER,  OPEN_ALERT, CLOSE_ALERT, SET_CHART_RELAYOUT, RESET_CHART_RELAYOUT, RESIZE_INFOCHART,
     SET_RANGE_MANAGER, SET_IDVARIABILI_LAYERS, SET_DEFAULT_URL, SET_DEFAULT_DATES,
     PLUGIN_LOADED, PLUGIN_NOT_LOADED } from '../actions/infochart';
 import DateAPI, { DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO, PERIOD_TYPES } from '../utils/ManageDateUtils';
@@ -26,7 +26,7 @@ const infoChartDefaultState = {
         toData: DEFAULT_DATA_FINE,
         variable: PERIOD_TYPES[0],
         latlng: {lat: 0, lng: 0},
-        periodType: PERIOD_TYPES[0]
+        periodType: PERIOD_TYPES[0].key
     },
     data: [],
     maskLoading: true,
@@ -159,7 +159,7 @@ function infochart(state = infoChartDefaultState, action) {
             ...state,
             defaultUrlGeoclimaChart: action.defaultUrlGeoclimaChart
         };
-    case SET_AVAILABLE_DATES:
+    case FETCHED_AVAILABLE_DATES:
         return {
             ...state,
             firstAvailableDate: action.dataInizio,

@@ -23,7 +23,7 @@ import layers from '../../MapStore2/web/client/reducers/layers';
 import freerangepicker from '@js/reducers/freerangepicker';
 import { toggleRangePickerPlugin } from '../actions/fixedrangepicker';
 import { changeFromData, changeToData, openAlert, closeAlert, collapsePlugin,
-    markFreeRangeAsLoaded, markFreeRangeAsNotLoaded, checkLaunchSelectDateQuery } from '@js/actions/freerangepicker';
+    markFreeRangeAsLoaded, markFreeRangeAsNotLoaded, checkFetchAvailableDatesFreeRange } from '@js/actions/freerangepicker';
 import * as rangePickerEpics from '../epics/dateRangeConfig';
 
 import FreeRangeManager from '../components/datepickers/FreeRangeManager';
@@ -277,7 +277,7 @@ const FreeRangePickerPlugin = connect(mapStateToProps, {
     onToggleFreeRangePicker: toggleRangePickerPlugin,
     onOpenAlert: openAlert,
     onCloseAlert: closeAlert,
-    onCheckLaunchSelectDateQuery: checkLaunchSelectDateQuery
+    onCheckLaunchSelectDateQuery: checkFetchAvailableDatesFreeRange
 })(FreeRangePicker);
 
 export default createPlugin(

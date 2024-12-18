@@ -5,8 +5,6 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import GeoClimaAPI from '../api/GeoClimaApi';
-
 export const TODATA_CHANGED = 'TODATA_CHANGED';
 export const MAP_PERIOD_CHANGED = 'MAP_PERIOD_CHANGED';
 export const TOGGLE_PLUGIN = 'TOGGLE_PLUGIN';
@@ -16,10 +14,11 @@ export const CLOSE_ALERT = 'FIXEDRANGE:CLOSE_ALERT';
 export const COLLAPSE_RANGE_PICKER = 'FIXEDRANGE:COLLAPSE_RANGE_PICKER';
 export const PLUGIN_LOADED = 'FIXEDRANGE:PLUGIN_LOADED';
 export const PLUGIN_NOT_LOADED = 'FIXEDRANGE:PLUGIN_NOT_LOADED';
-export const FIXEDRANGE_SET_AVAILABLE_DATES = 'FIXEDRANGE:SET_SELECT_DATE';
-export const FIXEDRANGE_ERROR_FETCH = 'FIXEDRANGE_ERROR_FETCH';
-export const FETCH_SELECT_DATE = 'FIXEDRANGE:FETCH_SELECT_DATE';
-export const UPDATE_DATE_PARAMS_FIXEDRANGE = 'FIXEDRANGE:UPDATE_DATE_PARAMS';
+// export const FIXEDRANGE_SET_AVAILABLE_DATES = 'FIXEDRANGE:SET_SELECT_DATE';
+// export const FIXEDRANGE_ERROR_FETCH = 'FIXEDRANGE_ERROR_FETCH';
+// export const FETCH_SELECT_DATE = 'FIXEDRANGE:FETCH_SELECT_DATE';
+// export const UPDATE_DATE_PARAMS_FIXEDRANGE = 'FIXEDRANGE:UPDATE_DATE_PARAMS';
+export const FIXEDRANGE_CHECK_FETCH_SELECT_DATE = 'FIXEDRANGE:CHECK_FETCH_SELECT_DATE';
 
 export function changePeriodToData(toData) {
     return {
@@ -78,41 +77,49 @@ export function markFixedRangeAsNotLoaded() {
     };
 }
 
-export function apiError(errorMessage) {
+export const checkFetchAvailableDatesFixedRange = (variableSelectDate, urlSelectDate) => {
     return {
-        type: FIXEDRANGE_ERROR_FETCH,
-        errorMessage
+        type: FIXEDRANGE_CHECK_FETCH_SELECT_DATE,
+        variableSelectDate,
+        urlSelectDate
     };
-}
+};
+
+// export function apiError(errorMessage) {
+//     return {
+//         type: FIXEDRANGE_ERROR_FETCH,
+//         errorMessage
+//     };
+// }
 
 
-export function setAvailableDatesFixedRange(dataInizio, dataFine) {
-    return {
-        type: FIXEDRANGE_SET_AVAILABLE_DATES,
-        dataInizio,
-        dataFine
-    };
-}
+// export function setAvailableDatesFixedRange(dataInizio, dataFine) {
+//     return {
+//         type: FIXEDRANGE_SET_AVAILABLE_DATES,
+//         dataInizio,
+//         dataFine
+//     };
+// }
 
-export function updateParamsFixedRange(dataInizio, dataFine) {
-    return {
-        type: UPDATE_DATE_PARAMS_FIXEDRANGE,
-        dataInizio,
-        dataFine
-    };
-}
+// export function updateParamsFixedRange(dataInizio, dataFine) {
+//     return {
+//         type: UPDATE_DATE_PARAMS_FIXEDRANGE,
+//         dataInizio,
+//         dataFine
+//     };
+// }
 
-export function fetchSelectDate(variabileLastAvailableData, urlGetLastAvailableData) {
-    return (dispatch) => {
-        GeoClimaAPI.getAvailableDates(variabileLastAvailableData, urlGetLastAvailableData)
-            .then(response => {
-                const dataFine = new Date(response.data[0].data_fine);
-                const dataInizio = new Date(response.data[0].data_inizio);
-                dispatch(setAvailableDatesFixedRange(dataInizio, dataFine));
-                dispatch(updateParamsFixedRange(dataInizio, dataFine));
-            })
-            .catch(error => {
-                dispatch(apiError(error));
-            });
-    };
-}
+// export function fetchAvailabletDatesFixedRange(variabileLastAvailableData, urlGetLastAvailableData) {
+//     return (dispatch) => {
+//         GeoClimaAPI.getAvailableDates(variabileLastAvailableData, urlGetLastAvailableData)
+//             .then(response => {
+//                 const dataFine = new Date(response.data[0].data_fine);
+//                 const dataInizio = new Date(response.data[0].data_inizio);
+//                 dispatch(setAvailableDatesFixedRange(dataInizio, dataFine));
+//                 dispatch(updateParamsFixedRange(dataInizio, dataFine));
+//             })
+//             .catch(error => {
+//                 dispatch(apiError(error));
+//             });
+//     };
+// }

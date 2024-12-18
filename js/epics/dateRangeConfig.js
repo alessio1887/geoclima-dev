@@ -9,21 +9,20 @@ import { Observable } from 'rxjs';
 import { zip } from 'rxjs/observable/zip';
 import { MAP_CONFIG_LOADED } from '@mapstore/actions/config';
 import { updateSettings, updateNode } from '@mapstore/actions/layers';
-import { FIXEDRANGE_SET_AVAILABLE_DATES, UPDATE_DATE_PARAMS_FIXEDRANGE } from '../actions/fixedrangepicker';
-import { UPDATE_DATE_PARAMS_FEERANGE, CHECK_LAUNCH_SELECT_DATE, setAvailableDatesFreeRange,
-    fetchSelectDate } from '../actions/freerangepicker';
-import DateAPI from '../utils/ManageDateUtils';
+import { FETCHED_AVAILABLE_DATES, fetchSelectDate } from '../actions/updateDatesParams';
+import { FIXEDRANGE_CHECK_FETCH_SELECT_DATE } from '../actions/fixedrangepicker';
+import { FREERANGE_CHECK_FETCH_SELECT_DATE  } from '../actions/freerangepicker';
+import DateAPI, { DATE_FORMAT } from '../utils/ManageDateUtils';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
 
-const UPDATE_NODE_DATE_PARAMS = 'UPDATE_NODE_DATE_PARAMS';
 const COMBINED_DATE_MAPCONFIG = 'COMBINED_DATE_MAPCONFIG';
 
 const updateLayersParams = (layers, toData) => {
     let actionsUpdateParams = [];
-    const toDataFormatted = moment(toData).format('YYYY-MM-DD');
-    const fromDataFormatted = moment(toData).clone().subtract(1, 'month').format('YYYY-MM-DD');
+    const toDataFormatted = moment(toData).format(DATE_FORMAT);
+    const fromDataFormatted = moment(toData).clone().subtract(1, 'month').format(DATE_FORMAT);
     for (const layer of layers) {
         if (layer.params) {
             const mapFileName = DateAPI.setGCMapFile(
@@ -47,36 +46,34 @@ const updateLayersParams = (layers, toData) => {
 };
 
 
-const updateParamsByDateRangeEpic = (action$) =>
+const updateParamsByDateRangeEpic = (action$, store) =>
     action$.ofType(COMBINED_DATE_MAPCONFIG)
         .switchMap((action) => {
+            const appState = store.getState();
+            if (!appState.fixedrangepicker?.isPluginLoaded && !appState.freerangepicker?.isPluginLoaded) {
+                return Observable.empty();
+            }
             const layers = action.payload.config?.map?.layers;
-            const toData = action.payload.lastAvailableDate;
+            const toData = action.payload.availableDate;
             const actionsUpdateParams = updateLayersParams(layers, toData);
             return Observable.of(...actionsUpdateParams);
         });
 
 const combinedDateMapConfigEpic = (action$) => {
-    // First observable: listens for UPDATE_DATE_PARAMS_FEERANGE or UPDATE_DATE_PARAMS_FIXEDRANGE
-    const lastAvailableDate$ = action$.ofType(UPDATE_DATE_PARAMS_FEERANGE, UPDATE_DATE_PARAMS_FIXEDRANGE)
-        .map((action) => ({
-            type: UPDATE_NODE_DATE_PARAMS,
-            dataFine: action.dataFine  // Extracts the 'dataFine' value from the action
-        }));
-    // Second observable: listens for MAP_CONFIG_LOADED
+    const availableDate$ = action$.ofType(FETCHED_AVAILABLE_DATES);
+
     const mapConfigLoaded$ = action$.ofType(MAP_CONFIG_LOADED);
-    // Combine both observables
+
     return zip(
-        lastAvailableDate$,
+        availableDate$,
         mapConfigLoaded$
-    )
-        .map(([lastAvailableDateAction, mapConfigAction]) => ({
-            type: COMBINED_DATE_MAPCONFIG,
-            payload: {
-                lastAvailableDate: lastAvailableDateAction.dataFine,  // Data from the first action
-                config: mapConfigAction.config              // Configuration from the second action
-            }
-        }));
+    ).map(([availableDateAction, mapConfigAction]) => ({
+        type: COMBINED_DATE_MAPCONFIG,
+        payload: {
+            availableDate: availableDateAction.dataFine,
+            config: mapConfigAction.config
+        }
+    }));
 };
 
 
@@ -151,31 +148,29 @@ const combinedDateMapConfigEpic = (action$) => {
 //             return Observable.empty();
 //         });
 
-const checkFetchAvailableDatesEpic = (action$, store) =>
-    action$.ofType(CHECK_LAUNCH_SELECT_DATE)
+const checkFetchAvailableDatesFreeRange = (action$, store) =>
+    action$.ofType(FREERANGE_CHECK_FETCH_SELECT_DATE)
         .switchMap((action) => {
             const appState = store.getState();
-            if (!appState.fixedrangepicker?.isPluginLoaded) {
-                return Observable.of(fetchSelectDate(action.variableSelectDate,
-                    action.urlSelectDate, action.mapId, action.mapConfig));
+            if (!appState.fixedrangepicker?.isPluginLoaded && !appState.infochart?.isPluginLoaded) {
+                return Observable.of(fetchSelectDate(action.variableSelectDate, action.urlSelectDate, "FreeRangePlugin"));
             }
             return Observable.empty();
         });
 
-const checkSetDateFreeRangePlugin = (action$, store) =>
-    action$.ofType(FIXEDRANGE_SET_AVAILABLE_DATES)
+const checkFetchAvailableDatesFixedRange = (action$, store) =>
+    action$.ofType(FIXEDRANGE_CHECK_FETCH_SELECT_DATE)
         .switchMap((action) => {
             const appState = store.getState();
-            if (appState.freerangepicker?.isPluginLoaded) {
-                return Observable.of(setAvailableDatesFreeRange(action.dataInizio,
-                    action.dataFine));
+            if (!appState.freerangepicker?.isPluginLoaded && !appState.infochart?.isPluginLoaded) {
+                return Observable.of(fetchSelectDate(action.variableSelectDate, action.urlSelectDate, "FixedRangePlugin"));
             }
             return Observable.empty();
         });
 
 export {
-    checkFetchAvailableDatesEpic,
-    checkSetDateFreeRangePlugin,
+    checkFetchAvailableDatesFreeRange,
+    checkFetchAvailableDatesFixedRange,
     combinedDateMapConfigEpic,
     updateParamsByDateRangeEpic
 };

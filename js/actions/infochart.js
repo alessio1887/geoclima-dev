@@ -5,8 +5,6 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
 */
-import GeoClimaAPI from '../api/GeoClimaApi';
-
 export const CHARTVARIABLE_CHANGED = 'CHARTVARIABLE_CHANGED';
 export const TODATA_CHANGED = 'INFOCHART:TODATA_CHANGED';
 export const FROMDATA_CHANGED = 'INFOCHART:FROMDATA_CHANGED';
@@ -26,8 +24,8 @@ export const RESIZE_INFOCHART = 'RESIZE_INFOCHART';
 export const SET_IDVARIABILI_LAYERS = 'SET_ID_VARIABILI_LAYERS';
 export const SET_DEFAULT_URL = 'INFOCHART:SET_DEFULT_URL';
 export const SET_DEFAULT_DATES = 'INFOCHART:SET_DEFULT_DATES';
-export const INFOCHART_ERROR_FETCH = 'INFOCHART_ERROR_FETCH';
-export const SET_AVAILABLE_DATES = 'INFOCHART:SET_AVAILABLE_DATES';
+// export const INFOCHART_ERROR_FETCH = 'INFOCHART_ERROR_FETCH';
+// export const INFOCHART_SET_AVAILABLE_DATES = 'INFOCHART:SET_AVAILABLE_DATES';
 export const CHECK_FETCH_AVAILABLE_DATES = 'INFOCHART:CHECK_FETCH_AVAILABLE_DATES';
 export const PLUGIN_LOADED = 'INFOCHART:PLUGIN_LOADED';
 export const PLUGIN_NOT_LOADED = 'INFOCHART:PLUGIN_NOT_LOADED';
@@ -174,34 +172,35 @@ export function setDefaultDates(toData, periodTypes) {
     };
 }
 
-export function apiError(errorMessage) {
-    return {
-        type: INFOCHART_ERROR_FETCH,
-        errorMessage
-    };
-}
+// export function apiError(errorMessage) {
+//     return {
+//         type: INFOCHART_ERROR_FETCH,
+//         errorMessage
+//     };
+// }
 
-export function setAvailableDates(dataInizio, dataFine) {
-    return {
-        type: SET_AVAILABLE_DATES,
-        dataInizio,
-        dataFine
-    };
-}
+// export function setAvailableDatesInfoChart(dataInizio, dataFine) {
+//     return {
+//         type: INFOCHART_SET_AVAILABLE_DATES,
+//         dataInizio,
+//         dataFine
+//     };
+// }
 
-export function fetchSelectDate(variabileLastAvailableData, urlGetLastAvailableData) {
-    return (dispatch) => {
-        GeoClimaAPI.getAvailableDates(variabileLastAvailableData, urlGetLastAvailableData)
-            .then(response => {
-                const dataFine = new Date(response.data[0].data_fine);
-                const dataInizio = new Date(response.data[0].data_inizio);
-                dispatch(setAvailableDates(dataInizio, dataFine));
-            })
-            .catch(error => {
-                dispatch(apiError(error));
-            });
-    };
-}
+// export function fetchSelectDate(variabileLastAvailableData, urlGetLastAvailableData) {
+//     return (dispatch) => {
+//         GeoClimaAPI.getAvailableDates(variabileLastAvailableData, urlGetLastAvailableData)
+//             .then(response => {
+//                 const dataFine = new Date(response.data[0].data_fine);
+//                 const dataInizio = new Date(response.data[0].data_inizio);
+//                 dispatch(setAvailableDatesInfoChart(dataInizio, dataFine));
+//                 dispatch(updateParamsInfoChart(dataInizio, dataFine));
+//             })
+//             .catch(error => {
+//                 dispatch(apiError(error));
+//             });
+//     };
+// }
 
 export const checkLaunchSelectDateQuery = (variableSelectDate, urlSelectDate) => {
     return {

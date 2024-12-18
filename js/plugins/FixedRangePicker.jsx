@@ -13,7 +13,7 @@ import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/l
 import { compose } from 'redux';
 import { changePeriodToData, changePeriod, toggleRangePickerPlugin, openAlert,
     closeAlert, collapsePlugin, markFixedRangeAsLoaded, markFixedRangeAsNotLoaded,
-    fetchSelectDate } from '../actions/fixedrangepicker';
+    checkFetchAvailableDatesFixedRange } from '../actions/fixedrangepicker';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../utils/ManageDateUtils';
 import { connect } from 'react-redux';
@@ -68,7 +68,7 @@ class FixedRangePicker extends React.Component {
         toData: PropTypes.instanceOf(Date),
         firstAvailableDate: PropTypes.instanceOf(Date),
         lastAvailableDate: PropTypes.instanceOf(Date),
-        onFetchSelectDate: PropTypes.func,
+        onCheckLaunchSelectDateQuery: PropTypes.func,
         onSetSelectDate: PropTypes.func,
         onChangePeriodToData: PropTypes.func,
         onChangePeriod: PropTypes.func,
@@ -149,7 +149,7 @@ class FixedRangePicker extends React.Component {
     componentDidMount() {
         this.props.onToggleFixedRangePicker();
         this.props.onMarkPluginAsLoaded();
-        this.props.onFetchSelectDate(this.props.variabileSelectDate, this.props.defaultUrlSelectDate);
+        this.props.onCheckLaunchSelectDateQuery(this.props.variabileSelectDate, this.props.defaultUrlSelectDate);
     }
 
     // Resets the plugin's state to default values when navigating back to the Home Page
@@ -333,7 +333,7 @@ const FixedRangePickerPlugin = connect(mapStateToProps, {
     onToggleFixedRangePicker: toggleRangePickerPlugin,
     onOpenAlert: openAlert,
     onCloseAlert: closeAlert,
-    onFetchSelectDate: fetchSelectDate
+    onCheckLaunchSelectDateQuery: checkFetchAvailableDatesFixedRange
 })(FixedRangePicker);
 
 export default createPlugin(
