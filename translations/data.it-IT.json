@@ -5,7 +5,7 @@
             "fixedRangePicker": {
               "titlePeriod": "Periodo considerato",
               "selectDateHidrologicYear": "Seleziona una data",
-              "selectCumulativePeriod": "Seleziona periodo di cumulata dalla data selezionata",
+              "selectCumulativePeriod": "Seleziona periodo di cumulata",
               "dateRangeButton": "Range libero",
               "collapsePlugin": "Seleziona un intervallo di date"
             },
