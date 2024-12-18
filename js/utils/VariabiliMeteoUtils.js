@@ -124,7 +124,7 @@ export function fillAreas(dateObjects, observed, climatological, variabile, PREC
 }
 
 
-export function formatDataCum(values) {
+export function formatDataCum(values, propVariable) {
     let data = [];
     let cum = 0;
     let cumClima = 0;
@@ -132,21 +132,21 @@ export function formatDataCum(values) {
         data.push(
             {
                 "data": o.data.substring(0, 10),
-                "st_value": parseFloat(cum.toFixed(1)),
+                [propVariable]: parseFloat(cum.toFixed(1)),
                 "st_value_clima": parseFloat(cumClima.toFixed(1))
             }
         );
-        cum += o.st_value;
+        cum += o[propVariable];
         cumClima += o.st_value_clima;
     }, this);
     return data;
 }
 
-export function formatDataTemp(values) {
+export function formatDataTemp(values, propVariable) {
     return values.map(o => ({
         data: o.data.substring(0, 10),
-        st_value: (o.st_value !== null && o.st_value !== undefined)
-            ? parseFloat(o.st_value.toFixed(1))
+        [propVariable]: (o[propVariable] !== null && o[propVariable] !== undefined)
+            ? parseFloat(o[propVariable].toFixed(1))
             : 0,
         st_value_clima: (o.st_value_clima !== null && o.st_value_clima !== undefined)
             ? parseFloat(o.st_value_clima.toFixed(1))

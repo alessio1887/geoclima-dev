@@ -216,20 +216,20 @@ class InfoChart extends React.Component {
             const PREC = this.props.variablePrecipitazione;
             const RET = this.props.variableEvotrasporazione;
             const TEMP_LIST = this.props.variableTemperaturaList;
-
-            const chartData = this.props.infoChartData.variable === PREC || this.props.infoChartData.variable === RET
-                ? formatDataCum(this.props.data)
-                : formatDataTemp(this.props.data);
-
+            const variableSelected = this.props.infoChartData.variable;
+            const propVariable = "st_value_" + variableSelected;
+            const chartData = variableSelected === PREC || variableSelected === RET
+                ? formatDataCum(this.props.data, propVariable)
+                : formatDataTemp(this.props.data, propVariable);
             // Definizione delle unità di misura dinamiche
             const unit = TEMP_LIST.includes(this.props.infoChartData.variable) ? '°C' : 'mm';
             const climaLabel = "Climatologia " + unit;
             const currentYearLabel = "Anno in corso " + unit;
 
             const dates = chartData.map(item => new Date(item.data));
-            const observedData = chartData.map(item => item.st_value);
+            const observedData = chartData.map(item => item[propVariable]);
             const climatologicalData = chartData.map(item => item.st_value_clima);
-            const fillTraces = fillAreas(dates, observedData, climatologicalData, this.props.infoChartData.variable, PREC);
+            const fillTraces = fillAreas(dates, observedData, climatologicalData, variableSelected, PREC);
 
             const colorTraceObserved = this.props.infoChartData.variable === PREC ? 'rgba(0, 0, 255, 1)' : 'rgba(255, 0, 0, 1)';
             const trace1 = {
