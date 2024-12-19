@@ -108,7 +108,6 @@ const InfoChartPanel = connect((state) => ({
     maskLoading: state.infochart?.maskLoading,
     active: state.controls?.chartinfo?.enabled || false,
     mapinfoActive: state.mapInfo?.enabled || false,
-    variable: state.infochart?.variable,
     // Initializes 'fromData' based on Infochart's date range; defaults to a calculated date if missing
     fromData: state.infochart?.fromData,
     // Initializes 'toData' based on Infochart's date range; defaults to a calculated date if missing

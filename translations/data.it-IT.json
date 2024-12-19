@@ -32,7 +32,8 @@
         "infochart": {
             "tooltipDeactivate": "Disattiva visualizzazione grafico",
             "tooltipActivate": "Attiva visualizzazione grafico",
-            "selectMeteoVariable": "Seleziona una variabile"
+            "selectMeteoVariable": "Seleziona una variabile",
+            "spiSpeiCombined": "Seleziona SPI o SPEI"
         },
         "Language": "Lingua",
         "msgId0": "{name} ha scattato {numPhotos, plural, =0 {nessuna foto} other {# foto}} il {takenDate, date, long}.",

@@ -1,40 +1,32 @@
 #mapstore-infochartdate1 {
-    margin:10px;
+    margin: 10px;
+    display: flex; /* Per allineare facilmente i figli */
+    justify-content: space-between;
 }
 
-#ms-infocharttodate-action1 {
-    float:left;
-    width:30%;
-    overflow:hidden;
-}
-
-#ms-infochartfromdate-action1 {
-    float:left;
-    width:30%;
-    overflow:hidden;
+.ms-infochart-action {
+    flex: 0 0 30%; /* Dimensione flessibile con larghezza fissa al 30% */
+    overflow: hidden;
 }
 
 .labels-infochart {
     color: black;
     background-color: white;
-    display: block; /* Assicura che il label sia un blocco allineato */
-    text-align: left; /* Allinea il testo a sinistra */
-    padding: 15px 0px 5px;
-    font-size: 14px; /* Assicurati che la dimensione del testo sia corretta */
-    font-weight: normal; /* Imposta il peso del font a normale */
+    display: block; /* Allineamento corretto */
+    text-align: left; /* Testo allineato a sinistra */
+    padding: 15px 0 5px; /* Margini ottimizzati */
+    font-size: 14px;
     font-weight: bold;
 }
 
-/* Contenitore del ButtonGroup */
 .button-group-wrapper {
-    position: relative; /* Definisce il posizionamento relativo per il genitore */
+    position: relative;
     display: flex;
     justify-content: flex-end;
-    margin-right: -10px;
-    margin-bottom: -10px;
+    gap: 10px; /* Distanza tra i pulsanti invece di margini negativi */
 }
 
-/* Spostamento dei pulsanti */
 .rangepicker-button {
-    margin: 20px 10px 0px 0px;
+    margin-top: 20px; /* Sposta i pulsanti verso il basso */
+    padding: 5px 10px; /* Migliora la dimensione cliccabile */
 }

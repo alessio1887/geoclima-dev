@@ -35,7 +35,6 @@ const infoChartDefaultState = {
     toData: DEFAULT_DATA_FINE,
     periodType: PERIOD_TYPES[0],
     isCollapsedFormGroup: false,
-    activeRangeManager: FREE_RANGE,
     alertMessage: null,
     chartRelayout: {
         startDate: null,
@@ -48,16 +47,6 @@ const infoChartDefaultState = {
         widthResizable: 880,
         heightResizable: 880
     },
-    idVariabiliLayers: {
-        "prec": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima"],
-        "tmed": ["Temperatura_Media", "Temperatura_Media_Anomalia", "Temperatura_Media_clima"],
-        "tmin": ["Temperatura_Minima", "Temperatura_Minima_Anomalia", "Temperatura_Minima_clima"],
-        "tmax": [ "Temperatura_Massima", "Temperatura_Massima_Anomalia", "Temperatura_Massima_clima"],
-        "ret": ["Evapotraspirazione", "Evapotraspirazione_Anomalia_mm", "Evapotraspirazione_Anomalia_perc", "Evapotraspirazione_clima"],
-        "bis": ["BilancioIdricoSemplificato", "BilancioIdricoSemplificato_Anomalia_mm", "BilancioIdricoSemplificato_Anomalia_perc",
-            "BilancioIdricoSemplificato_clima"]
-    },
-    defaultUrlGeoclimaChart: 'geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/geoclima_chart.py',
     firstAvailableDate: DEFAULT_DATA_INIZIO,
     lastAvailableDate: DEFAULT_DATA_FINE
 };

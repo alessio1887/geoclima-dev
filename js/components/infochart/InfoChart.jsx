@@ -15,12 +15,12 @@ import Message from '../../../MapStore2/web/client/components/I18N/Message';
 import Dialog from '../../../MapStore2/web/client/components/misc/Dialog';
 import BorderLayout from '../../../MapStore2/web/client/components/layout/BorderLayout';
 import Plot from '../../../MapStore2/web/client/components/charts/PlotlyChart.jsx';
-import moment from 'moment';
-import { DropdownList } from 'react-widgets';
+import SelectVariableMenu from './SelectVariableMenu';
 import FixedRangeManager from '../../components/datepickers/FixedRangeManager';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../../utils/ManageDateUtils';
 import { fillAreas, formatDataCum, formatDataTemp, FIXED_RANGE, FREE_RANGE }  from '../../utils/VariabiliMeteoUtils';
+import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
 
@@ -63,7 +63,8 @@ class InfoChart extends React.Component {
         toData: PropTypes.instanceOf(Date),
         firstAvailableDate: PropTypes.instanceOf(Date),
         lastAvailableDate: PropTypes.instanceOf(Date),
-        variable: PropTypes.string,
+        variabileMeteo: PropTypes.string,
+        spiSpeiCombined: PropTypes.string,
         periodType: PropTypes.string,
         periodTypes: PropTypes.array,
         classNameInfoChartDate: PropTypes.string,
@@ -78,6 +79,8 @@ class InfoChart extends React.Component {
         variableEvotrasporazione: PropTypes.string,
         variableTemperaturaList: PropTypes.array,
         variableList: PropTypes.array,
+        spiList: PropTypes.array,
+        speiList: PropTypes.array,
         idVariabiliLayers: PropTypes.object,
         defaultUrlGeoclimaChart: PropTypes.string,
         defaultUrlSelectDate: PropTypes.string,
@@ -111,6 +114,8 @@ class InfoChart extends React.Component {
             { "id": "ret", "name": "Evapotraspirazione Potenziale" },
             { "id": "bis", "name": "Bilancio Idrico Semplificato" }
         ],
+        spiList: [ "spi1", "spi3", "spi6", "spi12"],
+        speiList: [ "spei1", "spei3", "spei6", "spei12"],
         periodTypes: [
             { "key": "1", "label": "1 Mese" },
             { "key": "3", "label": "3 Mesi" },
@@ -299,13 +304,14 @@ class InfoChart extends React.Component {
                 <Grid fluid style={{paddingTop: 2, paddingBottom: 2}}>
                     <FormGroup>
                         <Label className="labels-infochart"><Message msgId="infochart.selectMeteoVariable"/></Label>
-                        <DropdownList
-                            key="charts"
-                            data={this.props.variableList}
-                            valueField = "id"
-                            textField = "name"
-                            value={this.props.variable}
-                            onChange={(value) => { this.handleChangeChartVariable(value); }} />
+                        <SelectVariableMenu
+                            variableList={this.props.variableList}
+                            spiList={this.props.spiList}
+                            speiList={this.props.speiList}
+                            variabileMeteo={this.props.variabileMeteo}
+                            spiSpeiCombined={this.props.spiSpeiCombined}
+                            onChangeVariable={this.handleChangeChartVariable}
+                        />
                         {/* Toggle between FixedRangeManager and FreeRangeManager based on activeRangeManager*/}
                         {this.props.activeRangeManager === FIXED_RANGE ? (
                             <FixedRangeManager
