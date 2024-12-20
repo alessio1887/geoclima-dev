@@ -5,10 +5,8 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
 */
-
-import { FREE_RANGE } from '@js/utils/VariabiliMeteoUtils';
 import { FETCHED_AVAILABLE_DATES } from '../actions/updateDatesParams';
-import { CHARTVARIABLE_CHANGED, TODATA_FIXEDRANGE_CHANGED, FROMDATA_CHANGED,
+import { TODATA_FIXEDRANGE_CHANGED, FROMDATA_CHANGED,
     TODATA_CHANGED, CHART_PERIOD_CHANGED, SET_INFOCHART_VISIBILITY, FETCH_INFOCHART_DATA,
     FETCHED_INFOCHART_DATA, COLLAPSE_RANGE_PICKER,  OPEN_ALERT, CLOSE_ALERT, SET_CHART_RELAYOUT, RESET_CHART_RELAYOUT, RESIZE_INFOCHART,
     SET_RANGE_MANAGER, SET_IDVARIABILI_LAYERS, SET_DEFAULT_URL, SET_DEFAULT_DATES,
@@ -24,16 +22,15 @@ const infoChartDefaultState = {
     infoChartData: {
         fromData: moment().subtract(1, 'month').startOf('day').toDate(),
         toData: DEFAULT_DATA_FINE,
-        variable: PERIOD_TYPES[0],
+        variable: "prec",
         latlng: {lat: 0, lng: 0},
         periodType: PERIOD_TYPES[0].key
     },
     data: [],
     maskLoading: true,
-    variable: "prec",
     fromData: moment().subtract(1, 'month').startOf('day').toDate(),
     toData: DEFAULT_DATA_FINE,
-    periodType: PERIOD_TYPES[0],
+    periodType: PERIOD_TYPES[0].key,
     isCollapsedFormGroup: false,
     alertMessage: null,
     chartRelayout: {
@@ -53,11 +50,6 @@ const infoChartDefaultState = {
 
 function infochart(state = infoChartDefaultState, action) {
     switch (action.type) {
-    case CHARTVARIABLE_CHANGED:
-        return {
-            ...state,
-            variable: action.variable.id
-        };
     case TODATA_CHANGED:
         return {
             ...state,
@@ -88,12 +80,15 @@ function infochart(state = infoChartDefaultState, action) {
             infoChartData: action.params,
             data: [],
             maskLoading: action.maskLoading,
-            isInteractionDisabled: !state.isInteractionDisabled,
-            variable: action.params.variable
+            isInteractionDisabled: !state.isInteractionDisabled
         });
     }
     case FETCHED_INFOCHART_DATA: {
-        return assign({}, state, {data: action.data, maskLoading: action.maskLoading, isInteractionDisabled: !state.isInteractionDisabled});
+        return assign({}, state, {
+            data: action.data,
+            maskLoading: action.maskLoading,
+            isInteractionDisabled: !state.isInteractionDisabled
+        });
     }
     case COLLAPSE_RANGE_PICKER: {
         return {

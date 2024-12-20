@@ -5,7 +5,7 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
 */
-export const CHARTVARIABLE_CHANGED = 'CHARTVARIABLE_CHANGED';
+// export const CHARTVARIABLE_CHANGED = 'CHARTVARIABLE_CHANGED';
 export const TODATA_CHANGED = 'INFOCHART:TODATA_CHANGED';
 export const FROMDATA_CHANGED = 'INFOCHART:FROMDATA_CHANGED';
 export const TODATA_FIXEDRANGE_CHANGED = 'INFOCHART:TODATA_FIXEDRANGE_CHANGED';
@@ -30,12 +30,12 @@ export const CHECK_FETCH_AVAILABLE_DATES = 'INFOCHART:CHECK_FETCH_AVAILABLE_DATE
 export const PLUGIN_LOADED = 'INFOCHART:PLUGIN_LOADED';
 export const PLUGIN_NOT_LOADED = 'INFOCHART:PLUGIN_NOT_LOADED';
 
-export function changeChartVariable(variable) {
-    return {
-        type: CHARTVARIABLE_CHANGED,
-        variable
-    };
-}
+// export function changeChartVariable(variable) {
+//     return {
+//         type: CHARTVARIABLE_CHANGED,
+//         variable
+//     };
+// }
 
 export function changeFromData(fromData) {
     return {

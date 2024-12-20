@@ -9,7 +9,7 @@
 import {connect} from 'react-redux';
 import { compose } from 'redux';
 import {setInfoChartVisibility, changeFixedRangeToData, fetchInfoChartData, fetchedInfoChartData, toggleInfoChart,
-    changeChartVariable, changePeriod, changeFromData, changeToData, setDefaultDates, collapseRangePicker,
+    changePeriod, changeFromData, changeToData, setDefaultDates, collapseRangePicker,
     openAlert, closeAlert, setChartRelayout, resetChartRelayout, resizeInfoChart, setIdVariabiliLayers,
     setRangeManager, setDefaultUrlGeoclimaChart, checkLaunchSelectDateQuery,
     markInfoChartAsLoaded } from '../actions/infochart';
@@ -27,8 +27,9 @@ momentLocaliser(moment);
 /*
 Plugin configuration
 "name":"InfoChart",
-      "defaultUrlGeoclimaChart": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/geoclima_chart.py",
-      "defaultConfig": {
+      "defaultUrlGeoclimaChart": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/geoclima_chart_test.py",
+        "defaultUrlSelectDate": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
+        "variabileSelectDate": "prec",
           "periodTypes": [
               { "key": "1", "label": "1 Mese" },
               { "key": "3", "label": "3 Mesi" },
@@ -55,6 +56,8 @@ Plugin configuration
             { "id": "ret", "name": "Evapotraspirazione Potenziale" },
             { "id": "bis", "name": "Bilancio Idrico Semplificato" }
           ],
+          "spiList": [ "spi1", "spi3", "spi6", "spi12"],
+          "speiList": [ "spei1", "spei3", "spei6", "spei12"],
           "idVariabiliLayers": {
             "prec": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima"],
             "tmed": ["Temperatura_Media", "Temperatura_Media_Anomalia", "Temperatura_Media_clima"],
@@ -126,7 +129,6 @@ const InfoChartPanel = connect((state) => ({
     onSetInfoChartVisibility: setInfoChartVisibility,
     onFetchInfoChartData: fetchInfoChartData,
     onFetchedInfoChartData: fetchedInfoChartData,
-    onChangeChartVariable: compose(changeChartVariable, (event) => event),
     onChangeToData: compose(changeToData, (event) => event),
     onChangeFromData: compose(changeFromData, (event) => event),
     onChangeFixedRangeTodata: compose(changeFixedRangeToData, (event) => event),
