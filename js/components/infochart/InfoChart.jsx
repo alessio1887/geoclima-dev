@@ -64,8 +64,7 @@ class InfoChart extends React.Component {
         toData: PropTypes.instanceOf(Date),
         firstAvailableDate: PropTypes.instanceOf(Date),
         lastAvailableDate: PropTypes.instanceOf(Date),
-        variabileMeteo: PropTypes.string,
-        spiSpeiCombined: PropTypes.string,
+        variables: PropTypes.array,
         periodType: PropTypes.string,
         periodTypes: PropTypes.array,
         classNameInfoChartDate: PropTypes.string,
@@ -210,22 +209,22 @@ class InfoChart extends React.Component {
             const PREC = this.props.variablePrecipitazione;
             const RET = this.props.variableEvotrasporazione;
             const TEMP_LIST = this.props.variableTemperaturaList;
-            const variableSelected = this.props.infoChartData.variable;
-            const propVariable = "st_value_" + variableSelected;
-            const chartData = variableSelected === PREC || variableSelected === RET
+            const chartVariable = this.props.infoChartData.variables;
+            const propVariable = "st_value_" + chartVariable;
+            const chartData = chartVariable === PREC || chartVariable === RET
                 ? formatDataCum(this.props.data, propVariable)
                 : formatDataTemp(this.props.data, propVariable);
             // Definizione delle unità di misura dinamiche
-            const unit = TEMP_LIST.includes(this.props.infoChartData.variable) ? '°C' : 'mm';
+            const unit = TEMP_LIST.includes(chartVariable) ? '°C' : 'mm';
             const climaLabel = "Climatologia " + unit;
             const currentYearLabel = "Anno in corso " + unit;
 
             const dates = chartData.map(item => new Date(item.data));
             const observedData = chartData.map(item => item[propVariable]);
             const climatologicalData = chartData.map(item => item.st_value_clima);
-            const fillTraces = fillAreas(dates, observedData, climatologicalData, variableSelected, PREC);
+            const fillTraces = fillAreas(dates, observedData, climatologicalData, chartVariable, PREC);
 
-            const colorTraceObserved = this.props.infoChartData.variable === PREC ? 'rgba(0, 0, 255, 1)' : 'rgba(255, 0, 0, 1)';
+            const colorTraceObserved = chartVariable === PREC ? 'rgba(0, 0, 255, 1)' : 'rgba(255, 0, 0, 1)';
             const trace1 = {
                 x: dates,
                 y: climatologicalData,
@@ -287,10 +286,6 @@ class InfoChart extends React.Component {
         </span>
         );
     }
-    onChangeSpiSpei = (selectedValues) => {
-        console.log('Valori selezionati SPI/SPEI:', selectedValues);
-        // Fai qualcosa con i valori selezionati
-    };
     getPanelFormGroup = () => {
         return (
             <Panel>
@@ -299,8 +294,8 @@ class InfoChart extends React.Component {
                         <Label className="labels-infochart"><Message msgId="infochart.selectMeteoVariable"/></Label>
                         <SelectVariableTab
                             tabList={this.props.tabList}
-                            onChangeVariable={this.handleChangeChartVariable}
-                            onChangeSpiSpei={this.onChangeSpiSpei}
+                            onChangeSingleVariable={this.handleChangeChartVariable}
+                            onChangeMultiVariable={this.props.onChangeChartVariable}
                         />
                         {/* Toggle between FixedRangeManager and FreeRangeManager based on activeRangeManager*/}
                         {this.props.activeRangeManager === FIXED_RANGE ? (
@@ -413,7 +408,8 @@ class InfoChart extends React.Component {
         this.props.onResetChartRelayout();
     }
     handleChangeChartVariable = (selectedVariable) => {
-        this.handleApplyPeriod(selectedVariable);
+        this.props.onChangeChartVariable([selectedVariable]);
+        this.handleApplyPeriod([selectedVariable]);
     }
     handleApplyPeriod = (selectedVariable) => {
         let { fromData, toData } = this.props;
@@ -433,7 +429,10 @@ class InfoChart extends React.Component {
             // set default period
             periodKey = this.props.periodTypes[0]?.key;
         }
-        const variableId = selectedVariable.id || selectedVariable;
+
+        const variableIds = selectedVariable ? selectedVariable[0].id
+            : this.props.variables.map(variable => variable.id).join(',');
+
         // Date validations
         const validation = DateAPI.validateDateRange(fromData, toData, this.props.firstAvailableDate, this.props.lastAvailableDate);
         if (!validation.isValid) {
@@ -449,7 +448,7 @@ class InfoChart extends React.Component {
             latlng: this.props.infoChartData.latlng,
             toData: toData,
             fromData: fromData,
-            variable: variableId,
+            variables: variableIds,
             periodType: periodKey
         });
         this.props.onResetChartRelayout();

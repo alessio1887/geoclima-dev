@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import DropdownList from 'react-widgets/lib/DropdownList';
 import Multiselect from 'react-widgets/lib/Multiselect';
-import Message from '../../../MapStore2/web/client/components/I18N/Message';
 
-const SelectVariableTab = ({ tabList, onChangeVariable, onChangeSpiSpei }) => {
+const SelectVariableTab = ({ tabList, onChangeSingleVariable, onChangeMultiVariable }) => {
     // Stato per tracciare il tab attivo
     const [activeTab, setActiveTab] = useState(tabList[0]?.id); // Di default il primo tab è attivo
 
@@ -41,7 +40,7 @@ const SelectVariableTab = ({ tabList, onChangeVariable, onChangeSpiSpei }) => {
                                     data={tab.groupList}
                                     valueField="id"
                                     textField="name"
-                                    onChange={(value) => onChangeVariable(value)}
+                                    onChange={(value) => onChangeSingleVariable(value)}
                                 />
                             );
                         } else if (tab.type === 'multiselect') {
@@ -52,7 +51,7 @@ const SelectVariableTab = ({ tabList, onChangeVariable, onChangeSpiSpei }) => {
                                     data={tab.groupList}
                                     valueField="id"
                                     textField="name"
-                                    onChange={(value) => onChangeSpiSpei(value)}
+                                    onChange={(value) => onChangeMultiVariable(value)}
                                 />
                             );
                         }
@@ -65,59 +64,3 @@ const SelectVariableTab = ({ tabList, onChangeVariable, onChangeSpiSpei }) => {
 };
 
 export default SelectVariableTab;
-
-/*
-import React from 'react';
-import DropdownList from 'react-widgets/lib/DropdownList';
-import Multiselect from 'react-widgets/lib/Multiselect';
-import Message from '../../../MapStore2/web/client/components/I18N/Message';
-
-const SelectVariableMenu = ({ variableList, spiList, speiList, variabileMeteo, spiSpeiCombined,
-    onChangeVariable, onChangeSpiSpei }) => {
-    // Combina SPI e SPEI in un'unica lista, aggiungendo una proprietà 'group'
-    const combinedList = [
-        ...spiList.map(item => ({ id: item, name: item, group: 'SPI' })),
-        ...speiList.map(item => ({ id: item, name: item, group: 'SPEI' }))
-    ];
-
-    return (
-        <div id="infochart-dropdown-container" style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '20px',
-            justifyContent: 'flex-start'
-        }}>
-            <DropdownList
-                key="variabileMeteo"
-                data={variableList}
-                valueField="id"
-                textField="name"
-                value={variabileMeteo}
-                onChange={(value) => onChangeVariable(value)}
-                placeholder={<Message msgId="infochart.selectMeteoVariable"/>}
-                style={{
-                    width: '200px',
-                    height: '35px'
-                }}
-            />
-            <Multiselect
-                key="spiSpeiCombined"
-                data={combinedList}
-                valueField="id"
-                textField="name"
-                groupBy="group"
-                value={spiSpeiCombined}
-                onChange={(value) => onChangeSpiSpei(value)}
-                placeholder={<Message msgId="infochart.spiSpeiCombined"/>}
-                multiple
-                style={{
-                    width: '200px',
-                    height: '35px'
-                }}
-            />
-        </div>
-    );
-};
-
-export default SelectVariableMenu;
-*/

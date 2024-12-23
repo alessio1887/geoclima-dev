@@ -274,7 +274,7 @@ const clickedPointCheckEpic = (action$, store) =>
                     latlng: action.point.latlng,
                     toData: moment(toData).format('YYYY-MM-DD'),
                     fromData: moment(fromData).format('YYYY-MM-DD'),
-                    variable,
+                    variables: variable,
                     periodType
                 }));
                 return Observable.of(...actions);

@@ -22,7 +22,7 @@ import urlUtil from 'url';
  */
 const Api = {
     geoclimachart: function(data, defaultUrlGeoclimaChart, options) {
-        var params = assign({lat: data.latlng.lat, lng: data.latlng.lng, toData: data.toData, fromData: data.fromData, variable: data.variable}, options || {});
+        var params = assign({lat: data.latlng.lat, lng: data.latlng.lng, toData: data.toData, fromData: data.fromData, variable: data.variables}, options || {});
         var url = urlUtil.format({
             protocol: window.location.hostname === 'localhost' ? 'https:' : window.location.protocol,
             host: defaultUrlGeoclimaChart,

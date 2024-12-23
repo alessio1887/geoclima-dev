@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
 */
 import { FETCHED_AVAILABLE_DATES } from '../actions/updateDatesParams';
-import { TODATA_FIXEDRANGE_CHANGED, FROMDATA_CHANGED,
+import {CHARTVARIABLE_CHANGED, TODATA_FIXEDRANGE_CHANGED, FROMDATA_CHANGED,
     TODATA_CHANGED, CHART_PERIOD_CHANGED, SET_INFOCHART_VISIBILITY, FETCH_INFOCHART_DATA,
     FETCHED_INFOCHART_DATA, COLLAPSE_RANGE_PICKER,  OPEN_ALERT, CLOSE_ALERT, SET_CHART_RELAYOUT, RESET_CHART_RELAYOUT, RESIZE_INFOCHART,
     SET_RANGE_MANAGER, SET_IDVARIABILI_LAYERS, SET_DEFAULT_URL, SET_DEFAULT_DATES,
@@ -22,7 +22,7 @@ const infoChartDefaultState = {
     infoChartData: {
         fromData: moment().subtract(1, 'month').startOf('day').toDate(),
         toData: DEFAULT_DATA_FINE,
-        variable: "prec",
+        variables: "prec",
         latlng: {lat: 0, lng: 0},
         periodType: PERIOD_TYPES[0].key
     },
@@ -50,6 +50,11 @@ const infoChartDefaultState = {
 
 function infochart(state = infoChartDefaultState, action) {
     switch (action.type) {
+    case CHARTVARIABLE_CHANGED:
+        return {
+            ...state,
+            variables: action.variables
+        };
     case TODATA_CHANGED:
         return {
             ...state,

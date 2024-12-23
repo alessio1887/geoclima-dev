@@ -9,7 +9,7 @@
 import {connect} from 'react-redux';
 import { compose } from 'redux';
 import {setInfoChartVisibility, changeFixedRangeToData, fetchInfoChartData, fetchedInfoChartData, toggleInfoChart,
-    changePeriod, changeFromData, changeToData, setDefaultDates, collapseRangePicker,
+    changeChartVariable, changePeriod, changeFromData, changeToData, setDefaultDates, collapseRangePicker,
     openAlert, closeAlert, setChartRelayout, resetChartRelayout, resizeInfoChart, setIdVariabiliLayers,
     setRangeManager, setDefaultUrlGeoclimaChart, checkLaunchSelectDateQuery,
     markInfoChartAsLoaded } from '../actions/infochart';
@@ -103,10 +103,11 @@ const InfoChartPanel = connect((state) => ({
     infoChartData: {
         fromData: state.infochart?.infoChartData?.fromData,
         toData: state.infochart?.infoChartData?.toData,
-        variable: state.infochart?.infoChartData?.variable,
+        variables: state.infochart?.infoChartData?.variables,
         latlng: state.infochart?.infoChartData?.latlng || {},
         periodType: state.infochart?.infoChartData?.periodType
     },
+    variables: state.infochart?.variables,
     data: state.infochart?.data || '',
     maskLoading: state.infochart?.maskLoading,
     active: state.controls?.chartinfo?.enabled || false,
@@ -129,6 +130,7 @@ const InfoChartPanel = connect((state) => ({
     onSetInfoChartVisibility: setInfoChartVisibility,
     onFetchInfoChartData: fetchInfoChartData,
     onFetchedInfoChartData: fetchedInfoChartData,
+    onChangeChartVariable: compose(changeChartVariable, (event) => event),
     onChangeToData: compose(changeToData, (event) => event),
     onChangeFromData: compose(changeFromData, (event) => event),
     onChangeFixedRangeTodata: compose(changeFixedRangeToData, (event) => event),
