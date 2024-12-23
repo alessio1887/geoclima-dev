@@ -161,7 +161,7 @@ const getChartVariables = (appState, visibleLayer, rangeManager, idVariabiliLaye
     let periodType = "1";
 
     if (appState.infochart.showInfoChartPanel) {
-        variable = appState.infochart.infoChartData.variable;
+        variable = appState.infochart.infoChartData.variables;
         fromData = appState.infochart.infoChartData.fromData;
         toData = appState.infochart.infoChartData.toData;
         periodType = rangeManager === FIXED_RANGE
@@ -248,9 +248,7 @@ const clickedPointCheckEpic = (action$, store) =>
     action$.ofType(CLICK_ON_MAP)
         .switchMap((action) => {
             const appState = store.getState();
-            const chartInfoEnabled = appState.controls?.chartinfo?.enabled;
-
-            if (chartInfoEnabled) {
+            if (appState.controls?.chartinfo?.enabled) {
                 const idVariabiliLayers = appState.infochart.idVariabiliLayers;
                 const visibleLayer = getFirstVisibleLayer(getVisibleLayers(appState.layers.flat), getVisibleGroups(appState.layers.groups));
 
