@@ -15,11 +15,11 @@ import Message from '../../../MapStore2/web/client/components/I18N/Message';
 import Dialog from '../../../MapStore2/web/client/components/misc/Dialog';
 import BorderLayout from '../../../MapStore2/web/client/components/layout/BorderLayout';
 import Plot from '../../../MapStore2/web/client/components/charts/PlotlyChart.jsx';
+import MultiVariableChart from './MultiVariableChart';
 import SelectVariableTab from './SelectVariableTab';
 import FixedRangeManager from '../../components/datepickers/FixedRangeManager';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../../utils/ManageDateUtils';
-import { renderMultiVariableChart } from '../../utils/InfoChartVisualizationUtils';
 import { fillAreas, formatDataCum, formatDataTemp, FIXED_RANGE, FREE_RANGE }  from '../../utils/VariabiliMeteoUtils';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
@@ -210,68 +210,76 @@ class InfoChart extends React.Component {
             let layoutChart;
             const variableArray = this.props.infoChartData.variables.split(',');
             if ( variableArray.length > 1 ) {
-                const resultRender =  renderMultiVariableChart(this.props.data, variableArray, this.props.tabList.filter(tab => tab.type === 'multiselect'));
-                dataChart = resultRender.dataChart;
-                layoutChart = resultRender.layoutChart;
-            } else {
-                const PREC = this.props.variablePrecipitazione;
-                const RET = this.props.variableEvotrasporazione;
-                const TEMP_LIST = this.props.variableTemperaturaList;
-                const chartVariable = this.props.infoChartData.variables;
-                const propVariable = "st_value_" + chartVariable;
-                const chartData = chartVariable === PREC || chartVariable === RET
-                    ? formatDataCum(this.props.data, propVariable)
-                    : formatDataTemp(this.props.data, propVariable);
-                // Definizione delle unità di misura dinamiche
-                const unit = TEMP_LIST.includes(chartVariable) ? '°C' : 'mm';
-                const climaLabel = "Climatologia " + unit;
-                const currentYearLabel = "Anno in corso " + unit;
-
-                const dates = chartData.map(item => new Date(item.data));
-                const observedData = chartData.map(item => item[propVariable]);
-                const climatologicalData = chartData.map(item => item.st_value_clima);
-                const fillTraces = fillAreas(dates, observedData, climatologicalData, chartVariable, PREC);
-
-                const colorTraceObserved = chartVariable === PREC ? 'rgba(0, 0, 255, 1)' : 'rgba(255, 0, 0, 1)';
-                const trace1 = {
-                    x: dates,
-                    y: climatologicalData,
-                    mode: 'lines',
-                    name: climaLabel,
-                    line: { color: '#38293C',  width: 1 }
-                };
-
-                const trace2 = {
-                    x: dates,
-                    y: observedData,
-                    mode: 'lines',
-                    name: currentYearLabel,
-                    line: { color: colorTraceObserved,  width: 1 }
-                };
-                dataChart = [trace1, trace2].concat(fillTraces);
-                layoutChart = {
-                    width: this.props.infoChartSize.widthResizable - 10,
-                    height: this.props.infoChartSize.heightResizable - (this.props.isCollapsedFormGroup ? 140 : 440 ), // Set the height based on the collapse state of the FormGroup
-                    xaxis: { // Dates format
-                        tickformat: '%Y-%m-%d',
-                        range: [this.props.chartRelayout?.startDate || Math.min(...dates), this.props.chartRelayout?.endDate || Math.max(...dates)]
-                    },
-                    yaxis: {
-                        title: TEMP_LIST.includes(this.props.infoChartData.variable)  ? 'Temperatura (°C)' : 'Valore (mm)',
-                        range: [this.props.chartRelayout?.variabileStart || Math.min(...observedData, ...climatologicalData),
-                            this.props.chartRelayout?.variabileEnd || Math.max(...observedData, ...climatologicalData)]
-                    },
-                    margin: this.props.chartStyle.margin,
-                    showlegend: true,
-                    hovermode: 'x unified',
-                    legend: {
-                        orientation: 'h',
-                        x: 0.5,
-                        y: -0.2
-                    },
-                    dragmode: this.props.chartRelayout?.dragmode
-                };
+                return (<MultiVariableChart
+                    dataFetched = {this.props.data}
+                    variables =  {variableArray}
+                    multiselectList = {this.props.tabList.filter(tab => tab.type === 'multiselect') }
+                    handleRelayout={this.handleRelayout}
+                    startDate={this.props.chartRelayout?.startDate}
+                    endDate={this.props.chartRelayout?.endDate}
+                    minVariable={this.props.chartRelayout?.variabileStart}
+                    maxVariable={this.props.chartRelayout?.variabileEnd }
+                />);
             }
+            // const resultRender =  renderMultiVariableChart(this.props.data, variableArray, this.props.tabList.filter(tab => tab.type === 'multiselect'));
+
+            const PREC = this.props.variablePrecipitazione;
+            const RET = this.props.variableEvotrasporazione;
+            const TEMP_LIST = this.props.variableTemperaturaList;
+            const chartVariable = this.props.infoChartData.variables;
+            const propVariable = "st_value_" + chartVariable;
+            const chartData = chartVariable === PREC || chartVariable === RET
+                ? formatDataCum(this.props.data, propVariable)
+                : formatDataTemp(this.props.data, propVariable);
+                // Definizione delle unità di misura dinamiche
+            const unit = TEMP_LIST.includes(chartVariable) ? '°C' : 'mm';
+            const climaLabel = "Climatologia " + unit;
+            const currentYearLabel = "Anno in corso " + unit;
+
+            const dates = chartData.map(item => new Date(item.data));
+            const observedData = chartData.map(item => item[propVariable]);
+            const climatologicalData = chartData.map(item => item.st_value_clima);
+            const fillTraces = fillAreas(dates, observedData, climatologicalData, chartVariable, PREC);
+
+            const colorTraceObserved = chartVariable === PREC ? 'rgba(0, 0, 255, 1)' : 'rgba(255, 0, 0, 1)';
+            const trace1 = {
+                x: dates,
+                y: climatologicalData,
+                mode: 'lines',
+                name: climaLabel,
+                line: { color: '#38293C',  width: 1 }
+            };
+
+            const trace2 = {
+                x: dates,
+                y: observedData,
+                mode: 'lines',
+                name: currentYearLabel,
+                line: { color: colorTraceObserved,  width: 1 }
+            };
+            dataChart = [trace1, trace2].concat(fillTraces);
+            layoutChart = {
+                width: this.props.infoChartSize.widthResizable - 10,
+                height: this.props.infoChartSize.heightResizable - (this.props.isCollapsedFormGroup ? 140 : 440 ), // Set the height based on the collapse state of the FormGroup
+                xaxis: { // Dates format
+                    tickformat: '%Y-%m-%d',
+                    range: [this.props.chartRelayout?.startDate || Math.min(...dates), this.props.chartRelayout?.endDate || Math.max(...dates)]
+                },
+                yaxis: {
+                    title: TEMP_LIST.includes(this.props.infoChartData.variable)  ? 'Temperatura (°C)' : 'Valore (mm)',
+                    range: [this.props.chartRelayout?.variabileStart || Math.min(...observedData, ...climatologicalData),
+                        this.props.chartRelayout?.variabileEnd || Math.max(...observedData, ...climatologicalData)]
+                },
+                margin: this.props.chartStyle.margin,
+                showlegend: true,
+                hovermode: 'x unified',
+                legend: {
+                    orientation: 'h',
+                    x: 0.5,
+                    y: -0.2
+                },
+                dragmode: this.props.chartRelayout?.dragmode
+            };
             return (
                 <Plot
                     data={dataChart}
@@ -303,7 +311,7 @@ class InfoChart extends React.Component {
                         <Label className="labels-infochart"><Message msgId="infochart.selectMeteoVariable"/></Label>
                         <SelectVariableTab
                             tabList={this.props.tabList}
-                            onChangeSingleVariable={this.handleChangeChartVariable}
+                            onChangeSingleVariable={this.updateInfoChart}
                             onChangeMultiVariable={this.props.onChangeChartVariable}
                         />
                         {/* Toggle between FixedRangeManager and FreeRangeManager based on activeRangeManager*/}
@@ -416,9 +424,9 @@ class InfoChart extends React.Component {
         this.props.onSetInfoChartDates(this.props.lastAvailableDate, this.props.periodTypes );
         this.props.onResetChartRelayout();
     }
-    handleChangeChartVariable = (selectedVariable) => {
+    updateInfoChart = (selectedVariable) => {
         this.props.onChangeChartVariable([selectedVariable]);
-        this.handleApplyPeriod([selectedVariable]);
+        this.handleApplyPeriod([selectedVariable], 'dropdown');
     }
     handleApplyPeriod = (selectedVariable) => {
         let { fromData, toData } = this.props;
