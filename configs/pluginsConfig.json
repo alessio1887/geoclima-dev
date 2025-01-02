@@ -730,18 +730,22 @@
                                                               ],
                                                           "type": "dropdown"
               },
-            {"id": "spiSpeiList", "name": "SPI e SPEI", "groupList": [
+            {"id": "spiList", "name": "SPI", "groupList": [
                                                                   { "id": "spi1", "name": "SPI-1" },
                                                                   { "id": "spi3", "name": "SPI-3" },
                                                                   { "id": "spi6", "name": "SPI-6" },
-                                                                  { "id": "spi12", "name": "SPI-12" },
+                                                                  { "id": "spi12", "name": "SPI-12" }
+                                                                ],
+                                                          "type": "multiselect"
+              },
+            {"id": "speiList", "name": "SPEI", "groupList": [
                                                                   { "id": "spei1", "name": "SPEI-1" },
                                                                   { "id": "spei3", "name": "SPEI-3" },
                                                                   { "id": "spei6", "name": "SPEI-6" },
                                                                   { "id": "spei12", "name": "SPEI-12" }
                                                                 ],
                                                           "type": "multiselect"
-          }
+            }
           ],
           "idVariabiliLayers": {
             "prec": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima"],
