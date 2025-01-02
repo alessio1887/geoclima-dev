@@ -41,10 +41,10 @@ export function renderMultiVariableChart(dataFetched, variables, multiselectList
             name: variableName,
             line: { color: lineColor, width: 2, shape: 'linear' },
             marker: { size: 6 },
-            type: 'scatter'
+            type: 'scatter',
+            connectgaps: true
         });
     });
-    // TODO CONTINUA DA QUA !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     const backgroundBands = [
         {
             x: dates.concat(dates.slice().reverse()),
