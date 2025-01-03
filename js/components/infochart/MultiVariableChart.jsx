@@ -13,14 +13,13 @@ import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
 
 const ST_VALUE = "st_value_";
+const colors = ['green', 'black', 'teal', 'gray'];
+const MIN_Y_INDEX = -3.0;
+const MAX_Y_INDEX = 3.0;
 
-const MultiVariableChart = ({ dataFetched, variables, multiselectList, handleRelayout, startDate, endDate,
-    minVariable,
-    maxVariable
-}) => {
-    const colors = ['green', 'black', 'teal', 'gray'];
-    const MIN_Y_INDEX = -3.0;
-    const MAX_Y_INDEX = 3.0;
+const MultiVariableChart = ({ dataFetched, variables, multiselectList,
+    handleRelayout, chartRelayout, infoChartSize, isCollapsedFormGroup }) => {
+
     // Formattare i dati
     const dates = dataFetched.map(item => moment(item.data).clone().startOf('day').toDate());
     let traces = [];
@@ -145,15 +144,15 @@ const MultiVariableChart = ({ dataFetched, variables, multiselectList, handleRel
 
     // Configurazione del layout
     const layout = {
+        width: infoChartSize.widthResizable - 10,
+        height: infoChartSize.heightResizable - ( isCollapsedFormGroup ? 140 : 440 ), // Set the height based on the collapse state of the FormGroup
         title: 'Indice SPI - Standardized Precipitation Index',
         xaxis: {
             title: 'Periodo',
             tickangle: -45,
             tickformat: '%Y-%m-%d',
             // range: [-0.05, dates.length - 0.95], // Aggiunge un piccolo spazio
-            range: [startDate
-                || Math.min(...dates), endDate
-                || Math.max(...dates)],
+            range: [chartRelayout?.startDate || Math.min(...dates), chartRelayout?.endDate || Math.max(...dates)],
             ticks: 'inside',
             ticklen: 5, // Lunghezza delle stanghette in pixel
             tickwidth: 1, // Spessore delle stanghette
@@ -161,7 +160,7 @@ const MultiVariableChart = ({ dataFetched, variables, multiselectList, handleRel
         },
         yaxis: {
             title: 'Valore SPI',
-            range: [ minVariable || MIN_Y_INDEX, maxVariable || MAX_Y_INDEX],
+            range: [ chartRelayout?.variabileStart || MIN_Y_INDEX, chartRelayout?.variabileEnd || MAX_Y_INDEX],
             tickvals: [MIN_Y_INDEX, -2, -1.5, -0.5, 0.5, 1.0, 1.5, 2.0, MAX_Y_INDEX],
             tickformat: '.1f',
             ticks: 'inside', // Mostra le stanghette all'esterno
@@ -170,7 +169,8 @@ const MultiVariableChart = ({ dataFetched, variables, multiselectList, handleRel
             tickcolor: '#000' // Colore delle stanghette
         },
         legend: { x: 1, y: 0.5 },
-        autosize: true
+        autosize: true,
+        dragmode: chartRelayout?.dragmode
     };
 
     return (

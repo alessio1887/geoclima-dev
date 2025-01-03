@@ -215,14 +215,11 @@ class InfoChart extends React.Component {
                     variables =  {variableArray}
                     multiselectList = {this.props.tabList.filter(tab => tab.type === 'multiselect') }
                     handleRelayout={this.handleRelayout}
-                    startDate={this.props.chartRelayout?.startDate}
-                    endDate={this.props.chartRelayout?.endDate}
-                    minVariable={this.props.chartRelayout?.variabileStart}
-                    maxVariable={this.props.chartRelayout?.variabileEnd }
+                    chartRelayout={this.props.chartRelayout}
+                    infoChartSize={this.props.infoChartSize}
+                    isCollapsedFormGroup={this.props.isCollapsedFormGroup}
                 />);
             }
-            // const resultRender =  renderMultiVariableChart(this.props.data, variableArray, this.props.tabList.filter(tab => tab.type === 'multiselect'));
-
             const PREC = this.props.variablePrecipitazione;
             const RET = this.props.variableEvotrasporazione;
             const TEMP_LIST = this.props.variableTemperaturaList;
