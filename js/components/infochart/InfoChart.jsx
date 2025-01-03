@@ -20,7 +20,7 @@ import SelectVariableTab from './SelectVariableTab';
 import FixedRangeManager from '../../components/datepickers/FixedRangeManager';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../../utils/ManageDateUtils';
-import { fillAreas, formatDataCum, formatDataTemp, FIXED_RANGE, FREE_RANGE }  from '../../utils/VariabiliMeteoUtils';
+import { fillAreas, formatDataCum, formatDataTemp, FIXED_RANGE, FREE_RANGE, SINGLE_VARIABLE_CHART, MULTI_VARIABLE_CHART }  from '../../utils/VariabiliMeteoUtils';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -44,6 +44,7 @@ class InfoChart extends React.Component {
         onSetRangeManager: PropTypes.func,
         show: PropTypes.bool,
         infoChartData: PropTypes.object,
+        tabSelected: PropTypes.object,
         maskLoading: PropTypes.bool,
         // data fetched by epic loadInfoChartDataEpic
         data: PropTypes.array,
@@ -308,8 +309,10 @@ class InfoChart extends React.Component {
                         <Label className="labels-infochart"><Message msgId="infochart.selectMeteoVariable"/></Label>
                         <SelectVariableTab
                             tabList={this.props.tabList}
-                            onChangeSingleVariable={this.updateInfoChart}
+                            onChangeSingleVariable={this.updateSingleVariable}
                             onChangeMultiVariable={this.props.onChangeChartVariable}
+                            onChangeTab={this.props.onChangeTab}
+                            activeTab={this.props.tabSelected.idTab}
                         />
                         {/* Toggle between FixedRangeManager and FreeRangeManager based on activeRangeManager*/}
                         {this.props.activeRangeManager === FIXED_RANGE ? (
@@ -421,11 +424,11 @@ class InfoChart extends React.Component {
         this.props.onSetInfoChartDates(this.props.lastAvailableDate, this.props.periodTypes );
         this.props.onResetChartRelayout();
     }
-    updateInfoChart = (selectedVariable) => {
+    updateSingleVariable = (selectedVariable, tabVariable) => {
         this.props.onChangeChartVariable([selectedVariable]);
-        this.handleApplyPeriod([selectedVariable], 'dropdown');
+        this.handleApplyPeriod([selectedVariable], tabVariable);
     }
-    handleApplyPeriod = (selectedVariable) => {
+    handleApplyPeriod = (selectedVariable, tabVariable) => {
         let { fromData, toData } = this.props;
         if (!fromData || !toData || isNaN(fromData) || isNaN(toData) || !(toData instanceof Date) || !(fromData instanceof Date)) {
             // restore defult values
@@ -445,7 +448,8 @@ class InfoChart extends React.Component {
         }
 
         const variableIds = selectedVariable ? selectedVariable[0].id
-            : this.props.variables.map(variable => variable.id).join(',');
+            : this.props.tabSelected.variables.map(variable => variable.id).join(',');
+        const idTab = tabVariable || this.props.tabSelected.idTab;
 
         // Date validations
         const validation = DateAPI.validateDateRange(fromData, toData, this.props.firstAvailableDate, this.props.lastAvailableDate);
@@ -463,7 +467,8 @@ class InfoChart extends React.Component {
             toData: toData,
             fromData: fromData,
             variables: variableIds,
-            periodType: periodKey
+            periodType: periodKey,
+            idTab: idTab
         });
         this.props.onResetChartRelayout();
         // set default values

@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
 */
 import { FETCHED_AVAILABLE_DATES } from '../actions/updateDatesParams';
-import {CHARTVARIABLE_CHANGED, TODATA_FIXEDRANGE_CHANGED, FROMDATA_CHANGED,
+import {CHARTVARIABLE_CHANGED, TAB_CHANGED, TODATA_FIXEDRANGE_CHANGED, FROMDATA_CHANGED,
     TODATA_CHANGED, CHART_PERIOD_CHANGED, SET_INFOCHART_VISIBILITY, FETCH_INFOCHART_DATA,
     FETCHED_INFOCHART_DATA, COLLAPSE_RANGE_PICKER,  OPEN_ALERT, CLOSE_ALERT, SET_CHART_RELAYOUT, RESET_CHART_RELAYOUT, RESIZE_INFOCHART,
     SET_RANGE_MANAGER, SET_IDVARIABILI_LAYERS, SET_DEFAULT_URL, SET_DEFAULT_DATES,
@@ -45,7 +45,11 @@ const infoChartDefaultState = {
         heightResizable: 880
     },
     firstAvailableDate: DEFAULT_DATA_INIZIO,
-    lastAvailableDate: DEFAULT_DATA_FINE
+    lastAvailableDate: DEFAULT_DATA_FINE,
+    tabSelected: {
+        idTab: "variableList",
+        variables: [{ id: "prec", name: "Precipitazione" }]
+    }
 };
 
 function infochart(state = infoChartDefaultState, action) {
@@ -53,7 +57,18 @@ function infochart(state = infoChartDefaultState, action) {
     case CHARTVARIABLE_CHANGED:
         return {
             ...state,
-            variables: action.variables
+            tabSelected: {
+                ...state.tabSelected,
+                variables: action.variables
+            }
+        };
+    case TAB_CHANGED:
+        return {
+            ...state,
+            tabSelected: {
+                idTab: action.idTab,
+                variables: null
+            }
         };
     case TODATA_CHANGED:
         return {

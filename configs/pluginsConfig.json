@@ -728,24 +728,25 @@
                                                                   { "id": "ret", "name": "Evapotraspirazione Potenziale" },
                                                                   { "id": "bis", "name": "Bilancio Idrico Semplificato" }
                                                               ],
-                                                          "type": "dropdown"
+                                                          "type": "sigle_variable"
               },
-            {"id": "spiList", "name": "Indice SPI - Standardized Precipitation Index", "groupList": [
+            {"id": "spiList", "name": "SPI", "groupList": [
                                                                   { "id": "spi1", "name": "SPI-1" },
                                                                   { "id": "spi3", "name": "SPI-3" },
                                                                   { "id": "spi6", "name": "SPI-6" },
                                                                   { "id": "spi12", "name": "SPI-12" }
                                                                 ],
-                                                          "type": "multiselect"
+                                                          "chartTitle": "Indice SPI - Standardized Precipitation Index",
+                                                          "type": "multi_select"
               },
-            {"id": "speiList", "name": "Indice SPEI - Standardized Precipitation-Evapotranspiration Index",
-                                                          "groupList": [
+            {"id": "speiList", "name": "SPEI", "groupList": [
                                                                     { "id": "spei1", "name": "SPEI-1" },
                                                                     { "id": "spei3", "name": "SPEI-3" },
                                                                     { "id": "spei6", "name": "SPEI-6" },
                                                                     { "id": "spei12", "name": "SPEI-12" }
                                                           ],
-                                                          "type": "multiselect"
+                                                          "chartTitle": "Indice SPEI - Standardized Precipitation-Evapotranspiration Index",
+                                                          "type": "multi_select"
             }
           ],
           "idVariabiliLayers": {

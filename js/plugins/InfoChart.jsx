@@ -12,7 +12,7 @@ import {setInfoChartVisibility, changeFixedRangeToData, fetchInfoChartData, fetc
     changeChartVariable, changePeriod, changeFromData, changeToData, setDefaultDates, collapseRangePicker,
     openAlert, closeAlert, setChartRelayout, resetChartRelayout, resizeInfoChart, setIdVariabiliLayers,
     setRangeManager, setDefaultUrlGeoclimaChart, checkLaunchSelectDateQuery,
-    markInfoChartAsLoaded } from '../actions/infochart';
+    markInfoChartAsLoaded, changeTab } from '../actions/infochart';
 import InfoChartButton from '../components/buttons/InfoChartButton';
 import InfoChart from '../components/infochart/InfoChart';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
@@ -107,7 +107,7 @@ const InfoChartPanel = connect((state) => ({
         latlng: state.infochart?.infoChartData?.latlng || {},
         periodType: state.infochart?.infoChartData?.periodType
     },
-    variables: state.infochart?.variables,
+    tabSelected: state.infochart?.tabSelected,
     data: state.infochart?.data || '',
     maskLoading: state.infochart?.maskLoading,
     active: state.controls?.chartinfo?.enabled || false,
@@ -131,6 +131,7 @@ const InfoChartPanel = connect((state) => ({
     onFetchInfoChartData: fetchInfoChartData,
     onFetchedInfoChartData: fetchedInfoChartData,
     onChangeChartVariable: compose(changeChartVariable, (event) => event),
+    onChangeTab: compose(changeTab, (event) => event),
     onChangeToData: compose(changeToData, (event) => event),
     onChangeFromData: compose(changeFromData, (event) => event),
     onChangeFixedRangeTodata: compose(changeFixedRangeToData, (event) => event),

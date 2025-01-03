@@ -20,7 +20,8 @@ import {
     changeToData,
     changeFixedRangeToData,
     changePeriod,
-    markInfoChartAsNotLoaded
+    markInfoChartAsNotLoaded,
+    changeTab
 } from '../actions/infochart';
 import { fetchSelectDate } from '../actions/updateDatesParams';
 import { CLICK_ON_MAP } from '../../MapStore2/web/client/actions/map';
@@ -273,8 +274,12 @@ const clickedPointCheckEpic = (action$, store) =>
                     toData: moment(toData).format('YYYY-MM-DD'),
                     fromData: moment(fromData).format('YYYY-MM-DD'),
                     variables: variable,
-                    periodType
+                    periodType: periodType,
+                    // TODO da rendere dinamico
+                    idTab: "variableList"
                 }));
+                // TODO da rendere dinamico
+                actions.push(changeTab("variableList"));
                 return Observable.of(...actions);
             }
             return Observable.empty();

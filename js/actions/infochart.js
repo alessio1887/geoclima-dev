@@ -29,6 +29,7 @@ export const SET_DEFAULT_DATES = 'INFOCHART:SET_DEFULT_DATES';
 export const CHECK_FETCH_AVAILABLE_DATES = 'INFOCHART:CHECK_FETCH_AVAILABLE_DATES';
 export const PLUGIN_LOADED = 'INFOCHART:PLUGIN_LOADED';
 export const PLUGIN_NOT_LOADED = 'INFOCHART:PLUGIN_NOT_LOADED';
+export const TAB_CHANGED = 'INFOCHART:TAB_CHANGED';
 
 export function changeChartVariable(variables) {
     return {
@@ -36,6 +37,14 @@ export function changeChartVariable(variables) {
         variables
     };
 }
+
+export function changeTab(idTab) {
+    return {
+        type: TAB_CHANGED,
+        idTab
+    };
+}
+
 
 export function changeFromData(fromData) {
     return {

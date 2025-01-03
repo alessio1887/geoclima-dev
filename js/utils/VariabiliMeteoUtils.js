@@ -7,9 +7,12 @@
  */
 // import ConfigUtils from '@mapstore/utils/ConfigUtils';
 
-
+// type of range picher
 export const FIXED_RANGE = "fixed_range_picker";
 export const FREE_RANGE = "free_range_picker";
+// type of chart based on tabLyst.type of pluginsConfig
+export const SINGLE_VARIABLE_CHART = "sigle_variable";
+export const MULTI_VARIABLE_CHART = "multi_select";
 
 export function isVariabiliMeteoLayer(layerName, variabiliMeteo) {
     // const VARIABILI_METEO = ConfigUtils.getConfigProp('variabiliMeteo');
