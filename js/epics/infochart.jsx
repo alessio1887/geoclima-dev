@@ -64,6 +64,32 @@ const getVisibleLayers = (layers) => {
         .filter(layer => layer.visibility && isVariabiliMeteoLayer(layer.name, infoChartConfig?.defaultConfig?.variabiliMeteo));
 };
 
+// Function to get default values
+const getDefaultValues = (idVariabiliLayers, appState) => {
+    const toData = appState.infochart.lastAvailableDate;
+    const fromData = moment(toData).subtract(1, 'month').toDate();
+    return {
+        variable: Object.keys(idVariabiliLayers)[0] || '',
+        fromData,
+        toData,
+        periodType: "1",
+        // TODO da rendere dinamico: da prendere in base a Object.keys(idVariabiliLayers)[0] || ''
+        idTab: "variableList"
+    };
+};
+
+// Function to get values when the InfoChart panel is visible
+const getInfoChartValues = (appState, rangeManager) => {
+    const { variables, fromData, toData, periodType,  idTab} = appState.infochart.infoChartData;
+    const periodTypeAdjusted = rangeManager === FIXED_RANGE ? periodType : "1";
+    return {
+        variable: variables,
+        fromData,
+        toData,
+        periodType: periodTypeAdjusted,
+        idTab: idTab
+    };
+};
 
 /**
  * This method returns the first visible layer from an array of layers,
@@ -142,6 +168,27 @@ const setVisVariable = (visibleIdLayer, idVariabiliLayers) => {
     // Return the matched key or default
     return chartVariable;
 };
+
+
+// Function to get values from a visible layer
+const getVisibleLayerValues = (visibleLayer, idVariabiliLayers, appState) => {
+    const variable = setVisVariable(visibleLayer.id, idVariabiliLayers);
+    const fromData = visibleLayer.params?.fromData || getDefaultValues(idVariabiliLayers, appState).fromData;
+    const toData = visibleLayer.params?.toData || getDefaultValues(idVariabiliLayers, appState).toData;
+    const periodType = appState.fixedrangepicker?.showFixedRangePicker
+        ? appState.fixedrangepicker?.periodType
+        : "1";
+    // TODO da rendere dinamico
+    const idTab = "variableList";
+    return {
+        variable,
+        fromData,
+        toData,
+        periodType,
+        idTab // Added idTab
+    };
+};
+
 /**
  * Calculates and returns the variables needed for configuring the InfoChart panel.
  *
@@ -154,29 +201,20 @@ const setVisVariable = (visibleIdLayer, idVariabiliLayers) => {
  *   - `fromData` (string): The start date for the data range.
  *   - `toData` (string): The end date for the data range.
  *   - `periodType` (string): The type of period used for the data range.
+ *   - 'idTab' (string): chart's type
  */
-const getChartVariables = (appState, visibleLayer, rangeManager, idVariabiliLayers) => {
-    let variable = Object.keys(idVariabiliLayers)[0] || '';
-    let toData = appState.infochart.lastAvailableDate;
-    let fromData = moment(toData).subtract(1, 'month').toDate();
-    let periodType = "1";
-
+const getChartVariables = (appState, rangeManager, idVariabiliLayers) => {
+    // If the InfoChart panel is visible, use data from appState
     if (appState.infochart.showInfoChartPanel) {
-        variable = appState.infochart.infoChartData.variables;
-        fromData = appState.infochart.infoChartData.fromData;
-        toData = appState.infochart.infoChartData.toData;
-        periodType = rangeManager === FIXED_RANGE
-            ? appState.infochart.infoChartData.periodType
-            : "1";
-    } else if (visibleLayer && !appState.infochart.showInfoChartPanel) {
-        variable = setVisVariable(visibleLayer.id, idVariabiliLayers);
-        fromData = visibleLayer.params?.fromData || fromData;
-        toData = visibleLayer.params?.toData || toData;
-        periodType = appState.fixedrangepicker?.showFixedRangePicker
-            ? appState.fixedrangepicker?.periodType
-            : "1";
+        return getInfoChartValues(appState, rangeManager);
     }
-    return { variable, fromData, toData, periodType };
+    // If there is a visible layer, use the layer's values
+    const visibleLayer = getFirstVisibleLayer(getVisibleLayers(appState.layers.flat), getVisibleGroups(appState.layers.groups));
+    if (visibleLayer) {
+        return getVisibleLayerValues(visibleLayer, idVariabiliLayers, appState);
+    }
+    // Otherwise, return the default values
+    return getDefaultValues(idVariabiliLayers, appState);
 };
 
 
@@ -251,12 +289,10 @@ const clickedPointCheckEpic = (action$, store) =>
             const appState = store.getState();
             if (appState.controls?.chartinfo?.enabled) {
                 const idVariabiliLayers = appState.infochart.idVariabiliLayers;
-                const visibleLayer = getFirstVisibleLayer(getVisibleLayers(appState.layers.flat), getVisibleGroups(appState.layers.groups));
 
                 const rangeManager = appState.fixedrangepicker?.showFixedRangePicker ? FIXED_RANGE : FREE_RANGE;
-                const { variable, fromData, toData, periodType } = getChartVariables(
+                const { variable, fromData, toData, periodType, idTab } = getChartVariables(
                     appState,
-                    visibleLayer,
                     rangeManager,
                     idVariabiliLayers
                 );
@@ -275,11 +311,9 @@ const clickedPointCheckEpic = (action$, store) =>
                     fromData: moment(fromData).format('YYYY-MM-DD'),
                     variables: variable,
                     periodType: periodType,
-                    // TODO da rendere dinamico
-                    idTab: "variableList"
+                    idTab: idTab
                 }));
-                // TODO da rendere dinamico
-                actions.push(changeTab("variableList"));
+                actions.push(changeTab(idTab));
                 return Observable.of(...actions);
             }
             return Observable.empty();
