@@ -11,8 +11,8 @@
 export const FIXED_RANGE = "fixed_range_picker";
 export const FREE_RANGE = "free_range_picker";
 // type of chart based on tabLyst.type of pluginsConfig
-export const SINGLE_VARIABLE_CHART = "single_select";
-export const MULTI_VARIABLE_CHART = "multi_select";
+export const SINGLE_VARIABLE_CHART = "single_variable";
+export const MULTI_VARIABLE_CHART = "multi_variable";
 
 export function isVariabiliMeteoLayer(layerName, variabiliMeteo) {
     // const VARIABILI_METEO = ConfigUtils.getConfigProp('variabiliMeteo');

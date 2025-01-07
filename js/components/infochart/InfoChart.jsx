@@ -248,7 +248,7 @@ class InfoChart extends React.Component {
             variables: variableListParam.groupList.filter(variable =>
                 variableArray.includes(variable.id)
             ),
-            type: variableListParam.type,
+            type: variableListParam.chartType,
             variableName: variableListParam.name
         };
 

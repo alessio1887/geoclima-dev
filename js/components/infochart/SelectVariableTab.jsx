@@ -1,7 +1,10 @@
 import React from 'react';
 import DropdownList from 'react-widgets/lib/DropdownList';
 import Multiselect from 'react-widgets/lib/Multiselect';
-import { SINGLE_VARIABLE_CHART, MULTI_VARIABLE_CHART }  from '../../utils/VariabiliMeteoUtils';
+
+// type of chart based on tabLyst.type of pluginsConfig
+const DROP_DOWN = "single_select";
+const MULTI_SELECT = "multi_select";
 
 
 const SelectVariableTab = ({ tabList, onChangeSingleVariable, onChangeMultiVariable, onChangeTab, activeTab }) => {
@@ -35,7 +38,7 @@ const SelectVariableTab = ({ tabList, onChangeSingleVariable, onChangeMultiVaria
             <div style={{ marginTop: '10px' }}>
                 {tabList.map(tab => {
                     if (tab.id === activeTab) {
-                        if (tab.type === SINGLE_VARIABLE_CHART) {
+                        if (tab.menuType === DROP_DOWN) {
                             return (
                                 <DropdownList
                                     key={tab.id}
@@ -45,7 +48,7 @@ const SelectVariableTab = ({ tabList, onChangeSingleVariable, onChangeMultiVaria
                                     onChange={(value) => onChangeSingleVariable(value, activeTab)}
                                 />
                             );
-                        } else if (tab.type === MULTI_VARIABLE_CHART) {
+                        } else if (tab.menuType === MULTI_SELECT) {
                             // Render Multiselect
                             return (
                                 <Multiselect

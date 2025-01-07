@@ -728,7 +728,8 @@
                                                                   { "id": "ret", "name": "Evapotraspirazione Potenziale" },
                                                                   { "id": "bis", "name": "Bilancio Idrico Semplificato" }
                                                               ],
-                                                          "type": "single_select"
+                                                          "menuType": "single_select",
+                                                          "chartType": "single_variable"
               },
             {"id": "spiList", "name": "SPI", "groupList": [
                                                                   { "id": "spi1", "name": "SPI-1" },
@@ -737,7 +738,8 @@
                                                                   { "id": "spi12", "name": "SPI-12" }
                                                                 ],
                                                           "chartTitle": "Indice SPI - Standardized Precipitation Index",
-                                                          "type": "multi_select"
+                                                          "menuType": "multi_select",
+                                                          "chartType": "multi_variable"
               },
             {"id": "speiList", "name": "SPEI", "groupList": [
                                                                     { "id": "spei1", "name": "SPEI-1" },
@@ -746,7 +748,8 @@
                                                                     { "id": "spei12", "name": "SPEI-12" }
                                                           ],
                                                           "chartTitle": "Indice SPEI - Standardized Precipitation-Evapotranspiration Index",
-                                                          "type": "multi_select"
+                                                          "menuType": "multi_select",
+                                                          "chartType": "multi_variable"
             }
           ],
           "idVariabiliLayers": {
