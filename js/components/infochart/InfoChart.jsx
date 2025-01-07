@@ -42,6 +42,7 @@ class InfoChart extends React.Component {
         onResetChartRelayout: PropTypes.func,
         onResizeInfoChart: PropTypes.func,
         onSetRangeManager: PropTypes.func,
+        onSetTabList: PropTypes.func,
         show: PropTypes.bool,
         infoChartData: PropTypes.object,
         tabSelected: PropTypes.object,
@@ -96,6 +97,7 @@ class InfoChart extends React.Component {
         onCollapseRangePicker: () => {},
         onSetRangeManager: () => {},
         onSetInfoChartDates: () => {},
+        onSetTabList: () => {},
         onSetChartRelayout: () => {},
         onResetChartRelayout: () => {},
         onResizeInfoChart: () => {},
@@ -123,6 +125,36 @@ class InfoChart extends React.Component {
             "bis": ["BilancioIdricoSemplificato", "BilancioIdricoSemplificato_Anomalia_mm", "BilancioIdricoSemplificato_Anomalia_perc",
                 "BilancioIdricoSemplificato_clima"]
         },
+        tabList: [
+            {"id": "variableList", "name": "Variabili Meteo", "groupList": [
+                { "id": "prec", "name": "Precipitazione" },
+                { "id": "tmed", "name": "Temperatura Media" },
+                { "id": "tmax", "name": "Temperatura Massima" },
+                { "id": "tmin", "name": "Temperatura Minima" },
+                { "id": "ret", "name": "Evapotraspirazione Potenziale" },
+                { "id": "bis", "name": "Bilancio Idrico Semplificato" }
+            ],
+            "type": "single_select"
+            },
+            {"id": "spiList", "name": "SPI", "groupList": [
+                { "id": "spi1", "name": "SPI-1" },
+                { "id": "spi3", "name": "SPI-3" },
+                { "id": "spi6", "name": "SPI-6" },
+                { "id": "spi12", "name": "SPI-12" }
+            ],
+            "chartTitle": "Indice SPI - Standardized Precipitation Index",
+            "type": "multi_select"
+            },
+            {"id": "speiList", "name": "SPEI", "groupList": [
+                { "id": "spei1", "name": "SPEI-1" },
+                { "id": "spei3", "name": "SPEI-3" },
+                { "id": "spei6", "name": "SPEI-6" },
+                { "id": "spei12", "name": "SPEI-12" }
+            ],
+            "chartTitle": "Indice SPEI - Standardized Precipitation-Evapotranspiration Index",
+            "type": "multi_select"
+            }
+        ],
         defaultUrlGeoclimaChart: 'geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/geoclima_chart.py',
         defaultUrlSelectDate: "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
         variabileSelectDate: "prec",
@@ -169,6 +201,7 @@ class InfoChart extends React.Component {
     componentDidMount() {
         if (!this.props.isPluginLoaded) {
             this.props.onSetIdVariabiliLayers(this.props.idVariabiliLayers);
+            this.props.onSetTabList(this.props.tabList);
             this.props.onSetDefaultUrlGeoclimaChart(this.props.defaultUrlGeoclimaChart);
             this.props.onCheckFetchAvailableDates(this.props.variabileSelectDate, this.props.defaultUrlSelectDate);
             this.props.onMarkPluginAsLoaded();

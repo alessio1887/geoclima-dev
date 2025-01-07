@@ -10,7 +10,7 @@ import {CHARTVARIABLE_CHANGED, TAB_CHANGED, TODATA_FIXEDRANGE_CHANGED, FROMDATA_
     TODATA_CHANGED, CHART_PERIOD_CHANGED, SET_INFOCHART_VISIBILITY, FETCH_INFOCHART_DATA,
     FETCHED_INFOCHART_DATA, COLLAPSE_RANGE_PICKER,  OPEN_ALERT, CLOSE_ALERT, SET_CHART_RELAYOUT, RESET_CHART_RELAYOUT, RESIZE_INFOCHART,
     SET_RANGE_MANAGER, SET_IDVARIABILI_LAYERS, SET_DEFAULT_URL, SET_DEFAULT_DATES,
-    PLUGIN_LOADED, PLUGIN_NOT_LOADED } from '../actions/infochart';
+    PLUGIN_LOADED, PLUGIN_NOT_LOADED, SET_TABLIST } from '../actions/infochart';
 import DateAPI, { DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO, PERIOD_TYPES } from '../utils/ManageDateUtils';
 import assign from 'object-assign';
 import moment from 'moment';
@@ -162,6 +162,11 @@ function infochart(state = infoChartDefaultState, action) {
         return {
             ...state,
             defaultUrlGeoclimaChart: action.defaultUrlGeoclimaChart
+        };
+    case SET_TABLIST:
+        return {
+            ...state,
+            tabList: action.tabList
         };
     case FETCHED_AVAILABLE_DATES:
         return {

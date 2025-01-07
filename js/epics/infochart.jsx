@@ -33,11 +33,21 @@ import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
 
-// const setAvailableDatesEpic = (action$) =>
-//     action$.ofType(UPDATE_DATE_PARAMS_FIXEDRANGE, UPDATE_DATE_PARAMS_FEERANGE)
-//         .switchMap((action) => {
-//             return Observable.of(setAvailableDates(action.dataInizio, action.dataFine));
-//         });
+// Function to retrieve the corresponding idTab based on the variable
+const getIdTabFromVariable = (variable, tabList) => {
+    // Iterate through each tab in the tabList
+    for (const tab of tabList) {
+        // Check if the variable exists in any group of the tab
+        for (const group of tab.groupList) {
+            if (group.id === variable) {
+                return tab.id; // Return the idTab if variable matches
+            }
+        }
+    }
+    // default value
+    return tabList[0].id;
+};
+
 
 const checkSelectDateEpic = (action$, store) =>
     action$.ofType(CHECK_FETCH_AVAILABLE_DATES)
@@ -68,13 +78,14 @@ const getVisibleLayers = (layers) => {
 const getDefaultValues = (idVariabiliLayers, appState) => {
     const toData = appState.infochart.lastAvailableDate;
     const fromData = moment(toData).subtract(1, 'month').toDate();
+    const defaultVariable = Object.keys(idVariabiliLayers)[0] || '';
     return {
         variable: Object.keys(idVariabiliLayers)[0] || '',
         fromData,
         toData,
         periodType: "1",
         // TODO da rendere dinamico: da prendere in base a Object.keys(idVariabiliLayers)[0] || ''
-        idTab: "variableList"
+        idTab: getIdTabFromVariable(defaultVariable, appState.infochart.tabList)
     };
 };
 
@@ -169,7 +180,6 @@ const setVisVariable = (visibleIdLayer, idVariabiliLayers) => {
     return chartVariable;
 };
 
-
 // Function to get values from a visible layer
 const getVisibleLayerValues = (visibleLayer, idVariabiliLayers, appState) => {
     const variable = setVisVariable(visibleLayer.id, idVariabiliLayers);
@@ -178,8 +188,8 @@ const getVisibleLayerValues = (visibleLayer, idVariabiliLayers, appState) => {
     const periodType = appState.fixedrangepicker?.showFixedRangePicker
         ? appState.fixedrangepicker?.periodType
         : "1";
-    // TODO da rendere dinamico
-    const idTab = "variableList";
+    // Dynamically determine idTab based on the variable using the tabList from appState
+    const idTab = getIdTabFromVariable(variable, appState.infochart.tabList); // Use the function to get idTab
     return {
         variable,
         fromData,
@@ -303,6 +313,7 @@ const clickedPointCheckEpic = (action$, store) =>
                     actions.push(changeFixedRangeToData(new Date(toData)));
                     actions.push(changeFromData(new Date(fromData)));
                     actions.push(changeToData(new Date(toData)));
+                    actions.push(changeTab(idTab));
                 }
                 actions.push(setInfoChartVisibility(true));
                 actions.push(fetchInfoChartData({
@@ -313,7 +324,6 @@ const clickedPointCheckEpic = (action$, store) =>
                     periodType: periodType,
                     idTab: idTab
                 }));
-                actions.push(changeTab(idTab));
                 return Observable.of(...actions);
             }
             return Observable.empty();

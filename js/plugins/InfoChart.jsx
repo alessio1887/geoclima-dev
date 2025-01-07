@@ -12,7 +12,7 @@ import {setInfoChartVisibility, changeFixedRangeToData, fetchInfoChartData, fetc
     changeChartVariable, changePeriod, changeFromData, changeToData, setDefaultDates, collapseRangePicker,
     openAlert, closeAlert, setChartRelayout, resetChartRelayout, resizeInfoChart, setIdVariabiliLayers,
     setRangeManager, setDefaultUrlGeoclimaChart, checkLaunchSelectDateQuery,
-    markInfoChartAsLoaded, changeTab } from '../actions/infochart';
+    markInfoChartAsLoaded, changeTab, setTabList } from '../actions/infochart';
 import InfoChartButton from '../components/buttons/InfoChartButton';
 import InfoChart from '../components/infochart/InfoChart';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
@@ -161,6 +161,7 @@ const InfoChartPanel = connect((state) => ({
     onSetInfoChartDates: setDefaultDates,
     onCollapseRangePicker: collapseRangePicker,
     onSetRangeManager: setRangeManager,
+    onSetTabList: setTabList,
     onOpenAlert: openAlert,
     onCloseAlert: closeAlert,
     onSetChartRelayout: compose(setChartRelayout, (event) => event),

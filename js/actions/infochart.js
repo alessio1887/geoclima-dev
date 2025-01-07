@@ -24,7 +24,7 @@ export const RESIZE_INFOCHART = 'RESIZE_INFOCHART';
 export const SET_IDVARIABILI_LAYERS = 'SET_ID_VARIABILI_LAYERS';
 export const SET_DEFAULT_URL = 'INFOCHART:SET_DEFULT_URL';
 export const SET_DEFAULT_DATES = 'INFOCHART:SET_DEFULT_DATES';
-// export const INFOCHART_ERROR_FETCH = 'INFOCHART_ERROR_FETCH';
+export const SET_TABLIST = 'INFOCHART:SET_TABLIST';
 // export const INFOCHART_SET_AVAILABLE_DATES = 'INFOCHART:SET_AVAILABLE_DATES';
 export const CHECK_FETCH_AVAILABLE_DATES = 'INFOCHART:CHECK_FETCH_AVAILABLE_DATES';
 export const PLUGIN_LOADED = 'INFOCHART:PLUGIN_LOADED';
@@ -181,12 +181,13 @@ export function setDefaultDates(toData, periodTypes) {
     };
 }
 
-// export function apiError(errorMessage) {
-//     return {
-//         type: INFOCHART_ERROR_FETCH,
-//         errorMessage
-//     };
-// }
+
+export function setTabList(tabList) {
+    return {
+        type: SET_TABLIST,
+        tabList
+    };
+}
 
 // export function setAvailableDatesInfoChart(dataInizio, dataFine) {
 //     return {
