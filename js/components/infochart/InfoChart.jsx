@@ -20,7 +20,7 @@ import SelectVariableTab from './SelectVariableTab';
 import FixedRangeManager from '../../components/datepickers/FixedRangeManager';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../../utils/ManageDateUtils';
-import { fillAreas, formatDataCum, formatDataTemp, FIXED_RANGE, FREE_RANGE, SINGLE_VARIABLE_CHART, MULTI_VARIABLE_CHART }  from '../../utils/VariabiliMeteoUtils';
+import { fillAreas, formatDataCum, formatDataTemp, FIXED_RANGE, FREE_RANGE, MULTI_VARIABLE_CHART }  from '../../utils/VariabiliMeteoUtils';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -205,20 +205,41 @@ class InfoChart extends React.Component {
             this.props.onSetChartRelayout(zoomData);
         }
     };
+    getVariableParams = () => {
+        const variableListParam = this.props.tabList.find(
+            tab => tab.id === this.props.infoChartData.idTab
+        );
+        const variableArray = this.props.infoChartData.variables?.split(',') || [];
+        // Restituisci sempre variabili e tipo, con un check per chartTitle
+        const result = {
+            variables: variableListParam.groupList.filter(variable =>
+                variableArray.includes(variable.id)
+            ),
+            type: variableListParam.type,
+            variableName: variableListParam.name
+        };
+
+        if (variableListParam.type === MULTI_VARIABLE_CHART && variableListParam.chartTitle) {
+            result.chartTitle = variableListParam.chartTitle;
+        }
+        return result;
+    };
+
     showChart = () => {
         if (!this.props.maskLoading) {
             let dataChart;
             let layoutChart;
-            const variableArray = this.props.infoChartData.variables.split(',');
-            if ( variableArray.length > 1 ) {
+            const variableParams = this.getVariableParams();
+            if ( variableParams.type === MULTI_VARIABLE_CHART) {
                 return (<MultiVariableChart
                     dataFetched = {this.props.data}
-                    variables =  {variableArray}
-                    multiselectList = {this.props.tabList.filter(tab => tab.type === 'multiselect') }
+                    variables =  { variableParams.variables }
                     handleRelayout={this.handleRelayout}
                     chartRelayout={this.props.chartRelayout}
                     infoChartSize={this.props.infoChartSize}
                     isCollapsedFormGroup={this.props.isCollapsedFormGroup}
+                    chartTitle={ variableParams.chartTitle }
+                    variableName = { variableParams.variableName }
                 />);
             }
             const PREC = this.props.variablePrecipitazione;

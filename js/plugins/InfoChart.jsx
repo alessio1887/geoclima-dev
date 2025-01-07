@@ -26,11 +26,12 @@ momentLocaliser(moment);
 
 /*
 Plugin configuration
-"name":"InfoChart",
-      "defaultUrlGeoclimaChart": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/geoclima_chart_test.py",
-        "defaultUrlSelectDate": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
-        "variabileSelectDate": "prec",
-          "periodTypes": [
+"name": "InfoChart",
+      "defaultConfig": {
+         "defaultUrlGeoclimaChart": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/geoclima_chart_test.py",
+         "defaultUrlSelectDate": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
+         "variabileSelectDate": "prec",
+         "periodTypes": [
               { "key": "1", "label": "1 Mese" },
               { "key": "3", "label": "3 Mesi" },
               { "key": "4", "label": "4 Mesi" },
@@ -48,16 +49,36 @@ Plugin configuration
             "spi": [ "spi1", "spi3", "spi6", "spi12"],
             "spei":[ "spei1", "spei3", "spei6", "spei12"]
           },
-          "variableList": [
-            { "id": "prec", "name": "Precipitazione" },
-            { "id": "tmed", "name": "Temperatura Media" },
-            { "id": "tmax", "name": "Temperatura Massima" },
-            { "id": "tmin", "name": "Temperatura Minima" },
-            { "id": "ret", "name": "Evapotraspirazione Potenziale" },
-            { "id": "bis", "name": "Bilancio Idrico Semplificato" }
+          "tabList": [
+            {"id": "variableList", "name": "Variabili Meteo", "groupList": [
+                                                                  { "id": "prec", "name": "Precipitazione" },
+                                                                  { "id": "tmed", "name": "Temperatura Media" },
+                                                                  { "id": "tmax", "name": "Temperatura Massima" },
+                                                                  { "id": "tmin", "name": "Temperatura Minima" },
+                                                                  { "id": "ret", "name": "Evapotraspirazione Potenziale" },
+                                                                  { "id": "bis", "name": "Bilancio Idrico Semplificato" }
+                                                              ],
+                                                          "type": "sigle_variable"
+              },
+            {"id": "spiList", "name": "SPI", "groupList": [
+                                                                  { "id": "spi1", "name": "SPI-1" },
+                                                                  { "id": "spi3", "name": "SPI-3" },
+                                                                  { "id": "spi6", "name": "SPI-6" },
+                                                                  { "id": "spi12", "name": "SPI-12" }
+                                                                ],
+                                                          "chartTitle": "Indice SPI - Standardized Precipitation Index",
+                                                          "type": "multi_select"
+              },
+            {"id": "speiList", "name": "SPEI", "groupList": [
+                                                                    { "id": "spei1", "name": "SPEI-1" },
+                                                                    { "id": "spei3", "name": "SPEI-3" },
+                                                                    { "id": "spei6", "name": "SPEI-6" },
+                                                                    { "id": "spei12", "name": "SPEI-12" }
+                                                          ],
+                                                          "chartTitle": "Indice SPEI - Standardized Precipitation-Evapotranspiration Index",
+                                                          "type": "multi_select"
+            }
           ],
-          "spiList": [ "spi1", "spi3", "spi6", "spi12"],
-          "speiList": [ "spei1", "spei3", "spei6", "spei12"],
           "idVariabiliLayers": {
             "prec": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima"],
             "tmed": ["Temperatura_Media", "Temperatura_Media_Anomalia", "Temperatura_Media_clima"],
@@ -74,7 +95,7 @@ Plugin configuration
             "tmax",
             "tmin"
           ]
-      },
+      }
       "override": {
         "Toolbar": {
           "alwaysVisible": true
@@ -105,7 +126,8 @@ const InfoChartPanel = connect((state) => ({
         toData: state.infochart?.infoChartData?.toData,
         variables: state.infochart?.infoChartData?.variables,
         latlng: state.infochart?.infoChartData?.latlng || {},
-        periodType: state.infochart?.infoChartData?.periodType
+        periodType: state.infochart?.infoChartData?.periodType,
+        idTab: state.infochart?.infoChartData?.idTab
     },
     tabSelected: state.infochart?.tabSelected,
     data: state.infochart?.data || '',

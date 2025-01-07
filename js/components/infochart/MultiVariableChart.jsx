@@ -17,7 +17,7 @@ const colors = ['green', 'black', 'teal', 'gray'];
 const MIN_Y_INDEX = -3.0;
 const MAX_Y_INDEX = 3.0;
 
-const MultiVariableChart = ({ dataFetched, variables, multiselectList,
+const MultiVariableChart = ({ dataFetched, variables, chartTitle, variableName,
     handleRelayout, chartRelayout, infoChartSize, isCollapsedFormGroup }) => {
 
     // Formattare i dati
@@ -26,7 +26,7 @@ const MultiVariableChart = ({ dataFetched, variables, multiselectList,
 
     // Iterare sulle variabili e creare il formato dati
     variables.forEach((variable, index) => {
-        const valueKey = ST_VALUE + variable;
+        const valueKey = ST_VALUE + variable.id;
 
         // Creare un array di valori per la variabile corrente
         const values = dataFetched.map(item =>
@@ -34,22 +34,12 @@ const MultiVariableChart = ({ dataFetched, variables, multiselectList,
         );
         const lineColor = colors[index % colors.length];
 
-        // Trova il gruppo in multiselectList che corrisponde all'id della variabile
-        let variableName = '';
-        for (let tab of multiselectList) {
-            const group = tab.groupList.find(item => item.id === variable);
-            if (group) {
-                variableName = group.name;
-                break; // Uscire dal ciclo una volta trovato il gruppo
-            }
-        }
-
         // Aggiungere la traccia formattata a dataFormatted
         traces.push({
             x: dates,
             y: values,
             mode: 'lines+markers',
-            name: variableName,
+            name: variable.name,
             line: { color: lineColor, width: 2, shape: 'linear' },
             marker: { size: 6 },
             type: 'scatter',
@@ -146,7 +136,7 @@ const MultiVariableChart = ({ dataFetched, variables, multiselectList,
     const layout = {
         width: infoChartSize.widthResizable - 10,
         height: infoChartSize.heightResizable - ( isCollapsedFormGroup ? 140 : 440 ), // Set the height based on the collapse state of the FormGroup
-        title: 'Indice SPI - Standardized Precipitation Index',
+        title: chartTitle,
         xaxis: {
             title: 'Periodo',
             tickangle: -45,
@@ -159,7 +149,7 @@ const MultiVariableChart = ({ dataFetched, variables, multiselectList,
             tickcolor: '#000' // Colore delle stanghette
         },
         yaxis: {
-            title: 'Valore SPI',
+            title: 'Valore ' + variableName,
             range: [ chartRelayout?.variabileStart || MIN_Y_INDEX, chartRelayout?.variabileEnd || MAX_Y_INDEX],
             tickvals: [MIN_Y_INDEX, -2, -1.5, -0.5, 0.5, 1.0, 1.5, 2.0, MAX_Y_INDEX],
             tickformat: '.1f',
