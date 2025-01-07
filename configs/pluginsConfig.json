@@ -728,7 +728,7 @@
                                                                   { "id": "ret", "name": "Evapotraspirazione Potenziale" },
                                                                   { "id": "bis", "name": "Bilancio Idrico Semplificato" }
                                                               ],
-                                                          "type": "sigle_variable"
+                                                          "type": "single_select"
               },
             {"id": "spiList", "name": "SPI", "groupList": [
                                                                   { "id": "spi1", "name": "SPI-1" },
