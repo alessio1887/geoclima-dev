@@ -84,7 +84,6 @@ const getDefaultValues = (idVariabiliLayers, appState) => {
         fromData,
         toData,
         periodType: "1",
-        // TODO da rendere dinamico: da prendere in base a Object.keys(idVariabiliLayers)[0] || ''
         idTab: getIdTabFromVariable(defaultVariable, appState.infochart.tabList)
     };
 };
@@ -151,18 +150,18 @@ const getFirstVisibleLayer = (layers, groups = []) => {
  * Determines the appropriate variable key based on the visible map layer ID.
  *
  * This function sets `chartVariable` to the corresponding key in `idVariabiliLayers` based on
- * a match with the `visibleIdLayer`. If no match is found, it defaults to the first key in
+ * a match with the `visibleLayer`. If no match is found, it defaults to the first key in
  * `idVariabiliLayers`.
  *
- * @param {string} visibleIdLayer - The ID of the visible layer, which will be checked for a match.
+ * @param {string} visibleLayer - The name of the visible layer, which will be checked for a match.
  * @param {Object} idVariabiliLayers - An object mapping variable keys to associated layer names (arrays).
  * @returns {string} - The matched variable key from `idVariabiliLayers` or the default key if no match is found.
  */
-const setVisVariable = (visibleIdLayer, idVariabiliLayers) => {
+const setVisVariable = (visibleLayer, idVariabiliLayers) => {
     // Default to the first key in idVariabiliLayers if no match is found
     let chartVariable = Object.keys(idVariabiliLayers)[0];
 
-    const transformedVisibleIdLayer = visibleIdLayer.replace(/[_\s]/g, '').toLowerCase();
+    const transformedVisibleIdLayer = visibleLayer.replace(/[_\s]/g, '').toLowerCase();
 
     // Iterate over idVariabiliLayers to find a matching key
     for (const [key, variabiliNames] of Object.entries(idVariabiliLayers)) {
@@ -171,7 +170,7 @@ const setVisVariable = (visibleIdLayer, idVariabiliLayers) => {
         );
 
         // Check if any name in the list matches the visible layer
-        if (transformedVariabiliNames.some(name => transformedVisibleIdLayer.includes(name))) {
+        if (transformedVariabiliNames.some(name => name === transformedVisibleIdLayer)) {
             chartVariable = key;
             break; // Exit loop once a match is found
         }
@@ -181,8 +180,9 @@ const setVisVariable = (visibleIdLayer, idVariabiliLayers) => {
 };
 
 // Function to get values from a visible layer
-const getVisibleLayerValues = (visibleLayer, idVariabiliLayers, appState) => {
-    const variable = setVisVariable(visibleLayer.id, idVariabiliLayers);
+const getVisibleLayerValues = (visibleLayer, appState) => {
+    const idVariabiliLayers = appState.infochart.idVariabiliLayers;
+    const variable = setVisVariable(visibleLayer.name, idVariabiliLayers);
     const fromData = visibleLayer.params?.fromData || getDefaultValues(idVariabiliLayers, appState).fromData;
     const toData = visibleLayer.params?.toData || getDefaultValues(idVariabiliLayers, appState).toData;
     const periodType = appState.fixedrangepicker?.showFixedRangePicker
@@ -221,7 +221,7 @@ const getChartVariables = (appState, rangeManager, idVariabiliLayers) => {
     // If there is a visible layer, use the layer's values
     const visibleLayer = getFirstVisibleLayer(getVisibleLayers(appState.layers.flat), getVisibleGroups(appState.layers.groups));
     if (visibleLayer) {
-        return getVisibleLayerValues(visibleLayer, idVariabiliLayers, appState);
+        return getVisibleLayerValues(visibleLayer, appState);
     }
     // Otherwise, return the default values
     return getDefaultValues(idVariabiliLayers, appState);

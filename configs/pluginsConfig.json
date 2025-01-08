@@ -759,7 +759,15 @@
             "tmax": [ "Temperatura_Massima", "Temperatura_Massima_Anomalia", "Temperatura_Massima_clima"],
             "ret": ["Evapotraspirazione", "Evapotraspirazione_Anomalia_mm", "Evapotraspirazione_Anomalia_perc", "Evapotraspirazione_clima"],
             "bis": ["BilancioIdricoSemplificato", "BilancioIdricoSemplificato_Anomalia_mm", "BilancioIdricoSemplificato_Anomalia_perc",
-                    "BilancioIdricoSemplificato_clima"]
+                    "BilancioIdricoSemplificato_clima"],
+            "spi1": ["spi1"],
+            "spi3": ["spi3"],
+            "spi6": ["spi6"],
+            "spi12": ["spi12"],
+            "spei1": ["spei1"],
+            "spei3": ["spei3"],
+            "spei6": ["spei6"],
+            "spei12": ["spei12"]
           },
           "variablePrecipitazione": "prec",
           "variableEvotrasporazione": "ret",
