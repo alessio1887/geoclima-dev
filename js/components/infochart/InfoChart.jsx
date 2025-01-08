@@ -14,13 +14,13 @@ import Message from '../../../MapStore2/web/client/components/I18N/Message';
 
 import Dialog from '../../../MapStore2/web/client/components/misc/Dialog';
 import BorderLayout from '../../../MapStore2/web/client/components/layout/BorderLayout';
-import Plot from '../../../MapStore2/web/client/components/charts/PlotlyChart.jsx';
-import MultiVariableChart from './MultiVariableChart';
+// import Plot from '../../../MapStore2/web/client/components/charts/PlotlyChart.jsx';
+import InfoChartRender from './InfoChartRender';
 import SelectVariableTab from './SelectVariableTab';
 import FixedRangeManager from '../../components/datepickers/FixedRangeManager';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../../utils/ManageDateUtils';
-import { fillAreas, formatDataCum, formatDataTemp, FIXED_RANGE, FREE_RANGE, MULTI_VARIABLE_CHART }  from '../../utils/VariabiliMeteoUtils';
+import { FIXED_RANGE, FREE_RANGE, MULTI_VARIABLE_CHART }  from '../../utils/VariabiliMeteoUtils';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -61,7 +61,6 @@ class InfoChart extends React.Component {
         onToggleControl: PropTypes.func,
         active: PropTypes.bool,
         mapinfoActive: PropTypes.bool,
-        chartStyle: PropTypes.object,
         animated: PropTypes.bool,
         fromData: PropTypes.instanceOf(Date),
         toData: PropTypes.instanceOf(Date),
@@ -78,9 +77,8 @@ class InfoChart extends React.Component {
         alertMessage: PropTypes.string,
         chartRelayout: PropTypes.object,
         infoChartSize: PropTypes.object,
-        variablePrecipitazione: PropTypes.string,
-        variableEvotrasporazione: PropTypes.string,
-        variableTemperaturaList: PropTypes.array,
+        unitPrecipitazione: PropTypes.string,
+        unitTemperatura: PropTypes.string,
         tabList: PropTypes.array,
         idVariabiliLayers: PropTypes.object,
         defaultUrlGeoclimaChart: PropTypes.string,
@@ -101,13 +99,8 @@ class InfoChart extends React.Component {
         onSetChartRelayout: () => {},
         onResetChartRelayout: () => {},
         onResizeInfoChart: () => {},
-        variablePrecipitazione: "prec",
-        variableEvotrasporazione: "ret",
-        variableTemperaturaList: [
-            "tmed",
-            "tmax",
-            "tmin"
-        ],
+        unitPrecipitazione: "mm",
+        unitTemperatura: "°C",
         periodTypes: [
             { "key": "1", "label": "1 Mese" },
             { "key": "3", "label": "3 Mesi" },
@@ -172,14 +165,6 @@ class InfoChart extends React.Component {
         onToggleControl: () => {},
         active: false,
         mapinfoActive: false,
-        chartStyle: {
-            margin: {
-                t: 40,
-                r: 60,
-                l: 60,
-                b: 60
-            }
-        },
         animated: true,
         classNameInfoChartDate: "mapstore-infochartdate",
         isCollapsedFormGroup: false,
@@ -252,7 +237,7 @@ class InfoChart extends React.Component {
             variableName: variableListParam.name
         };
 
-        if (variableListParam.type === MULTI_VARIABLE_CHART && variableListParam.chartTitle) {
+        if (variableListParam.chartType === MULTI_VARIABLE_CHART && variableListParam.chartTitle) {
             result.chartTitle = variableListParam.chartTitle;
         }
         return result;
@@ -260,91 +245,87 @@ class InfoChart extends React.Component {
 
     showChart = () => {
         if (!this.props.maskLoading) {
-            let dataChart;
-            let layoutChart;
             const variableParams = this.getVariableParams();
-            if ( variableParams.type === MULTI_VARIABLE_CHART) {
-                return (<MultiVariableChart
-                    dataFetched = {this.props.data}
-                    variables =  { variableParams.variables }
-                    handleRelayout={this.handleRelayout}
-                    chartRelayout={this.props.chartRelayout}
-                    infoChartSize={this.props.infoChartSize}
-                    isCollapsedFormGroup={this.props.isCollapsedFormGroup}
-                    chartTitle={ variableParams.chartTitle }
-                    variableName = { variableParams.variableName }
-                />);
-            }
-            const PREC = this.props.variablePrecipitazione;
-            const RET = this.props.variableEvotrasporazione;
-            const TEMP_LIST = this.props.variableTemperaturaList;
-            const chartVariable = this.props.infoChartData.variables;
-            const propVariable = "st_value_" + chartVariable;
-            const chartData = chartVariable === PREC || chartVariable === RET
-                ? formatDataCum(this.props.data, propVariable)
-                : formatDataTemp(this.props.data, propVariable);
-                // Definizione delle unità di misura dinamiche
-            const unit = TEMP_LIST.includes(chartVariable) ? '°C' : 'mm';
-            const climaLabel = "Climatologia " + unit;
-            const currentYearLabel = "Anno in corso " + unit;
+            return (<InfoChartRender
+                dataFetched = {this.props.data}
+                variables =  { variableParams.variables }
+                handleRelayout={this.handleRelayout}
+                chartRelayout={this.props.chartRelayout}
+                infoChartSize={this.props.infoChartSize}
+                isCollapsedFormGroup={this.props.isCollapsedFormGroup}
+                variableParams={ variableParams }
+                unitPrecipitazione = { this.props.unitPrecipitazione }
+            />);
+            // const PREC = this.props.variablePrecipitazione;
+            // const RET = this.props.variableEvotrasporazione;
+            // const TEMP_LIST = this.props.variableTemperaturaList;
+            // const chartVariable = this.props.infoChartData.variables;
+            // const propVariable = "st_value_" + chartVariable;
+            // const chartData = chartVariable === PREC || chartVariable === RET
+            //     ? formatDataCum(this.props.data, propVariable)
+            //     : formatDataTemp(this.props.data, propVariable);
+            //     // Definizione delle unità di misura dinamiche
+            // const unit = TEMP_LIST.includes(chartVariable) ? '°C' : 'mm';
+            // const climaLabel = "Climatologia " + unit;
+            // const currentYearLabel = "Anno in corso " + unit;
 
-            const dates = chartData.map(item => new Date(item.data));
-            const observedData = chartData.map(item => item[propVariable]);
-            const climatologicalData = chartData.map(item => item.st_value_clima);
-            const fillTraces = fillAreas(dates, observedData, climatologicalData, chartVariable, PREC);
+            // const dates = chartData.map(item => new Date(item.data));
+            // const observedData = chartData.map(item => item[propVariable]);
+            // const climatologicalData = chartData.map(item => item.st_value_clima);
+            // const fillTraces = fillAreas(dates, observedData, climatologicalData, chartVariable, PREC);
 
-            const colorTraceObserved = chartVariable === PREC ? 'rgba(0, 0, 255, 1)' : 'rgba(255, 0, 0, 1)';
-            const trace1 = {
-                x: dates,
-                y: climatologicalData,
-                mode: 'lines',
-                name: climaLabel,
-                line: { color: '#38293C',  width: 1 }
-            };
+            // const colorTraceObserved = chartVariable === PREC ? 'rgba(0, 0, 255, 1)' : 'rgba(255, 0, 0, 1)';
+            // const trace1 = {
+            //     x: dates,
+            //     y: climatologicalData,
+            //     mode: 'lines',
+            //     name: climaLabel,
+            //     line: { color: '#38293C',  width: 1 }
+            // };
 
-            const trace2 = {
-                x: dates,
-                y: observedData,
-                mode: 'lines',
-                name: currentYearLabel,
-                line: { color: colorTraceObserved,  width: 1 }
-            };
-            dataChart = [trace1, trace2].concat(fillTraces);
-            layoutChart = {
-                width: this.props.infoChartSize.widthResizable - 10,
-                height: this.props.infoChartSize.heightResizable - (this.props.isCollapsedFormGroup ? 140 : 440 ), // Set the height based on the collapse state of the FormGroup
-                xaxis: { // Dates format
-                    tickformat: '%Y-%m-%d',
-                    range: [this.props.chartRelayout?.startDate || Math.min(...dates), this.props.chartRelayout?.endDate || Math.max(...dates)]
-                },
-                yaxis: {
-                    title: TEMP_LIST.includes(this.props.infoChartData.variable)  ? 'Temperatura (°C)' : 'Valore (mm)',
-                    range: [this.props.chartRelayout?.variabileStart || Math.min(...observedData, ...climatologicalData),
-                        this.props.chartRelayout?.variabileEnd || Math.max(...observedData, ...climatologicalData)]
-                },
-                margin: this.props.chartStyle.margin,
-                showlegend: true,
-                hovermode: 'x unified',
-                legend: {
-                    orientation: 'h',
-                    x: 0.5,
-                    y: -0.2
-                },
-                dragmode: this.props.chartRelayout?.dragmode
-            };
-            return (
-                <Plot
-                    data={dataChart}
-                    layout={layoutChart}
-                    style={{ width: '100%', height: '100%' }}
-                    onRelayout={this.handleRelayout}
-                    config={{ // Chart toolbar config
-                        displayModeBar: true,
-                        modeBarButtonsToRemove: ['resetScale2d'],
-                        autosizable: true
-                    }}
-                />
-            );
+            // const trace2 = {
+            //     x: dates,
+            //     y: observedData,
+            //     mode: 'lines',
+            //     name: currentYearLabel,
+            //     line: { color: colorTraceObserved,  width: 1 }
+            // };
+            // dataChart = [trace1, trace2].concat(fillTraces);
+            // layoutChart = {
+            //     width: this.props.infoChartSize.widthResizable - 10,
+            //     height: this.props.infoChartSize.heightResizable - (this.props.isCollapsedFormGroup ? 140 : 440 ), // Set the height based on the collapse state of the FormGroup
+            //     xaxis: { // Dates format
+            //         tickformat: '%Y-%m-%d',
+            //         range: [this.props.chartRelayout?.startDate || Math.min(...dates), this.props.chartRelayout?.endDate || Math.max(...dates)]
+            //     },
+            //     yaxis: {
+            //         title: TEMP_LIST.includes(this.props.infoChartData.variable)  ? 'Temperatura (°C)' : 'Valore (mm)',
+            //         range: [this.props.chartRelayout?.variabileStart || Math.min(...observedData, ...climatologicalData),
+            //             this.props.chartRelayout?.variabileEnd || Math.max(...observedData, ...climatologicalData)]
+            //     },
+            //     margin: this.props.chartStyle.margin,
+            //     showlegend: true,
+            //     hovermode: 'x unified',
+            //     legend: {
+            //         orientation: 'h',
+            //         x: 0.5,
+            //         y: -0.2
+            //     },
+            //     dragmode: this.props.chartRelayout?.dragmode
+            // };
+            // return (
+            //     <Plot
+            //         data={dataChart}
+            //         layout={layoutChart}
+            //         style={{ width: '100%', height: '100%' }}
+            //         onRelayout={this.handleRelayout}
+            //         config={{ // Chart toolbar config
+            //             displayModeBar: true,
+            //             modeBarButtonsToRemove: ['resetScale2d'],
+            //             autosizable: true
+            //         }}
+            //     />
+            // );
         }
         return null;
     }

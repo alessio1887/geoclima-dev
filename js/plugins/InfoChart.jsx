@@ -51,14 +51,15 @@ Plugin configuration
           },
           "tabList": [
             {"id": "variableList", "name": "Variabili Meteo", "groupList": [
-                                                                  { "id": "prec", "name": "Precipitazione" },
-                                                                  { "id": "tmed", "name": "Temperatura Media" },
-                                                                  { "id": "tmax", "name": "Temperatura Massima" },
-                                                                  { "id": "tmin", "name": "Temperatura Minima" },
-                                                                  { "id": "ret", "name": "Evapotraspirazione Potenziale" },
-                                                                  { "id": "bis", "name": "Bilancio Idrico Semplificato" }
+                                                                  { "id": "prec", "name": "Precipitazione", "unit": "mm", "yaxis": "Valore (mm)" },
+                                                                  { "id": "tmed", "name": "Temperatura Media", "unit": "°C", "yaxis": "Temperatura (°C)"  },
+                                                                  { "id": "tmax", "name": "Temperatura Massima", "unit": "°C", "yaxis": "Temperatura (°C)"  },
+                                                                  { "id": "tmin", "name": "Temperatura Minima", "unit": "°C", "yaxis": "Temperatura (°C)"  },
+                                                                  { "id": "ret", "name": "Evapotraspirazione Potenziale", "unit": "mm", "yaxis": "Valore (mm)"  },
+                                                                  { "id": "bis", "name": "Bilancio Idrico Semplificato", "unit": "mm", "yaxis": "Valore (mm)"  }
                                                               ],
-                                                          "type": "sigle_variable"
+                                                          "menuType": "single_select",
+                                                          "chartType": "single_variable"
               },
             {"id": "spiList", "name": "SPI", "groupList": [
                                                                   { "id": "spi1", "name": "SPI-1" },
@@ -67,7 +68,8 @@ Plugin configuration
                                                                   { "id": "spi12", "name": "SPI-12" }
                                                                 ],
                                                           "chartTitle": "Indice SPI - Standardized Precipitation Index",
-                                                          "type": "multi_select"
+                                                          "menuType": "multi_select",
+                                                          "chartType": "multi_variable"
               },
             {"id": "speiList", "name": "SPEI", "groupList": [
                                                                     { "id": "spei1", "name": "SPEI-1" },
@@ -76,7 +78,8 @@ Plugin configuration
                                                                     { "id": "spei12", "name": "SPEI-12" }
                                                           ],
                                                           "chartTitle": "Indice SPEI - Standardized Precipitation-Evapotranspiration Index",
-                                                          "type": "multi_select"
+                                                          "menuType": "multi_select",
+                                                          "chartType": "multi_variable"
             }
           ],
           "idVariabiliLayers": {
@@ -86,15 +89,18 @@ Plugin configuration
             "tmax": [ "Temperatura_Massima", "Temperatura_Massima_Anomalia", "Temperatura_Massima_clima"],
             "ret": ["Evapotraspirazione", "Evapotraspirazione_Anomalia_mm", "Evapotraspirazione_Anomalia_perc", "Evapotraspirazione_clima"],
             "bis": ["BilancioIdricoSemplificato", "BilancioIdricoSemplificato_Anomalia_mm", "BilancioIdricoSemplificato_Anomalia_perc",
-                    "BilancioIdricoSemplificato_clima"]
+                    "BilancioIdricoSemplificato_clima"],
+            "spi1": ["spi1"],
+            "spi3": ["spi3"],
+            "spi6": ["spi6"],
+            "spi12": ["spi12"],
+            "spei1": ["spei1"],
+            "spei3": ["spei3"],
+            "spei6": ["spei6"],
+            "spei12": ["spei12"]
           },
-          "variablePrecipitazione": "prec",
-          "variableEvotrasporazione": "ret",
-          "variableTemperaturaList": [
-            "tmed",
-            "tmax",
-            "tmin"
-          ]
+          "unitPrecipitazione": "mm",
+          "unitTemperatura": "°C"
       }
       "override": {
         "Toolbar": {

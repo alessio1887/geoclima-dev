@@ -721,12 +721,12 @@
           },
           "tabList": [
             {"id": "variableList", "name": "Variabili Meteo", "groupList": [
-                                                                  { "id": "prec", "name": "Precipitazione" },
-                                                                  { "id": "tmed", "name": "Temperatura Media" },
-                                                                  { "id": "tmax", "name": "Temperatura Massima" },
-                                                                  { "id": "tmin", "name": "Temperatura Minima" },
-                                                                  { "id": "ret", "name": "Evapotraspirazione Potenziale" },
-                                                                  { "id": "bis", "name": "Bilancio Idrico Semplificato" }
+                                                                  { "id": "prec", "name": "Precipitazione", "unit": "mm", "yaxis": "Valore (mm)" },
+                                                                  { "id": "tmed", "name": "Temperatura Media", "unit": "°C", "yaxis": "Temperatura (°C)"  },
+                                                                  { "id": "tmax", "name": "Temperatura Massima", "unit": "°C", "yaxis": "Temperatura (°C)"  },
+                                                                  { "id": "tmin", "name": "Temperatura Minima", "unit": "°C", "yaxis": "Temperatura (°C)"  },
+                                                                  { "id": "ret", "name": "Evapotraspirazione Potenziale", "unit": "mm", "yaxis": "Valore (mm)"  },
+                                                                  { "id": "bis", "name": "Bilancio Idrico Semplificato", "unit": "mm", "yaxis": "Valore (mm)"  }
                                                               ],
                                                           "menuType": "single_select",
                                                           "chartType": "single_variable"
@@ -769,13 +769,8 @@
             "spei6": ["spei6"],
             "spei12": ["spei12"]
           },
-          "variablePrecipitazione": "prec",
-          "variableEvotrasporazione": "ret",
-          "variableTemperaturaList": [
-            "tmed",
-            "tmax",
-            "tmin"
-          ]
+          "unitPrecipitazione": "mm",
+          "unitTemperatura": "°C"
       },
       "override": {
         "Toolbar": {
