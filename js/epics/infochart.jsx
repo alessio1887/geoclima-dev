@@ -21,7 +21,7 @@ import {
     changeFixedRangeToData,
     changePeriod,
     markInfoChartAsNotLoaded,
-    changeTab
+    changeTab, changeChartVariable
 } from '../actions/infochart';
 import { fetchSelectDate } from '../actions/updateDatesParams';
 import { CLICK_ON_MAP } from '../../MapStore2/web/client/actions/map';
@@ -48,6 +48,12 @@ const getIdTabFromVariable = (variable, tabList) => {
     return tabList[0].id;
 };
 
+const getVariableParamsFromTab = (idTab, idVariable, tabList) => {
+    const variableList = tabList.find( tab => tab.id === idTab);
+    return variableList.groupList.find(variable =>
+        variable.id === idVariable
+    );
+};
 
 const checkSelectDateEpic = (action$, store) =>
     action$.ofType(CHECK_FETCH_AVAILABLE_DATES)
@@ -314,6 +320,8 @@ const clickedPointCheckEpic = (action$, store) =>
                     actions.push(changeFromData(new Date(fromData)));
                     actions.push(changeToData(new Date(toData)));
                     actions.push(changeTab(idTab));
+                    actions.push(changeChartVariable(idTab,
+                        [getVariableParamsFromTab(idTab, variable, appState.infochart.tabList)]));
                 }
                 actions.push(setInfoChartVisibility(true));
                 actions.push(fetchInfoChartData({
