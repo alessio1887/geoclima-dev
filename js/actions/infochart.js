@@ -25,15 +25,16 @@ export const SET_IDVARIABILI_LAYERS = 'SET_ID_VARIABILI_LAYERS';
 export const SET_DEFAULT_URL = 'INFOCHART:SET_DEFULT_URL';
 export const SET_DEFAULT_DATES = 'INFOCHART:SET_DEFULT_DATES';
 export const SET_TABLIST = 'INFOCHART:SET_TABLIST';
-// export const INFOCHART_SET_AVAILABLE_DATES = 'INFOCHART:SET_AVAILABLE_DATES';
+export const INITIALIZE_TABS = 'INFOCHART:INITIALIZE_TABS';
 export const CHECK_FETCH_AVAILABLE_DATES = 'INFOCHART:CHECK_FETCH_AVAILABLE_DATES';
 export const PLUGIN_LOADED = 'INFOCHART:PLUGIN_LOADED';
 export const PLUGIN_NOT_LOADED = 'INFOCHART:PLUGIN_NOT_LOADED';
 export const TAB_CHANGED = 'INFOCHART:TAB_CHANGED';
 
-export function changeChartVariable(variables) {
+export function changeChartVariable(idTab, variables) {
     return {
         type: CHARTVARIABLE_CHANGED,
+        idTab,
         variables
     };
 }
@@ -230,5 +231,12 @@ export function markInfoChartAsLoaded() {
 export function markInfoChartAsNotLoaded() {
     return {
         type: PLUGIN_NOT_LOADED
+    };
+}
+
+export function initializeVariableTabs(tabVariables) {
+    return {
+        type: INITIALIZE_TABS,
+        tabVariables
     };
 }

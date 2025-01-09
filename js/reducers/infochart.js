@@ -9,7 +9,7 @@ import { FETCHED_AVAILABLE_DATES } from '../actions/updateDatesParams';
 import {CHARTVARIABLE_CHANGED, TAB_CHANGED, TODATA_FIXEDRANGE_CHANGED, FROMDATA_CHANGED,
     TODATA_CHANGED, CHART_PERIOD_CHANGED, SET_INFOCHART_VISIBILITY, FETCH_INFOCHART_DATA,
     FETCHED_INFOCHART_DATA, COLLAPSE_RANGE_PICKER,  OPEN_ALERT, CLOSE_ALERT, SET_CHART_RELAYOUT, RESET_CHART_RELAYOUT, RESIZE_INFOCHART,
-    SET_RANGE_MANAGER, SET_IDVARIABILI_LAYERS, SET_DEFAULT_URL, SET_DEFAULT_DATES,
+    SET_RANGE_MANAGER, SET_IDVARIABILI_LAYERS, SET_DEFAULT_URL, SET_DEFAULT_DATES, INITIALIZE_TABS,
     PLUGIN_LOADED, PLUGIN_NOT_LOADED, SET_TABLIST } from '../actions/infochart';
 import DateAPI, { DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO, PERIOD_TYPES } from '../utils/ManageDateUtils';
 import assign from 'object-assign';
@@ -46,10 +46,23 @@ const infoChartDefaultState = {
     },
     firstAvailableDate: DEFAULT_DATA_INIZIO,
     lastAvailableDate: DEFAULT_DATA_FINE,
-    tabSelected: {
-        idTab: "variableList",
-        variables: [{ id: "prec", name: "Precipitazione" }]
-    }
+    tabVariables: [
+        {
+            id: "variableList",
+            variables: [{ "id": "prec", "name": "Precipitazione", "unit": "mm", "yaxis": "Valore (mm)" }],
+            active: true
+        },
+        {
+            id: "spiList",
+            variables: [{ id: "spi1", name: "SPI-1" }],
+            active: false
+        },
+        {
+            id: "speiList",
+            variables: [{ id: "spei1", name: "SPEI-1" }],
+            active: false
+        }
+    ]
 };
 
 function infochart(state = infoChartDefaultState, action) {
@@ -57,18 +70,20 @@ function infochart(state = infoChartDefaultState, action) {
     case CHARTVARIABLE_CHANGED:
         return {
             ...state,
-            tabSelected: {
-                ...state.tabSelected,
-                variables: action.variables
-            }
+            tabVariables: state.tabVariables.map(tab =>
+                tab.id === action.idTab
+                    ? { ...tab, variables: action.variables } // Aggiorna le variabili del tab corrispondente
+                    : tab
+            )
+
         };
     case TAB_CHANGED:
         return {
             ...state,
-            tabSelected: {
-                idTab: action.idTab,
-                variables: null
-            }
+            tabVariables: state.tabVariables.map(tab => ({
+                ...tab,
+                active: tab.id === action.idTab // Imposta true solo per il tab con id uguale a idTab
+            }))
         };
     case TODATA_CHANGED:
         return {
@@ -187,6 +202,11 @@ function infochart(state = infoChartDefaultState, action) {
                 fromData: newFromData,
                 periodType: action.periodTypes?.[0] || PERIOD_TYPES[0]
             }
+        };
+    case INITIALIZE_TABS:
+        return {
+            ...state,
+            tabVariables: action.tabVariables
         };
     case PLUGIN_LOADED:
         return {

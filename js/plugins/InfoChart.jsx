@@ -12,7 +12,7 @@ import {setInfoChartVisibility, changeFixedRangeToData, fetchInfoChartData, fetc
     changeChartVariable, changePeriod, changeFromData, changeToData, setDefaultDates, collapseRangePicker,
     openAlert, closeAlert, setChartRelayout, resetChartRelayout, resizeInfoChart, setIdVariabiliLayers,
     setRangeManager, setDefaultUrlGeoclimaChart, checkLaunchSelectDateQuery,
-    markInfoChartAsLoaded, changeTab, setTabList } from '../actions/infochart';
+    markInfoChartAsLoaded, changeTab, setTabList, initializeVariableTabs } from '../actions/infochart';
 import InfoChartButton from '../components/buttons/InfoChartButton';
 import InfoChart from '../components/infochart/InfoChart';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
@@ -135,7 +135,7 @@ const InfoChartPanel = connect((state) => ({
         periodType: state.infochart?.infoChartData?.periodType,
         idTab: state.infochart?.infoChartData?.idTab
     },
-    tabSelected: state.infochart?.tabSelected,
+    tabVariables: state.infochart?.tabVariables,
     data: state.infochart?.data || '',
     maskLoading: state.infochart?.maskLoading,
     active: state.controls?.chartinfo?.enabled || false,
@@ -158,7 +158,7 @@ const InfoChartPanel = connect((state) => ({
     onSetInfoChartVisibility: setInfoChartVisibility,
     onFetchInfoChartData: fetchInfoChartData,
     onFetchedInfoChartData: fetchedInfoChartData,
-    onChangeChartVariable: compose(changeChartVariable, (event) => event),
+    onChangeChartVariable: changeChartVariable,
     onChangeTab: compose(changeTab, (event) => event),
     onChangeToData: compose(changeToData, (event) => event),
     onChangeFromData: compose(changeFromData, (event) => event),
@@ -166,6 +166,7 @@ const InfoChartPanel = connect((state) => ({
     onChangePeriod: compose(changePeriod, (event) => event.key),
     onSetInfoChartDates: setDefaultDates,
     onCollapseRangePicker: collapseRangePicker,
+    onInitializeVariableTabs: initializeVariableTabs,
     onSetRangeManager: setRangeManager,
     onSetTabList: setTabList,
     onOpenAlert: openAlert,

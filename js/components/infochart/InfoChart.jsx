@@ -45,7 +45,7 @@ class InfoChart extends React.Component {
         onSetTabList: PropTypes.func,
         show: PropTypes.bool,
         infoChartData: PropTypes.object,
-        tabSelected: PropTypes.object,
+        tabVariables: PropTypes.object,
         maskLoading: PropTypes.bool,
         // data fetched by epic loadInfoChartDataEpic
         data: PropTypes.array,
@@ -59,6 +59,7 @@ class InfoChart extends React.Component {
         className: PropTypes.string,
         bsStyle: PropTypes.string,
         onToggleControl: PropTypes.func,
+        onInitializeVariableTabs: PropTypes.func,
         active: PropTypes.bool,
         mapinfoActive: PropTypes.bool,
         animated: PropTypes.bool,
@@ -99,6 +100,7 @@ class InfoChart extends React.Component {
         onSetChartRelayout: () => {},
         onResetChartRelayout: () => {},
         onResizeInfoChart: () => {},
+        onInitializeVariableTabs: () => {},
         unitPrecipitazione: "mm",
         unitTemperatura: "°C",
         periodTypes: [
@@ -182,11 +184,21 @@ class InfoChart extends React.Component {
         defaultFromData: new Date(moment(this.props.lastAvailableDate).clone().subtract(1, 'month').startOf('day')),
         defaultToData: new Date(this.props.lastAvailableDate)
     }
+
+    initializeTabs = () => {
+        const variableTabs = this.props.tabList.map((tab, index) => ({
+            id: tab.id,
+            variables: [tab.groupList[0]], // Seleziona il primo come default
+            active: index === 0 // Imposta il primo tab come attivo
+        }));
+        this.props.onInitializeVariableTabs(variableTabs);
+    }
     // Set some props to the plugin's state
     componentDidMount() {
         if (!this.props.isPluginLoaded) {
             this.props.onSetIdVariabiliLayers(this.props.idVariabiliLayers);
             this.props.onSetTabList(this.props.tabList);
+            this.initializeTabs();
             this.props.onSetDefaultUrlGeoclimaChart(this.props.defaultUrlGeoclimaChart);
             this.props.onCheckFetchAvailableDates(this.props.variabileSelectDate, this.props.defaultUrlSelectDate);
             this.props.onMarkPluginAsLoaded();
@@ -223,6 +235,9 @@ class InfoChart extends React.Component {
             this.props.onSetChartRelayout(zoomData);
         }
     };
+    getActiveTab = () => {
+        return this.props.tabVariables.find(tab => tab.active === true);
+    }
     getVariableParams = () => {
         const variableListParam = this.props.tabList.find(
             tab => tab.id === this.props.infoChartData.idTab
@@ -346,8 +361,8 @@ class InfoChart extends React.Component {
                             tabList={this.props.tabList}
                             onChangeSingleVariable={this.updateSingleVariable}
                             onChangeMultiVariable={this.props.onChangeChartVariable}
-                            onChangeTab={this.props.onChangeTab}
-                            activeTab={this.props.tabSelected.idTab}
+                            activeTab={this.getActiveTab()}
+                            onChangeTab={this.handleChangeTab}
                         />
                         {/* Toggle between FixedRangeManager and FreeRangeManager based on activeRangeManager*/}
                         {this.props.activeRangeManager === FIXED_RANGE ? (
@@ -458,12 +473,17 @@ class InfoChart extends React.Component {
         this.props.onSetInfoChartVisibility(false);
         this.props.onSetInfoChartDates(this.props.lastAvailableDate, this.props.periodTypes );
         this.props.onResetChartRelayout();
+        this.initializeTabs();
+    }
+    handleChangeTab = (idTab) => {
+        this.props.onChangeTab(idTab);
+        this.handleApplyPeriod(this.props.tabVariables.find(tab => tab.id === idTab).variables, idTab);
     }
     updateSingleVariable = (selectedVariable, tabVariable) => {
-        this.props.onChangeChartVariable([selectedVariable]);
+        this.props.onChangeChartVariable(tabVariable, [selectedVariable]);
         this.handleApplyPeriod([selectedVariable], tabVariable);
     }
-    handleApplyPeriod = (selectedVariable, tabVariable) => {
+    handleApplyPeriod = (selectedVariables, tabVariable) => {
         let { fromData, toData } = this.props;
         if (!fromData || !toData || isNaN(fromData) || isNaN(toData) || !(toData instanceof Date) || !(fromData instanceof Date)) {
             // restore defult values
@@ -482,9 +502,9 @@ class InfoChart extends React.Component {
             periodKey = this.props.periodTypes[0]?.key;
         }
 
-        const variableIds = selectedVariable ? selectedVariable[0].id
-            : this.props.tabSelected.variables.map(variable => variable.id).join(',');
-        const idTab = tabVariable || this.props.tabSelected.idTab;
+        const variableIds = selectedVariables ? selectedVariables.map(variable => variable.id).join(',')
+            : this.getActiveTab().variables.map(variable => variable.id).join(',');
+        const idTab = tabVariable || this.getActiveTab().id;
 
         // Date validations
         const validation = DateAPI.validateDateRange(fromData, toData, this.props.firstAvailableDate, this.props.lastAvailableDate);

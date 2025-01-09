@@ -8,8 +8,6 @@ const MULTI_SELECT = "multi_select";
 
 
 const SelectVariableTab = ({ tabList, onChangeSingleVariable, onChangeMultiVariable, onChangeTab, activeTab }) => {
-    // Stato per tracciare il tab attivo
-    // const [activeTab, setActiveTab] = useState(tabList[0]?.id); // Di default il primo tab è attivo
 
     return (
         <div id="infochart-dropdown-container">
@@ -25,8 +23,8 @@ const SelectVariableTab = ({ tabList, onChangeSingleVariable, onChangeMultiVaria
                         key={tab.id}
                         style={{
                             padding: '10px 20px',
-                            borderBottom: activeTab === tab.id ? '2px solid #007bff' : 'none',
-                            color: activeTab === tab.id ? '#007bff' : '#000'
+                            borderBottom: activeTab.id === tab.id ? '2px solid #007bff' : 'none',
+                            color: activeTab.id === tab.id ? '#007bff' : '#000'
                         }}
                         onClick={() => onChangeTab(tab.id)}
                     >
@@ -34,10 +32,9 @@ const SelectVariableTab = ({ tabList, onChangeSingleVariable, onChangeMultiVaria
                     </div>
                 ))}
             </div>
-
             <div style={{ marginTop: '10px' }}>
                 {tabList.map(tab => {
-                    if (tab.id === activeTab) {
+                    if (tab.id === activeTab.id) {
                         if (tab.menuType === DROP_DOWN) {
                             return (
                                 <DropdownList
@@ -45,7 +42,8 @@ const SelectVariableTab = ({ tabList, onChangeSingleVariable, onChangeMultiVaria
                                     data={tab.groupList}
                                     valueField="id"
                                     textField="name"
-                                    onChange={(value) => onChangeSingleVariable(value, activeTab)}
+                                    value={activeTab.variables[0]}
+                                    onChange={(value) => onChangeSingleVariable(value, activeTab.id)}
                                 />
                             );
                         } else if (tab.menuType === MULTI_SELECT) {
@@ -56,7 +54,8 @@ const SelectVariableTab = ({ tabList, onChangeSingleVariable, onChangeMultiVaria
                                     data={tab.groupList}
                                     valueField="id"
                                     textField="name"
-                                    onChange={(value) => onChangeMultiVariable(value)}
+                                    onChange={(value) => onChangeMultiVariable(activeTab.id, value)}
+                                    value={activeTab.variables}
                                 />
                             );
                         }
