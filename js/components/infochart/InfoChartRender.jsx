@@ -39,7 +39,8 @@ const createBackgroundBands = (dates) => {
         fillcolor: color,
         line: { width: 0 },
         hoverinfo: 'skip',
-        showlegend: false
+        showlegend: false,
+        mode: 'lines'
     }));
 };
 
