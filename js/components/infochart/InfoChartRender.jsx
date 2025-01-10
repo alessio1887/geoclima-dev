@@ -73,8 +73,8 @@ const createObservedAndClimatologicalTraces = (variable, dates, dataFetched, uni
         ? formatDataCum(dataFetched, propVariable)
         : formatDataTemp(dataFetched, propVariable);
 
-    const climaLabel = "Climatologia " + unit;
-    const currentYearLabel = "Anno in corso " + unit;
+    const climaLabel = "Climatologia " + ( unit || "");
+    const currentYearLabel = "Anno in corso " + ( unit || "");
 
     const observedData = chartData.map(item => item[propVariable]);
     const climatologicalData = chartData.map(item => item.st_value_clima);

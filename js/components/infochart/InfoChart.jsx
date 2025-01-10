@@ -373,9 +373,10 @@ class InfoChart extends React.Component {
                                 periodType={this.props.periodType}
                                 periodTypes={this.props.periodTypes}
                                 onChangeToData={this.props.onChangeFixedRangeTodata}
-                                onChangePeriod={this.props.onChangePeriod}
+                                onChangePeriod={this.handleChangePeriod}
                                 isInteractionDisabled={false}
                                 styleLabels="labels-infochart"
+                                format={DATE_FORMAT}
                             />
                         ) : (
                             <FreeRangeManager
@@ -468,22 +469,26 @@ class InfoChart extends React.Component {
             ) : null
         );
     }
-
     closePanel = () => {
         this.props.onSetInfoChartVisibility(false);
         this.props.onSetInfoChartDates(this.props.lastAvailableDate, this.props.periodTypes );
         this.props.onResetChartRelayout();
         this.initializeTabs();
     }
+    handleChangePeriod = (periodType) => {
+        this.props.onChangePeriod(periodType.key);
+        this.handleApplyPeriod(null, null, periodType.key);
+    }
     handleChangeTab = (idTab) => {
         this.props.onChangeTab(idTab);
-        this.handleApplyPeriod(this.props.tabVariables.find(tab => tab.id === idTab).variables, idTab);
+        this.handleApplyPeriod(this.props.tabVariables.find(tab => tab.id === idTab).variables, idTab, null);
     }
     updateSingleVariable = (selectedVariable, tabVariable) => {
         this.props.onChangeChartVariable(tabVariable, [selectedVariable]);
         this.handleApplyPeriod([selectedVariable], tabVariable);
     }
-    handleApplyPeriod = (selectedVariables, tabVariable) => {
+    handleApplyPeriod = (selectedVariables, tabVariable, periodKey) => {
+        let periodApplied = periodKey || this.props.periodType;
         let { fromData, toData } = this.props;
         if (!fromData || !toData || isNaN(fromData) || isNaN(toData) || !(toData instanceof Date) || !(fromData instanceof Date)) {
             // restore defult values
@@ -491,15 +496,13 @@ class InfoChart extends React.Component {
             return;
         }
         // Set fromData, toData, periodKey and variabile meteo
-        let periodKey;
         toData = moment(this.props.toData).clone().format(DATE_FORMAT);
         if ( this.props.activeRangeManager === FIXED_RANGE) {
-            fromData = DateAPI.calculateDateFromKeyReal( this.props.periodType, toData).fromData;
-            periodKey = this.props.periodType;
+            fromData = DateAPI.calculateDateFromKeyReal( periodApplied, toData).fromData;
         } else {
             fromData = moment(this.props.fromData).clone().format(DATE_FORMAT);
             // set default period
-            periodKey = this.props.periodTypes[0]?.key;
+            periodApplied = this.props.periodTypes[0]?.key;
         }
 
         const variableIds = selectedVariables ? selectedVariables.map(variable => variable.id).join(',')
@@ -522,7 +525,7 @@ class InfoChart extends React.Component {
             toData: toData,
             fromData: fromData,
             variables: variableIds,
-            periodType: periodKey,
+            periodType: periodApplied,
             idTab: idTab
         });
         this.props.onResetChartRelayout();

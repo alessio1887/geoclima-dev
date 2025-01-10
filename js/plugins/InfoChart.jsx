@@ -163,7 +163,7 @@ const InfoChartPanel = connect((state) => ({
     onChangeToData: compose(changeToData, (event) => event),
     onChangeFromData: compose(changeFromData, (event) => event),
     onChangeFixedRangeTodata: compose(changeFixedRangeToData, (event) => event),
-    onChangePeriod: compose(changePeriod, (event) => event.key),
+    onChangePeriod: changePeriod,
     onSetInfoChartDates: setDefaultDates,
     onCollapseRangePicker: collapseRangePicker,
     onInitializeVariableTabs: initializeVariableTabs,

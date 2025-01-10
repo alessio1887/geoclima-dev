@@ -219,7 +219,8 @@ class FixedRangePicker extends React.Component {
                     isInteractionDisabled={this.props.isInteractionDisabled}
                     periodType={this.props.periodType}
                     periodTypes={this.props.periodTypes}
-                    onChangePeriod={this.props.onChangePeriod}
+                    format={DATE_FORMAT}
+                    onChangePeriod={this.handleChangePeriod}
                     styleLabels="labels-fixedrangepicker"
                 />
                 <ButtonGroup id="button-rangepicker-container">
@@ -257,8 +258,18 @@ class FixedRangePicker extends React.Component {
             />
         );
     }
-    handleApplyPeriod = () => {
-        const { fromData, toData } = this.props;
+    handleChangePeriod = (periodType) => {
+        this.props.onChangePeriod(periodType.key);
+        this.handleApplyPeriod(periodType.key);
+    }
+    handleApplyPeriod = (periodType) => {
+        const toData = this.props.toData;
+        let fromData;
+        if (!periodType) {
+            fromData = this.props.fromData;
+        } else {
+            fromData =  new Date(DateAPI.calculateDateFromKeyReal(periodType, toData).fromData);
+        }
         if (!fromData || !toData || isNaN(fromData) || isNaN(toData) || !(toData instanceof Date) || !(fromData instanceof Date)) {
             // restore defult values
             this.props.onChangePeriodToData(new Date(this.state.defaultToData));
@@ -327,7 +338,7 @@ const FixedRangePickerPlugin = connect(mapStateToProps, {
     onMarkFixedRangeAsNotLoaded: markFixedRangeAsNotLoaded,
     onCollapsePlugin: collapsePlugin,
     onChangePeriodToData: compose(changePeriodToData, (event) => event),
-    onChangePeriod: compose(changePeriod, (event) => event.key),
+    onChangePeriod: changePeriod,
     onUpdateSettings: updateSettings,
     onUpdateNode: updateNode,
     onToggleFixedRangePicker: toggleRangePickerPlugin,

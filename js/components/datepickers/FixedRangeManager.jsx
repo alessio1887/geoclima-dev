@@ -24,9 +24,9 @@ const FixedRangeManager = (props) => {
                 time={false}
                 min={props.minDate}
                 max={props.maxDate}
-                format={"YYYY-MM-DD"}
-                editFormat={"YYYY-MM-DD"}
-                value={moment(props.toData, "YYYY-MM-DD").toDate()}
+                format={props.format}
+                editFormat={props.format}
+                value={moment(props.toData, props.format).toDate()}
                 onChange={props.onChangeToData}
                 disabled={props.isInteractionDisabled} />
             <Label className={props.styleLabels}><Message msgId="gcapp.fixedRangePicker.selectCumulativePeriod" /></Label>
