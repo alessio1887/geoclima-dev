@@ -14,7 +14,7 @@
     background-color: white;
     display: block; /* Allineamento corretto */
     text-align: left; /* Testo allineato a sinistra */
-    padding: 15px 0 5px; /* Margini ottimizzati */
+    padding: 8px 0px 5px; /* Margini ottimizzati */
     font-size: 14px;
     font-weight: bold;
 }
@@ -24,9 +24,15 @@
     display: flex;
     justify-content: flex-end;
     gap: 10px; /* Distanza tra i pulsanti invece di margini negativi */
+    margin-top: -10px;
+    margin-bottom: -15px
 }
 
 .rangepicker-button {
     margin-top: 20px; /* Sposta i pulsanti verso il basso */
     padding: 5px 10px; /* Migliora la dimensione cliccabile */
+}
+
+.infochart-panel {
+    padding: 0 !important;
 }

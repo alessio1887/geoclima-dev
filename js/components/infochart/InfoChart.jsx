@@ -345,7 +345,7 @@ class InfoChart extends React.Component {
         return null;
     }
     getHeader = () => {
-        return ( <span role="header" style={{ position: 'relative', zIndex: 1000 }}>
+        return ( <span role="header" style={{ position: 'relative', zIndex: 1000, padding: "10px" }}>
             <span>Pannello Grafici - Latitudine: {parseFloat(this.props.infoChartData.latlng.lat.toFixed(5))}, Longitudine: {parseFloat(this.props.infoChartData.latlng.lng.toFixed(5))}</span>
             <button onClick={() => this.closePanel()} className="layer-settings-metadata-panel-close close">{this.props.closeGlyph ? <Glyphicon glyph={this.props.closeGlyph}/> : <span>×</span>}</button>
         </span>
@@ -353,8 +353,8 @@ class InfoChart extends React.Component {
     }
     getPanelFormGroup = () => {
         return (
-            <Panel>
-                <Grid fluid style={{paddingTop: 2, paddingBottom: 2}}>
+            <Panel className="infochart-panel">
+                <Grid fluid style={{padding: 0}}>
                     <FormGroup>
                         <Label className="labels-infochart"><Message msgId="infochart.selectMeteoVariable"/></Label>
                         <SelectVariableTab
@@ -404,7 +404,7 @@ class InfoChart extends React.Component {
                     {this.props.alertMessage && (
                         <div className="alert-date" >
                             <strong><Message msgId="warning"/></strong>
-                            <span ><Message msgId={this.props.alertMessage} msgParams={{toData: moment(this.props.lastAvailableDate).format("DD-MM-YYYY")}}/></span>
+                            <span ><Message msgId={this.props.alertMessage} msgParams={{toData: moment(this.props.lastAvailableDate).format(DATE_FORMAT)}}/></span>
                         </div>
                     )}
                 </Grid>
@@ -412,6 +412,7 @@ class InfoChart extends React.Component {
         );
     }
     getBody = () => {
+        const rotateIcon = this.props.isCollapsedFormGroup ? 'rotate(180deg)' : 'rotate(0deg)';
         return (
             <Dialog maskLoading={this.props.maskLoading} id={this.props.id}
                 style={{
@@ -443,12 +444,13 @@ class InfoChart extends React.Component {
                             right: 17
                         }}>
                         <div style={{ display: "flex", flexDirection: "column",
-                            width: this.props.infoChartSize.widthResizable,  padding: '10px'}}>
-                            <div style={{ position: "relative", top: "-15px"}}>
-                                <Button onClick={this.props.onCollapseRangePicker}>
+                            width: this.props.infoChartSize.widthResizable,  padding: '5px'}}>
+                            <div style={{ position: "relative",  top: "-25px", marginBottom: "-15px"  }}>
+                                <Button onClick={this.props.onCollapseRangePicker} style={{ padding: "2px"}} >
                                     <Message msgId={this.props.isCollapsedFormGroup
                                         ? "gcapp.infochart.expand"
                                         : "gcapp.infochart.collapse"}  />
+                                    <span className="collapse-rangepicker-icon"  style={{ transform: rotateIcon }}>&#9650;</span>
                                 </Button>
                                 <Collapse in={!this.props.isCollapsedFormGroup}>
                                     {this.getPanelFormGroup()}

@@ -102,11 +102,11 @@ const createObservedAndClimatologicalTraces = (variable, dates, dataFetched, uni
 
 const createObservedAndClimaLayout = (variable, dates, climaAndObservedData, chartRelayout, infoChartSize, isCollapsedFormGroup) => ({
     width: infoChartSize.widthResizable - 10,
-    height: infoChartSize.heightResizable - (isCollapsedFormGroup ? 140 : 440),
+    height: infoChartSize.heightResizable - (isCollapsedFormGroup ? 140 : 420),
     title: variable.name,
     xaxis: {
         tickformat: '%Y-%m-%d',
-        tickangle: -45,
+        tickangle: -25,
         range: [chartRelayout?.startDate || Math.min(...dates), chartRelayout?.endDate || Math.max(...dates)],
         ticks: 'inside',
         ticklen: 5,
@@ -129,17 +129,17 @@ const createObservedAndClimaLayout = (variable, dates, climaAndObservedData, cha
     legend: {
         orientation: 'h',
         x: 0.5,
-        y: -0.2
+        y: -0.3
     },
     dragmode: chartRelayout?.dragmode
 });
 
 const createMultiLayout = (chartTitle, dates, chartRelayout, infoChartSize, isCollapsedFormGroup) => ({
     width: infoChartSize.widthResizable - 10,
-    height: infoChartSize.heightResizable - ( isCollapsedFormGroup ? 140 : 440 ), // Set the height based on the collapse state of the FormGroup
+    height: infoChartSize.heightResizable - ( isCollapsedFormGroup ? 140 : 420 ), // Set the height based on the collapse state of the FormGroup
     title: chartTitle,
     xaxis: {
-        tickangle: -45,
+        tickangle: -25,
         tickformat: '%Y-%m-%d',
         // range: [-0.05, dates.length - 0.95], // Aggiunge un piccolo spazio
         range: [chartRelayout?.startDate || Math.min(...dates), chartRelayout?.endDate || Math.max(...dates)],
@@ -159,7 +159,9 @@ const createMultiLayout = (chartTitle, dates, chartRelayout, infoChartSize, isCo
     },
     margin: chartMargin,
     showlegend: true,
-    legend: { x: 1, y: 0.5 },
+    hovermode: 'x unified',
+    legend: { orientation: 'h', x: 0.5,
+        y: -0.2 },
     autosize: true,
     dragmode: chartRelayout?.dragmode
 });
