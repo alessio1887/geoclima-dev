@@ -9,7 +9,7 @@ import React, { useState } from 'react';
 import { DateTimePicker } from 'react-widgets';
 import { Button, Glyphicon } from 'react-bootstrap';
 import Message from '../../../MapStore2/web/client/components/I18N/Message';
-import DateAPI from '../../utils/ManageDateUtils';
+import DateAPI, { DATE_FORMAT } from '../../utils/ManageDateUtils';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -36,7 +36,7 @@ const DailyManager = ({
         const newToData = moment(toData).add(1, 'days').toDate();
         onChangePeriodToData(newToData);
         updateParams({
-            fromData: moment(newToData).clone().subtract(1, 'day').toDate(),
+            fromData: moment(newToData).clone().subtract(1, 'month').toDate(),
             toData: newToData
         });
     };
@@ -45,7 +45,7 @@ const DailyManager = ({
         const newToData = moment(toData).subtract(1, 'days').toDate();
         onChangePeriodToData(newToData);
         updateParams({
-            fromData: moment(newToData).clone().subtract(1, 'day').toDate(),
+            fromData: moment(newToData).clone().subtract(1, 'month').toDate(),
             toData: newToData
         });
     };
@@ -63,7 +63,7 @@ const DailyManager = ({
         if (alertMessage !== null) {
             onCloseAlert();
         }
-        const fromData =  moment(toData).clone().subtract(1, 'day').toDate();
+        const fromData =  moment(toData).clone().subtract(1, 'month').toDate();
         updateParams({
             fromData: fromData,
             toData: toData
@@ -83,9 +83,9 @@ const DailyManager = ({
                     time={false}
                     min={minDate}
                     max={maxDate}
-                    format={"YYYY-MM-DD"}
-                    editFormat={"YYYY-MM-DD"}
-                    value={moment(toData, "YYYY-MM-DD").toDate()}
+                    format={DATE_FORMAT}
+                    editFormat={DATE_FORMAT}
+                    value={moment(toData, DATE_FORMAT).toDate()}
                     onChange={onChangePeriodToData}
                     disabled={isInteractionDisabled} />
                 <Button onClick={incrementDate} disabled={isIncrementDisabled}>
