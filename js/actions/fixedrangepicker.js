@@ -77,11 +77,12 @@ export function markFixedRangeAsNotLoaded() {
     };
 }
 
-export const checkFetchAvailableDatesFixedRange = (variableSelectDate, urlSelectDate) => {
+export const checkFetchAvailableDatesFixedRange = (variableSelectDate, urlSelectDate, timeUnit) => {
     return {
         type: FIXEDRANGE_CHECK_FETCH_SELECT_DATE,
         variableSelectDate,
-        urlSelectDate
+        urlSelectDate,
+        timeUnit
     };
 };
 

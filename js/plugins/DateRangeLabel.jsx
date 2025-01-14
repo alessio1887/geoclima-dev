@@ -22,7 +22,8 @@ class DateRangeLabel extends React.Component {
         style: PropTypes.object,
         id: PropTypes.string,
         fromData: PropTypes.instanceOf(Date),
-        toData: PropTypes.instanceOf(Date)
+        toData: PropTypes.instanceOf(Date),
+        timeUnit: PropTypes.string
     }
     static defaultProps = {
         id: "mapstore-daterangelabel",
@@ -30,14 +31,15 @@ class DateRangeLabel extends React.Component {
             position: "absolute",
             left: "53%",
             transform: "translateX(-50%)"
-        }
+        },
+        timeUnit: DATE_FORMAT
     };
     render() {
         return (
             <div className="daterangelabel" style={this.props.style}>
                 <div style={{ padding: "6px", textAlign: 'center' }}>
-                    <strong>Dal: <span>{moment(this.props.fromData).format(DATE_FORMAT)}</span> -
-                    al: <span>{moment(this.props.toData).format(DATE_FORMAT)}</span></strong>
+                    <strong>Dal: <span>{moment(this.props.fromData).format(this.props.timeUnit)}</span> -
+                    al: <span>{moment(this.props.toData).format(this.props.timeUnit)}</span></strong>
                 </div>
             </div>
         );

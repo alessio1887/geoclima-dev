@@ -11,7 +11,7 @@ import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-boots
 import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
 import { compose } from 'redux';
-import DateAPI, { DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO} from '../utils/ManageDateUtils';
+import DateAPI, { DATE_FORMAT, DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO} from '../utils/ManageDateUtils';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 import { connect } from 'react-redux';
 import assign from 'object-assign';
@@ -79,7 +79,8 @@ class FreeRangePicker extends React.Component {
         isInteractionDisabled: PropTypes.bool,
         shiftRight: PropTypes.bool,
         isPluginLoaded: PropTypes.bool,
-        showChangeRangePickerButton: PropTypes.bool
+        showChangeRangePickerButton: PropTypes.bool,
+        timeUnit: PropTypes.string
     };
     static defaultProps = {
         isCollapsedPlugin: false,
@@ -113,6 +114,7 @@ class FreeRangePicker extends React.Component {
         showChangeRangePickerButton: true,
         firstAvailableDate: DEFAULT_DATA_INIZIO,
         lastAvailableDate: DEFAULT_DATA_FINE,
+        timeUnit: DATE_FORMAT,
         isPluginLoaded: false
     };
 
@@ -169,6 +171,7 @@ class FreeRangePicker extends React.Component {
                     labelTitleId="gcapp.freeRangePicker.titlePeriod"
                     fromData={this.props.fromData}
                     toData={this.props.toData}
+                    format={this.props.timeUnit}
                 />
                 <FreeRangeManager
                     minDate={this.props.firstAvailableDate}
@@ -179,6 +182,7 @@ class FreeRangePicker extends React.Component {
                     onChangeToData={this.props.onChangeToData}
                     isInteractionDisabled={this.props.isInteractionDisabled}
                     styleLabels="labels-freerangepicker"
+                    format={this.props.timeUnit}
                 />
                 <ButtonGroup id="button-rangepicker-container">
                     <Button onClick={this.handleApplyPeriod}  disabled={this.props.isInteractionDisabled}>
@@ -233,8 +237,8 @@ class FreeRangePicker extends React.Component {
                 const newParams = {
                     params: {
                         map: mapFile,
-                        fromData: moment(datesParam.fromData).format('YYYY-MM-DD'),
-                        toData: moment(datesParam.toData).format('YYYY-MM-DD')
+                        fromData: moment(datesParam.fromData).format(this.props.timeUnit),
+                        toData: moment(datesParam.toData).format(this.props.timeUnit)
                     }
                 };
                 this.props.onUpdateSettings(newParams);

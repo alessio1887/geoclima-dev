@@ -9,6 +9,7 @@ import React from 'react';
 import { DateTimePicker } from 'react-widgets';
 import { Label } from 'react-bootstrap';
 import Message from '../../../MapStore2/web/client/components/I18N/Message';
+import { DATE_FORMAT } from '../../utils/ManageDateUtils';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -23,7 +24,8 @@ const FreeRangeManager = ({
     onChangeFromData,
     onChangeToData,
     isInteractionDisabled,
-    styleLabels
+    styleLabels,
+    format
 }) => {
     return (
         <div className="ms-freerangemanager-action">
@@ -32,12 +34,12 @@ const FreeRangeManager = ({
             </Label>
             <DateTimePicker
                 culture="it"
-                time={false}
+                time={ format === DATE_FORMAT ? false : true }
                 min={minDate}
                 max={maxDate}
-                format={"YYYY-MM-DD"}
-                editFormat={"YYYY-MM-DD"}
-                value={moment(fromData, "YYYY-MM-DD").toDate()}
+                format={format}
+                editFormat={format}
+                value={moment(fromData, format).toDate()}
                 onChange={onChangeFromData}
                 disabled={isInteractionDisabled}
             />
@@ -46,12 +48,12 @@ const FreeRangeManager = ({
             </Label>
             <DateTimePicker
                 culture="it"
-                time={false}
+                time={ format === DATE_FORMAT ? false : true }
                 min={minDate}
                 max={maxDate}
-                format={"YYYY-MM-DD"}
-                editFormat={"YYYY-MM-DD"}
-                value={moment(toData, "YYYY-MM-DD").toDate()}
+                format={format}
+                editFormat={format}
+                value={moment(toData, format).toDate()}
                 onChange={onChangeToData}
                 disabled={isInteractionDisabled}
             />

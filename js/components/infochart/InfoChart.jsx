@@ -85,6 +85,7 @@ class InfoChart extends React.Component {
         defaultUrlGeoclimaChart: PropTypes.string,
         defaultUrlSelectDate: PropTypes.string,
         variabileSelectDate: PropTypes.string,
+        timeUnit: PropTypes.string,
         isPluginLoaded: PropTypes.bool
     }
     static defaultProps = {
@@ -176,6 +177,7 @@ class InfoChart extends React.Component {
         },
         firstAvailableDate: DEFAULT_DATA_INIZIO,
         lastAvailableDate: DEFAULT_DATA_FINE,
+        timeUnit: DATE_FORMAT,
         isPluginLoaded: false
     }
 
@@ -376,7 +378,7 @@ class InfoChart extends React.Component {
                                 onChangePeriod={this.handleChangePeriod}
                                 isInteractionDisabled={false}
                                 styleLabels="labels-infochart"
-                                format={DATE_FORMAT}
+                                format={this.props.timeUnit}
                             />
                         ) : (
                             <FreeRangeManager
@@ -388,6 +390,7 @@ class InfoChart extends React.Component {
                                 onChangeToData={this.props.onChangeToData}
                                 isInteractionDisabled={false}
                                 styleLabels="labels-infochart"
+                                format={this.props.timeUnit}
                             />
                         )}
                         <ButtonGroup className="button-group-wrapper">

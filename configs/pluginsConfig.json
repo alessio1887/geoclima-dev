@@ -659,6 +659,7 @@
               "spi": [ "spi1", "spi3", "spi6", "spi12"],
               "spei":[ "spei1", "spei3", "spei6", "spei12"]
         },
+        "timeUnit": "YYYY-MM-DD",
         "showOneDatePicker": false
       }
     },
@@ -677,7 +678,8 @@
                   "BilancioIdricoSemplificato_clima"],
           "spi": [ "spi1", "spi3", "spi6", "spi12"],
           "spei":[ "spei1", "spei3", "spei6", "spei12"]
-        }
+        },
+        "timeUnit": "YYYY-MM-DD"
       }
     },
     {
@@ -693,7 +695,8 @@
                   "BilancioIdricoSemplificato_clima"],
           "spi": [ "spi1", "spi3", "spi6", "spi12"],
           "spei":[ "spei1", "spei3", "spei6", "spei12"]
-        }
+        },
+        "timeUnit": "YYYY-MM-DD"
       }
     }, {
       "name": "InfoChart",
@@ -769,6 +772,7 @@
             "spei6": ["spei6"],
             "spei12": ["spei12"]
           },
+          "timeUnit": "YYYY-MM-DD",
           "unitPrecipitazione": "mm",
           "unitTemperatura": "°C"
       },

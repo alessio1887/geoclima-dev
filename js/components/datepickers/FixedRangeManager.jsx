@@ -9,6 +9,7 @@ import React from 'react';
 import { DateTimePicker, DropdownList } from 'react-widgets';
 import { Label } from 'react-bootstrap';
 import Message from '../../../MapStore2/web/client/components/I18N/Message';
+import { DATE_FORMAT } from '../../utils/ManageDateUtils';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -21,7 +22,7 @@ const FixedRangeManager = (props) => {
             <Label className={props.styleLabels}><Message msgId="gcapp.fixedRangePicker.selectDateHidrologicYear" /></Label>
             <DateTimePicker
                 culture="it"
-                time={false}
+                time={ props.format === DATE_FORMAT ? false : true}
                 min={props.minDate}
                 max={props.maxDate}
                 format={props.format}

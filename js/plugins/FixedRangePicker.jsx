@@ -92,7 +92,8 @@ class FixedRangePicker extends React.Component {
         shiftRight: PropTypes.bool,
         showOneDatePicker: PropTypes.bool,
         showChangeRangePickerButton: PropTypes.bool,
-        isPluginLoaded: PropTypes.bool
+        isPluginLoaded: PropTypes.bool,
+        timeUnit: PropTypes.string
     };
     static defaultProps = {
         isCollapsedPlugin: true,
@@ -137,7 +138,8 @@ class FixedRangePicker extends React.Component {
         showChangeRangePickerButton: false,
         firstAvailableDate: DEFAULT_DATA_INIZIO,
         lastAvailableDate: DEFAULT_DATA_FINE,
-        isPluginLoaded: false
+        isPluginLoaded: false,
+        timeUnit: DATE_FORMAT
     };
 
     state = {
@@ -149,7 +151,7 @@ class FixedRangePicker extends React.Component {
     componentDidMount() {
         this.props.onToggleFixedRangePicker();
         this.props.onMarkPluginAsLoaded();
-        this.props.onCheckLaunchSelectDateQuery(this.props.variabileSelectDate, this.props.defaultUrlSelectDate);
+        this.props.onCheckLaunchSelectDateQuery(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, this.props.timeUnit);
     }
 
     // Resets the plugin's state to default values when navigating back to the Home Page
@@ -194,7 +196,7 @@ class FixedRangePicker extends React.Component {
                             <div className="alert-date" >
                                 <strong><Message msgId="warning"/></strong>
                                 <span ><Message msgId={this.props.alertMessage}
-                                    msgParams={{toData: moment(this.props.lastAvailableDate).format(DATE_FORMAT)}}/>
+                                    msgParams={{toData: moment(this.props.lastAvailableDate).format(this.props.timeUnit)}}/>
                                 </span>
                             </div>
                         )}
@@ -210,6 +212,7 @@ class FixedRangePicker extends React.Component {
                     labelTitleId="gcapp.fixedRangePicker.titlePeriod"
                     fromData={this.props.fromData}
                     toData={this.props.toData}
+                    format={this.props.timeUnit}
                 />
                 <FixedRangeManager
                     minDate={this.props.firstAvailableDate}
@@ -219,7 +222,7 @@ class FixedRangePicker extends React.Component {
                     isInteractionDisabled={this.props.isInteractionDisabled}
                     periodType={this.props.periodType}
                     periodTypes={this.props.periodTypes}
-                    format={DATE_FORMAT}
+                    format={this.props.timeUnit}
                     onChangePeriod={this.handleChangePeriod}
                     styleLabels="labels-fixedrangepicker"
                 />
@@ -299,8 +302,8 @@ class FixedRangePicker extends React.Component {
                 const newParams = {
                     params: {
                         map: mapFile,
-                        fromData: moment(datesParam.fromData).format(DATE_FORMAT),
-                        toData: moment(datesParam.toData).format(DATE_FORMAT)
+                        fromData: moment(datesParam.fromData).format(this.props.timeUnit),
+                        toData: moment(datesParam.toData).format(this.props.timeUnit)
                     }
                 };
                 this.props.onUpdateSettings(newParams);

@@ -163,7 +163,7 @@ const checkFetchAvailableDatesFixedRange = (action$, store) =>
         .switchMap((action) => {
             const appState = store.getState();
             if (!appState.freerangepicker?.isPluginLoaded && !appState.infochart?.isPluginLoaded) {
-                return Observable.of(fetchSelectDate(action.variableSelectDate, action.urlSelectDate, "FixedRangePlugin"));
+                return Observable.of(fetchSelectDate(action.variableSelectDate, action.urlSelectDate, "FixedRangePlugin", action.timeUnit));
             }
             return Observable.empty();
         });
