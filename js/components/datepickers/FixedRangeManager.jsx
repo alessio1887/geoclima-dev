@@ -19,6 +19,16 @@ import './rangemanager.css';
 const FixedRangeManager = (props) => {
     return (
         <div className="ms-fixedrangemanager-action">
+            <Label className={props.styleLabels}><Message msgId="gcapp.fixedRangePicker.selectCumulativePeriod" /></Label>
+            <DropdownList
+                id="period1"
+                key={props.periodType}
+                data={props.periodTypes}
+                valueField="key"
+                textField="label"
+                value={props.periodType}
+                onChange={props.onChangePeriod}
+                disabled={props.isInteractionDisabled} />
             <Label className={props.styleLabels}><Message msgId="gcapp.fixedRangePicker.selectDateHidrologicYear" /></Label>
             <DateTimePicker
                 culture="it"
@@ -29,16 +39,6 @@ const FixedRangeManager = (props) => {
                 editFormat={props.format}
                 value={moment(props.toData, props.format).toDate()}
                 onChange={props.onChangeToData}
-                disabled={props.isInteractionDisabled} />
-            <Label className={props.styleLabels}><Message msgId="gcapp.fixedRangePicker.selectCumulativePeriod" /></Label>
-            <DropdownList
-                id="period1"
-                key={props.periodType}
-                data={props.periodTypes}
-                valueField="key"
-                textField="label"
-                value={props.periodType}
-                onChange={props.onChangePeriod}
                 disabled={props.isInteractionDisabled} />
         </div>
     );

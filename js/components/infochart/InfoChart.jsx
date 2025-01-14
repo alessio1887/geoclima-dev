@@ -501,15 +501,12 @@ class InfoChart extends React.Component {
             return;
         }
         // Set fromData, toData, periodKey and variabile meteo
-        toData = moment(this.props.toData).clone().format(DATE_FORMAT);
         if ( this.props.activeRangeManager === FIXED_RANGE) {
             fromData = DateAPI.calculateDateFromKeyReal( periodApplied, toData).fromData;
         } else {
-            fromData = moment(this.props.fromData).clone().format(DATE_FORMAT);
             // set default period
             periodApplied = this.props.periodTypes[0]?.key;
         }
-
         const variableIds = selectedVariables ? selectedVariables.map(variable => variable.id).join(',')
             : this.getActiveTab().variables.map(variable => variable.id).join(',');
         const idTab = tabVariable || this.getActiveTab().id;
@@ -527,8 +524,8 @@ class InfoChart extends React.Component {
         // Ensure dates are in 'YYYY-MM-DD' format before making the fetch call
         this.props.onFetchInfoChartData({
             latlng: this.props.infoChartData.latlng,
-            toData: toData,
-            fromData: fromData,
+            toData: moment(toData).clone().format(this.props.timeUnit),
+            fromData: moment(fromData).clone().format(this.props.timeUnit),
             variables: variableIds,
             periodType: periodApplied,
             idTab: idTab
