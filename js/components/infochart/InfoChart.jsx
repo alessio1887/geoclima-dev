@@ -200,6 +200,7 @@ class InfoChart extends React.Component {
         if (!this.props.isPluginLoaded) {
             this.props.onSetIdVariabiliLayers(this.props.idVariabiliLayers);
             this.props.onSetTabList(this.props.tabList);
+            this.props.onSetTimeUnit(this.props.timeUnit);
             this.initializeTabs();
             this.props.onSetDefaultUrlGeoclimaChart(this.props.defaultUrlGeoclimaChart);
             this.props.onCheckFetchAvailableDates(this.props.variabileSelectDate, this.props.defaultUrlSelectDate);

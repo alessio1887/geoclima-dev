@@ -10,8 +10,8 @@ import {CHARTVARIABLE_CHANGED, TAB_CHANGED, TODATA_FIXEDRANGE_CHANGED, FROMDATA_
     TODATA_CHANGED, CHART_PERIOD_CHANGED, SET_INFOCHART_VISIBILITY, FETCH_INFOCHART_DATA,
     FETCHED_INFOCHART_DATA, COLLAPSE_RANGE_PICKER,  OPEN_ALERT, CLOSE_ALERT, SET_CHART_RELAYOUT, RESET_CHART_RELAYOUT, RESIZE_INFOCHART,
     SET_RANGE_MANAGER, SET_IDVARIABILI_LAYERS, SET_DEFAULT_URL, SET_DEFAULT_DATES, INITIALIZE_TABS,
-    PLUGIN_LOADED, PLUGIN_NOT_LOADED, SET_TABLIST } from '../actions/infochart';
-import DateAPI, { DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO, PERIOD_TYPES } from '../utils/ManageDateUtils';
+    PLUGIN_LOADED, PLUGIN_NOT_LOADED, SET_TABLIST, SET_TIMEUNIT } from '../actions/infochart';
+import DateAPI, { DATE_FORMAT, DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO, PERIOD_TYPES } from '../utils/ManageDateUtils';
 import assign from 'object-assign';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
@@ -46,6 +46,7 @@ const infoChartDefaultState = {
     },
     firstAvailableDate: DEFAULT_DATA_INIZIO,
     lastAvailableDate: DEFAULT_DATA_FINE,
+    // timeUnit: DATE_FORMAT,
     tabVariables: [
         {
             id: "variableList",
@@ -188,6 +189,11 @@ function infochart(state = infoChartDefaultState, action) {
             ...state,
             firstAvailableDate: action.dataInizio,
             lastAvailableDate: action.dataFine
+        };
+    case SET_TIMEUNIT:
+        return {
+            ...state,
+            timeUnit: action.timeUnit
         };
     case SET_DEFAULT_DATES:
         const newToData = action.toData || moment().subtract(1, 'day').startOf('day').toDate();

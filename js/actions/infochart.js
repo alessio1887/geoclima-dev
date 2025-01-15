@@ -30,6 +30,7 @@ export const CHECK_FETCH_AVAILABLE_DATES = 'INFOCHART:CHECK_FETCH_AVAILABLE_DATE
 export const PLUGIN_LOADED = 'INFOCHART:PLUGIN_LOADED';
 export const PLUGIN_NOT_LOADED = 'INFOCHART:PLUGIN_NOT_LOADED';
 export const TAB_CHANGED = 'INFOCHART:TAB_CHANGED';
+export const SET_TIMEUNIT = 'INOFCHART:SET_TIMEUNIT';
 
 export function changeChartVariable(idTab, variables) {
     return {
@@ -238,5 +239,12 @@ export function initializeVariableTabs(tabVariables) {
     return {
         type: INITIALIZE_TABS,
         tabVariables
+    };
+}
+
+export function setTimeUnit(timeUnit) {
+    return {
+        type: SET_TIMEUNIT,
+        timeUnit
     };
 }

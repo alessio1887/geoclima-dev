@@ -303,7 +303,7 @@ const clickedPointCheckEpic = (action$, store) =>
             const appState = store.getState();
             if (appState.controls?.chartinfo?.enabled) {
                 const idVariabiliLayers = appState.infochart.idVariabiliLayers;
-
+                const timeUnit = appState.infochart.timeUnit;
                 const rangeManager = appState.fixedrangepicker?.showFixedRangePicker ? FIXED_RANGE : FREE_RANGE;
                 const { variable, fromData, toData, periodType, idTab } = getChartVariables(
                     appState,
@@ -324,8 +324,8 @@ const clickedPointCheckEpic = (action$, store) =>
                 actions.push(setInfoChartVisibility(true));
                 actions.push(fetchInfoChartData({
                     latlng: action.point.latlng,
-                    toData: moment(toData).format('YYYY-MM-DD'),
-                    fromData: moment(fromData).format('YYYY-MM-DD'),
+                    toData: moment(toData).format(timeUnit),
+                    fromData: moment(fromData).format(timeUnit),
                     variables: variable,
                     periodType: periodType,
                     idTab: idTab

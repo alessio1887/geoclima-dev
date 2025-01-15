@@ -712,16 +712,6 @@
               { "key": "12", "label": "12 Mesi" },
               { "key": "10", "label": "dal 1° Ottobre" }
           ],
-          "variabiliMeteo": {
-            "precipitazione": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima","Pioggia_Cumulata_Giornaliera"],
-            "temperatura": ["Temperatura_Media", "Temperatura_Media_Anomalia", "Temperatura_Minima", "Temperatura_Minima_Anomalia",
-                    "Temperatura_Massima", "Temperatura_Massima_Anomalia", "Temperatura_Media_clima", "Temperatura_Massima_clima", "Temperatura_Minima_clima"],
-            "evapotraspirazione": ["Evapotraspirazione", "Evapotraspirazione_Anomalia_mm", "Evapotraspirazione_Anomalia_perc", "Evapotraspirazione_clima"],
-            "bilancioIdricoSemplificato": ["BilancioIdricoSemplificato", "BilancioIdricoSemplificato_Anomalia_mm", "BilancioIdricoSemplificato_Anomalia_perc",
-                    "BilancioIdricoSemplificato_clima"],
-            "spi": [ "spi1", "spi3", "spi6", "spi12"],
-            "spei":[ "spei1", "spei3", "spei6", "spei12"]
-          },
           "tabList": [
             {"id": "variableList", "name": "Variabili Meteo", "groupList": [
                                                                   { "id": "prec", "name": "Precipitazione", "unit": "mm", "yaxis": "Valore (mm)" },

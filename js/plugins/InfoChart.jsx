@@ -11,7 +11,7 @@ import { compose } from 'redux';
 import {setInfoChartVisibility, changeFixedRangeToData, fetchInfoChartData, fetchedInfoChartData, toggleInfoChart,
     changeChartVariable, changePeriod, changeFromData, changeToData, setDefaultDates, collapseRangePicker,
     openAlert, closeAlert, setChartRelayout, resetChartRelayout, resizeInfoChart, setIdVariabiliLayers,
-    setRangeManager, setDefaultUrlGeoclimaChart, checkLaunchSelectDateQuery,
+    setRangeManager, setDefaultUrlGeoclimaChart, checkLaunchSelectDateQuery, setTimeUnit,
     markInfoChartAsLoaded, changeTab, setTabList, initializeVariableTabs } from '../actions/infochart';
 import InfoChartButton from '../components/buttons/InfoChartButton';
 import InfoChart from '../components/infochart/InfoChart';
@@ -156,6 +156,7 @@ const InfoChartPanel = connect((state) => ({
     isPluginLoaded: state?.infochart?.isPluginLoaded
 }), {
     onSetInfoChartVisibility: setInfoChartVisibility,
+    onSetTimeUnit: setTimeUnit,
     onFetchInfoChartData: fetchInfoChartData,
     onFetchedInfoChartData: fetchedInfoChartData,
     onChangeChartVariable: changeChartVariable,
