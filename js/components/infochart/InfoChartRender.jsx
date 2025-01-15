@@ -8,6 +8,7 @@
 
 import React from 'react';
 import Plot from '@mapstore/components/charts/PlotlyChart.jsx';
+import { DATE_FORMAT } from '../../utils/ManageDateUtils';
 import { fillAreas, formatDataCum, formatDataTemp, MULTI_VARIABLE_CHART }  from '../../utils/VariabiliMeteoUtils';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
@@ -17,7 +18,6 @@ const ST_VALUE = "st_value_";
 const colors = ['green', 'black', 'teal', 'gray'];
 const MIN_Y_INDEX = -3.0;
 const MAX_Y_INDEX = 3.0;
-const chartMargin = { t: 40, r: 60, l: 60, b: 60};
 
 const createBackgroundBands = (dates) => {
     const bands = [
@@ -99,14 +99,14 @@ const createObservedAndClimatologicalTraces = (variable, dates, dataFetched, uni
 
     return [trace1, trace2].concat(fillTraces);
 };
-
-const createObservedAndClimaLayout = (variable, dates, climaAndObservedData, chartRelayout, infoChartSize, isCollapsedFormGroup) => ({
+/*
+const createObservedAndClimaLayout = (variable, dates, format, climaAndObservedData, chartRelayout, infoChartSize, isCollapsedFormGroup) => ({
     width: infoChartSize.widthResizable - 10,
     height: infoChartSize.heightResizable - (isCollapsedFormGroup ? 140 : 420),
     title: variable.name,
     xaxis: {
-        tickformat: '%Y-%m-%d',
-        tickangle: -25,
+        tickformat: format !== DATE_FORMAT ? '%Y-%m-%d %H:%M:%S' : '%Y-%m-%d',
+        tickangle: -20,
         range: [chartRelayout?.startDate || Math.min(...dates), chartRelayout?.endDate || Math.max(...dates)],
         ticks: 'inside',
         ticklen: 5,
@@ -126,21 +126,18 @@ const createObservedAndClimaLayout = (variable, dates, climaAndObservedData, cha
     margin: chartMargin,
     showlegend: true,
     hovermode: 'x unified',
-    legend: {
-        orientation: 'h',
-        x: 0.5,
-        y: -0.3
-    },
+    legend: { orientation: 'h', x: 0.5,
+        y: 1.1 },
     dragmode: chartRelayout?.dragmode
 });
 
-const createMultiLayout = (chartTitle, dates, chartRelayout, infoChartSize, isCollapsedFormGroup) => ({
+const createMultiLayout = (chartTitle, dates, format, chartRelayout, infoChartSize, isCollapsedFormGroup) => ({
     width: infoChartSize.widthResizable - 10,
     height: infoChartSize.heightResizable - ( isCollapsedFormGroup ? 140 : 420 ), // Set the height based on the collapse state of the FormGroup
     title: chartTitle,
     xaxis: {
-        tickangle: -25,
-        tickformat: '%Y-%m-%d',
+        tickangle: -20,
+        tickformat: format !== DATE_FORMAT ? '%Y-%m-%d %H:%M:%S' : '%Y-%m-%d',
         // range: [-0.05, dates.length - 0.95], // Aggiunge un piccolo spazio
         range: [chartRelayout?.startDate || Math.min(...dates), chartRelayout?.endDate || Math.max(...dates)],
         ticks: 'inside',
@@ -161,13 +158,54 @@ const createMultiLayout = (chartTitle, dates, chartRelayout, infoChartSize, isCo
     showlegend: true,
     hovermode: 'x unified',
     legend: { orientation: 'h', x: 0.5,
-        y: -0.2 },
+        y: 1 },
     autosize: true,
     dragmode: chartRelayout?.dragmode
 });
+*/
+const createLayout = (variable, chartTitle,  dates, format, dataTraces, chartRelayout, infoChartSize, isCollapsedFormGroup, chartType) => {
+    const isMultiVariable = chartType === MULTI_VARIABLE_CHART;
+    const yaxisRange = isMultiVariable
+        ? [chartRelayout?.variabileStart || MIN_Y_INDEX, chartRelayout?.variabileEnd || MAX_Y_INDEX]
+        : [chartRelayout?.variabileStart || Math.min([dataTraces[0], dataTraces[1]]), chartRelayout?.variabileEnd || Math.max([dataTraces[0], dataTraces[1]])];
+
+    return {
+        width: infoChartSize.widthResizable - 10,
+        height: infoChartSize.heightResizable - (isCollapsedFormGroup ? 140 : 400),
+        title: chartTitle,
+        xaxis: {
+            tickformat: format !== DATE_FORMAT ? '%Y-%m-%d %H:%M:%S' : '%Y-%m-%d',
+            tickangle: -20,
+            range: [chartRelayout?.startDate || Math.min(...dates), chartRelayout?.endDate || Math.max(...dates)],
+            ticks: 'inside',
+            ticklen: 5,
+            tickwidth: 1,
+            tickcolor: '#000'
+        },
+        yaxis: {
+            range: yaxisRange,
+            ...(isMultiVariable && { // Aggiunge tickvals solo per multi-variable
+                tickvals: [MIN_Y_INDEX, -2, -1.5, -0.5, 0.5, 1.0, 1.5, 2.0, MAX_Y_INDEX]
+            }),
+            ...(!isMultiVariable && { // Aggiunge il title solo se non e multi-variable
+                title: variable.yaxis
+            }),
+            tickformat: '.1f',
+            ticks: 'inside',
+            ticklen: 5,
+            tickwidth: 1,
+            tickcolor: '#000'
+        },
+        margin: { t: 80, r: 40, l: 60, b: (format === DATE_FORMAT ? 40 : 60 )},
+        showlegend: true,
+        hovermode: 'x unified',
+        legend: { orientation: 'h', x: 0.5, y: 1.1 },
+        dragmode: chartRelayout?.dragmode
+    };
+};
 
 const InfoChartRender = ({ dataFetched, variables, variableParams, handleRelayout,
-    chartRelayout, infoChartSize, isCollapsedFormGroup, unitPrecipitazione }) => {
+    chartRelayout, infoChartSize, isCollapsedFormGroup, unitPrecipitazione, format }) => {
 
     // Formattare i dati
     const dates = dataFetched.map(item => moment(item.data).clone().startOf('day').toDate());
@@ -175,11 +213,12 @@ const InfoChartRender = ({ dataFetched, variables, variableParams, handleRelayou
         : createObservedAndClimatologicalTraces(variables, dates, dataFetched, unitPrecipitazione);
 
     const traces = variableParams.type === MULTI_VARIABLE_CHART ? createBackgroundBands(dates).concat(dataTraces) : dataTraces;
+    const chartTitle = variableParams.type === MULTI_VARIABLE_CHART ? variableParams.chartTitle : variables[0].name;
 
     // Configurazione del layout
-    const layout = variableParams.type === MULTI_VARIABLE_CHART ? createMultiLayout(variableParams.chartTitle, dates, chartRelayout, infoChartSize, isCollapsedFormGroup)
-        : createObservedAndClimaLayout(variables[0], dates, [dataTraces[0], dataTraces[1]], chartRelayout, infoChartSize, isCollapsedFormGroup, unitPrecipitazione);
-
+    // const layout = variableParams.type === MULTI_VARIABLE_CHART ? createMultiLayout(variableParams.chartTitle, dates, format, chartRelayout, infoChartSize, isCollapsedFormGroup)
+    //     : createObservedAndClimaLayout(variables[0], dates, format, [dataTraces[0], dataTraces[1]], chartRelayout, infoChartSize, isCollapsedFormGroup, unitPrecipitazione);
+    const layout = createLayout(variables[0], chartTitle, dates, format, dataTraces,  chartRelayout, infoChartSize, isCollapsedFormGroup, variableParams.type);
     return (
         <Plot
             data={traces}

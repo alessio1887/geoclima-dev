@@ -266,12 +266,13 @@ class InfoChart extends React.Component {
             return (<InfoChartRender
                 dataFetched = {this.props.data}
                 variables =  { variableParams.variables }
-                handleRelayout={this.handleRelayout}
-                chartRelayout={this.props.chartRelayout}
-                infoChartSize={this.props.infoChartSize}
+                handleRelayout= { this.handleRelayout }
+                chartRelayout= { this.props.chartRelayout}
+                infoChartSize={ this.props.infoChartSize}
                 isCollapsedFormGroup={this.props.isCollapsedFormGroup}
                 variableParams={ variableParams }
                 unitPrecipitazione = { this.props.unitPrecipitazione }
+                format={ this.props.timeUnit }
             />);
             // const PREC = this.props.variablePrecipitazione;
             // const RET = this.props.variableEvotrasporazione;

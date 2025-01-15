@@ -9,6 +9,7 @@
 export const UPDATE_RANGE_LABEL = 'UPDATE_RANGE_LABEL';
 export const NOT_FOUND_LAYER = 'NOT_FOUND_LAYER';
 export const LAYER_DATE_MISSING = 'LAYER_DATE_MISSING';
+export const SET_VARIABILIMETEO = 'RANGE_LABEL:SET_VARIABILIMETEO';
 
 export function updateRangeLabelDates(layerId, fromData, toData) {
     return {
@@ -33,3 +34,9 @@ export function errorLayerNotFound(layerId) {
     };
 }
 
+export function setVariabiliMeteo(variabiliMeteo) {
+    return {
+        type: SET_VARIABILIMETEO,
+        variabiliMeteo
+    };
+}

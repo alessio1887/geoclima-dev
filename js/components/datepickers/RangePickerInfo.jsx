@@ -8,6 +8,7 @@
 import React from 'react';
 import { Label } from 'react-bootstrap';
 import Message from '../../../MapStore2/web/client/components/I18N/Message';
+import { DATE_FORMAT } from '../../utils/ManageDateUtils';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -21,7 +22,7 @@ const RangePickerInfo = ({ fromData, toData, labelTitleId, format }) => (
         </Label>
         <div style={{ padding: "6px", textAlign: 'center' }}>
             Dal: <span id="from-data-statistics">{moment(fromData).format(format)}</span>
-            <br />
+            {format !== DATE_FORMAT && <br />}
             - al: <span id="to-data-statistics">{moment(toData).format(format)}</span>
         </div>
     </div>

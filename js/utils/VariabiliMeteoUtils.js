@@ -15,7 +15,6 @@ export const SINGLE_VARIABLE_CHART = "single_variable";
 export const MULTI_VARIABLE_CHART = "multi_variable";
 
 export function isVariabiliMeteoLayer(layerName, variabiliMeteo) {
-    // const VARIABILI_METEO = ConfigUtils.getConfigProp('variabiliMeteo');
     let check = false;
     // Check undefined\null
     if (!variabiliMeteo) {

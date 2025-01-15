@@ -28,7 +28,6 @@ import { CLICK_ON_MAP } from '../../MapStore2/web/client/actions/map';
 import { LOADING } from '@mapstore/actions/maps';
 import API from '../api/GeoClimaApi';
 import { FIXED_RANGE, FREE_RANGE, isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
-import defaultConfig from '../../configs/pluginsConfig.json';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -74,10 +73,9 @@ const getVisibleGroups = (groupMS2List = []) => {
         .flatMap(group => group.nodes);
 };
 
-const getVisibleLayers = (layers) => {
-    const infoChartConfig = defaultConfig.plugins.find(plugin => plugin.name === "InfoChart");
+const getVisibleLayers = (layers, idVariabiliLayers) => {
     return layers
-        .filter(layer => layer.visibility && isVariabiliMeteoLayer(layer.name, infoChartConfig?.defaultConfig?.variabiliMeteo));
+        .filter(layer => layer.visibility && isVariabiliMeteoLayer(layer.name, idVariabiliLayers));
 };
 
 // Function to get default values
@@ -225,7 +223,7 @@ const getChartVariables = (appState, rangeManager, idVariabiliLayers) => {
         return getInfoChartValues(appState, rangeManager);
     }
     // If there is a visible layer, use the layer's values
-    const visibleLayer = getFirstVisibleLayer(getVisibleLayers(appState.layers.flat), getVisibleGroups(appState.layers.groups));
+    const visibleLayer = getFirstVisibleLayer(getVisibleLayers(appState.layers.flat, idVariabiliLayers), getVisibleGroups(appState.layers.groups));
     if (visibleLayer) {
         return getVisibleLayerValues(visibleLayer, appState);
     }

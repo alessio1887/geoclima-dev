@@ -9,19 +9,18 @@ import { Observable } from 'rxjs';
 import { LAYER_LOAD } from '@mapstore/actions/layers';
 import { updateRangeLabelDates, errorLayerNotFound, errorLayerDateMissing } from '../actions/daterangelabel';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
-import defaultConfig from '../../configs/pluginsConfig.json';
 
 const updateDateLabelEpic = (action$, store) =>
     action$.ofType(LAYER_LOAD)
         .mergeMap(({layerId}) => {
             const currentState = store.getState();
             const layers = currentState.layers?.flat || [];
+            const variabiliMeteo = currentState.daterangelabel.variabiliMeteo;
             const activeLayer = layers.find(layer => layer.id === layerId);
             if (!activeLayer) {
                 return Observable.of(errorLayerNotFound(layerId));
             }
-            const dateRangeLabelConfig = defaultConfig.plugins.find(plugin => plugin.name === "DateRangeLabel");
-            if (!isVariabiliMeteoLayer(activeLayer?.name, dateRangeLabelConfig.defaultConfig?.variabiliMeteo)) {
+            if (!isVariabiliMeteoLayer(activeLayer?.name, variabiliMeteo)) {
                 // do nothing
                 return Observable.empty();
             }
