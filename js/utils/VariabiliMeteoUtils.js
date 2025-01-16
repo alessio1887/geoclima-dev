@@ -30,6 +30,11 @@ export function isVariabiliMeteoLayer(layerName, variabiliMeteo) {
     }
     return check;
 }
+
+export const getVisibleLayers = (layers, idVariabiliLayers) => {
+    return layers
+        .filter(layer => layer.visibility && isVariabiliMeteoLayer(layer.name, idVariabiliLayers));
+};
 //  Function to calculate the intersection between two line segments
 function getIntersection(x1, y1, x2, y2, clim_y1, clim_y2) {
     // Calculate slopes

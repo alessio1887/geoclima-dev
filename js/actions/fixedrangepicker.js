@@ -34,9 +34,11 @@ export function changePeriod(periodType) {
     };
 }
 
-export function toggleRangePickerPlugin() {
+export function toggleRangePickerPlugin(layerParams, source) {
     return {
-        type: TOGGLE_PLUGIN
+        type: TOGGLE_PLUGIN,
+        layerParams,
+        source
     };
 }
 

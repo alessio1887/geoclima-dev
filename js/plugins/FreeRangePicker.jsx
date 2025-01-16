@@ -12,7 +12,7 @@ import Message from '../../MapStore2/web/client/components/I18N/Message';
 import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
 import { compose } from 'redux';
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO} from '../utils/ManageDateUtils';
-import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
+import { FREE_RANGE, isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 import { connect } from 'react-redux';
 import assign from 'object-assign';
 import moment from 'moment';
@@ -189,7 +189,7 @@ class FreeRangePicker extends React.Component {
                         <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton"/>
                     </Button>
                     { this.props.showChangeRangePickerButton && (
-                        <Button variant="primary" onClick={this.props.onToggleFreeRangePicker} disabled={this.props.isInteractionDisabled}>
+                        <Button variant="primary" onClick={() => this.props.onToggleFreeRangePicker(this.props.variabiliMeteo, FREE_RANGE)} disabled={this.props.isInteractionDisabled}>
                             <Message msgId="gcapp.freeRangePicker.dateRangeButton"/>
                         </Button>
                     )}

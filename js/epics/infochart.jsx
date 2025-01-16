@@ -27,7 +27,7 @@ import { fetchSelectDate } from '../actions/updateDatesParams';
 import { CLICK_ON_MAP } from '../../MapStore2/web/client/actions/map';
 import { LOADING } from '@mapstore/actions/maps';
 import API from '../api/GeoClimaApi';
-import { FIXED_RANGE, FREE_RANGE, isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
+import { FIXED_RANGE, FREE_RANGE, getVisibleLayers } from '../utils/VariabiliMeteoUtils';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -71,11 +71,6 @@ const getVisibleGroups = (groupMS2List = []) => {
     return groupMS2List
         .filter(group => group.visibility)
         .flatMap(group => group.nodes);
-};
-
-const getVisibleLayers = (layers, idVariabiliLayers) => {
-    return layers
-        .filter(layer => layer.visibility && isVariabiliMeteoLayer(layer.name, idVariabiliLayers));
 };
 
 // Function to get default values

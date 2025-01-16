@@ -14,7 +14,7 @@ import { compose } from 'redux';
 import { changePeriodToData, changePeriod, toggleRangePickerPlugin, openAlert,
     closeAlert, collapsePlugin, markFixedRangeAsLoaded, markFixedRangeAsNotLoaded,
     checkFetchAvailableDatesFixedRange } from '../actions/fixedrangepicker';
-import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
+import { FIXED_RANGE, isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../utils/ManageDateUtils';
 import { connect } from 'react-redux';
 import assign from 'object-assign';
@@ -231,7 +231,7 @@ class FixedRangePicker extends React.Component {
                         <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton" />
                     </Button>
                     { this.props.showChangeRangePickerButton && (
-                        <Button onClick={this.props.onToggleFixedRangePicker} disabled={this.props.isInteractionDisabled}>
+                        <Button onClick={() => this.props.onToggleFixedRangePicker(this.props.variabiliMeteo, FIXED_RANGE)} disabled={this.props.isInteractionDisabled}>
                             <Message msgId="gcapp.fixedRangePicker.dateRangeButton" />
                         </Button>
                     )}

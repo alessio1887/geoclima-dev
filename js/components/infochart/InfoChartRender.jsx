@@ -172,7 +172,11 @@ const createLayout = (variable, chartTitle,  dates, format, dataTraces, chartRel
     return {
         width: infoChartSize.widthResizable - 10,
         height: infoChartSize.heightResizable - (isCollapsedFormGroup ? 140 : 400),
-        title: chartTitle,
+        title: {
+            text: chartTitle,
+            x: 0.05, // Posiziona il titolo a sinistra
+            xanchor: 'left' // Ancora il titolo a sinistra
+        },
         xaxis: {
             tickformat: format !== DATE_FORMAT ? '%Y-%m-%d %H:%M:%S' : '%Y-%m-%d',
             tickangle: -20,
@@ -199,7 +203,7 @@ const createLayout = (variable, chartTitle,  dates, format, dataTraces, chartRel
         margin: { t: 80, r: 40, l: 60, b: (format === DATE_FORMAT ? 40 : 60 )},
         showlegend: true,
         hovermode: 'x unified',
-        legend: { orientation: 'h', x: 0.5, y: 1.1 },
+        legend: { orientation: 'h', x: 0.5, y: 1.05 },
         dragmode: chartRelayout?.dragmode
     };
 };

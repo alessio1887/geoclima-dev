@@ -168,9 +168,59 @@ const checkFetchAvailableDatesFixedRange = (action$, store) =>
             return Observable.empty();
         });
 
+/**
+ * Epic that handles the toggling of a plugin based on action parameters.
+ *
+ * This function listens for the `TOGGLE_PLUGIN` action type and, based on the
+ * `source` (either `FixedRangePlugin` or `FreeRangePlugin`), performs different operations.
+ * The purpose of this epic is to set the plugin's dates.
+ * If the necessary parameters (like `layerParams`) are not provided, the epic does nothing.
+ *
+ * - If `source` is `FIXED_RANGE`, it calculates a start and end date (using the active layer's data
+ *   or a default value) and emits actions to update the dates for `FixedRangePlugin`.
+ * - If `source` is `FREE_RANGE`, it only updates the end date and emits an action to modify the
+ *   period for `FreeRangePlugin`.
+ *
+ * The function returns an Observable that emits the generated actions.
+ *
+ * @param {Object} action$ - Stream of incoming actions, managed by redux-observable.
+ * @param {Object} store - The application state, used to access global data.
+ * @returns {Observable} - Observable that emits Redux actions to modify the state.
+ */
+const togglePluginEpic = (action$, store) =>
+    action$.ofType(TOGGLE_PLUGIN)
+        .switchMap((action) => {
+            if (!action.layerParams) {
+                return Observable.empty();
+            }
+            const appState = store.getState();
+            let newActions = [];
+            const layers = getVisibleLayers(appState.layers.flat, action.layerParams);
+            if (action.source === FIXED_RANGE) {
+                const toData = layers[0]?.params?.toData || appState.fixedrangepicker.lastAvailableDate;
+                const fromData = layers[0]?.params?.fromData || moment(toData).clone().subtract(1, 'month');
+                // Verifica validità delle date
+                if (toData && !isNaN(new Date(toData)) && fromData && !isNaN(new Date(fromData))) {
+                    newActions.push(changeFromData(new Date(fromData)));
+                    newActions.push(changeToData(new Date(toData)));
+                }
+            }
+            if (action.source === FREE_RANGE) {
+                const toData = layers[0]?.params?.toData || appState.freerangepicker.lastAvailableDate;
+                // Verifica validità delle date
+                if (toData && !isNaN(new Date(toData))) {
+                    newActions.push(changePeriod("1"));
+                    newActions.push(changePeriodToData(new Date(toData)));
+                }
+            }
+            return Observable.of(...newActions);
+        });
+
+
 export {
     checkFetchAvailableDatesFreeRange,
     checkFetchAvailableDatesFixedRange,
     combinedDateMapConfigEpic,
-    updateParamsByDateRangeEpic
+    updateParamsByDateRangeEpic,
+    togglePluginEpic
 };

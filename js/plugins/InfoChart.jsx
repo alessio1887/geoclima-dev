@@ -39,16 +39,6 @@ Plugin configuration
               { "key": "12", "label": "12 Mesi" },
               { "key": "10", "label": "dal 1° Ottobre" }
           ],
-          "variabiliMeteo": {
-            "precipitazione": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima","Pioggia_Cumulata_Giornaliera"],
-            "temperatura": ["Temperatura_Media", "Temperatura_Media_Anomalia", "Temperatura_Minima", "Temperatura_Minima_Anomalia",
-                    "Temperatura_Massima", "Temperatura_Massima_Anomalia", "Temperatura_Media_clima", "Temperatura_Massima_clima", "Temperatura_Minima_clima"],
-            "evapotraspirazione": ["Evapotraspirazione", "Evapotraspirazione_Anomalia_mm", "Evapotraspirazione_Anomalia_perc", "Evapotraspirazione_clima"],
-            "bilancioIdricoSemplificato": ["BilancioIdricoSemplificato", "BilancioIdricoSemplificato_Anomalia_mm", "BilancioIdricoSemplificato_Anomalia_perc",
-                    "BilancioIdricoSemplificato_clima"],
-            "spi": [ "spi1", "spi3", "spi6", "spi12"],
-            "spei":[ "spei1", "spei3", "spei6", "spei12"]
-          },
           "tabList": [
             {"id": "variableList", "name": "Variabili Meteo", "groupList": [
                                                                   { "id": "prec", "name": "Precipitazione", "unit": "mm", "yaxis": "Valore (mm)" },
@@ -58,8 +48,8 @@ Plugin configuration
                                                                   { "id": "ret", "name": "Evapotraspirazione Potenziale", "unit": "mm", "yaxis": "Valore (mm)"  },
                                                                   { "id": "bis", "name": "Bilancio Idrico Semplificato", "unit": "mm", "yaxis": "Valore (mm)"  }
                                                               ],
-                                                          "menuType": "single_select",
-                                                          "chartType": "single_variable"
+                                                          "menuType": "single_select", // The type of variable selection for this tab menu: single variable (single_select) or multiple variables selected (multi_select)
+                                                          "chartType": "single_variable" // The chart type: 'single_variable' for a chart with one variable, 'multi_variable' for multiple variables (specific for layout in InfoChartRender)
               },
             {"id": "spiList", "name": "SPI", "groupList": [
                                                                   { "id": "spi1", "name": "SPI-1" },
@@ -68,8 +58,8 @@ Plugin configuration
                                                                   { "id": "spi12", "name": "SPI-12" }
                                                                 ],
                                                           "chartTitle": "Indice SPI - Standardized Precipitation Index",
-                                                          "menuType": "multi_select",
-                                                          "chartType": "multi_variable"
+                                                          "menuType": "multi_select", // The type of variable selection for this tab menu: single variable (single_select) or multiple variables selected (multi_select)
+                                                          "chartType": "multi_variable"  // The chart type: 'single_variable' for a chart with one variable, 'multi_variable' for multiple variables (specific for layout in InfoChartRender)
               },
             {"id": "speiList", "name": "SPEI", "groupList": [
                                                                     { "id": "spei1", "name": "SPEI-1" },
@@ -78,8 +68,8 @@ Plugin configuration
                                                                     { "id": "spei12", "name": "SPEI-12" }
                                                           ],
                                                           "chartTitle": "Indice SPEI - Standardized Precipitation-Evapotranspiration Index",
-                                                          "menuType": "multi_select",
-                                                          "chartType": "multi_variable"
+                                                          "menuType": "multi_select", // The type of variable selection for this tab menu: single variable (single_select) or multiple variables selected (multi_select)
+                                                          "chartType": "multi_variable" // The chart type: 'single_variable' for a chart with one variable, 'multi_variable' for multiple variables (specific for layout in InfoChartRender)
             }
           ],
           "idVariabiliLayers": {
@@ -99,6 +89,7 @@ Plugin configuration
             "spei6": ["spei6"],
             "spei12": ["spei12"]
           },
+          "timeUnit": "YYYY-MM-DD",
           "unitPrecipitazione": "mm",
           "unitTemperatura": "°C"
       }
