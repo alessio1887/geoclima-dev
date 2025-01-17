@@ -136,6 +136,9 @@ class FreeRangePicker extends React.Component {
         this.props.onChangeToData(TO_DATA);
         this.props.onChangeFromData(FROM_DATA);
         this.props.onMarkPluginAsNotLoaded();
+        if (this.props.alertMessage) {
+            this.props.onCloseAlert();
+        }
     }
 
     render() {

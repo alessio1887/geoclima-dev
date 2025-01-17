@@ -10,9 +10,10 @@ import { zip } from 'rxjs/observable/zip';
 import { MAP_CONFIG_LOADED } from '@mapstore/actions/config';
 import { updateSettings, updateNode } from '@mapstore/actions/layers';
 import { FETCHED_AVAILABLE_DATES, fetchSelectDate } from '../actions/updateDatesParams';
-import { FIXEDRANGE_CHECK_FETCH_SELECT_DATE } from '../actions/fixedrangepicker';
-import { FREERANGE_CHECK_FETCH_SELECT_DATE  } from '../actions/freerangepicker';
-import DateAPI, { DATE_FORMAT } from '../utils/ManageDateUtils';
+import { FIXEDRANGE_CHECK_FETCH_SELECT_DATE, TOGGLE_PLUGIN, changePeriod, changePeriodToData } from '../actions/fixedrangepicker';
+import { FREERANGE_CHECK_FETCH_SELECT_DATE, changeFromData, changeToData  } from '../actions/freerangepicker';
+import DateAPI from '../utils/ManageDateUtils';
+import { getVisibleLayers, FIXED_RANGE, FREE_RANGE } from '@js/utils/VariabiliMeteoUtils';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -21,8 +22,8 @@ const COMBINED_DATE_MAPCONFIG = 'COMBINED_DATE_MAPCONFIG';
 
 const updateLayersParams = (layers, toData) => {
     let actionsUpdateParams = [];
-    const toDataFormatted = moment(toData).format(DATE_FORMAT);
-    const fromDataFormatted = moment(toData).clone().subtract(1, 'month').format(DATE_FORMAT);
+    const toDataFormatted = moment(toData).format();
+    const fromDataFormatted = moment(toData).clone().subtract(1, 'month').format();
     for (const layer of layers) {
         if (layer.params) {
             const mapFileName = DateAPI.setGCMapFile(

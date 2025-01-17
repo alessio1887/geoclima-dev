@@ -17,11 +17,12 @@
     z-index: 10;
   }
 #button-dailydatepicker-button {
-    display: flex; /* Make the container a flexbox */
+    display: flex;
     justify-content: center; /* Arrange buttons horizontally */
     align-items: center;
-    border-radius: 3px;      /* Arrotonda gli angoli */
-    margin: 10px 70px;
+    border-radius: 3px;
+    gap: 40px;
+    margin-top: 5px;
 }
 
   @media (max-width: 768px) {

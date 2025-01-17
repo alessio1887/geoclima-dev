@@ -37,6 +37,7 @@
     align-items: center;
     border-radius: 3px;      /* Arrotonda gli angoli */
     margin: 10px 0;
+    gap: 40px;
 }
 #button-rangepicker-container button {
     margin: 0 10px;

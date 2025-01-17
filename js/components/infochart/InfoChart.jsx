@@ -481,6 +481,9 @@ class InfoChart extends React.Component {
         this.props.onSetInfoChartDates(this.props.lastAvailableDate, this.props.periodTypes );
         this.props.onResetChartRelayout();
         this.initializeTabs();
+        if (this.props.alertMessage) {
+            this.props.onCloseAlert();
+        }
     }
     handleChangePeriod = (periodType) => {
         this.props.onChangePeriod(periodType.key);

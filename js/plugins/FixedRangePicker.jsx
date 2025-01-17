@@ -163,6 +163,9 @@ class FixedRangePicker extends React.Component {
         if (this.props.showFixedRangePicker) {
             this.props.onToggleFixedRangePicker();
         }
+        if (this.props.alertMessage !== null) {
+            this.props.onCloseAlert();
+        }
     }
 
     render() {
@@ -258,6 +261,7 @@ class FixedRangePicker extends React.Component {
                 alertMessage={this.props.alertMessage}
                 onOpenAlert={this.props.onOpenAlert}
                 onCloseAlert={this.props.onCloseAlert}
+                format={ this.props.timeUnit }
             />
         );
     }

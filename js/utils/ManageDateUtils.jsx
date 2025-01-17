@@ -128,13 +128,21 @@ const Api = {
         // Se tutte le verifiche passano
         return { isValid: true, errorMessage: null };
     },
-    validateDay(toData, firstAvailableData, lastAvailableData) {
-        const normalizedDate = moment(toData).startOf('day');
-        if (normalizedDate.isBefore(firstAvailableData)) {
+    validateOneDate(toData, firstAvailableDate, lastAvailableDate, timeUnit) {
+        let firstDate = moment(firstAvailableDate);
+        let lastDate = moment(lastAvailableDate);
+        let normalizedDate = moment(toData);
+        // Se il confronto deve essere solo sulla data, rimuoviamo le parti relative al tempo
+        if (timeUnit === DATE_FORMAT) {
+            normalizedDate = normalizedDate.startOf('day');
+            firstDate = firstDate.startOf('day');
+            lastDate = lastDate.startOf('day');
+        }
+        if (normalizedDate.isBefore(firstDate)) {
             return { isValid: false, errorMessage: "gcapp.errorMessages.dateTooEarly" };
         }
-        if (normalizedDate.isAfter(lastAvailableData)) {
-            return { isValid: false, errorMessage: "gcapp.errorMessages.rangeExceedsBoundary"};
+        if (normalizedDate.isAfter(lastDate)) {
+            return { isValid: false, errorMessage: "gcapp.errorMessages.rangeExceedsBoundary" };
         }
         // Se tutte le verifiche passano
         return { isValid: true, errorMessage: null };

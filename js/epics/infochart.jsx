@@ -59,7 +59,7 @@ const checkSelectDateEpic = (action$, store) =>
         .switchMap((action) => {
             const appState = store.getState();
             if (!appState.fixedrangepicker?.isPluginLoaded && !appState.freerangepicker?.isPluginLoaded) {
-                return Observable.of(fetchSelectDate(action.variableSelectDate, action.urlSelectDate));
+                return Observable.of(fetchSelectDate(action.variableSelectDate, action.urlSelectDate, "InfoChartPlugin"));
             }
             return Observable.empty();
         });

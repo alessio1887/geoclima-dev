@@ -7,7 +7,7 @@
  */
 import React, { useState } from 'react';
 import { DateTimePicker } from 'react-widgets';
-import { Button, Glyphicon } from 'react-bootstrap';
+import { ButtonGroup, Button, Glyphicon } from 'react-bootstrap';
 import Message from '../../../MapStore2/web/client/components/I18N/Message';
 import DateAPI, { DATE_FORMAT } from '../../utils/ManageDateUtils';
 import moment from 'moment';
@@ -20,6 +20,7 @@ const DailyManager = ({
     minDate,
     maxDate,
     toData,
+    format,
     isInteractionDisabled,
     isDecrementDisabled,
     isIncrementDisabled,
@@ -30,22 +31,39 @@ const DailyManager = ({
     onCloseAlert
 }) => {
     const [defaultToData, setDefaultToData] = useState(new Date(maxDate));
-
+    /*
     // Increment the date by 1 day
     const incrementDate = () => {
-        const newToData = moment(toData).add(1, 'days').toDate();
+        const newToData = moment(toData).add(1, 'days').format();
         onChangePeriodToData(newToData);
         updateParams({
-            fromData: moment(newToData).clone().subtract(1, 'month').toDate(),
+            fromData: moment(newToData).clone().subtract(1, 'month').format(format),
             toData: newToData
         });
     };
     // Decrement the date by 1 day
     const decrementDate = () => {
-        const newToData = moment(toData).subtract(1, 'days').toDate();
+        const newToData = moment(toData).subtract(1, 'days').format();
         onChangePeriodToData(newToData);
         updateParams({
-            fromData: moment(newToData).clone().subtract(1, 'month').toDate(),
+            fromData: moment(newToData).clone().subtract(1, 'month').format(format),
+            toData: newToData
+        });
+    };
+    */
+    const changeDateTime = (timeUnit, amount) => {
+        const newToData = moment(toData).add(amount, timeUnit).format(format);
+        onChangePeriodToData(newToData);
+        const validation = DateAPI.validateOneDate(toData, minDate, maxDate, format);
+        if (!validation.isValid) {
+            onOpenAlert(validation.errorMessage);
+            return;
+        }
+        if (alertMessage !== null) {
+            onCloseAlert();
+        }
+        updateParams({
+            fromData: moment(newToData).clone().subtract(1, 'month').format(format),
             toData: newToData
         });
     };
@@ -55,7 +73,7 @@ const DailyManager = ({
             onChangePeriodToData(new Date(defaultToData));
             return;
         }
-        const validation = DateAPI.validateDay(toData, minDate, maxDate);
+        const validation = DateAPI.validateOneDate(toData, minDate, maxDate, format);
         if (!validation.isValid) {
             onOpenAlert(validation.errorMessage);
             return;
@@ -75,26 +93,35 @@ const DailyManager = ({
     return (
         <div className="ms-dailydatepicker-container">
             <div className="ms-dailydatepicker-calendar">
-                <Button  onClick={decrementDate} disabled={isDecrementDisabled}>
+                <Button  onClick={() => changeDateTime('days', -1)} disabled={isDecrementDisabled}>
                     <Glyphicon glyph="glyphicon glyphicon-chevron-left" />
                 </Button>
                 <DateTimePicker
                     culture="it"
-                    time={false}
+                    time={ format === DATE_FORMAT ? false : true }
                     min={minDate}
                     max={maxDate}
-                    format={DATE_FORMAT}
-                    editFormat={DATE_FORMAT}
-                    value={moment(toData, DATE_FORMAT).toDate()}
+                    format={format}
+                    editFormat={format}
+                    value={moment(toData, format).toDate()}
                     onChange={onChangePeriodToData}
                     disabled={isInteractionDisabled} />
-                <Button onClick={incrementDate} disabled={isIncrementDisabled}>
+                <Button onClick={() => changeDateTime('days', +1)} disabled={isIncrementDisabled}>
                     <Glyphicon glyph="glyphicon glyphicon-chevron-right" />
                 </Button>
             </div>
-            <Button onClick={handleChangeDay} disabled={isInteractionDisabled} id="button-dailydatepicker-button">
-                <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton" />
-            </Button>
+            <ButtonGroup id="button-dailydatepicker-button">
+                { format !== DATE_FORMAT && (<Button onClick={() => changeDateTime('hours', -1)} disabled={isDecrementDisabled}
+                ><Glyphicon glyph="glyphicon glyphicon-minus" />
+                </Button>) }
+                <Button onClick={handleChangeDay} disabled={isInteractionDisabled}>
+                    <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton" />
+                </Button>
+                { format !== DATE_FORMAT && (<Button onClick={() => changeDateTime('hours', +1)} disabled={isIncrementDisabled}
+                >
+                    <Glyphicon glyph="glyphicon glyphicon-plus" />
+                </Button>) }
+            </ButtonGroup>
         </div>
     );
 };
