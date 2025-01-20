@@ -409,7 +409,10 @@ class InfoChart extends React.Component {
                     {this.props.alertMessage && (
                         <div className="alert-date" >
                             <strong><Message msgId="warning"/></strong>
-                            <span ><Message msgId={this.props.alertMessage} msgParams={{toData: moment(this.props.lastAvailableDate).format(DATE_FORMAT)}}/></span>
+                            <span ><Message msgId={this.props.alertMessage}
+                                msgParams={{toData: moment(this.props.lastAvailableDate).format(this.props.timeUnit),
+                                    fromData: moment(this.props.firstAvailableDate).format(this.props.timeUnit)
+                                }}/></span>
                         </div>
                     )}
                 </Grid>
@@ -517,7 +520,7 @@ class InfoChart extends React.Component {
         const idTab = tabVariable || this.getActiveTab().id;
 
         // Date validations
-        const validation = DateAPI.validateDateRange(fromData, toData, this.props.firstAvailableDate, this.props.lastAvailableDate);
+        const validation = DateAPI.validateDateRange(fromData, toData, this.props.firstAvailableDate, this.props.lastAvailableDate, this.props.timeUnit);
         if (!validation.isValid) {
             this.props.onOpenAlert(validation.errorMessage);
             return;

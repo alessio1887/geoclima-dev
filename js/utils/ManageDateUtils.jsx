@@ -109,21 +109,29 @@ const Api = {
         const mapfileName = threshold ? cleanedMapName + threshold.suffix : cleanedMapName;
         return mapfileName;
     },
-    validateDateRange(fromData, toData, firstAvailableData, lastAvailableData) {
-        const startDate = moment(fromData).startOf('day');
-        const endDate = moment(toData).startOf('day');
-        if (startDate.isBefore(firstAvailableData) || endDate.isBefore(firstAvailableData)) {
+    validateDateRange(fromData, toData, firstAvailableDate, lastAvailableDate, timeUnit) {
+        let firstDate = moment(firstAvailableDate);
+        let lastDate = moment(lastAvailableDate);
+        let fromDataMoment = moment(fromData);
+        let toDataMoment = moment(toData);
+        if (timeUnit === DATE_FORMAT) {
+            fromDataMoment = fromDataMoment.startOf('day');
+            toDataMoment = toDataMoment.startOf('day');
+            firstDate = firstDate.startOf('day');
+            lastDate = lastDate.startOf('day');
+        }
+        if (fromDataMoment.isBefore(firstDate) || toDataMoment.isBefore(firstDate)) {
             return { isValid: false, errorMessage: "gcapp.errorMessages.dateTooEarly" };
         }
-        if (endDate.isBefore(startDate)) {
-            return { isValid: false, errorMessage: "gcapp.errorMessages.endDateBefore" };
-        }
-        const oneYearFromStart = startDate.clone().add(1, 'year');
-        if (endDate.isAfter(oneYearFromStart)) {
-            return { isValid: false, errorMessage: "gcapp.errorMessages.rangeTooLarge" };
-        }
-        if (startDate.isAfter(lastAvailableData) || endDate.isAfter(lastAvailableData)) {
+        if (fromDataMoment.isAfter(lastDate) || toDataMoment.isAfter(lastDate)) {
             return { isValid: false, errorMessage: "gcapp.errorMessages.rangeExceedsBoundary"};
+        }
+        if (toDataMoment.isBefore(fromDataMoment)) {
+            return { isValid: false, errorMessage: "gcapp.errorMessages.toDataMomentBefore" };
+        }
+        const oneYearFromStart = fromDataMoment.clone().add(1, 'year');
+        if (toDataMoment.isAfter(oneYearFromStart)) {
+            return { isValid: false, errorMessage: "gcapp.errorMessages.rangeTooLarge" };
         }
         // Se tutte le verifiche passano
         return { isValid: true, errorMessage: null };

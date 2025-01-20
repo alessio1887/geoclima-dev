@@ -22,8 +22,6 @@ const DailyManager = ({
     toData,
     format,
     isInteractionDisabled,
-    isDecrementDisabled,
-    isIncrementDisabled,
     onChangePeriodToData,
     updateParams,
     alertMessage,
@@ -31,6 +29,13 @@ const DailyManager = ({
     onCloseAlert
 }) => {
     const [defaultToData, setDefaultToData] = useState(new Date(maxDate));
+
+    // Definizione delle variabili di disabilitazione
+    const isDecrementDayDisabled = isInteractionDisabled || moment(toData).isBefore(moment(minDate).add(1, 'day'));
+    const isDecrementHourDisabled = isInteractionDisabled || moment(toData).isSameOrBefore(moment(minDate));
+
+    const isIncrementDayDisabled = isInteractionDisabled || moment(toData).isAfter(moment(maxDate).subtract(1, 'day'));
+    const isIncremenHourtDisabled = isInteractionDisabled || moment(toData).isSameOrAfter(moment(maxDate));
     /*
     // Increment the date by 1 day
     const incrementDate = () => {
@@ -93,7 +98,7 @@ const DailyManager = ({
     return (
         <div className="ms-dailydatepicker-container">
             <div className="ms-dailydatepicker-calendar">
-                <Button  onClick={() => changeDateTime('days', -1)} disabled={isDecrementDisabled}>
+                <Button  onClick={() => changeDateTime('days', -1)} disabled={isDecrementDayDisabled}>
                     <Glyphicon glyph="glyphicon glyphicon-chevron-left" />
                 </Button>
                 <DateTimePicker
@@ -106,18 +111,18 @@ const DailyManager = ({
                     value={moment(toData, format).toDate()}
                     onChange={onChangePeriodToData}
                     disabled={isInteractionDisabled} />
-                <Button onClick={() => changeDateTime('days', +1)} disabled={isIncrementDisabled}>
+                <Button onClick={() => changeDateTime('days', +1)} disabled={isIncrementDayDisabled}>
                     <Glyphicon glyph="glyphicon glyphicon-chevron-right" />
                 </Button>
             </div>
             <ButtonGroup id="button-dailydatepicker-button">
-                { format !== DATE_FORMAT && (<Button onClick={() => changeDateTime('hours', -1)} disabled={isDecrementDisabled}
+                { format !== DATE_FORMAT && (<Button onClick={() => changeDateTime('hours', -1)} disabled={isDecrementHourDisabled}
                 ><Glyphicon glyph="glyphicon glyphicon-minus" />
                 </Button>) }
                 <Button onClick={handleChangeDay} disabled={isInteractionDisabled}>
                     <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton" />
                 </Button>
-                { format !== DATE_FORMAT && (<Button onClick={() => changeDateTime('hours', +1)} disabled={isIncrementDisabled}
+                { format !== DATE_FORMAT && (<Button onClick={() => changeDateTime('hours', +1)} disabled={isIncremenHourtDisabled}
                 >
                     <Glyphicon glyph="glyphicon glyphicon-plus" />
                 </Button>) }

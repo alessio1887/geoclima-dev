@@ -199,7 +199,9 @@ class FixedRangePicker extends React.Component {
                             <div className="alert-date" >
                                 <strong><Message msgId="warning"/></strong>
                                 <span ><Message msgId={this.props.alertMessage}
-                                    msgParams={{toData: moment(this.props.lastAvailableDate).format(this.props.timeUnit)}}/>
+                                    msgParams={{toData: moment(this.props.lastAvailableDate).format(this.props.timeUnit),
+                                        fromData: moment(this.props.firstAvailableDate).format(this.props.timeUnit)
+                                    }}/>
                                 </span>
                             </div>
                         )}
@@ -243,19 +245,20 @@ class FixedRangePicker extends React.Component {
         );
     }
     showDailyDatePicker = () => {
+        /*
         const normalizedDate = moment(this.props.toData).startOf('day').toDate();
         const isDecrementDisabled = this.props.isInteractionDisabled ||
                                 moment(normalizedDate).isSameOrBefore(this.props.firstAvailableDate);
         const isIncrementDisabled = this.props.isInteractionDisabled ||
-                                moment(normalizedDate).isSameOrAfter(moment(this.props.lastAvailableDate));
+                                moment(normalizedDate).isSameOrAfter(this.props.lastAvailableDate) ||
+                                !DateAPI.validateOneDate(this.props.toData, this.props.firstAvailableDate, this.props.lastAvailableDate, this.props.timeUnit).isValid;
+        */
         return (
             <DailyManager
                 toData={this.props.toData}
                 minDate={this.props.firstAvailableDate}
                 maxDate={this.props.lastAvailableDate}
                 isInteractionDisabled={this.props.isInteractionDisabled}
-                isDecrementDisabled = {isDecrementDisabled}
-                isIncrementDisabled = {isIncrementDisabled}
                 onChangePeriodToData={this.props.onChangePeriodToData}
                 updateParams={this.updateParams}
                 alertMessage={this.props.alertMessage}
@@ -283,7 +286,7 @@ class FixedRangePicker extends React.Component {
             return;
         }
         // Verifiche sulle date
-        const validation = DateAPI.validateDateRange(fromData, toData, this.props.firstAvailableDate, this.props.lastAvailableDate);
+        const validation = DateAPI.validateDateRange(fromData, toData, this.props.firstAvailableDate, this.props.lastAvailableDate, this.props.timeUnit);
         if (!validation.isValid) {
             this.props.onOpenAlert(validation.errorMessage);
             return;

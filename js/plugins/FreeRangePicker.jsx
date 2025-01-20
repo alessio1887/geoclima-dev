@@ -201,7 +201,9 @@ class FreeRangePicker extends React.Component {
                     <div className="alert-date" >
                         <strong><Message msgId="warning"/></strong>
                         <span ><Message msgId={this.props.alertMessage}
-                            msgParams={{toData: moment(this.props.lastAvailableDate).format("DD-MM-YYYY")}}/>
+                            msgParams={{toData: moment(this.props.lastAvailableDate).format(this.props.timeUnit),
+                                fromData: moment(this.props.firstAvailableDate).format(this.props.timeUnit)
+                            }}/>
                         </span>
                     </div>
                 )}
@@ -217,7 +219,7 @@ class FreeRangePicker extends React.Component {
             return;
         }
         // Verifiche sulle date
-        const validation = DateAPI.validateDateRange(fromData, toData, this.props.firstAvailableDate, this.props.lastAvailableDate);
+        const validation = DateAPI.validateDateRange(fromData, toData, this.props.firstAvailableDate, this.props.lastAvailableDate, this.props.timeUnit);
         if (!validation.isValid) {
             this.props.onOpenAlert(validation.errorMessage);
             return;
