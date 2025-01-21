@@ -21,6 +21,7 @@ import FixedRangeManager from '../../components/datepickers/FixedRangeManager';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../../utils/ManageDateUtils';
 import { FIXED_RANGE, FREE_RANGE, MULTI_VARIABLE_CHART }  from '../../utils/VariabiliMeteoUtils';
+import { get, isEqual } from 'lodash';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -209,7 +210,18 @@ class InfoChart extends React.Component {
     }
 
     shouldComponentUpdate(newProps) {
-        return newProps.active || newProps.mapinfoActive || newProps.data.length > 0;
+        // // List of prop to compare
+        const propsToCompare = ['show', 'maskLoading', 'active', 'mapinfoActive', 'tabVariables', 'data',
+            'fromData', 'toData', 'periodType', 'isInteractionDisabled', 'isCollapsedFormGroup',
+            'activeRangeManager', 'alertMessage', 'chartRelayout', 'infoChartSize', 'isPluginLoaded'];
+        for (let key of propsToCompare) {
+        // Use get to access nested properties
+            if (!isEqual(get(newProps, key), get(this.props, key))) {
+                return true; // Aggiorna il componente se c'è una differenza
+            }
+        }
+        // None of the selected properties have changed
+        return false;
     }
     onResize = (event, { size }) => {
         this.props.onResizeInfoChart(size.width, size.height);
