@@ -7,9 +7,11 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { createSelector } from 'reselect';
 import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-bootstrap';
-import Message from '../../MapStore2/web/client/components/I18N/Message';
-import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
+import Message from '@mapstore/components/I18N/Message';
+import { updateSettings, updateNode } from '@mapstore/actions/layers';
+import { layersSelector } from '@mapstore/selectors/layers';
 import { compose } from 'redux';
 import { changePeriodToData, changePeriod, toggleRangePickerPlugin, openAlert,
     closeAlert, collapsePlugin, markFixedRangeAsLoaded, markFixedRangeAsNotLoaded,
@@ -26,11 +28,17 @@ import FixedRangeManager from '../components/datepickers/FixedRangeManager';
 import DailyManager from '@js/components/datepickers/DailyManager';
 
 import fixedrangepicker from '../reducers/fixedrangepicker';
-import layers from '../../MapStore2/web/client/reducers/layers';
+import layers from '@mapstore/reducers/layers';
 
 import * as rangePickerEpics from '../epics/dateRangeConfig';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
+
+const isLayerLoadingSelector = createSelector(
+    [layersSelector],
+    (allMapLayers) => allMapLayers && allMapLayers.some(layer => layer.loading) // Restituisce true se almeno un layer è in loading
+);
+
 /*
 Plugin configuration
 "name": "FixedRangePicker",
@@ -334,7 +342,7 @@ const mapStateToProps = (state) => {
         layers: state?.layers || {},
         showFixedRangePicker: (state?.fixedrangepicker?.showFixedRangePicker) ? true : false,
         alertMessage: state?.fixedrangepicker?.alertMessage || null,
-        isInteractionDisabled: state?.fixedrangepicker?.isInteractionDisabled || false,
+        isInteractionDisabled: isLayerLoadingSelector(state),
         shiftRight: state.controls.drawer ? state.controls.drawer.enabled : false,
         showChangeRangePickerButton: state.freerangepicker?.isPluginLoaded ? true : false,
         isPluginLoaded: state?.fixedrangepicker?.isPluginLoaded,

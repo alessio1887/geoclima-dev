@@ -7,9 +7,11 @@
 */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { createSelector } from 'reselect';
 import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-bootstrap';
-import Message from '../../MapStore2/web/client/components/I18N/Message';
-import { updateSettings, updateNode } from '../../MapStore2/web/client/actions/layers';
+import Message from '@mapstore/components/I18N/Message';
+import { updateSettings, updateNode } from '@mapstore/actions/layers';
+import { layersSelector } from '@mapstore/selectors/layers';
 import { compose } from 'redux';
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO} from '../utils/ManageDateUtils';
 import { FREE_RANGE, isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
@@ -19,7 +21,7 @@ import moment from 'moment';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
 import './rangepicker.css';
 
-import layers from '../../MapStore2/web/client/reducers/layers';
+import layers from '@mapstore/reducers/layers';
 import freerangepicker from '@js/reducers/freerangepicker';
 import { toggleRangePickerPlugin } from '../actions/fixedrangepicker';
 import { changeFromData, changeToData, openAlert, closeAlert, collapsePlugin,
@@ -30,6 +32,11 @@ import FreeRangeManager from '../components/datepickers/FreeRangeManager';
 import RangePickerInfo from '../components/datepickers/RangePickerInfo';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
+
+const isLayerLoadingSelector = createSelector(
+    [layersSelector],
+    (allMapLayers) => allMapLayers && allMapLayers.some(layer => layer.loading) // Restituisce true se almeno un layer è in loading
+);
 
 /*
 Plugin configuration
@@ -266,7 +273,7 @@ const mapStateToProps = (state) => {
         layers: state?.layers || {},
         showFreeRangePicker: (!state?.fixedrangepicker?.showFixedRangePicker ) ? true : false,
         alertMessage: state?.freerangepicker?.alertMessage || null,
-        isInteractionDisabled: state?.freerangepicker?.isInteractionDisabled || false,
+        isInteractionDisabled: isLayerLoadingSelector(state),
         shiftRight: state.controls.drawer ? state.controls.drawer.enabled : false,
         showChangeRangePickerButton: state.fixedrangepicker.isPluginLoaded ? true : false,
         isPluginLoaded: state?.freerangepicker?.isPluginLoaded,
