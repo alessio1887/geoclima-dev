@@ -44,6 +44,7 @@ class InfoChart extends React.Component {
         onResizeInfoChart: PropTypes.func,
         onSetRangeManager: PropTypes.func,
         onSetTabList: PropTypes.func,
+        onHideMapinfoMarker: PropTypes.func,
         show: PropTypes.bool,
         infoChartData: PropTypes.object,
         tabVariables: PropTypes.object,
@@ -496,6 +497,7 @@ class InfoChart extends React.Component {
         this.props.onSetInfoChartDates(this.props.lastAvailableDate, this.props.periodTypes );
         this.props.onResetChartRelayout();
         this.initializeTabs();
+        this.props.onHideMapinfoMarker();
         if (this.props.alertMessage) {
             this.props.onCloseAlert();
         }

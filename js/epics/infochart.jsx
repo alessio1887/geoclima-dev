@@ -7,7 +7,7 @@
 */
 import { Observable } from 'rxjs';
 import { setControlProperty } from '../../MapStore2/web/client/actions/controls';
-import { TOGGLE_MAPINFO_STATE, changeMapInfoState, toggleMapInfoState } from '../../MapStore2/web/client/actions/mapInfo';
+import { TOGGLE_MAPINFO_STATE, changeMapInfoState, toggleMapInfoState, featureInfoClick } from '../../MapStore2/web/client/actions/mapInfo';
 import {
     TOGGLE_INFOCHART,
     FETCH_INFOCHART_DATA,
@@ -21,7 +21,8 @@ import {
     changeFixedRangeToData,
     changePeriod,
     markInfoChartAsNotLoaded,
-    changeTab, changeChartVariable
+    changeTab, changeChartVariable,
+    closeAlert
 } from '../actions/infochart';
 import { fetchSelectDate } from '../actions/updateDatesParams';
 import { CLICK_ON_MAP } from '../../MapStore2/web/client/actions/map';
@@ -271,19 +272,23 @@ const toggleMapInfoEpic = (action$, store) =>
 
 const toggleInfoChartEpic = (action$, store) =>
     action$.ofType(TOGGLE_INFOCHART).switchMap((action) => {
-        const mapInfoEnabled = store.getState().mapInfo.enabled;
-        if (mapInfoEnabled) {
-            return Observable.of(
-                setControlProperty("chartinfo", "enabled", action.enable),
-                toggleMapInfoState()
-            );
-        }
-        return Observable.of(
+        const appState = store.getState();
+        const mapInfoEnabled = appState.mapInfo.enabled;
+        const actions = [
             setControlProperty("chartinfo", "enabled", action.enable),
-            setInfoChartVisibility(false),
             toggleMapInfoState()
-        );
+        ];
+        if (appState.infochart.alertMessage) {
+            actions.push(closeAlert());
+        }
+        if (!mapInfoEnabled) {
+            actions.push(setInfoChartVisibility(false));
+        }
+
+        return Observable.of(...actions);
     });
+
+
 /**
  * Redux-Observable epic that listens for the CLICK_ON_MAP action and handles updating
  * the InfoChart panel state and fetching its data.
@@ -325,6 +330,7 @@ const clickedPointCheckEpic = (action$, store) =>
                     periodType: periodType,
                     idTab: idTab
                 }));
+                actions.push(featureInfoClick(action.point));
                 return Observable.of(...actions);
             }
             return Observable.empty();
