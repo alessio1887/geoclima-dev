@@ -496,6 +496,9 @@ class InfoChart extends React.Component {
         this.props.onSetInfoChartVisibility(false);
         this.props.onSetInfoChartDates(this.props.lastAvailableDate, this.props.periodTypes );
         this.props.onResetChartRelayout();
+        if ( this.props.infoChartSize.widthResizable !== 880 || this.props.infoChartSize.heightResizable !== 880) {
+            this.props.onResizeInfoChart(880, 880);
+        }
         this.initializeTabs();
         this.props.onHideMapinfoMarker();
         if (this.props.alertMessage) {

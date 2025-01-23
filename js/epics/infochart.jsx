@@ -7,7 +7,12 @@
 */
 import { Observable } from 'rxjs';
 import { setControlProperty } from '../../MapStore2/web/client/actions/controls';
-import { TOGGLE_MAPINFO_STATE, changeMapInfoState, toggleMapInfoState, featureInfoClick } from '../../MapStore2/web/client/actions/mapInfo';
+import { TOGGLE_MAPINFO_STATE,
+    changeMapInfoState,
+    toggleMapInfoState,
+    featureInfoClick,
+    purgeMapInfoResults,
+    hideMapinfoMarker } from '../../MapStore2/web/client/actions/mapInfo';
 import {
     TOGGLE_INFOCHART,
     FETCH_INFOCHART_DATA,
@@ -22,7 +27,8 @@ import {
     changePeriod,
     markInfoChartAsNotLoaded,
     changeTab, changeChartVariable,
-    closeAlert
+    closeAlert,
+    resizeInfoChart
 } from '../actions/infochart';
 import { fetchSelectDate } from '../actions/updateDatesParams';
 import { CLICK_ON_MAP } from '../../MapStore2/web/client/actions/map';
@@ -252,19 +258,25 @@ const toggleMapInfoEpic = (action$, store) =>
                 return Observable.of(
                     changeMapInfoState(false),
                     setInfoChartVisibility(false),
-                    setControlProperty("chartinfo", "enabled", true)
+                    setControlProperty("chartinfo", "enabled", true),
+                    purgeMapInfoResults(),
+                    hideMapinfoMarker()
                 );
             } else if (!chartInfoEnabled && !mapInfoEnabled) {
                 return Observable.of(
                     changeMapInfoState(false),
                     setInfoChartVisibility(false),
                     setControlProperty("chartinfo", "enabled", false)
+                    // purgeMapInfoResults(),
+                    // hideMapinfoMarker()
                 );
             }
             return Observable.of(
                 changeMapInfoState(true),
                 setInfoChartVisibility(false),
-                setControlProperty("chartinfo", "enabled", false)
+                setControlProperty("chartinfo", "enabled", false),
+                purgeMapInfoResults(),
+                hideMapinfoMarker()
             );
         }
         return Observable.empty();
@@ -276,8 +288,12 @@ const toggleInfoChartEpic = (action$, store) =>
         const mapInfoEnabled = appState.mapInfo.enabled;
         const actions = [
             setControlProperty("chartinfo", "enabled", action.enable),
-            toggleMapInfoState()
+            toggleMapInfoState(),
+            purgeMapInfoResults()
         ];
+        if ( appState.infochart.infoChartSize.widthResizable !== 880 || appState.infochart.infoChartSize.heightResizable !== 880) {
+            actions.push(resizeInfoChart(880, 880));
+        }
         if (appState.infochart.alertMessage) {
             actions.push(closeAlert());
         }
