@@ -8,6 +8,7 @@
 import { Observable } from 'rxjs';
 import { setControlProperty } from '../../MapStore2/web/client/actions/controls';
 import { TOGGLE_MAPINFO_STATE,
+    CHANGE_MAPINFO_STATE,
     changeMapInfoState,
     toggleMapInfoState,
     featureInfoClick,
@@ -288,9 +289,11 @@ const toggleInfoChartEpic = (action$, store) =>
         const mapInfoEnabled = appState.mapInfo.enabled;
         const actions = [
             setControlProperty("chartinfo", "enabled", action.enable),
-            toggleMapInfoState(),
             purgeMapInfoResults()
         ];
+        if (appState.mapInfo.enabled) {
+            actions.push(toggleMapInfoState());
+        }
         if ( appState.infochart.infoChartSize.widthResizable !== 880 || appState.infochart.infoChartSize.heightResizable !== 880) {
             actions.push(resizeInfoChart(880, 880));
         }
@@ -304,7 +307,17 @@ const toggleInfoChartEpic = (action$, store) =>
         return Observable.of(...actions);
     });
 
-
+// disable infochart,se attivo, when mapInfo viene abilitato
+const disableInfoChartEpic = (action$, store) =>
+    action$.ofType(CHANGE_MAPINFO_STATE).switchMap((action) => {
+        const appState = store.getState();
+        const actions = [];
+        if (action.enabled && appState.controls?.chartinfo?.enabled) {
+            actions.push(setInfoChartVisibility(false));
+            actions.push(setControlProperty("chartinfo", "enabled", false));
+        }
+        return Observable.of(...actions);
+    });
 /**
  * Redux-Observable epic that listens for the CLICK_ON_MAP action and handles updating
  * the InfoChart panel state and fetching its data.
@@ -347,6 +360,7 @@ const clickedPointCheckEpic = (action$, store) =>
                     idTab: idTab
                 }));
                 actions.push(featureInfoClick(action.point));
+                actions.push(purgeMapInfoResults());
                 return Observable.of(...actions);
             }
             return Observable.empty();
@@ -379,5 +393,6 @@ export {
     clickedPointCheckEpic,
     loadInfoChartDataEpic,
     closeInfoChartPanel,
-    checkSelectDateEpic
+    checkSelectDateEpic,
+    disableInfoChartEpic
 };
