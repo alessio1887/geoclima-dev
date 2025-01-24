@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
 */
 import { Observable } from 'rxjs';
-import { setControlProperty } from '../../MapStore2/web/client/actions/controls';
+import { TOGGLE_CONTROL, SET_CONTROL_PROPERTY, setControlProperty } from '../../MapStore2/web/client/actions/controls';
 import { TOGGLE_MAPINFO_STATE,
     CHANGE_MAPINFO_STATE,
     changeMapInfoState,
@@ -249,12 +249,19 @@ const closeInfoChartPanel = (action$, store) =>
         return Observable.empty();
     });
 
+/**
+ * Epic that manages the visibility state of MapInfo, the panel on the right displaying map information (state.mapInfo),
+ * and its relationship with InfoChart (state.controls.chartinfo).
+ * When the TOGGLE_MAPINFO_STATE action is triggered, it checks the current state of the controls
+ * state.controls.chartinfo and state.mapInfo.
+ */
 const toggleMapInfoEpic = (action$, store) =>
     action$.ofType(TOGGLE_MAPINFO_STATE).switchMap(() => {
         const storeState = store.getState();
         if (storeState.controls.chartinfo) {
             const chartInfoEnabled = store.getState().controls.chartinfo.enabled;
             const mapInfoEnabled = store.getState().mapInfo.enabled;
+            // If `chartinfo` is enabled and `mapInfo` is not, purge MapInfo results, hide the marker, and update the state of ChartInfo.
             if (chartInfoEnabled && !mapInfoEnabled) {
                 return Observable.of(
                     changeMapInfoState(false),
@@ -263,6 +270,7 @@ const toggleMapInfoEpic = (action$, store) =>
                     purgeMapInfoResults(),
                     hideMapinfoMarker()
                 );
+            // If both are disabled, keep `mapInfo` disabled but update the state of `chartinfo`.
             } else if (!chartInfoEnabled && !mapInfoEnabled) {
                 return Observable.of(
                     changeMapInfoState(false),
@@ -272,6 +280,7 @@ const toggleMapInfoEpic = (action$, store) =>
                     // hideMapinfoMarker()
                 );
             }
+            // If none of the above conditions are met, enable `mapInfo` and disable `chartinfo`, purge MapInfoResults, and hide the marker.
             return Observable.of(
                 changeMapInfoState(true),
                 setInfoChartVisibility(false),
@@ -283,6 +292,10 @@ const toggleMapInfoEpic = (action$, store) =>
         return Observable.empty();
     });
 
+/**
+ * Epic that manages the visibility of InfoChart and optionally restores some default settings (size and alert closure).
+ * It is triggered when clicking on the InfoChartButton in the Toolbar menu.
+ */
 const toggleInfoChartEpic = (action$, store) =>
     action$.ofType(TOGGLE_INFOCHART).switchMap((action) => {
         const appState = store.getState();
@@ -291,8 +304,11 @@ const toggleInfoChartEpic = (action$, store) =>
             setControlProperty("chartinfo", "enabled", action.enable),
             purgeMapInfoResults()
         ];
-        if (appState.mapInfo.enabled) {
+        if (mapInfoEnabled) { // If the `mapInfo` button is active in the toolbar, it disables it.
             actions.push(toggleMapInfoState());
+        } else { // Otherwise it ensures that InfoChart is not visible and hides the marker.
+            actions.push(setInfoChartVisibility(false));
+            actions.push(hideMapinfoMarker());
         }
         if ( appState.infochart.infoChartSize.widthResizable !== 880 || appState.infochart.infoChartSize.heightResizable !== 880) {
             actions.push(resizeInfoChart(880, 880));
@@ -300,15 +316,11 @@ const toggleInfoChartEpic = (action$, store) =>
         if (appState.infochart.alertMessage) {
             actions.push(closeAlert());
         }
-        if (!mapInfoEnabled) {
-            actions.push(setInfoChartVisibility(false));
-        }
-
         return Observable.of(...actions);
     });
 
-// disable infochart,se attivo, when mapInfo viene abilitato
-const disableInfoChartEpic = (action$, store) =>
+// Disable InfoChart (if active) when mapInfo is enabled
+const changeMapInfoStateEpic = (action$, store) =>
     action$.ofType(CHANGE_MAPINFO_STATE).switchMap((action) => {
         const appState = store.getState();
         const actions = [];
@@ -318,6 +330,33 @@ const disableInfoChartEpic = (action$, store) =>
         }
         return Observable.of(...actions);
     });
+
+/**
+ * Epic that handles toggling controls, excluding specific controls (e.g., toolbar, chartinfo, and burgermenu).
+ * If `chartinfo` is active, it disables it, hides the InfoChart, and removes the map marker.
+ */
+const toggleControlEpic = (action$, store) => {
+    // Controls to exclude from toggling
+    const excludedControls = ["toolbar", "chartinfo", "burgermenu", "about"];
+
+    return action$
+        .ofType(TOGGLE_CONTROL, SET_CONTROL_PROPERTY)
+        .filter(({ control }) => !excludedControls.includes(control))
+        .switchMap(() => {
+            const appState = store.getState();
+            const actions = [];
+            // Disable chartinfo if it's enabled
+            if (appState.controls?.chartinfo?.enabled) {
+                actions.push(setInfoChartVisibility(false));
+                actions.push(setControlProperty("chartinfo", "enabled", false));
+                actions.push(hideMapinfoMarker());
+            }
+
+            return Observable.of(...actions);
+        });
+};
+
+
 /**
  * Redux-Observable epic that listens for the CLICK_ON_MAP action and handles updating
  * the InfoChart panel state and fetching its data.
@@ -394,5 +433,6 @@ export {
     loadInfoChartDataEpic,
     closeInfoChartPanel,
     checkSelectDateEpic,
-    disableInfoChartEpic
+    changeMapInfoStateEpic,
+    toggleControlEpic
 };
