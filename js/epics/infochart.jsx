@@ -337,7 +337,7 @@ const changeMapInfoStateEpic = (action$, store) =>
  */
 const toggleControlEpic = (action$, store) => {
     // Controls to exclude from toggling
-    const excludedControls = ["toolbar", "chartinfo", "burgermenu", "about"];
+    const excludedControls = ["toolbar", "chartinfo", "burgermenu", "about", "backgroundSelector", "drawer"];
 
     return action$
         .ofType(TOGGLE_CONTROL, SET_CONTROL_PROPERTY)
