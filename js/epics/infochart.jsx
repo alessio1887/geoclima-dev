@@ -293,24 +293,24 @@ const toggleMapInfoEpic = (action$, store) =>
     });
 
 /**
- * Epic that manages the visibility of InfoChart and optionally restores some default settings (size and alert closure).
- * It is triggered when clicking on the InfoChartButton in the Toolbar menu.
+ * Epic that toggles the activation of the InfoChart and FeatureInfo buttons.
+ * It manages the visibility of the InfoChart and optionally restores some default settings (e.g., size and alert closure).
+ * Triggered when clicking on the InfoChartButton in the Toolbar menu.
  */
 const toggleInfoChartEpic = (action$, store) =>
     action$.ofType(TOGGLE_INFOCHART).switchMap((action) => {
         const appState = store.getState();
-        const mapInfoEnabled = appState.mapInfo.enabled;
+        const infoChartSize = appState.infochart.infoChartSize;
         const actions = [
             setControlProperty("chartinfo", "enabled", action.enable),
-            purgeMapInfoResults()
+            toggleMapInfoState()
         ];
-        if (mapInfoEnabled) { // If the `mapInfo` button is active in the toolbar, it disables it.
-            actions.push(toggleMapInfoState());
-        } else { // Otherwise it ensures that InfoChart is not visible and hides the marker.
+        if (appState.mapInfo?.showMarker || appState.controls?.chartinfo?.enabled) {
+            actions.push(purgeMapInfoResults());
             actions.push(setInfoChartVisibility(false));
             actions.push(hideMapinfoMarker());
         }
-        if ( appState.infochart.infoChartSize.widthResizable !== 880 || appState.infochart.infoChartSize.heightResizable !== 880) {
+        if ( infoChartSize.widthResizable !== 880 || infoChartSize.heightResizable !== 880) {
             actions.push(resizeInfoChart(880, 880));
         }
         if (appState.infochart.alertMessage) {
