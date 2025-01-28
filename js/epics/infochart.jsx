@@ -254,57 +254,59 @@ const closeInfoChartPanel = (action$, store) =>
  * and its relationship with InfoChart (state.controls.chartinfo).
  * When the TOGGLE_MAPINFO_STATE action is triggered, it checks the current state of the controls
  * state.controls.chartinfo and state.mapInfo.
- */
+*/
+// TODO  Compare with toggleMapInfoEpic and changeMapInfoStateEpic because there are duplicated actions.
 const toggleMapInfoEpic = (action$, store) =>
-    action$.ofType(TOGGLE_MAPINFO_STATE).switchMap(() => {
-        const storeState = store.getState();
-        if (storeState.controls.chartinfo) {
+    action$.ofType(TOGGLE_MAPINFO_STATE)
+        .filter(() => store.getState().controls.chartinfo)
+        .switchMap(() => {
+            let actions = [];
             const chartInfoEnabled = store.getState().controls.chartinfo.enabled;
             const mapInfoEnabled = store.getState().mapInfo.enabled;
             // If `chartinfo` is enabled and `mapInfo` is not, purge MapInfo results, hide the marker, and update the state of ChartInfo.
             if (chartInfoEnabled && !mapInfoEnabled) {
-                return Observable.of(
-                    changeMapInfoState(false),
-                    setInfoChartVisibility(false),
-                    setControlProperty("chartinfo", "enabled", true),
-                    purgeMapInfoResults(),
-                    hideMapinfoMarker()
-                );
-            // If both are disabled, keep `mapInfo` disabled but update the state of `chartinfo`.
+                actions.push(changeMapInfoState(false));
+                actions.push(setInfoChartVisibility(false));
+                actions.push(setControlProperty("chartinfo", "enabled", true));
+                actions.push(purgeMapInfoResults());
+                actions.push(hideMapinfoMarker());
+                // If both are disabled, keep `mapInfo` disabled but update the state of `chartinfo`.
             } else if (!chartInfoEnabled && !mapInfoEnabled) {
-                return Observable.of(
-                    changeMapInfoState(false),
-                    setInfoChartVisibility(false),
-                    setControlProperty("chartinfo", "enabled", false)
-                    // purgeMapInfoResults(),
-                    // hideMapinfoMarker()
-                );
+                actions.push(changeMapInfoState(false));
+                actions.push(setInfoChartVisibility(false));
+                actions.push(setControlProperty("chartinfo", "enabled", false));
+                // purgeMapInfoResults(),
+                // hideMapinfoMarker(
+            } else {
+                // If none of the above conditions are met, enable `mapInfo` and disable `chartinfo`, purge MapInfoResults, and hide the marker.
+                actions.push(changeMapInfoState(true));
+                actions.push(setInfoChartVisibility(false));
+                actions.push(setControlProperty("chartinfo", "enabled", false));
+                actions.push(purgeMapInfoResults());
+                actions.push(hideMapinfoMarker());
             }
-            // If none of the above conditions are met, enable `mapInfo` and disable `chartinfo`, purge MapInfoResults, and hide the marker.
-            return Observable.of(
-                changeMapInfoState(true),
-                setInfoChartVisibility(false),
-                setControlProperty("chartinfo", "enabled", false),
-                purgeMapInfoResults(),
-                hideMapinfoMarker()
-            );
-        }
-        return Observable.empty();
-    });
-
+            return Observable.of(...actions);
+        });
 /**
- * Epic that toggles the activation of the InfoChart and FeatureInfo buttons.
- * It manages the visibility of the InfoChart and optionally restores some default settings (e.g., size and alert closure).
+ * Epic that toggles the activation of the InfoChartButton (state.controls.chartinfo.enabled).
+ * It also manages the visibility of the InfoChart and optionally restores some default settings (e.g., size and alert closure).
  * Triggered when clicking on the InfoChartButton in the Toolbar menu.
  */
+// TODO  Compare with toggleMapInfoEpic and changeMapInfoStateEpic because there are duplicated actions.
 const toggleInfoChartEpic = (action$, store) =>
     action$.ofType(TOGGLE_INFOCHART).switchMap((action) => {
         const appState = store.getState();
         const infoChartSize = appState.infochart.infoChartSize;
         const actions = [
-            setControlProperty("chartinfo", "enabled", action.enable),
-            toggleMapInfoState()
+            setControlProperty("chartinfo", "enabled", action.enable)
         ];
+        /**
+         * If the InfoChartButton is to be disabled and the MapInfo button is disabled, toggle MapInfo (active MapInfo button).
+         * If the InfoChartButton is to be enabled and the MapInfo button is enabled, toggle MapInfo (disable MapInfo button).
+         */
+        if (action.enable === appState.mapInfo?.enabled) {
+            actions.push(toggleMapInfoState());
+        }
         if (appState.mapInfo?.showMarker || appState.controls?.chartinfo?.enabled) {
             actions.push(purgeMapInfoResults());
             actions.push(setInfoChartVisibility(false));
