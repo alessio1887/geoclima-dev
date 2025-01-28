@@ -127,7 +127,7 @@ const Api = {
             return { isValid: false, errorMessage: "gcapp.errorMessages.rangeExceedsBoundary"};
         }
         if (toDataMoment.isBefore(fromDataMoment)) {
-            return { isValid: false, errorMessage: "gcapp.errorMessages.toDataMomentBefore" };
+            return { isValid: false, errorMessage: "gcapp.errorMessages.endDateBefore" };
         }
         const oneYearFromStart = fromDataMoment.clone().add(1, 'year');
         if (toDataMoment.isAfter(oneYearFromStart)) {
