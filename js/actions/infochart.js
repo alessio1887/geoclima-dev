@@ -214,11 +214,12 @@ export function setTabList(tabList) {
 //     };
 // }
 
-export const checkLaunchSelectDateQuery = (variableSelectDate, urlSelectDate) => {
+export const checkLaunchSelectDateQuery = (variableSelectDate, urlSelectDate, timeUnit) => {
     return {
         type: CHECK_FETCH_AVAILABLE_DATES,
         variableSelectDate,
-        urlSelectDate
+        urlSelectDate,
+        timeUnit
     };
 };
 

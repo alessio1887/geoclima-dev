@@ -44,8 +44,8 @@ ConfigUtils.setLocalConfigurationFile('configs/localConfig.json');
  *     }]
  * });
  */
-// const appConfig = require('@mapstore/product/appConfig').default;
-import appConfig from '@js/appConfig';
+const appConfig = require('@mapstore/product/appConfig').default;
+// import appConfig from '@js/appConfig';
 
 /**
  * Define a custom list of plugins with:

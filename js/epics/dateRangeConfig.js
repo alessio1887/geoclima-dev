@@ -6,7 +6,6 @@
  * LICENSE file in the root directory of this source tree.
 */
 import { Observable } from 'rxjs';
-import { zip } from 'rxjs/observable/zip';
 import { MAP_CONFIG_LOADED } from '@mapstore/actions/config';
 import { updateSettings, updateNode } from '@mapstore/actions/layers';
 import { FETCHED_AVAILABLE_DATES, fetchSelectDate } from '../actions/updateDatesParams';
@@ -20,12 +19,12 @@ momentLocaliser(moment);
 
 const COMBINED_DATE_MAPCONFIG = 'COMBINED_DATE_MAPCONFIG';
 
-const updateLayersParams = (layers, toData) => {
+const updateLayersParams = (layers, toData, timeUnit) => {
     let actionsUpdateParams = [];
-    const toDataFormatted = moment(toData).format();
-    const fromDataFormatted = moment(toData).clone().subtract(1, 'month').format();
+    const toDataFormatted = moment(toData).format(timeUnit);
+    const fromDataFormatted = moment(toData).clone().subtract(1, 'month').format(timeUnit);
     for (const layer of layers) {
-        if (layer.params) {
+        if (layer.params?.map) {
             const mapFileName = DateAPI.setGCMapFile(
                 fromDataFormatted,
                 toDataFormatted,
@@ -45,36 +44,55 @@ const updateLayersParams = (layers, toData) => {
     // Returns action for updated layers
     return actionsUpdateParams;
 };
-
-
+/**
+ * Epic that listens for the COMBINED_DATE_MAPCONFIG action and updates layer parameters
+ * based on the selected date range.
+ *
+ * It first checks if either the fixed range picker or the free range picker plugin is loaded.
+ * If so, it extracts the layers from the map configuration and retrieves the selected date
+ * and time unit from the action payload.
+ *
+ * Then, it generates update actions for the layers' parameters.
+ */
 const updateParamsByDateRangeEpic = (action$, store) =>
     action$.ofType(COMBINED_DATE_MAPCONFIG)
-        .switchMap((action) => {
+        .filter(() => {
             const appState = store.getState();
-            if (!appState.fixedrangepicker?.isPluginLoaded && !appState.freerangepicker?.isPluginLoaded) {
-                return Observable.empty();
-            }
-            const layers = action.payload.config?.map?.layers;
+            return appState.fixedrangepicker?.isPluginLoaded || appState.freerangepicker?.isPluginLoaded;
+        })
+        .switchMap((action) => {
+            const layers = action.payload.config?.map?.layers || [];
             const toData = action.payload.availableDate;
-            const actionsUpdateParams = updateLayersParams(layers, toData);
+            const timeUnit = action.payload.timeUnit;
+            const actionsUpdateParams = updateLayersParams(layers, toData, timeUnit);
             return Observable.of(...actionsUpdateParams);
         });
 
+/**
+ * Epic that combines two action streams:
+ * 1. FETCHED_AVAILABLE_DATES: emitted when available dates are fetched.
+ * 2. MAP_CONFIG_LOADED: emitted when a map configuration is loaded.
+ *
+ * Each time a FETCHED_AVAILABLE_DATES action is received, it is combined with
+ * the latest MAP_CONFIG_LOADED action. If no MAP_CONFIG_LOADED action has been emitted yet,
+ * FETCHED_AVAILABLE_DATES will not produce any output until a map configuration is available.
+ *
+ * Once combined, the epic emits a new action of type `COMBINED_DATE_MAPCONFIG`,
+ * containing both the available date (`availableDateAction.dataFine`) and the map configuration (`mapConfigAction.config`).
+ */
 const combinedDateMapConfigEpic = (action$) => {
-    const availableDate$ = action$.ofType(FETCHED_AVAILABLE_DATES);
-
     const mapConfigLoaded$ = action$.ofType(MAP_CONFIG_LOADED);
 
-    return zip(
-        availableDate$,
-        mapConfigLoaded$
-    ).map(([availableDateAction, mapConfigAction]) => ({
-        type: COMBINED_DATE_MAPCONFIG,
-        payload: {
-            availableDate: availableDateAction.dataFine,
-            config: mapConfigAction.config
-        }
-    }));
+    return action$.ofType(FETCHED_AVAILABLE_DATES)
+        .withLatestFrom(mapConfigLoaded$) // Ogni FETCHED_AVAILABLE_DATES viene combinato con l'ultimo MAP_CONFIG_LOADED
+        .map(([availableDateAction, mapConfigAction]) => ({
+            type: COMBINED_DATE_MAPCONFIG,
+            payload: {
+                availableDate: availableDateAction.dataFine,
+                config: mapConfigAction.config,
+                timeUnit: availableDateAction.timeUnit
+            }
+        }));
 };
 
 
@@ -149,25 +167,22 @@ const combinedDateMapConfigEpic = (action$) => {
 //             return Observable.empty();
 //         });
 
-const checkFetchAvailableDatesFreeRange = (action$, store) =>
-    action$.ofType(FREERANGE_CHECK_FETCH_SELECT_DATE)
-        .switchMap((action) => {
+const checkFetchAvailableDatesEpic = (action$, store) =>
+    action$.ofType(FREERANGE_CHECK_FETCH_SELECT_DATE, FIXEDRANGE_CHECK_FETCH_SELECT_DATE)
+        .filter((action) => {
             const appState = store.getState();
-            if (!appState.fixedrangepicker?.isPluginLoaded && !appState.infochart?.isPluginLoaded) {
-                return Observable.of(fetchSelectDate(action.variableSelectDate, action.urlSelectDate, "FreeRangePlugin"));
+            if (action.type === FREERANGE_CHECK_FETCH_SELECT_DATE) {
+                return !appState.fixedrangepicker?.isPluginLoaded && !appState.infochart?.isPluginLoaded;
             }
-            return Observable.empty();
-        });
+            if (action.type === FIXEDRANGE_CHECK_FETCH_SELECT_DATE) {
+                return !appState.freerangepicker?.isPluginLoaded && !appState.infochart?.isPluginLoaded;
+            }
+            return false;
+        })
+        .switchMap((action) =>
+            Observable.of(fetchSelectDate(action.variableSelectDate, action.urlSelectDate, action.type, action.timeUnit))
+        );
 
-const checkFetchAvailableDatesFixedRange = (action$, store) =>
-    action$.ofType(FIXEDRANGE_CHECK_FETCH_SELECT_DATE)
-        .switchMap((action) => {
-            const appState = store.getState();
-            if (!appState.freerangepicker?.isPluginLoaded && !appState.infochart?.isPluginLoaded) {
-                return Observable.of(fetchSelectDate(action.variableSelectDate, action.urlSelectDate, "FixedRangePlugin", action.timeUnit));
-            }
-            return Observable.empty();
-        });
 
 /**
  * Epic that handles the toggling of a plugin based on action parameters.
@@ -219,8 +234,7 @@ const togglePluginEpic = (action$, store) =>
 
 
 export {
-    checkFetchAvailableDatesFreeRange,
-    checkFetchAvailableDatesFixedRange,
+    checkFetchAvailableDatesEpic,
     combinedDateMapConfigEpic,
     updateParamsByDateRangeEpic,
     togglePluginEpic

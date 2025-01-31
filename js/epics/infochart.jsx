@@ -62,14 +62,12 @@ const getVariableParamsFromTab = (idTab, idVariable, tabList) => {
     );
 };
 
+
 const checkSelectDateEpic = (action$, store) =>
     action$.ofType(CHECK_FETCH_AVAILABLE_DATES)
+        .filter(() => !store.getState().fixedrangepicker?.isPluginLoaded && !store.getState().freerangepicker?.isPluginLoaded)
         .switchMap((action) => {
-            const appState = store.getState();
-            if (!appState.fixedrangepicker?.isPluginLoaded && !appState.freerangepicker?.isPluginLoaded) {
-                return Observable.of(fetchSelectDate(action.variableSelectDate, action.urlSelectDate, "InfoChartPlugin"));
-            }
-            return Observable.empty();
+            return Observable.of(fetchSelectDate(action.variableSelectDate, action.urlSelectDate, action.type, action.timeUnit));
         });
 
 const getVisibleGroups = (groupMS2List = []) => {

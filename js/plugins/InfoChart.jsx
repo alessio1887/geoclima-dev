@@ -118,7 +118,10 @@ const InfoChartPlugin = connect(
 )(InfoChartButton);
 
 const InfoChartPanel = connect((state) => ({
-    show: state.infochart && state.infochart.showInfoChartPanel || false,
+    active: state.controls?.chartinfo?.enabled || false,
+    activeRangeManager: state.infochart?.activeRangeManager || FREE_RANGE,
+    alertMessage: state.infochart?.alertMessage || null,
+    data: state.infochart?.data || '',
     infoChartData: {
         fromData: state.infochart?.infoChartData?.fromData,
         toData: state.infochart?.infoChartData?.toData,
@@ -127,25 +130,22 @@ const InfoChartPanel = connect((state) => ({
         periodType: state.infochart?.infoChartData?.periodType,
         idTab: state.infochart?.infoChartData?.idTab
     },
-    tabVariables: state.infochart?.tabVariables,
-    data: state.infochart?.data || '',
-    maskLoading: state.infochart?.maskLoading,
-    active: state.controls?.chartinfo?.enabled || false,
     mapinfoActive: state.mapInfo?.enabled || false,
+    maskLoading: state.infochart?.maskLoading,
     // Initializes 'fromData' based on Infochart's date range; defaults to a calculated date if missing
     fromData: state.infochart?.fromData,
-    // Initializes 'toData' based on Infochart's date range; defaults to a calculated date if missing
-    toData: state.infochart?.toData,
     periodType: state.infochart?.periodType,
     isInteractionDisabled: state.infochart?.isInteractionDisabled || false,
     isCollapsedFormGroup: state.infochart?.isCollapsedFormGroup || false,
-    activeRangeManager: state.infochart?.activeRangeManager || FREE_RANGE,
-    alertMessage: state.infochart?.alertMessage || null,
     chartRelayout: state.infochart?.chartRelayout,
     infoChartSize: state.infochart?.infoChartSize || { widthResizable: 880, heightResizable: 880 },
     firstAvailableDate: state?.infochart?.firstAvailableDate,
     lastAvailableDate: state?.infochart?.lastAvailableDate,
-    isPluginLoaded: state?.infochart?.isPluginLoaded
+    isPluginLoaded: state?.infochart?.isPluginLoaded,
+    show: state.infochart && state.infochart.showInfoChartPanel || false,
+    tabVariables: state.infochart?.tabVariables,
+    // Initializes 'toData' based on Infochar's date range; defaults to a calculated date if missing
+    toData: state.infochart?.toData
 }), {
     onSetInfoChartVisibility: setInfoChartVisibility,
     onSetTimeUnit: setTimeUnit,
