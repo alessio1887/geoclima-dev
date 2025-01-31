@@ -47,7 +47,7 @@ class InfoChart extends React.Component {
         onHideMapinfoMarker: PropTypes.func,
         show: PropTypes.bool,
         infoChartData: PropTypes.object,
-        tabVariables: PropTypes.object,
+        tabVariables: PropTypes.array,
         maskLoading: PropTypes.bool,
         // data fetched by epic loadInfoChartDataEpic
         data: PropTypes.array,
@@ -225,6 +225,14 @@ class InfoChart extends React.Component {
         return false;
     }
     onResize = (event, { size }) => {
+        // Stampa la posizione corrente del pannello
+        console.log("Posizione del pannello:", {
+            width: size.width,
+            height: size.height,
+            top: event.target.style.top, // Se il pannello ha una proprietà top
+            left: event.target.style.left // Se il pannello ha una proprietà left
+        });
+        // Aggiorna le dimensioni del pannello
         this.props.onResizeInfoChart(size.width, size.height);
     };
     switchRangeManager = () => {
