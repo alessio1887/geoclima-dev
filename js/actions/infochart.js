@@ -1,10 +1,10 @@
-/*
- * Copyright 2024, Riccardo Mari - CNR-Ibimet - Consorzio LaMMA.
+/**
+ * Copyright 2024, Consorzio LaMMA.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
-*/
+ */
 export const CHARTVARIABLE_CHANGED = 'CHARTVARIABLE_CHANGED';
 export const TODATA_CHANGED = 'INFOCHART:TODATA_CHANGED';
 export const FROMDATA_CHANGED = 'INFOCHART:FROMDATA_CHANGED';
