@@ -9,6 +9,7 @@ import FreeRangePickerPlugin from '@js/plugins/FreeRangePicker';
 import FixedRangePickerPlugin from '@js/plugins/FixedRangePicker';
 import InfoChartPlugin from './plugins/InfoChart';
 import DateRangeLabelPlugin from './plugins/DateRangeLabel';
+import ExportImagePlugin from './plugins/ExportImage';
 import productPlugins from '@mapstore/product/plugins.js';
 
 export default {
@@ -20,6 +21,7 @@ export default {
         FreeRangePickerPlugin,
         FixedRangePickerPlugin,
         DateRangeLabelPlugin,
-        InfoChartPlugin
+        InfoChartPlugin,
+        ExportImagePlugin
     }
 };
