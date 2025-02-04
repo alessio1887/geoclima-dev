@@ -14,9 +14,8 @@ import Message from '../../../MapStore2/web/client/components/I18N/Message';
 
 import Dialog from '../../../MapStore2/web/client/components/misc/Dialog';
 import BorderLayout from '../../../MapStore2/web/client/components/layout/BorderLayout';
-// import Plot from '../../../MapStore2/web/client/components/charts/PlotlyChart.jsx';
 import InfoChartRender from './InfoChartRender';
-import SelectVariableTab from './SelectVariableTab';
+import SelectVariableTab from '../../components/dropdowns/SelectVariableTab';
 import FixedRangeManager from '../../components/datepickers/FixedRangeManager';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../../utils/ManageDateUtils';
