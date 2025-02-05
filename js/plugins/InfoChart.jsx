@@ -11,13 +11,14 @@ import { compose } from 'redux';
 import {setInfoChartVisibility, changeFixedRangeToData, fetchInfoChartData, fetchedInfoChartData, toggleInfoChart,
     changeChartVariable, changePeriod, changeFromData, changeToData, setDefaultDates, collapseRangePicker,
     openAlert, closeAlert, setChartRelayout, resetChartRelayout, resizeInfoChart, setIdVariabiliLayers,
-    setRangeManager, setDefaultUrlGeoclimaChart, checkLaunchSelectDateQuery, setTimeUnit,
+    setRangeManager, setDefaultUrlGeoclimaChart, setTimeUnit,
     markInfoChartAsLoaded, changeTab, setTabList, initializeVariableTabs } from '../actions/infochart';
 import { hideMapinfoMarker } from '@mapstore/actions/mapInfo';
 import InfoChartButton from '../components/buttons/InfoChartButton';
 import InfoChart from '../components/infochart/InfoChart';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
 import infoChartReducer from '../reducers/infochart';
+import { fetchSelectDate } from '@js/actions/updateDatesParams';
 import * as infoChartEpic from '../epics/infochart';
 import assign from 'object-assign';
 import { FREE_RANGE } from '@js/utils/VariabiliMeteoUtils';
@@ -147,8 +148,7 @@ const InfoChartPanel = connect((state) => ({
     // Initializes 'toData' based on Infochar's date range; defaults to a calculated date if missing
     toData: state.infochart?.toData
 }), {
-    onSetInfoChartVisibility: setInfoChartVisibility,
-    onSetTimeUnit: setTimeUnit,
+    onFetchAvailableDates: fetchSelectDate,
     onFetchInfoChartData: fetchInfoChartData,
     onFetchedInfoChartData: fetchedInfoChartData,
     onChangeChartVariable: changeChartVariable,
@@ -158,6 +158,8 @@ const InfoChartPanel = connect((state) => ({
     onChangeFixedRangeTodata: compose(changeFixedRangeToData, (event) => event),
     onChangePeriod: changePeriod,
     onSetInfoChartDates: setDefaultDates,
+    onSetInfoChartVisibility: setInfoChartVisibility,
+    onSetTimeUnit: setTimeUnit,
     onCollapseRangePicker: collapseRangePicker,
     onInitializeVariableTabs: initializeVariableTabs,
     onSetRangeManager: setRangeManager,
@@ -169,7 +171,6 @@ const InfoChartPanel = connect((state) => ({
     onResizeInfoChart: resizeInfoChart,
     onSetIdVariabiliLayers: setIdVariabiliLayers,
     onSetDefaultUrlGeoclimaChart: setDefaultUrlGeoclimaChart,
-    onCheckFetchAvailableDates: checkLaunchSelectDateQuery,
     onMarkPluginAsLoaded: markInfoChartAsLoaded,
     onHideMapinfoMarker: hideMapinfoMarker
 })(InfoChart);

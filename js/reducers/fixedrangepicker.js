@@ -33,8 +33,7 @@ function fixedrangepicker(state = defaultState, action) {
         return {
             ...state,
             fromData: moment(action.toData).clone().subtract(Number(state.periodType), 'days').toDate(),
-            toData: action.toData,
-            periodType: state.periodType
+            toData: action.toData
         };
     case MAP_PERIOD_CHANGED:
         return {

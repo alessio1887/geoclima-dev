@@ -25,7 +25,8 @@ import layers from '@mapstore/reducers/layers';
 import freerangepicker from '@js/reducers/freerangepicker';
 import { toggleRangePickerPlugin } from '../actions/fixedrangepicker';
 import { changeFromData, changeToData, openAlert, closeAlert, collapsePlugin,
-    markFreeRangeAsLoaded, markFreeRangeAsNotLoaded, checkFetchAvailableDatesFreeRange } from '@js/actions/freerangepicker';
+    markFreeRangeAsLoaded, markFreeRangeAsNotLoaded } from '@js/actions/freerangepicker';
+import { fetchSelectDate } from '@js/actions/updateDatesParams';
 import * as rangePickerEpics from '../epics/dateRangeConfig';
 
 import FreeRangeManager from '../components/datepickers/FreeRangeManager';
@@ -61,7 +62,7 @@ class FreeRangePicker extends React.Component {
         id: PropTypes.string,
         className: PropTypes.string,
         isCollapsedPlugin: PropTypes.bool,
-        onCollapsePlugin: PropTypes.func,
+        isFetchAvailableDates: PropTypes.bool,
         fromData: PropTypes.instanceOf(Date),
         toData: PropTypes.instanceOf(Date),
         firstAvailableDate: PropTypes.instanceOf(Date),
@@ -69,12 +70,13 @@ class FreeRangePicker extends React.Component {
         onChangeFromData: PropTypes.func,
         onChangeToData: PropTypes.func,
         onCloseAlert: PropTypes.func,
+        onCollapsePlugin: PropTypes.func,
+        onFetchAvailableDates: PropTypes.func,
+        onMarkPluginAsLoaded: PropTypes.func,
+        onMarkPluginAsNotLoaded: PropTypes.func,
         onOpenAlert: PropTypes.func,
         onUpdateSettings: PropTypes.func,
         onUpdateNode: PropTypes.func,
-        onMarkPluginAsLoaded: PropTypes.func,
-        onMarkPluginAsNotLoaded: PropTypes.func,
-        onCheckLaunchSelectDateQuery: PropTypes.func,
         periodTypes: PropTypes.array,
         defaultUrlSelectDate: PropTypes.string,
         variabileSelectDate: PropTypes.string,
@@ -132,9 +134,14 @@ class FreeRangePicker extends React.Component {
         defaultToData: moment(this.props.lastAvailableDate).clone().subtract(1, 'month').startOf('day').toDate()
     }
 
+
     componentDidMount() {
         this.props.onMarkPluginAsLoaded();
-        this.props.onCheckLaunchSelectDateQuery(this.props.variabileSelectDate, this.props.defaultUrlSelectDate);
+        // Setta mapfilenameSuffixes solo al primo caricamento del componente
+        this.mapfilenameSuffixes = this.props.periodTypes.map(t => t.key);
+        if ( this.props.isFetchAvailableDates && this.props.defaultUrlSelectDate && this.props.variabileSelectDate) {
+            this.props.onFetchAvailableDates(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, this.props.timeUnit, this.props.periodTypes);
+        }
     }
 
     // Resets the plugin's state to default values when navigating back to the Home Page
@@ -175,6 +182,9 @@ class FreeRangePicker extends React.Component {
             </div>
         );
     }
+
+    mapfilenameSuffixes = [];
+
     showRangePicker = () => {
         return (
             <div className="ms-freerangepicker-action">
@@ -246,7 +256,7 @@ class FreeRangePicker extends React.Component {
     updateParams(datesParam, onUpdateNode = true) {
         this.props.layers.flat.map((layer) => {
             if (onUpdateNode && isVariabiliMeteoLayer(layer.name, this.props.variabiliMeteo)) {
-                const mapFile = DateAPI.getMapNameFromSuffix(layer.params?.map, this.periodTypes,
+                const mapFile = DateAPI.getMapNameFromSuffix(layer.params?.map, this.mapfilenameSuffixes,
                     DateAPI.getMapSuffixFromDates(datesParam.fromData, datesParam.toData, this.periodTypes));
                 const newParams = {
                     params: {
@@ -295,7 +305,7 @@ const FreeRangePickerPlugin = connect(mapStateToProps, {
     onToggleFreeRangePicker: toggleRangePickerPlugin,
     onOpenAlert: openAlert,
     onCloseAlert: closeAlert,
-    onCheckLaunchSelectDateQuery: checkFetchAvailableDatesFreeRange
+    onFetchAvailableDates: fetchSelectDate
 })(FreeRangePicker);
 
 export default createPlugin(

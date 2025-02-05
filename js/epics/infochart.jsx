@@ -17,7 +17,6 @@ import { TOGGLE_MAPINFO_STATE,
 import {
     TOGGLE_INFOCHART,
     FETCH_INFOCHART_DATA,
-    CHECK_FETCH_AVAILABLE_DATES,
     fetchedInfoChartData,
     setInfoChartVisibility,
     fetchInfoChartData,
@@ -31,7 +30,6 @@ import {
     closeAlert,
     resizeInfoChart
 } from '../actions/infochart';
-import { fetchSelectDate } from '../actions/updateDatesParams';
 import { CLICK_ON_MAP } from '../../MapStore2/web/client/actions/map';
 import { LOADING } from '@mapstore/actions/maps';
 import API from '../api/GeoClimaApi';
@@ -63,12 +61,12 @@ const getVariableParamsFromTab = (idTab, idVariable, tabList) => {
 };
 
 
-const checkSelectDateEpic = (action$, store) =>
-    action$.ofType(CHECK_FETCH_AVAILABLE_DATES)
-        .filter(() => !store.getState().fixedrangepicker?.isPluginLoaded && !store.getState().freerangepicker?.isPluginLoaded)
-        .switchMap((action) => {
-            return Observable.of(fetchSelectDate(action.variableSelectDate, action.urlSelectDate, action.type, action.timeUnit));
-        });
+// const checkSelectDateEpic = (action$, store) =>
+//     action$.ofType(CHECK_FETCH_AVAILABLE_DATES)
+//         .filter(() => !store.getState().fixedrangepicker?.isPluginLoaded && !store.getState().freerangepicker?.isPluginLoaded)
+//         .switchMap((action) => {
+//             return Observable.of(fetchSelectDate(action.variableSelectDate, action.urlSelectDate, action.type, action.timeUnit));
+//         });
 
 const getVisibleGroups = (groupMS2List = []) => {
     if (!Array.isArray(groupMS2List)) {
@@ -432,7 +430,6 @@ export {
     clickedPointCheckEpic,
     loadInfoChartDataEpic,
     closeInfoChartPanel,
-    checkSelectDateEpic,
     changeMapInfoStateEpic,
     toggleControlEpic
 };

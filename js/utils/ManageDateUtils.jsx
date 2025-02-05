@@ -89,8 +89,7 @@ const Api = {
      * For instance, a one-month rainfall cumulative has very different values compared to a one-year rainfall cumulative.
      * Each mapfile has a different reclassification for the legend. Attached are the various mapfiles currently used in the online application.
      */
-    getMapNameFromSuffix(mapLayerParam, periodTypes, mapNameSuffix) {
-        const validSuffixes = periodTypes.map(t => t.key);
+    getMapNameFromSuffix(mapLayerParam, validSuffixes, mapNameSuffix) {
         const cleanedMapName = this.removeValidSuffixes(mapLayerParam, validSuffixes);
         return cleanedMapName + mapNameSuffix;
     },
