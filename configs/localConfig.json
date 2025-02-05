@@ -5,6 +5,7 @@
           "http://geoportale.lamma.rete.toscana.it/geoserver_sar",
             "https://geoportale.lamma.rete.toscana.it/geoserver_sar",
             "https://geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/geoclima_chart.py?",
+            "https://geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/geoclima_chart_test.py?",
             "https://geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py?",
             "https://nominatim.openstreetmap.org",
             "http://spatialreference.org/ref/epsg/3003/proj4/"
@@ -713,8 +714,18 @@
               },
               "fluid": true
             }
-          }
-          , "Footer", {
+          },  {
+            "name": "Footer",
+            "cfg": {
+                "id": "footer-geoclima",
+                "logo": {
+                    "src": "js/assets/img/LogoLamma-hr.jpg",
+                    "width": 130,
+                    "height": "auto",
+                    "href": "https://www.lamma.toscana.it/"
+                }
+            }
+          }, {
           "name": "Cookie",
           "cfg": {
             "externalCookieUrl" : "",

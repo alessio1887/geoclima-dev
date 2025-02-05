@@ -68,12 +68,14 @@ class FreeRangePicker extends React.Component {
         lastAvailableDate: PropTypes.instanceOf(Date),
         onChangeFromData: PropTypes.func,
         onChangeToData: PropTypes.func,
+        onCloseAlert: PropTypes.func,
+        onOpenAlert: PropTypes.func,
         onUpdateSettings: PropTypes.func,
         onUpdateNode: PropTypes.func,
         onMarkPluginAsLoaded: PropTypes.func,
         onMarkPluginAsNotLoaded: PropTypes.func,
         onCheckLaunchSelectDateQuery: PropTypes.func,
-        settings: PropTypes.object,
+        periodTypes: PropTypes.array,
         defaultUrlSelectDate: PropTypes.string,
         variabileSelectDate: PropTypes.string,
         layers: PropTypes.object,
@@ -81,11 +83,10 @@ class FreeRangePicker extends React.Component {
         showFreeRangePicker: PropTypes.bool, // serve per la visibilita del componente
         onToggleFreeRangePicker: PropTypes.func,
         alertMessage: PropTypes.string,
-        onOpenAlert: PropTypes.func,
-        onCloseAlert: PropTypes.func,
         isInteractionDisabled: PropTypes.bool,
         shiftRight: PropTypes.bool,
         isPluginLoaded: PropTypes.bool,
+        settings: PropTypes.object,
         showChangeRangePickerButton: PropTypes.bool,
         timeUnit: PropTypes.string
     };
@@ -245,7 +246,8 @@ class FreeRangePicker extends React.Component {
     updateParams(datesParam, onUpdateNode = true) {
         this.props.layers.flat.map((layer) => {
             if (onUpdateNode && isVariabiliMeteoLayer(layer.name, this.props.variabiliMeteo)) {
-                const mapFile = DateAPI.setGCMapFile(datesParam.fromData, datesParam.toData, layer.params.map);
+                const mapFile = DateAPI.getMapNameFromSuffix(layer.params?.map, this.periodTypes,
+                    DateAPI.getMapSuffixFromDates(datesParam.fromData, datesParam.toData, this.periodTypes));
                 const newParams = {
                     params: {
                         map: mapFile,

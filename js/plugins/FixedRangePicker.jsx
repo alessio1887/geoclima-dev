@@ -67,7 +67,6 @@ Plugin configuration
 */
 class FixedRangePicker extends React.Component {
     static propTypes = {
-        style: PropTypes.object,
         id: PropTypes.string,
         className: PropTypes.string,
         isCollapsedPlugin: PropTypes.bool,
@@ -75,6 +74,8 @@ class FixedRangePicker extends React.Component {
         fromData: PropTypes.instanceOf(Date),
         toData: PropTypes.instanceOf(Date),
         firstAvailableDate: PropTypes.instanceOf(Date),
+        isInteractionDisabled: PropTypes.bool,
+        isPluginLoaded: PropTypes.bool,
         lastAvailableDate: PropTypes.instanceOf(Date),
         onCheckLaunchSelectDateQuery: PropTypes.func,
         onSetSelectDate: PropTypes.func,
@@ -89,18 +90,17 @@ class FixedRangePicker extends React.Component {
         settings: PropTypes.object,
         layers: PropTypes.object,
         variabiliMeteo: PropTypes.object,
-        periodType: PropTypes.string,
+        periodType: PropTypes.object,
         periodTypes: PropTypes.array,
         showFixedRangePicker: PropTypes.bool, // If true, show this plugin; otherwise, show FreeRangePlugin if inserted in context
         onToggleFixedRangePicker: PropTypes.func,
         alertMessage: PropTypes.string,
         onOpenAlert: PropTypes.func,
         onCloseAlert: PropTypes.func,
-        isInteractionDisabled: PropTypes.bool,
         shiftRight: PropTypes.bool,
         showOneDatePicker: PropTypes.bool,
         showChangeRangePickerButton: PropTypes.bool,
-        isPluginLoaded: PropTypes.bool,
+        style: PropTypes.object,
         timeUnit: PropTypes.string
     };
     static defaultProps = {
@@ -112,12 +112,13 @@ class FixedRangePicker extends React.Component {
         onMarkFixedRangeAsNotLoaded: () => { },
         periodType: "1",
         periodTypes: [
-            { "key": "1", "label": "1 Mese" },
-            { "key": "3", "label": "3 Mesi" },
-            { "key": "4", "label": "4 Mesi" },
-            { "key": "6", "label": "6 Mesi" },
-            { "key": "12", "label": "12 Mesi" },
-            { "key": "10", "label": "dal 1° Ottobre" }
+            { "key": 1, "label": "5 giorni", "max": 5, "default": true },
+            { "key": 7, "label": "8 giorni", "max": 8 },
+            { "key": 10, "label": "20 giorni", "max": 20 },
+            { "key": 30, "label": "60 giorni", "max": 60 },
+            { "key": 120, "label": "160 giorni", "max": 160 },
+            { "key": 180, "label": "250 giorni", "max": 250 },
+            { "key": 365, "label": "366 giorni", "max": 366 }
         ],
         id: "mapstore-fixederange",
         variabiliMeteo: {
@@ -159,7 +160,9 @@ class FixedRangePicker extends React.Component {
     componentDidMount() {
         this.props.onToggleFixedRangePicker();
         this.props.onMarkPluginAsLoaded();
-        this.props.onCheckLaunchSelectDateQuery(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, this.props.timeUnit);
+        // if(defualtir (
+        //     this.props.onCheckLaunchSelectDateQuery(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, this.props.timeUnit);
+        // ))
     }
 
     // Resets the plugin's state to default values when navigating back to the Home Page
@@ -277,16 +280,19 @@ class FixedRangePicker extends React.Component {
         );
     }
     handleChangePeriod = (periodType) => {
-        this.props.onChangePeriod(periodType.key);
+        this.props.onChangePeriod(periodType);
         this.handleApplyPeriod(periodType.key);
     }
     handleApplyPeriod = (periodType = null) => {
         const toData = this.props.toData;
         let fromData;
+        let mapNameSuffix;
         if (!periodType) {
             fromData = this.props.fromData;
+            mapNameSuffix = periodType.key;
         } else {
-            fromData =  new Date(DateAPI.calculateDateFromKeyReal(periodType, toData).fromData);
+            fromData =  moment(toData).clone().subtract(Number(this.periodType.max), 'days').toDate();
+            mapNameSuffix = this.periodType;
         }
         if (!fromData || !toData || isNaN(fromData) || isNaN(toData) || !(toData instanceof Date) || !(fromData instanceof Date)) {
             // restore defult values
@@ -304,7 +310,8 @@ class FixedRangePicker extends React.Component {
         }
         this.updateParams({
             fromData: fromData,
-            toData: toData
+            toData: toData,
+            mapNameSuffix: mapNameSuffix
         });
         // set default values
         this.setState({ defaultFromData: new Date(fromData)});
@@ -313,7 +320,7 @@ class FixedRangePicker extends React.Component {
     updateParams = (datesParam, onUpdateNode = true) => {
         this.props.layers.flat.map((layer) => {
             if (onUpdateNode && isVariabiliMeteoLayer(layer.name, this.props.variabiliMeteo)) {
-                const mapFile = DateAPI.setGCMapFile(datesParam.fromData, datesParam.toData, layer.params.map);
+                const mapFile = DateAPI.getMapNameFromSuffix(layer.params.map, this.periodTypes, datesParam.mapNameSuffix);
                 const newParams = {
                     params: {
                         map: mapFile,
