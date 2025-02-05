@@ -20,7 +20,6 @@ const defaultState = {
     toData: DEFAULT_DATA_FINE,
     showModal: false,
     imgSrc: "",
-    map: "geoclima",
     alertMessage: null,
     isPluginLoaded: false,
     firstAvailableDate: DEFAULT_DATA_INIZIO,
@@ -88,7 +87,8 @@ function freerangepicker(state = defaultState, action) {
             toData: newDataFine,
             fromData: newFromData,
             firstAvailableDate: newDataInizio,
-            lastAvailableDate: newDataFine
+            lastAvailableDate: newDataFine,
+            periodTypes: action.periodTypes
         };
     default:
         return state;

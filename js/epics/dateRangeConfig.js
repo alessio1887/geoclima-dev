@@ -224,7 +224,8 @@ const togglePluginEpic = (action$, store) =>
                 const toData = layers[0]?.params?.toData || appState.freerangepicker.lastAvailableDate;
                 // Verifica validità delle date
                 if (toData && !isNaN(new Date(toData))) {
-                    newActions.push(changePeriod("1"));
+                    const defaultPeriod = appState.fixedrangepicker?.periodTypes?.find(period => period.isDefault);
+                    newActions.push(changePeriod(defaultPeriod));
                     newActions.push(changePeriodToData(new Date(toData)));
                 }
             }

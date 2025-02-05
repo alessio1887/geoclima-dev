@@ -21,7 +21,6 @@ const defaultState = {
     toData: DEFAULT_DATA_FINE,
     showModal: false,
     imgSrc: "",
-    map: "geoclima",
     showFixedRangePicker: false,
     isInteractionDisabled: false,
     isPluginLoaded: false
@@ -92,7 +91,8 @@ function fixedrangepicker(state = defaultState, action) {
             toData: newDataFine,
             fromData: newFromData,
             firstAvailableDate: newDataInizio,
-            lastAvailableDate: newDataFine
+            lastAvailableDate: newDataFine,
+            periodTypes: action.periodTypes
         };
     default:
         return state;

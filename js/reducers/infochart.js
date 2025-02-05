@@ -188,7 +188,8 @@ function infochart(state = infoChartDefaultState, action) {
         return {
             ...state,
             firstAvailableDate: action.dataInizio,
-            lastAvailableDate: action.dataFine
+            lastAvailableDate: action.dataFine,
+            periodTypes: action.periodTypes
         };
     case SET_TIMEUNIT:
         return {
