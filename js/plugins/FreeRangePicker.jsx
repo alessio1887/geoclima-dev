@@ -257,7 +257,7 @@ class FreeRangePicker extends React.Component {
         this.props.layers.flat.map((layer) => {
             if (onUpdateNode && isVariabiliMeteoLayer(layer.name, this.props.variabiliMeteo)) {
                 const mapFile = DateAPI.getMapNameFromSuffix(layer.params?.map, this.mapfilenameSuffixes,
-                    DateAPI.getMapSuffixFromDates(datesParam.fromData, datesParam.toData, this.periodTypes));
+                    DateAPI.getMapSuffixFromDates(datesParam.fromData, datesParam.toData, this.props.periodTypes));
                 const newParams = {
                     params: {
                         map: mapFile,
