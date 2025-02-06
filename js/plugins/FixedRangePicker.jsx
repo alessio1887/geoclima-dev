@@ -163,7 +163,6 @@ class FixedRangePicker extends React.Component {
         this.props.onMarkPluginAsLoaded();
         // Setta mapfilenameSuffixes solo al primo caricamento del componente
         this.mapfilenameSuffixes = this.props.periodTypes.map(t => t.key);
-        this.props.onChangePeriod(this.props.periodTypes.find(period => period.isDefault));
         if ( this.props.isFetchAvailableDates && this.props.defaultUrlSelectDate && this.props.variabileSelectDate) {
             this.props.onFetchAvailableDates(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, this.props.timeUnit, this.props.periodTypes);
         }
@@ -341,9 +340,9 @@ class FixedRangePicker extends React.Component {
 const mapStateToProps = (state) => {
     return {
         isCollapsedPlugin: state?.fixedrangepicker?.isCollapsedPlugin,
-        fromData: state?.fixedrangepicker?.fromData || moment(this.props.lastAvailableDate).clone().subtract(1, 'month'),
+        fromData: state?.fixedrangepicker?.fromData || moment(this.props.lastAvailableDate).clone().subtract(20, 'days').toDate(),
         toData: state?.fixedrangepicker?.toData || this.props.lastAvailableDate,
-        periodType: state?.fixedrangepicker?.periodType || "1",
+        periodType: state?.fixedrangepicker?.periodType || { key: 10, label: "20 giorni", min: 9, max: 20, isDefault: true  },
         settings: state?.layers?.settings || { expanded: false, options: { opacity: 1 } },
         layers: state?.layers || {},
         showFixedRangePicker: (state?.fixedrangepicker?.showFixedRangePicker) ? true : false,

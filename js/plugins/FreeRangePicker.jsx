@@ -134,22 +134,20 @@ class FreeRangePicker extends React.Component {
         defaultToData: moment(this.props.lastAvailableDate).clone().subtract(1, 'month').startOf('day').toDate()
     }
 
-
     componentDidMount() {
-        this.props.onMarkPluginAsLoaded();
-        // Setta mapfilenameSuffixes solo al primo caricamento del componente
-        this.mapfilenameSuffixes = this.props.periodTypes.map(t => t.key);
-        if ( this.props.isFetchAvailableDates && this.props.defaultUrlSelectDate && this.props.variabileSelectDate) {
-            this.props.onFetchAvailableDates(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, this.props.timeUnit, this.props.periodTypes);
+        if (!this.props.isPluginLoaded) {
+            // Setta mapfilenameSuffixes solo al primo caricamento del componente
+            this.mapfilenameSuffixes = this.props.periodTypes.map(t => t.key);
+            if ( this.props.isFetchAvailableDates && this.props.defaultUrlSelectDate && this.props.variabileSelectDate) {
+                this.props.onFetchAvailableDates(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, this.props.timeUnit, this.props.periodTypes);
+            }
+            this.props.onMarkPluginAsLoaded();
         }
     }
 
     // Resets the plugin's state to default values when navigating back to the Home Page
     componentWillUnmount() {
-        const TO_DATA = this.props.lastAvailableDate;
-        const FROM_DATA = moment(TO_DATA).clone().subtract(1, 'month').startOf('day').toDate();
-        this.props.onChangeToData(TO_DATA);
-        this.props.onChangeFromData(FROM_DATA);
+        this.setDefaultDates(this.props.periodTypes(period => period.isDefault));
         this.props.onMarkPluginAsNotLoaded();
         if (this.props.alertMessage) {
             this.props.onCloseAlert();
@@ -184,6 +182,13 @@ class FreeRangePicker extends React.Component {
     }
 
     mapfilenameSuffixes = [];
+
+    setDefaultDates(defaultPeriod) {
+        const TO_DATA = this.props.lastAvailableDate;
+        const FROM_DATA = moment(TO_DATA).clone().subtract(defaultPeriod.max, 'days').toDate();
+        this.props.onChangeToData(TO_DATA);
+        this.props.onChangeFromData(FROM_DATA);
+    }
 
     showRangePicker = () => {
         return (

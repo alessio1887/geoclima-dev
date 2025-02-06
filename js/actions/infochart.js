@@ -175,11 +175,11 @@ export function setDefaultUrlGeoclimaChart(defaultUrlGeoclimaChart) {
     };
 }
 
-export function setDefaultDates(toData, periodTypes) {
+export function setDefaultDates(toData, defaultPeriod) {
     return {
         type: SET_DEFAULT_DATES,
         toData,
-        periodTypes
+        defaultPeriod
     };
 }
 

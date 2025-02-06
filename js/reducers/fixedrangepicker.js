@@ -16,9 +16,12 @@ momentLocaliser(moment);
 
 const defaultState = {
     isCollapsedPlugin: false,
-    periodType: "1",
-    fromData: moment(DEFAULT_DATA_FINE).clone().subtract(1, 'month').startOf('day').toDate(),
+    // periodType: "1",
+    // fromData: moment(DEFAULT_DATA_FINE).clone().subtract(1, 'month').startOf('day').toDate(),
+    // toData: DEFAULT_DATA_FINE,
+    fromData: moment(DEFAULT_DATA_FINE).clone().subtract(20, 'days').toDate(),
     toData: DEFAULT_DATA_FINE,
+    periodType: { key: 10, label: "20 giorni", min: 9, max: 20, isDefault: true  },
     showModal: false,
     imgSrc: "",
     showFixedRangePicker: false,
@@ -31,13 +34,13 @@ function fixedrangepicker(state = defaultState, action) {
     case TODATA_CHANGED:
         return {
             ...state,
-            fromData: moment(action.toData).clone().subtract(Number(state.periodType), 'days').toDate(),
+            fromData: moment(action.toData).clone().subtract(Number(state.periodType.max), 'days').toDate(),
             toData: action.toData
         };
     case MAP_PERIOD_CHANGED:
         return {
             ...state,
-            fromData: moment(state.toData).clone().subtract(action.periodType, 'days').toDate(),
+            fromData: moment(state.toData).clone().subtract(action.periodType.max, 'days').toDate(),
             // toData: new Date(DateAPI.calculateDateFromKeyReal(action.periodType, state.toData).toData),
             periodType: action.periodType
         };
@@ -85,14 +88,17 @@ function fixedrangepicker(state = defaultState, action) {
     case FETCHED_AVAILABLE_DATES:
         const newDataFine = action.dataFine || DEFAULT_DATA_FINE;
         const newDataInizio = action.dataInizio || DEFAULT_DATA_INIZIO;
-        const newFromData = moment(newDataFine).subtract(1, 'month').toDate();
+        const defaultPeriod = action.periodTypes.find(period => period.isDefault);
+        // const newFromData = moment(newDataFine).subtract(1, 'month').toDate();
+        const newFromData = moment(newDataFine).clone().subtract(defaultPeriod.max, 'days').toDate();
         return {
             ...state,
             toData: newDataFine,
             fromData: newFromData,
             firstAvailableDate: newDataInizio,
             lastAvailableDate: newDataFine,
-            periodTypes: action.periodTypes
+            periodTypes: action.periodTypes,
+            periodType: defaultPeriod
         };
     default:
         return state;

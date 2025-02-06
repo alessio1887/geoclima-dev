@@ -184,12 +184,27 @@ function infochart(state = infoChartDefaultState, action) {
             ...state,
             tabList: action.tabList
         };
+    // case FETCHED_AVAILABLE_DATES:
+    //     return {
+    //         ...state,
+    //         firstAvailableDate: action.dataInizio,
+    //         lastAvailableDate: action.dataFine,
+    //         periodTypes: action.periodTypes
+    //     };
     case FETCHED_AVAILABLE_DATES:
+        const newDataFine = action.dataFine || DEFAULT_DATA_FINE;
+        const newDataInizio = action.dataInizio || DEFAULT_DATA_INIZIO;
+        const defaultPeriod = action.periodTypes.find(period => period.isDefault);
+        // const newFromData = moment(newDataFine).subtract(1, 'month').toDate();
+        const newFromData = moment(newDataFine).clone().subtract(defaultPeriod.max, 'days').toDate();
         return {
             ...state,
-            firstAvailableDate: action.dataInizio,
-            lastAvailableDate: action.dataFine,
-            periodTypes: action.periodTypes
+            toData: newDataFine,
+            fromData: newFromData,
+            firstAvailableDate: newDataInizio,
+            lastAvailableDate: newDataFine,
+            periodTypes: action.periodTypes,
+            periodType: defaultPeriod
         };
     case SET_TIMEUNIT:
         return {
@@ -197,17 +212,17 @@ function infochart(state = infoChartDefaultState, action) {
             timeUnit: action.timeUnit
         };
     case SET_DEFAULT_DATES:
-        const newToData = action.toData || moment().subtract(1, 'day').startOf('day').toDate();
-        const newFromData = moment(newToData).subtract(1, 'month').toDate();
+        const newToData = action.toData;
+        const calculatedFromData = moment(newToData).clone().subtract(action.defaultPeriod.max, 'days').toDate();
         return {
             ...state,
             toData: newToData,
-            fromData: newFromData,
+            fromData: calculatedFromData,
             infoChartData: {
                 ...state.infoChartData,
                 toData: newToData,
                 fromData: newFromData,
-                periodType: action.periodTypes?.[0] || PERIOD_TYPES[0]
+                periodType: action.defaultPeriod
             }
         };
     case INITIALIZE_TABS:

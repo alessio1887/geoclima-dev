@@ -500,7 +500,7 @@ class InfoChart extends React.Component {
     }
     closePanel = () => {
         this.props.onSetInfoChartVisibility(false);
-        this.props.onSetInfoChartDates(this.props.lastAvailableDate, this.props.periodTypes );
+        this.props.onSetInfoChartDates(this.props.lastAvailableDate, this.props.periodTypes.find(period => period.isDefault));
         this.props.onResetChartRelayout();
         if ( this.props.infoChartSize.widthResizable !== 880 || this.props.infoChartSize.heightResizable !== 880) {
             this.props.onResizeInfoChart(880, 880);

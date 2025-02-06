@@ -81,7 +81,9 @@ function freerangepicker(state = defaultState, action) {
     case FETCHED_AVAILABLE_DATES:
         const newDataFine = action.dataFine || DEFAULT_DATA_FINE;
         const newDataInizio = action.dataInizio || DEFAULT_DATA_INIZIO;
-        const newFromData = moment(newDataFine).subtract(1, 'month').toDate();
+        const defaultPeriod = action.periodTypes.find(period => period.isDefault);
+        // const newFromData = moment(newDataFine).subtract(1, 'month').toDate();
+        const newFromData = moment(newDataFine).clone().subtract(defaultPeriod.max, 'days').toDate();
         return {
             ...state,
             toData: newDataFine,
