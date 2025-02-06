@@ -147,7 +147,7 @@ class FreeRangePicker extends React.Component {
 
     // Resets the plugin's state to default values when navigating back to the Home Page
     componentWillUnmount() {
-        this.setDefaultDates(this.props.periodTypes(period => period.isDefault));
+        this.setDefaultDates();
         this.props.onMarkPluginAsNotLoaded();
         if (this.props.alertMessage) {
             this.props.onCloseAlert();
@@ -183,7 +183,8 @@ class FreeRangePicker extends React.Component {
 
     mapfilenameSuffixes = [];
 
-    setDefaultDates(defaultPeriod) {
+    setDefaultDates() {
+        const defaultPeriod = this.props.periodTypes.find(period => period.isDefault);
         const TO_DATA = this.props.lastAvailableDate;
         const FROM_DATA = moment(TO_DATA).clone().subtract(defaultPeriod.max, 'days').toDate();
         this.props.onChangeToData(TO_DATA);

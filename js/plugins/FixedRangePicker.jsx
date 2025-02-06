@@ -134,6 +134,7 @@ class FixedRangePicker extends React.Component {
         },
         defaultUrlSelectDate: "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
         variabileSelectDate: "prec",
+        isFetchAvailableDates: false,
         className: "mapstore-fixederange",
         style: {
             top: 0,
