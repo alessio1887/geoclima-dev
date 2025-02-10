@@ -82,11 +82,12 @@ const getDefaultValues = (idVariabiliLayers, appState) => {
     const toData = appState.infochart.lastAvailableDate;
     const fromData = moment(toData).subtract(1, 'month').toDate();
     const defaultVariable = Object.keys(idVariabiliLayers)[0] || '';
+    const defaultPeriod = appState.infochart.periodTypes.find(period => period.isDefault);
     return {
         variable: Object.keys(idVariabiliLayers)[0] || '',
         fromData,
         toData,
-        periodType: "1",
+        periodType: defaultPeriod,
         idTab: getIdTabFromVariable(defaultVariable, appState.infochart.tabList)
     };
 };
@@ -190,7 +191,7 @@ const getVisibleLayerValues = (visibleLayer, appState) => {
     const toData = visibleLayer.params?.toData || getDefaultValues(idVariabiliLayers, appState).toData;
     const periodType = appState.fixedrangepicker?.showFixedRangePicker
         ? appState.fixedrangepicker?.periodType
-        : "1";
+        : getDefaultValues(idVariabiliLayers, appState).periodType;
     // Dynamically determine idTab based on the variable using the tabList from appState
     const idTab = getIdTabFromVariable(variable, appState.infochart.tabList); // Use the function to get idTab
     return {
