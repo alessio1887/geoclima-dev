@@ -21,6 +21,7 @@ const DailyManager = ({
     maxDate,
     toData,
     format,
+    defaultPeriod,
     isInteractionDisabled,
     onChangePeriodToData,
     updateParams,
@@ -57,8 +58,8 @@ const DailyManager = ({
     };
     */
     const changeDateTime = (timeUnit, amount) => {
-        const newToData = moment(toData).add(amount, timeUnit).format(format);
-        onChangePeriodToData(newToData);
+        const newToData = moment(toData).add(amount, timeUnit);
+        onChangePeriodToData(newToData.toDate());
         const validation = DateAPI.validateOneDate(toData, minDate, maxDate, format);
         if (!validation.isValid) {
             onOpenAlert(validation.errorMessage);
@@ -68,8 +69,8 @@ const DailyManager = ({
             onCloseAlert();
         }
         updateParams({
-            fromData: moment(newToData).clone().subtract(1, 'month').format(format),
-            toData: newToData
+            fromData: newToData.clone().subtract(defaultPeriod.max, 'days').format(format),
+            toData: newToData.format(format)
         });
     };
     const handleChangeDay = () => {
@@ -86,7 +87,7 @@ const DailyManager = ({
         if (alertMessage !== null) {
             onCloseAlert();
         }
-        const fromData =  moment(toData).clone().subtract(1, 'month').toDate();
+        const fromData =  moment(toData).clone().subtract(defaultPeriod.max, 'days').toDate();
         updateParams({
             fromData: fromData,
             toData: toData

@@ -19,14 +19,16 @@ momentLocaliser(moment);
 
 const COMBINED_DATE_MAPCONFIG = 'COMBINED_DATE_MAPCONFIG';
 
-const updateLayersParams = (layers, periodTypes, toData, timeUnit) => {
+const updateLayersParams = (layers, periodTypes, toData, timeUnit, isMapfilenameNotChange) => {
     let actionsUpdateParams = [];
     const toDataFormatted = moment(toData).format(timeUnit);
     const defaultPeriod = periodTypes.find(period => period.isDefault);
     const fromDataFormatted = moment(toData).clone().subtract(defaultPeriod.max, 'days').format(timeUnit);
     for (const layer of layers) {
         if (layer.params?.map) {
-            const mapFileName = DateAPI.getMapNameFromSuffix(layer.params.map, periodTypes.map(t => t.key), defaultPeriod.key);
+            const mapFileName = !isMapfilenameNotChange ?
+                DateAPI.getMapNameFromSuffix(layer.params.map, periodTypes.map(t => t.key), defaultPeriod.key)
+                : layer.params.map;
             const newParams = {
                 params: {
                     map: mapFileName,
@@ -51,18 +53,20 @@ const updateLayersParams = (layers, periodTypes, toData, timeUnit) => {
  *
  * Then, it generates update actions for the layers' parameters.
  */
-const updateParamsByDateRangeEpic = (action$) =>
+const updateParamsByDateRangeEpic = (action$, store) =>
     action$.ofType(COMBINED_DATE_MAPCONFIG)
-        // .filter(() => {
-        //     const appState = store.getState();
-        //     return appState.fixedrangepicker?.isPluginLoaded || appState.freerangepicker?.isPluginLoaded;
-        // })
+        .filter(() => {
+            const appState = store.getState();
+            return appState.fixedrangepicker?.isPluginLoaded || appState.freerangepicker?.isPluginLoaded;
+        })
         .switchMap((action) => {
+            const appState = store.getState();
+            const isMapfilenameNotChange = appState.fixedrangepicker?.isPluginLoaded && appState.fixedrangepicker?.showOneDatePicker;
             const layers = action.payload.config?.map?.layers || [];
             const toData = action.payload.availableDate;
             const timeUnit = action.payload.timeUnit;
             const periodTypes = action.payload.periodTypes;
-            const actionsUpdateParams = updateLayersParams(layers, periodTypes, toData, timeUnit);
+            const actionsUpdateParams = updateLayersParams(layers, periodTypes, toData, timeUnit, isMapfilenameNotChange);
             return Observable.of(...actionsUpdateParams);
         });
 

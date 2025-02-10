@@ -161,7 +161,7 @@ class FixedRangePicker extends React.Component {
 
     componentDidMount() {
         this.props.onToggleFixedRangePicker();
-        this.props.onMarkPluginAsLoaded();
+        this.props.onMarkPluginAsLoaded(this.props.showOneDatePicker);
         // Setta mapfilenameSuffixes solo al primo caricamento del componente
         this.mapfilenameSuffixes = this.props.periodTypes.map(t => t.key);
         if ( this.props.isFetchAvailableDates && this.props.defaultUrlSelectDate && this.props.variabileSelectDate) {
@@ -275,6 +275,7 @@ class FixedRangePicker extends React.Component {
                 onOpenAlert={this.props.onOpenAlert}
                 onCloseAlert={this.props.onCloseAlert}
                 format={ this.props.timeUnit }
+                defaultPeriod={ this.props.periodTypes.find(period => period.isDefault) }
             />
         );
     }
@@ -319,7 +320,9 @@ class FixedRangePicker extends React.Component {
     updateParams = (datesParam, onUpdateNode = true) => {
         this.props.layers.flat.map((layer) => {
             if (onUpdateNode && isVariabiliMeteoLayer(layer.name, this.props.variabiliMeteo)) {
-                const mapFile = DateAPI.getMapNameFromSuffix(layer.params.map, this.mapfilenameSuffixes, datesParam.mapNameSuffix);
+                const mapFile = !this.props.showOneDatePicker ?
+                    DateAPI.getMapNameFromSuffix(layer.params.map, this.mapfilenameSuffixes, datesParam.mapNameSuffix)
+                    : layer.params.map;
                 const newParams = {
                     params: {
                         map: mapFile,
