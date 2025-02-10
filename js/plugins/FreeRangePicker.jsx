@@ -115,7 +115,8 @@ class FreeRangePicker extends React.Component {
         style: {
             top: 0,
             position: 'absolute',
-            zIndex: 10
+            zIndex: 10,
+            width: 280
         },
         showFreeRangePicker: false,
         alertMessage: null,
