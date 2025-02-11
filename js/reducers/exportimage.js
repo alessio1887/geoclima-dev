@@ -5,7 +5,7 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
 */
-import { UPDATE_DATES, SET_VARIABILIMETEO } from '../actions/exportimage';
+import { UPDATE_DATES, SET_VARIABILIMETEO, INITIALIZE_TABS, TAB_CHANGED, IMAGEVARIABLE_CHANGED } from '../actions/exportimage';
 
 const defaultState = {
     fromData: new Date(),
@@ -24,6 +24,29 @@ function daterangelabel(state = defaultState, action) {
         return {
             ...state,
             variabiliMeteo: action.variabiliMeteo
+        };
+    case INITIALIZE_TABS:
+        return {
+            ...state,
+            tabVariables: action.tabVariables
+        };
+    case TAB_CHANGED:
+        return {
+            ...state,
+            tabVariables: state.tabVariables.map(tab => ({
+                ...tab,
+                active: tab.id === action.idTab // Imposta true solo per il tab con id uguale a idTab
+            }))
+        };
+    case IMAGEVARIABLE_CHANGED:
+        return {
+            ...state,
+            tabVariables: state.tabVariables.map(tab =>
+                tab.id === action.idTab
+                    ? { ...tab, variables: action.variable } // Aggiorna le variabili del tab corrispondente
+                    : tab
+            )
+
         };
     default:
         return state;

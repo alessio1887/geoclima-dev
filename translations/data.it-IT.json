@@ -2,6 +2,11 @@
     "locale": "it-IT",
     "messages": {
         "gcapp": {
+            "exportImage": {
+              "selectFromDate": "Data d'inizio periodo",
+              "selectToDate": "Data di fine periodo",
+               "selectMeteoVariable": "Seleziona una variabile"
+            },
             "fixedRangePicker": {
               "titlePeriod": "Periodo considerato",
               "selectDateHidrologicYear": "Seleziona una data",

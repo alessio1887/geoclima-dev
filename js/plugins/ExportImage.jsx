@@ -5,7 +5,7 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
 */
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Glyphicon } from 'react-bootstrap';
@@ -16,7 +16,7 @@ import ResponsivePanel from '@mapstore/components/misc/panels/ResponsivePanel';
 import { exportImageEnabledSelector, fromDataSelector, toDataSelector, isLayerLoadingSelector } from '../utils/geoclimaSelectors';
 import * as exportImageEpics from '../epics/exportImage';
 import exportimage from '../reducers/exportimage';
-import { setVariabiliMeteo } from '../actions/exportimage';
+import { initializeVariableTabs, setVariabiliMeteo, changeTab, changeImageVariable } from '../actions/exportimage';
 
 
 import moment from 'moment';
@@ -32,22 +32,38 @@ const PLUGIN_GLYPH_ICON = "export";
  * @name ExportImage
  */
 const ExportImage = ({
-    fromData,
-    toData,
-    onToggleControl,
     active,
-    variabiliMeteo,
+    fromData,
+    isInteractionDisabled,
+    onToggleControl,
+    tabList,
     timeUnit,
+    toData,
+    onChangeImageVariable,
+    onChangeTab,
+    onInitializeVariableTabs,
     onSetVariabiliMeteo,
-    isInteractionDisabled
+    variabiliMeteo,
+    tabVariables
 }) => {
+
+    const initializeTabs = useCallback(() => {
+        const tabVariablesInit = tabList.map((tab, index) => ({
+            id: tab.id,
+            variables: [tab.groupList[0]], // Seleziona il primo come default
+            active: index === 0 // Imposta il primo tab come attivo
+        }));
+        onInitializeVariableTabs(tabVariablesInit);
+    }, [tabList, onInitializeVariableTabs]); // Aggiungi tabList come dipendenza
 
     useEffect(() => {
         // Quando il componente si monta, setta variabiliMeteo nello stato Redux
         if (variabiliMeteo) {
             onSetVariabiliMeteo(variabiliMeteo);
         }
-    }, [variabiliMeteo, onSetVariabiliMeteo]); // Si attiva solo se variabiliMeteo cambia
+        initializeTabs();
+    }, [variabiliMeteo, onSetVariabiliMeteo, initializeTabs]); // Aggiungi initializeTabs come dipendenza
+
 
     return (
         <ResponsivePanel
@@ -66,8 +82,12 @@ const ExportImage = ({
                 fromData={fromData}
                 toData={toData}
                 variabiliMeteo={variabiliMeteo}
+                tabList={tabList}
+                tabVariables={tabVariables}
                 timeUnit={timeUnit}
                 isInteractionDisabled={isInteractionDisabled}
+                handleChangeTab={onChangeTab}
+                handleChangeVariable={onChangeImageVariable}
             />
         </ResponsivePanel>
     );
@@ -77,12 +97,16 @@ const mapStateToProps = createStructuredSelector({
     fromData: fromDataSelector,
     toData: toDataSelector,
     active: exportImageEnabledSelector,
-    isInteractionDisabled: isLayerLoadingSelector
+    isInteractionDisabled: isLayerLoadingSelector,
+    tabVariables: state => state.exportimage.tabVariables
 });
 
 const mapDispatchToProps = {
-    onToggleControl: () => toggleControl('exportImage', 'enabled'),
-    onSetVariabiliMeteo: setVariabiliMeteo
+    onChangeImageVariable: changeImageVariable,
+    onChangeTab: changeTab,
+    onInitializeVariableTabs: initializeVariableTabs,
+    onSetVariabiliMeteo: setVariabiliMeteo,
+    onToggleControl: () => toggleControl('exportImage', 'enabled')
 };
 
 export default createPlugin('ExportImage', {

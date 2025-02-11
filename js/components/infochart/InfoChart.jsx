@@ -411,6 +411,7 @@ class InfoChart extends React.Component {
                                 onChangeToData={this.props.onChangeToData}
                                 isInteractionDisabled={false}
                                 styleLabels="labels-infochart"
+                                lablesType="gcapp.freeRangePicker"
                                 format={this.props.timeUnit}
                                 isReadOnly={false}
                             />

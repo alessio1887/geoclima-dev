@@ -9,6 +9,9 @@ export const UPDATE_DATES = 'EXPORTIMAGE:UPDATE_DATES';
 export const NOT_FOUND_LAYER = 'EXPORTIMAGE:NOT_FOUND_LAYER';
 export const LAYER_DATE_MISSING = 'EXPORTIMAGE:LAYER_DATE_MISSING';
 export const SET_VARIABILIMETEO = 'EXPORTIMAGE:SET_VARIABILIMETEO';
+export const INITIALIZE_TABS = 'EXPORTIMAGE:INITIALIZE_TABS';
+export const TAB_CHANGED = 'EXPORTIMAGE:TAB_CHANGED';
+export const IMAGEVARIABLE_CHANGED = 'EXPORTIMAGE:IMAGEVARIABLE_CHANGED';
 
 export function updateExportImageDates(layerId, fromData, toData) {
     return {
@@ -37,5 +40,27 @@ export function setVariabiliMeteo(variabiliMeteo) {
     return {
         type: SET_VARIABILIMETEO,
         variabiliMeteo
+    };
+}
+
+export function initializeVariableTabs(tabVariables) {
+    return {
+        type: INITIALIZE_TABS,
+        tabVariables
+    };
+}
+
+export function changeTab(idTab) {
+    return {
+        type: TAB_CHANGED,
+        idTab
+    };
+}
+
+export function changeImageVariable(idTab, variable) {
+    return {
+        type: IMAGEVARIABLE_CHANGED,
+        idTab,
+        variable
     };
 }

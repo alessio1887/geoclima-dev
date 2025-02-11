@@ -217,6 +217,7 @@ class FreeRangePicker extends React.Component {
                     onChangeToData={this.props.onChangeToData}
                     isInteractionDisabled={this.props.isInteractionDisabled}
                     styleLabels="labels-freerangepicker"
+                    lablesType="gcapp.freeRangePicker"
                     format={this.props.timeUnit}
                     isReadOnly={false}
                 />

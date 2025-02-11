@@ -26,12 +26,13 @@ const FreeRangeManager = ({
     isInteractionDisabled,
     styleLabels,
     format,
+    lablesType,
     isReadOnly
 }) => {
     return (
         <div className="ms-freerangemanager-action">
             <Label className={styleLabels}>
-                <Message msgId="gcapp.freeRangePicker.selectFromDate"/>
+                <Message msgId= {lablesType + ".selectFromDate" }/>
             </Label>
             <DateTimePicker
                 culture="it"
@@ -46,7 +47,7 @@ const FreeRangeManager = ({
                 readOnly={isReadOnly}
             />
             <Label className={styleLabels}>
-                <Message msgId="gcapp.freeRangePicker.selectToDate"/>
+                <Message msgId={lablesType + ".selectToDate"}/>
             </Label>
             <DateTimePicker
                 culture="it"
