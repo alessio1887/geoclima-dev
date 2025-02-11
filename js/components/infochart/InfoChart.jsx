@@ -412,6 +412,7 @@ class InfoChart extends React.Component {
                                 isInteractionDisabled={false}
                                 styleLabels="labels-infochart"
                                 format={this.props.timeUnit}
+                                isReadOnly={false}
                             />
                         )}
                         <ButtonGroup className="button-group-wrapper">

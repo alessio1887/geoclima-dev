@@ -21,6 +21,15 @@ import urlUtil from 'url';
  * The proxy URL and allowed CORS domains are defined in localConfig.json
  */
 const Api = {
+    downloadImage: function(defaultUrlExportImage, layerName, fromData, toData, options) {
+        var params = assign({ layerName: layerName}, options || {});
+        var url = urlUtil.format({
+            protocol: window.location.hostname === 'localhost' ? 'https:' : window.location.protocol,
+            host: defaultUrlExportImage,
+            query: params
+        });
+        return axios.get(url);
+    },
     geoclimachart: function(data, defaultUrlGeoclimaChart, options) {
         var params = assign({lat: data.latlng.lat, lng: data.latlng.lng, toData: data.toData, fromData: data.fromData, variable: data.variables}, options || {});
         var url = urlUtil.format({

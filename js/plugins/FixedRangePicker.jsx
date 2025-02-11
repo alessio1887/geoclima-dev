@@ -7,15 +7,14 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { createSelector } from 'reselect';
 import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-bootstrap';
 import Message from '@mapstore/components/I18N/Message';
 import { updateSettings, updateNode } from '@mapstore/actions/layers';
-import { layersSelector } from '@mapstore/selectors/layers';
 import { compose } from 'redux';
 import { changePeriodToData, changePeriod, toggleRangePickerPlugin, openAlert,
     closeAlert, collapsePlugin, markFixedRangeAsLoaded, markFixedRangeAsNotLoaded } from '../actions/fixedrangepicker';
 import { fetchSelectDate } from '@js/actions/updateDatesParams';
+import { isLayerLoadingSelector } from '../utils/geoclimaSelectors';
 import { FIXED_RANGE, isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../utils/ManageDateUtils';
 import { connect } from 'react-redux';
@@ -33,11 +32,6 @@ import layers from '@mapstore/reducers/layers';
 import * as rangePickerEpics from '../epics/dateRangeConfig';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
-
-const isLayerLoadingSelector = createSelector(
-    [layersSelector],
-    (allMapLayers) => allMapLayers && allMapLayers.some(layer => layer.loading) // Restituisce true se almeno un layer è in loading
-);
 
 /*
 Plugin configuration
@@ -128,11 +122,12 @@ class FixedRangePicker extends React.Component {
     static propTypes = {
         id: PropTypes.string,
         className: PropTypes.string,
+        defaultUrlSelectDate: PropTypes.string,
+        firstAvailableDate: PropTypes.instanceOf(Date),
         fromData: PropTypes.instanceOf(Date),
+        toData: PropTypes.instanceOf(Date),
         isCollapsedPlugin: PropTypes.bool,
         isFetchAvailableDates: PropTypes.bool, // If true, fetch the first and last available dates calling fetchSelectDate action
-        toData: PropTypes.instanceOf(Date),
-        firstAvailableDate: PropTypes.instanceOf(Date),
         isInteractionDisabled: PropTypes.bool,
         isPluginLoaded: PropTypes.bool,
         lastAvailableDate: PropTypes.instanceOf(Date),
@@ -146,7 +141,6 @@ class FixedRangePicker extends React.Component {
         onMarkPluginAsLoaded: PropTypes.func,
         onMarkFixedRangeAsNotLoaded: PropTypes.func,
         onToggleFixedRangePicker: PropTypes.func,
-        defaultUrlSelectDate: PropTypes.string,
         variabileSelectDate: PropTypes.string,
         layers: PropTypes.object,
         variabiliMeteo: PropTypes.object,

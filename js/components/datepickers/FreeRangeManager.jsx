@@ -25,7 +25,8 @@ const FreeRangeManager = ({
     onChangeToData,
     isInteractionDisabled,
     styleLabels,
-    format
+    format,
+    isReadOnly
 }) => {
     return (
         <div className="ms-freerangemanager-action">
@@ -42,6 +43,7 @@ const FreeRangeManager = ({
                 value={moment(fromData, format).toDate()}
                 onChange={onChangeFromData}
                 disabled={isInteractionDisabled}
+                readOnly={isReadOnly}
             />
             <Label className={styleLabels}>
                 <Message msgId="gcapp.freeRangePicker.selectToDate"/>
@@ -56,6 +58,7 @@ const FreeRangeManager = ({
                 value={moment(toData, format).toDate()}
                 onChange={onChangeToData}
                 disabled={isInteractionDisabled}
+                readOnly={isReadOnly}
             />
         </div>
     );

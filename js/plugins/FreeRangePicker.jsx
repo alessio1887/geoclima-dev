@@ -7,12 +7,11 @@
 */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { createSelector } from 'reselect';
 import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-bootstrap';
 import Message from '@mapstore/components/I18N/Message';
 import { updateSettings, updateNode } from '@mapstore/actions/layers';
-import { layersSelector } from '@mapstore/selectors/layers';
 import { compose } from 'redux';
+import { isLayerLoadingSelector } from '../utils/geoclimaSelectors';
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO} from '../utils/ManageDateUtils';
 import { FREE_RANGE, isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 import { connect } from 'react-redux';
@@ -33,11 +32,6 @@ import FreeRangeManager from '../components/datepickers/FreeRangeManager';
 import RangePickerInfo from '../components/datepickers/RangePickerInfo';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
-
-const isLayerLoadingSelector = createSelector(
-    [layersSelector],
-    (allMapLayers) => allMapLayers && allMapLayers.some(layer => layer.loading) // Restituisce true se almeno un layer è in loading
-);
 
 /*
 Plugin configuration
@@ -224,6 +218,7 @@ class FreeRangePicker extends React.Component {
                     isInteractionDisabled={this.props.isInteractionDisabled}
                     styleLabels="labels-freerangepicker"
                     format={this.props.timeUnit}
+                    isReadOnly={false}
                 />
                 <ButtonGroup id="button-rangepicker-container">
                     <Button onClick={this.handleApplyPeriod}  disabled={this.props.isInteractionDisabled}>

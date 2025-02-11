@@ -13,13 +13,15 @@ import Message from '@mapstore/components/I18N/Message';
 import { toggleControl } from '@mapstore/actions/controls';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
 import ResponsivePanel from '@mapstore/components/misc/panels/ResponsivePanel';
-import { exportImageEnabledSelector, fromDataSelector, toDataSelector } from '../utils/exportImageSelectors';
+import { exportImageEnabledSelector, fromDataSelector, toDataSelector, isLayerLoadingSelector } from '../utils/geoclimaSelectors';
 import * as exportImageEpics from '../epics/exportImage';
 import exportimage from '../reducers/exportimage';
 import { setVariabiliMeteo } from '../actions/exportimage';
 
+
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
+import ExportImageForm from '../components/exportimage/ExportImageForm';
 momentLocaliser(moment);
 
 const PLUGIN_GLYPH_ICON = "export";
@@ -36,7 +38,8 @@ const ExportImage = ({
     active,
     variabiliMeteo,
     timeUnit,
-    onSetVariabiliMeteo
+    onSetVariabiliMeteo,
+    isInteractionDisabled
 }) => {
 
     useEffect(() => {
@@ -59,24 +62,22 @@ const ExportImage = ({
             title={<Message msgId="exportImage.title" />}
             onClose={onToggleControl}
         >
-            <div style={{ padding: 8, textAlign: 'center' }}>
-                <h3>Export Image</h3>
-                <div>
-                    <strong>From:</strong> {moment(fromData).format(timeUnit) }
-                </div>
-                <div>
-                    <strong>To:</strong> {moment(toData).format(timeUnit) }
-                </div>
-                <button onClick={onToggleControl}>Close</button>
-            </div>
+            <ExportImageForm
+                fromData={fromData}
+                toData={toData}
+                variabiliMeteo={variabiliMeteo}
+                timeUnit={timeUnit}
+                isInteractionDisabled={isInteractionDisabled}
+            />
         </ResponsivePanel>
     );
 };
 
 const mapStateToProps = createStructuredSelector({
-    fromData: fromDataSelector, // Prendi i dati da redux tramite il selettore
-    toData: toDataSelector,     // Prendi i dati da redux tramite il selettore
-    active: exportImageEnabledSelector
+    fromData: fromDataSelector,
+    toData: toDataSelector,
+    active: exportImageEnabledSelector,
+    isInteractionDisabled: isLayerLoadingSelector
 });
 
 const mapDispatchToProps = {
