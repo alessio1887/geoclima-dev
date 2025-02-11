@@ -17,7 +17,6 @@ import { TOGGLE_MAPINFO_STATE,
 import {
     TOGGLE_INFOCHART,
     FETCH_INFOCHART_DATA,
-    CHECK_FETCH_AVAILABLE_DATES,
     fetchedInfoChartData,
     setInfoChartVisibility,
     fetchInfoChartData,
@@ -31,7 +30,6 @@ import {
     closeAlert,
     resizeInfoChart
 } from '../actions/infochart';
-import { fetchSelectDate } from '../actions/updateDatesParams';
 import { CLICK_ON_MAP } from '../../MapStore2/web/client/actions/map';
 import { LOADING } from '@mapstore/actions/maps';
 import API from '../api/GeoClimaApi';
@@ -63,12 +61,12 @@ const getVariableParamsFromTab = (idTab, idVariable, tabList) => {
 };
 
 
-const checkSelectDateEpic = (action$, store) =>
-    action$.ofType(CHECK_FETCH_AVAILABLE_DATES)
-        .filter(() => !store.getState().fixedrangepicker?.isPluginLoaded && !store.getState().freerangepicker?.isPluginLoaded)
-        .switchMap((action) => {
-            return Observable.of(fetchSelectDate(action.variableSelectDate, action.urlSelectDate, action.type, action.timeUnit));
-        });
+// const checkSelectDateEpic = (action$, store) =>
+//     action$.ofType(CHECK_FETCH_AVAILABLE_DATES)
+//         .filter(() => !store.getState().fixedrangepicker?.isPluginLoaded && !store.getState().freerangepicker?.isPluginLoaded)
+//         .switchMap((action) => {
+//             return Observable.of(fetchSelectDate(action.variableSelectDate, action.urlSelectDate, action.type, action.timeUnit));
+//         });
 
 const getVisibleGroups = (groupMS2List = []) => {
     if (!Array.isArray(groupMS2List)) {
@@ -84,11 +82,12 @@ const getDefaultValues = (idVariabiliLayers, appState) => {
     const toData = appState.infochart.lastAvailableDate;
     const fromData = moment(toData).subtract(1, 'month').toDate();
     const defaultVariable = Object.keys(idVariabiliLayers)[0] || '';
+    const defaultPeriod = appState.infochart.periodTypes.find(period => period.isDefault);
     return {
         variable: Object.keys(idVariabiliLayers)[0] || '',
         fromData,
         toData,
-        periodType: "1",
+        periodType: defaultPeriod,
         idTab: getIdTabFromVariable(defaultVariable, appState.infochart.tabList)
     };
 };
@@ -192,7 +191,7 @@ const getVisibleLayerValues = (visibleLayer, appState) => {
     const toData = visibleLayer.params?.toData || getDefaultValues(idVariabiliLayers, appState).toData;
     const periodType = appState.fixedrangepicker?.showFixedRangePicker
         ? appState.fixedrangepicker?.periodType
-        : "1";
+        : getDefaultValues(idVariabiliLayers, appState).periodType;
     // Dynamically determine idTab based on the variable using the tabList from appState
     const idTab = getIdTabFromVariable(variable, appState.infochart.tabList); // Use the function to get idTab
     return {
@@ -432,7 +431,6 @@ export {
     clickedPointCheckEpic,
     loadInfoChartDataEpic,
     closeInfoChartPanel,
-    checkSelectDateEpic,
     changeMapInfoStateEpic,
     toggleControlEpic
 };

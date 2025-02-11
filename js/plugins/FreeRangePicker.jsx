@@ -25,7 +25,8 @@ import layers from '@mapstore/reducers/layers';
 import freerangepicker from '@js/reducers/freerangepicker';
 import { toggleRangePickerPlugin } from '../actions/fixedrangepicker';
 import { changeFromData, changeToData, openAlert, closeAlert, collapsePlugin,
-    markFreeRangeAsLoaded, markFreeRangeAsNotLoaded, checkFetchAvailableDatesFreeRange } from '@js/actions/freerangepicker';
+    markFreeRangeAsLoaded, markFreeRangeAsNotLoaded } from '@js/actions/freerangepicker';
+import { fetchSelectDate } from '@js/actions/updateDatesParams';
 import * as rangePickerEpics from '../epics/dateRangeConfig';
 
 import FreeRangeManager from '../components/datepickers/FreeRangeManager';
@@ -43,6 +44,18 @@ Plugin configuration
 "name": "FreeRangePicker",
       "defaultConfig" : {
         "id": "mapstore-freerangepicker-map",
+        "defaultUrlSelectDate": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
+        "variabileSelectDate": "prec",
+        "isFetchAvailableDates": false,  // If true, fetch the first and last available dates calling fetchSelectDate action
+        "periodTypes": [
+          { "key": 1, "label": "5 giorni", "min": 1, "max": 5 },
+          { "key": 7, "label": "8 giorni", "min": 6, "max": 8 },
+          { "key": 10, "label": "20 giorni", "min": 9, "max": 20, "isDefault": true  },
+          { "key": 30, "label": "60 giorni", "min": 21, "max": 60 },
+          { "key": 120, "label": "160 giorni", "min": 61, "max": 160 },
+          { "key": 180, "label": "250 giorni", "min": 161, "max": 250 },
+          { "key": 365, "label": "366 giorni", "min": 251, "max": 366 }
+      ],
         "variabiliMeteo": {
           "precipitazione": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima","Pioggia_Cumulata_Giornaliera"],
           "temperatura": ["Temperatura_Media", "Temperatura_Media_Anomalia", "Temperatura_Minima", "Temperatura_Minima_Anomalia",
@@ -52,7 +65,8 @@ Plugin configuration
                   "BilancioIdricoSemplificato_clima"],
           "spi": [ "spi1", "spi3", "spi6", "spi12"],
           "spei":[ "spei1", "spei3", "spei6", "spei12"]
-        }
+        },
+        "timeUnit": "YYYY-MM-DD"
       }
 */
 class FreeRangePicker extends React.Component {
@@ -61,19 +75,22 @@ class FreeRangePicker extends React.Component {
         id: PropTypes.string,
         className: PropTypes.string,
         isCollapsedPlugin: PropTypes.bool,
-        onCollapsePlugin: PropTypes.func,
+        isFetchAvailableDates: PropTypes.bool, // If true, fetch the first and last available dates calling fetchSelectDate action
         fromData: PropTypes.instanceOf(Date),
         toData: PropTypes.instanceOf(Date),
         firstAvailableDate: PropTypes.instanceOf(Date),
         lastAvailableDate: PropTypes.instanceOf(Date),
         onChangeFromData: PropTypes.func,
         onChangeToData: PropTypes.func,
-        onUpdateSettings: PropTypes.func,
-        onUpdateNode: PropTypes.func,
+        onCloseAlert: PropTypes.func,
+        onCollapsePlugin: PropTypes.func,
+        onFetchAvailableDates: PropTypes.func,
         onMarkPluginAsLoaded: PropTypes.func,
         onMarkPluginAsNotLoaded: PropTypes.func,
-        onCheckLaunchSelectDateQuery: PropTypes.func,
-        settings: PropTypes.object,
+        onOpenAlert: PropTypes.func,
+        onUpdateSettings: PropTypes.func,
+        onUpdateNode: PropTypes.func,
+        periodTypes: PropTypes.array,
         defaultUrlSelectDate: PropTypes.string,
         variabileSelectDate: PropTypes.string,
         layers: PropTypes.object,
@@ -81,11 +98,10 @@ class FreeRangePicker extends React.Component {
         showFreeRangePicker: PropTypes.bool, // serve per la visibilita del componente
         onToggleFreeRangePicker: PropTypes.func,
         alertMessage: PropTypes.string,
-        onOpenAlert: PropTypes.func,
-        onCloseAlert: PropTypes.func,
         isInteractionDisabled: PropTypes.bool,
         shiftRight: PropTypes.bool,
         isPluginLoaded: PropTypes.bool,
+        settings: PropTypes.object,
         showChangeRangePickerButton: PropTypes.bool,
         timeUnit: PropTypes.string
     };
@@ -112,7 +128,8 @@ class FreeRangePicker extends React.Component {
         style: {
             top: 0,
             position: 'absolute',
-            zIndex: 10
+            zIndex: 10,
+            width: 280
         },
         showFreeRangePicker: false,
         alertMessage: null,
@@ -132,16 +149,19 @@ class FreeRangePicker extends React.Component {
     }
 
     componentDidMount() {
-        this.props.onMarkPluginAsLoaded();
-        this.props.onCheckLaunchSelectDateQuery(this.props.variabileSelectDate, this.props.defaultUrlSelectDate);
+        if (!this.props.isPluginLoaded) {
+            // Setta mapfilenameSuffixes solo al primo caricamento del componente
+            this.mapfilenameSuffixes = this.props.periodTypes.map(t => t.key);
+            if ( this.props.isFetchAvailableDates && this.props.defaultUrlSelectDate && this.props.variabileSelectDate) {
+                this.props.onFetchAvailableDates(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, this.props.timeUnit, this.props.periodTypes);
+            }
+            this.props.onMarkPluginAsLoaded();
+        }
     }
 
     // Resets the plugin's state to default values when navigating back to the Home Page
     componentWillUnmount() {
-        const TO_DATA = this.props.lastAvailableDate;
-        const FROM_DATA = moment(TO_DATA).clone().subtract(1, 'month').startOf('day').toDate();
-        this.props.onChangeToData(TO_DATA);
-        this.props.onChangeFromData(FROM_DATA);
+        this.setDefaultDates();
         this.props.onMarkPluginAsNotLoaded();
         if (this.props.alertMessage) {
             this.props.onCloseAlert();
@@ -174,6 +194,17 @@ class FreeRangePicker extends React.Component {
             </div>
         );
     }
+
+    mapfilenameSuffixes = [];
+
+    setDefaultDates() {
+        const defaultPeriod = this.props.periodTypes.find(period => period.isDefault);
+        const TO_DATA = this.props.lastAvailableDate;
+        const FROM_DATA = moment(TO_DATA).clone().subtract(defaultPeriod.max, 'days').toDate();
+        this.props.onChangeToData(TO_DATA);
+        this.props.onChangeFromData(FROM_DATA);
+    }
+
     showRangePicker = () => {
         return (
             <div className="ms-freerangepicker-action">
@@ -245,7 +276,8 @@ class FreeRangePicker extends React.Component {
     updateParams(datesParam, onUpdateNode = true) {
         this.props.layers.flat.map((layer) => {
             if (onUpdateNode && isVariabiliMeteoLayer(layer.name, this.props.variabiliMeteo)) {
-                const mapFile = DateAPI.setGCMapFile(datesParam.fromData, datesParam.toData, layer.params.map);
+                const mapFile = DateAPI.getMapNameFromSuffix(layer.params?.map, this.mapfilenameSuffixes,
+                    DateAPI.getMapSuffixFromDates(datesParam.fromData, datesParam.toData, this.props.periodTypes));
                 const newParams = {
                     params: {
                         map: mapFile,
@@ -293,7 +325,7 @@ const FreeRangePickerPlugin = connect(mapStateToProps, {
     onToggleFreeRangePicker: toggleRangePickerPlugin,
     onOpenAlert: openAlert,
     onCloseAlert: closeAlert,
-    onCheckLaunchSelectDateQuery: checkFetchAvailableDatesFreeRange
+    onFetchAvailableDates: fetchSelectDate
 })(FreeRangePicker);
 
 export default createPlugin(

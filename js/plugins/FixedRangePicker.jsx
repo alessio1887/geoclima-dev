@@ -14,8 +14,8 @@ import { updateSettings, updateNode } from '@mapstore/actions/layers';
 import { layersSelector } from '@mapstore/selectors/layers';
 import { compose } from 'redux';
 import { changePeriodToData, changePeriod, toggleRangePickerPlugin, openAlert,
-    closeAlert, collapsePlugin, markFixedRangeAsLoaded, markFixedRangeAsNotLoaded,
-    checkFetchAvailableDatesFixedRange } from '../actions/fixedrangepicker';
+    closeAlert, collapsePlugin, markFixedRangeAsLoaded, markFixedRangeAsNotLoaded } from '../actions/fixedrangepicker';
+import { fetchSelectDate } from '@js/actions/updateDatesParams';
 import { FIXED_RANGE, isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../utils/ManageDateUtils';
 import { connect } from 'react-redux';
@@ -43,64 +43,124 @@ const isLayerLoadingSelector = createSelector(
 Plugin configuration
 "name": "FixedRangePicker",
           "cfg" : {
-            "id": "mapstore-fixedrangepicker-map",
-            "periodTypes": [
-                    { "key": "1", "label": "1 Mese" },
-                    { "key": "3", "label": "3 Mesi" },
-                    { "key": "4", "label": "4 Mesi" },
-                    { "key": "6", "label": "6 Mesi" },
-                    { "key": "12", "label": "12 Mesi" },
-                    { "key": "10", "label": "dal 1° Ottobre" }
-                ],
-            "variabiliMeteo": {
-                  "precipitazione": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima","Pioggia_Cumulata_Giornaliera"],
-                  "temperatura": ["Temperatura_Media", "Temperatura_Media_Anomalia", "Temperatura_Minima", "Temperatura_Minima_Anomalia",
-                          "Temperatura_Massima", "Temperatura_Massima_Anomalia", "Temperatura_Media_clima", "Temperatura_Massima_clima", "Temperatura_Minima_clima"],
-                  "evapotraspirazione": ["Evapotraspirazione", "Evapotraspirazione_Anomalia_mm", "Evapotraspirazione_Anomalia_perc", "Evapotraspirazione_clima"],
-                  "bilancioIdricoSemplificato": ["BilancioIdricoSemplificato", "BilancioIdricoSemplificato_Anomalia_mm", "BilancioIdricoSemplificato_Anomalia_perc",
-                          "BilancioIdricoSemplificato_clima"],
-                  "spi": [ "spi1", "spi3", "spi6", "spi12"],
-                  "spei":[ "spei1", "spei3", "spei6", "spei12"]
-            },
-            "showOneDatePicker": false
+        "id": "mapstore-fixedrangepicker-map",
+        "defaultUrlSelectDate": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
+        "variabileSelectDate": "prec",
+        "isFetchAvailableDates": true, // If true, fetch the first and last available dates calling fetchSelectDate action
+        "periodTypes": [
+            { "key": 1, "label": "5 giorni", "max": 5 },
+            { "key": 7, "label": "8 giorni", "max": 8 },
+            { "key": 10, "label": "20 giorni", "max": 20, "isDefault": true  },
+            { "key": 30, "label": "60 giorni", "max": 60 },
+            { "key": 120, "label": "160 giorni", "max": 160 },
+            { "key": 180, "label": "250 giorni", "max": 250 },
+            { "key": 365, "label": "366 giorni", "max": 366 }
+        ],
+        "variabiliMeteo": {
+          "precipitazione": [
+            "Pioggia_Anomalia_perc",
+            "Pioggia_Anomalia_mm",
+            "Pioggia_Cumulata",
+            "Pioggia_Cumulata_clima",
+            "Pioggia_Cumulata_Giornaliera",
+            "Prec_stazioni",
+            "Prec_stazioni_non_utilizzate"
+          ],
+          "temperatura": [
+            "Temperatura_Media",
+            "Temperatura_Media_Anomalia",
+            "Temperatura_Minima",
+            "Temperatura_Minima_Anomalia",
+            "Temperatura_Massima",
+            "Temperatura_Massima_Anomalia",
+            "Temperatura_Media_clima",
+            "Temperatura_Massima_clima",
+            "Temperatura_Minima_clima",
+            "Temperatura_Minima_Giornaliera",
+            "Tmin_stazioni",
+            "Tmin_stazioni_non_utilizzate",
+            "Temperatura_Massima_Giornaliera",
+            "Tmax_stazioni",
+            "Tmax_stazioni_non_utilizzate",
+            "Velocita_vento_giornaliera",
+            "Vven_stazioni",
+            "Vven_stazioni_non_utilizzate",
+            "Umidita_media_giornaliera",
+            "Umid_stazioni",
+            "Umid_stazioni_non_utilizzate",
+            "Pressione_Mare_Giornaliera",
+            "Pressione_Suolo_Giornaliera",
+            "Mslp_stazioni",
+            "Mslp_stazioni_non_utilizzate",
+            "Radiazione_Globale_Giornaliera",
+            "Evapotraspirazione_Potenziale_Giornaliera"
+          ],
+          "evapotraspirazione": [
+            "Evapotraspirazione",
+            "Evapotraspirazione_Anomalia_mm",
+            "Evapotraspirazione_Anomalia_perc",
+            "Evapotraspirazione_clima"
+          ],
+          "bilancioIdricoSemplificato": [
+            "BilancioIdricoSemplificato",
+            "BilancioIdricoSemplificato_Anomalia_mm",
+            "BilancioIdricoSemplificato_Anomalia_perc",
+            "BilancioIdricoSemplificato_clima"
+          ],
+          "spi": [
+            "spi1",
+            "spi3",
+            "spi6",
+            "spi12"
+          ],
+          "spei": [
+            "spei1",
+            "spei3",
+            "spei6",
+            "spei12"
+          ]
+        },
+        "timeUnit": "YYYY-MM-DD",
+        "showOneDatePicker": false // If true, show the DailyManager component instead of the FixedRangeManager
           }
 */
 class FixedRangePicker extends React.Component {
     static propTypes = {
-        style: PropTypes.object,
         id: PropTypes.string,
         className: PropTypes.string,
-        isCollapsedPlugin: PropTypes.bool,
-        onCollapsePlugin: PropTypes.func,
         fromData: PropTypes.instanceOf(Date),
+        isCollapsedPlugin: PropTypes.bool,
+        isFetchAvailableDates: PropTypes.bool, // If true, fetch the first and last available dates calling fetchSelectDate action
         toData: PropTypes.instanceOf(Date),
         firstAvailableDate: PropTypes.instanceOf(Date),
+        isInteractionDisabled: PropTypes.bool,
+        isPluginLoaded: PropTypes.bool,
         lastAvailableDate: PropTypes.instanceOf(Date),
-        onCheckLaunchSelectDateQuery: PropTypes.func,
-        onSetSelectDate: PropTypes.func,
         onChangePeriodToData: PropTypes.func,
         onChangePeriod: PropTypes.func,
+        onCollapsePlugin: PropTypes.func,
+        onFetchAvailableDates: PropTypes.func,
+        onSetSelectDate: PropTypes.func,
         onUpdateSettings: PropTypes.func,
         onUpdateNode: PropTypes.func,
         onMarkPluginAsLoaded: PropTypes.func,
         onMarkFixedRangeAsNotLoaded: PropTypes.func,
+        onToggleFixedRangePicker: PropTypes.func,
         defaultUrlSelectDate: PropTypes.string,
         variabileSelectDate: PropTypes.string,
-        settings: PropTypes.object,
         layers: PropTypes.object,
         variabiliMeteo: PropTypes.object,
-        periodType: PropTypes.string,
+        periodType: PropTypes.object,
         periodTypes: PropTypes.array,
         showFixedRangePicker: PropTypes.bool, // If true, show this plugin; otherwise, show FreeRangePlugin if inserted in context
-        onToggleFixedRangePicker: PropTypes.func,
         alertMessage: PropTypes.string,
         onOpenAlert: PropTypes.func,
         onCloseAlert: PropTypes.func,
-        isInteractionDisabled: PropTypes.bool,
+        settings: PropTypes.object,
         shiftRight: PropTypes.bool,
         showOneDatePicker: PropTypes.bool,
         showChangeRangePickerButton: PropTypes.bool,
-        isPluginLoaded: PropTypes.bool,
+        style: PropTypes.object,
         timeUnit: PropTypes.string
     };
     static defaultProps = {
@@ -110,14 +170,15 @@ class FixedRangePicker extends React.Component {
         onUpdateSettings: () => { },
         onCollapsePlugin: () => { },
         onMarkFixedRangeAsNotLoaded: () => { },
-        periodType: "1",
+        periodType: { key: 10, label: "20 giorni", min: 9, max: 20, isDefault: true },
         periodTypes: [
-            { "key": "1", "label": "1 Mese" },
-            { "key": "3", "label": "3 Mesi" },
-            { "key": "4", "label": "4 Mesi" },
-            { "key": "6", "label": "6 Mesi" },
-            { "key": "12", "label": "12 Mesi" },
-            { "key": "10", "label": "dal 1° Ottobre" }
+            { key: 1, label: "5 giorni", min: 1, max: 5, isDefault: true },
+            { key: 7, label: "8 giorni", min: 6, max: 8 },
+            { key: 10, label: "20 giorni", min: 9, max: 20, isDefault: true },
+            { key: 30, label: "60 giorni", min: 21, max: 60 },
+            { key: 120, label: "160 giorni", min: 61, max: 160 },
+            { key: 180, label: "250 giorni", min: 161, max: 250 },
+            { key: 365, label: "366 giorni", min: 251, max: 366 }
         ],
         id: "mapstore-fixederange",
         variabiliMeteo: {
@@ -136,7 +197,8 @@ class FixedRangePicker extends React.Component {
         style: {
             top: 0,
             position: 'absolute',
-            zIndex: 10
+            zIndex: 10,
+            width: 280
         },
         showFixedRangePicker: false,
         showOneDatePicker: false,
@@ -158,15 +220,19 @@ class FixedRangePicker extends React.Component {
 
     componentDidMount() {
         this.props.onToggleFixedRangePicker();
-        this.props.onMarkPluginAsLoaded();
-        this.props.onCheckLaunchSelectDateQuery(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, this.props.timeUnit);
+        this.props.onMarkPluginAsLoaded(this.props.showOneDatePicker);
+        // Setta mapfilenameSuffixes solo al primo caricamento del componente
+        this.mapfilenameSuffixes = this.props.periodTypes.map(t => t.key);
+        if ( this.props.isFetchAvailableDates && this.props.defaultUrlSelectDate && this.props.variabileSelectDate) {
+            this.props.onFetchAvailableDates(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, this.props.timeUnit, this.props.periodTypes);
+        }
     }
 
     // Resets the plugin's state to default values when navigating back to the Home Page
     componentWillUnmount() {
         const TO_DATA = this.props.lastAvailableDate;
         this.props.onChangePeriodToData(TO_DATA);
-        this.props.onChangePeriod(this.props.periodTypes[0].key);
+        this.props.onChangePeriod(this.props.periodTypes.find(period => period.isDefault));
         this.props.onMarkFixedRangeAsNotLoaded();
         if (this.props.showFixedRangePicker) {
             this.props.onToggleFixedRangePicker();
@@ -218,6 +284,9 @@ class FixedRangePicker extends React.Component {
             </div>
         );
     }
+
+    mapfilenameSuffixes = [];
+
     showFixedRangeManager = () => {
         return (
             <div className="ms-fixedrangepicker-action">
@@ -253,14 +322,6 @@ class FixedRangePicker extends React.Component {
         );
     }
     showDailyDatePicker = () => {
-        /*
-        const normalizedDate = moment(this.props.toData).startOf('day').toDate();
-        const isDecrementDisabled = this.props.isInteractionDisabled ||
-                                moment(normalizedDate).isSameOrBefore(this.props.firstAvailableDate);
-        const isIncrementDisabled = this.props.isInteractionDisabled ||
-                                moment(normalizedDate).isSameOrAfter(this.props.lastAvailableDate) ||
-                                !DateAPI.validateOneDate(this.props.toData, this.props.firstAvailableDate, this.props.lastAvailableDate, this.props.timeUnit).isValid;
-        */
         return (
             <DailyManager
                 toData={this.props.toData}
@@ -273,20 +334,24 @@ class FixedRangePicker extends React.Component {
                 onOpenAlert={this.props.onOpenAlert}
                 onCloseAlert={this.props.onCloseAlert}
                 format={ this.props.timeUnit }
+                defaultPeriod={ this.props.periodTypes.find(period => period.isDefault) }
             />
         );
     }
     handleChangePeriod = (periodType) => {
-        this.props.onChangePeriod(periodType.key);
-        this.handleApplyPeriod(periodType.key);
+        this.props.onChangePeriod(periodType);
+        this.handleApplyPeriod(periodType);
     }
     handleApplyPeriod = (periodType = null) => {
         const toData = this.props.toData;
         let fromData;
+        let mapNameSuffix;
         if (!periodType) {
             fromData = this.props.fromData;
+            mapNameSuffix = this.props.periodType.key;
         } else {
-            fromData =  new Date(DateAPI.calculateDateFromKeyReal(periodType, toData).fromData);
+            fromData =  moment(toData).clone().subtract(Number(periodType.max), 'days').toDate();
+            mapNameSuffix = periodType.key;
         }
         if (!fromData || !toData || isNaN(fromData) || isNaN(toData) || !(toData instanceof Date) || !(fromData instanceof Date)) {
             // restore defult values
@@ -304,7 +369,8 @@ class FixedRangePicker extends React.Component {
         }
         this.updateParams({
             fromData: fromData,
-            toData: toData
+            toData: toData,
+            mapNameSuffix: mapNameSuffix
         });
         // set default values
         this.setState({ defaultFromData: new Date(fromData)});
@@ -313,7 +379,9 @@ class FixedRangePicker extends React.Component {
     updateParams = (datesParam, onUpdateNode = true) => {
         this.props.layers.flat.map((layer) => {
             if (onUpdateNode && isVariabiliMeteoLayer(layer.name, this.props.variabiliMeteo)) {
-                const mapFile = DateAPI.setGCMapFile(datesParam.fromData, datesParam.toData, layer.params.map);
+                const mapFile = !this.props.showOneDatePicker ?
+                    DateAPI.getMapNameFromSuffix(layer.params.map, this.mapfilenameSuffixes, datesParam.mapNameSuffix)
+                    : layer.params.map;
                 const newParams = {
                     params: {
                         map: mapFile,
@@ -335,9 +403,9 @@ class FixedRangePicker extends React.Component {
 const mapStateToProps = (state) => {
     return {
         isCollapsedPlugin: state?.fixedrangepicker?.isCollapsedPlugin,
-        fromData: state?.fixedrangepicker?.fromData || moment(this.props.lastAvailableDate).clone().subtract(1, 'month'),
+        fromData: state?.fixedrangepicker?.fromData || moment(this.props.lastAvailableDate).clone().subtract(20, 'days').toDate(),
         toData: state?.fixedrangepicker?.toData || this.props.lastAvailableDate,
-        periodType: state?.fixedrangepicker?.periodType || "1",
+        periodType: state?.fixedrangepicker?.periodType || { key: 10, label: "20 giorni", min: 9, max: 20, isDefault: true  },
         settings: state?.layers?.settings || { expanded: false, options: { opacity: 1 } },
         layers: state?.layers || {},
         showFixedRangePicker: (state?.fixedrangepicker?.showFixedRangePicker) ? true : false,
@@ -362,7 +430,7 @@ const FixedRangePickerPlugin = connect(mapStateToProps, {
     onToggleFixedRangePicker: toggleRangePickerPlugin,
     onOpenAlert: openAlert,
     onCloseAlert: closeAlert,
-    onCheckLaunchSelectDateQuery: checkFetchAvailableDatesFixedRange
+    onFetchAvailableDates: fetchSelectDate
 })(FixedRangePicker);
 
 export default createPlugin(

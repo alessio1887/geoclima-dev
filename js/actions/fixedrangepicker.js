@@ -18,7 +18,7 @@ export const PLUGIN_NOT_LOADED = 'FIXEDRANGE:PLUGIN_NOT_LOADED';
 // export const FIXEDRANGE_ERROR_FETCH = 'FIXEDRANGE_ERROR_FETCH';
 // export const FETCH_SELECT_DATE = 'FIXEDRANGE:FETCH_SELECT_DATE';
 // export const UPDATE_DATE_PARAMS_FIXEDRANGE = 'FIXEDRANGE:UPDATE_DATE_PARAMS';
-export const FIXEDRANGE_CHECK_FETCH_SELECT_DATE = 'FIXEDRANGE:CHECK_FETCH_SELECT_DATE';
+// export const FIXEDRANGE_CHECK_FETCH_SELECT_DATE = 'FIXEDRANGE:CHECK_FETCH_SELECT_DATE';
 
 export function changePeriodToData(toData) {
     return {
@@ -67,9 +67,10 @@ export function collapsePlugin() {
 }
 
 
-export function markFixedRangeAsLoaded() {
+export function markFixedRangeAsLoaded(showOneDatePicker) {
     return {
-        type: PLUGIN_LOADED
+        type: PLUGIN_LOADED,
+        showOneDatePicker
     };
 }
 
@@ -79,14 +80,14 @@ export function markFixedRangeAsNotLoaded() {
     };
 }
 
-export const checkFetchAvailableDatesFixedRange = (variableSelectDate, urlSelectDate, timeUnit) => {
-    return {
-        type: FIXEDRANGE_CHECK_FETCH_SELECT_DATE,
-        variableSelectDate,
-        urlSelectDate,
-        timeUnit
-    };
-};
+// export const checkFetchAvailableDatesFixedRange = (variableSelectDate, urlSelectDate, timeUnit) => {
+//     return {
+//         type: FIXEDRANGE_CHECK_FETCH_SELECT_DATE,
+//         variableSelectDate,
+//         urlSelectDate,
+//         timeUnit
+//     };
+// };
 
 // export function apiError(errorMessage) {
 //     return {

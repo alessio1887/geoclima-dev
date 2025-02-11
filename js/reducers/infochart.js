@@ -11,7 +11,7 @@ import {CHARTVARIABLE_CHANGED, TAB_CHANGED, TODATA_FIXEDRANGE_CHANGED, FROMDATA_
     FETCHED_INFOCHART_DATA, COLLAPSE_RANGE_PICKER,  OPEN_ALERT, CLOSE_ALERT, SET_CHART_RELAYOUT, RESET_CHART_RELAYOUT, RESIZE_INFOCHART,
     SET_RANGE_MANAGER, SET_IDVARIABILI_LAYERS, SET_DEFAULT_URL, SET_DEFAULT_DATES, INITIALIZE_TABS,
     PLUGIN_LOADED, PLUGIN_NOT_LOADED, SET_TABLIST, SET_TIMEUNIT } from '../actions/infochart';
-import DateAPI, { DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO, PERIOD_TYPES } from '../utils/ManageDateUtils';
+import { DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO, PERIOD_TYPES } from '../utils/ManageDateUtils';
 import assign from 'object-assign';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
@@ -20,17 +20,17 @@ momentLocaliser(moment);
 const infoChartDefaultState = {
     showInfoChartPanel: false,
     infoChartData: {
-        fromData: moment().subtract(1, 'month').startOf('day').toDate(),
+        fromData: moment(DEFAULT_DATA_FINE).clone().subtract(20, 'days').toDate(),
         toData: DEFAULT_DATA_FINE,
         variables: "prec",
         latlng: {lat: 0, lng: 0},
-        periodType: PERIOD_TYPES[0].key
+        periodType: { key: 10, label: "20 giorni", min: 9, max: 20, isDefault: true  }
     },
     data: [],
     maskLoading: true,
-    fromData: moment().subtract(1, 'month').startOf('day').toDate(),
+    fromData: moment(DEFAULT_DATA_FINE).clone().subtract(20, 'days').toDate(),
     toData: DEFAULT_DATA_FINE,
-    periodType: PERIOD_TYPES[0].key,
+    periodType: { key: 10, label: "20 giorni", min: 9, max: 20, isDefault: true  },
     isCollapsedFormGroup: false,
     alertMessage: null,
     chartRelayout: {
@@ -99,13 +99,13 @@ function infochart(state = infoChartDefaultState, action) {
     case TODATA_FIXEDRANGE_CHANGED:
         return {
             ...state,
-            fromData: new Date(DateAPI.calculateDateFromKeyReal(state.periodType, action.toData).fromData),
+            fromData: moment(action.toData).clone().subtract(Number(state.periodType.max), 'days').toDate(),
             toData: action.toData
         };
     case CHART_PERIOD_CHANGED:
         return {
             ...state,
-            fromData: new Date(DateAPI.calculateDateFromKeyReal(action.periodType, state.toData).fromData),
+            fromData: moment(action.toData).clone().subtract(Number(action.periodType.max), 'days').toDate(),
             periodType: action.periodType
         };
     case SET_INFOCHART_VISIBILITY: {
@@ -184,11 +184,27 @@ function infochart(state = infoChartDefaultState, action) {
             ...state,
             tabList: action.tabList
         };
+    // case FETCHED_AVAILABLE_DATES:
+    //     return {
+    //         ...state,
+    //         firstAvailableDate: action.dataInizio,
+    //         lastAvailableDate: action.dataFine,
+    //         periodTypes: action.periodTypes
+    //     };
     case FETCHED_AVAILABLE_DATES:
+        const newDataFine = action.dataFine || DEFAULT_DATA_FINE;
+        const newDataInizio = action.dataInizio || DEFAULT_DATA_INIZIO;
+        const defaultPeriod = action.periodTypes.find(period => period.isDefault);
+        // const newFromData = moment(newDataFine).subtract(1, 'month').toDate();
+        const newFromData = moment(newDataFine).clone().subtract(defaultPeriod.max, 'days').toDate();
         return {
             ...state,
-            firstAvailableDate: action.dataInizio,
-            lastAvailableDate: action.dataFine
+            toData: newDataFine,
+            fromData: newFromData,
+            firstAvailableDate: newDataInizio,
+            lastAvailableDate: newDataFine,
+            periodTypes: action.periodTypes,
+            periodType: defaultPeriod
         };
     case SET_TIMEUNIT:
         return {
@@ -196,17 +212,17 @@ function infochart(state = infoChartDefaultState, action) {
             timeUnit: action.timeUnit
         };
     case SET_DEFAULT_DATES:
-        const newToData = action.toData || moment().subtract(1, 'day').startOf('day').toDate();
-        const newFromData = moment(newToData).subtract(1, 'month').toDate();
+        const defaultToData = action.toData;
+        const defaultFromData = moment(defaultToData).clone().subtract(action.defaultPeriod.max, 'days').toDate();
         return {
             ...state,
-            toData: newToData,
-            fromData: newFromData,
+            toData: defaultToData,
+            fromData: defaultFromData,
             infoChartData: {
                 ...state.infoChartData,
-                toData: newToData,
-                fromData: newFromData,
-                periodType: action.periodTypes?.[0] || PERIOD_TYPES[0]
+                toData: defaultToData,
+                fromData: defaultFromData,
+                periodType: action.defaultPeriod
             }
         };
     case INITIALIZE_TABS:

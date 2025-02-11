@@ -13,8 +13,6 @@ export const CLOSE_ALERT = 'FREERANGE:CLOSE_ALERT';
 export const COLLAPSE_RANGE_PICKER = 'FREERANGE:COLLAPSE_RANGE_PICKER';
 export const PLUGIN_LOADED = 'FREERANGE:PLUGIN_LOADED';
 export const PLUGIN_NOT_LOADED = 'FREERANGE:PLUGIN_NOT_LOADED';
-// export const FREERANGE_SET_AVAILABLE_DATES = 'FREERANGE:SET_SELECT_DATE';
-export const FREERANGE_CHECK_FETCH_SELECT_DATE = 'FREERANGE:CHECK_FETCH_SELECT_DATE';
 // export const FREERANGE_ERROR_FETCH = 'FREERANGE_ERROR_FETCH';
 // export const FETCH_SELECT_DATE = 'FREERANGE:FETCH_SELECT_DATE';
 // export const UPDATE_DATE_PARAMS_FEERANGE = 'FREEANGE:UPDATE_DATE_PARAMS';
@@ -62,13 +60,13 @@ export function markFreeRangeAsNotLoaded() {
     };
 }
 
-export const checkFetchAvailableDatesFreeRange = (variableSelectDate, urlSelectDate) => {
-    return {
-        type: FREERANGE_CHECK_FETCH_SELECT_DATE,
-        variableSelectDate,
-        urlSelectDate
-    };
-};
+// export const checkFetchAvailableDatesFreeRange = (variableSelectDate, urlSelectDate) => {
+//     return {
+//         type: FREERANGE_CHECK_FETCH_SELECT_DATE,
+//         variableSelectDate,
+//         urlSelectDate
+//     };
+// };
 
 // export function setAvailableDatesFreeRange(dataInizio, dataFine) {
 //     return {

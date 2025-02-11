@@ -31,11 +31,11 @@ import './infochart.css';
 class InfoChart extends React.Component {
     static propTypes = {
         id: PropTypes.string,
+        isFetchAvailableDates: PropTypes.bool, // If true, fetch the first and last available dates calling fetchSelectDate action
         panelClassName: PropTypes.string,
         closeGlyph: PropTypes.string,
         onSetInfoChartVisibility: PropTypes.func,
         onFetchInfoChartData: PropTypes.func,
-        onCheckFetchAvailableDates: PropTypes.func,
         onCollapseRangePicker: PropTypes.func,
         onSetInfoChartDates: PropTypes.func,
         onSetChartRelayout: PropTypes.func,
@@ -69,7 +69,7 @@ class InfoChart extends React.Component {
         firstAvailableDate: PropTypes.instanceOf(Date),
         lastAvailableDate: PropTypes.instanceOf(Date),
         variables: PropTypes.array,
-        periodType: PropTypes.string,
+        periodType: PropTypes.object,
         periodTypes: PropTypes.array,
         classNameInfoChartDate: PropTypes.string,
         styleInfoChartDate: PropTypes.object,
@@ -196,6 +196,9 @@ class InfoChart extends React.Component {
         }));
         this.props.onInitializeVariableTabs(variableTabs);
     }
+
+    mapfilenameSuffixes = [];
+
     // Set some props to the plugin's state
     componentDidMount() {
         if (!this.props.isPluginLoaded) {
@@ -204,7 +207,10 @@ class InfoChart extends React.Component {
             this.props.onSetTimeUnit(this.props.timeUnit);
             this.initializeTabs();
             this.props.onSetDefaultUrlGeoclimaChart(this.props.defaultUrlGeoclimaChart);
-            this.props.onCheckFetchAvailableDates(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, this.props.timeUnit);
+            this.mapfilenameSuffixes = this.props.periodTypes.map(t => t.key);
+            if ( this.props.isFetchAvailableDates && this.props.defaultUrlSelectDate && this.props.variabileSelectDate) {
+                this.props.onFetchAvailableDates(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, this.props.timeUnit, this.props.periodTypes);
+            }
             this.props.onMarkPluginAsLoaded();
         }
     }
@@ -494,7 +500,7 @@ class InfoChart extends React.Component {
     }
     closePanel = () => {
         this.props.onSetInfoChartVisibility(false);
-        this.props.onSetInfoChartDates(this.props.lastAvailableDate, this.props.periodTypes );
+        this.props.onSetInfoChartDates(this.props.lastAvailableDate, this.props.periodTypes.find(period => period.isDefault));
         this.props.onResetChartRelayout();
         if ( this.props.infoChartSize.widthResizable !== 880 || this.props.infoChartSize.heightResizable !== 880) {
             this.props.onResizeInfoChart(880, 880);
@@ -506,8 +512,8 @@ class InfoChart extends React.Component {
         }
     }
     handleChangePeriod = (periodType) => {
-        this.props.onChangePeriod(periodType.key);
-        this.handleApplyPeriod(null, null, periodType.key);
+        this.props.onChangePeriod(periodType);
+        this.handleApplyPeriod(null, null, periodType);
     }
     handleChangeTab = (idTab) => {
         this.props.onChangeTab(idTab);
@@ -517,27 +523,29 @@ class InfoChart extends React.Component {
         this.props.onChangeChartVariable(tabVariable, [selectedVariable]);
         this.handleApplyPeriod([selectedVariable], tabVariable);
     }
-    handleApplyPeriod = (selectedVariables, tabVariable, periodKey) => {
-        let periodApplied = periodKey || this.props.periodType;
-        let { fromData, toData } = this.props;
-        if (!fromData || !toData || isNaN(fromData) || isNaN(toData) || !(toData instanceof Date) || !(fromData instanceof Date)) {
+    handleApplyPeriod = (selectedVariables, tabVariable, newPeriod) => {
+        let periodApplied = newPeriod || this.props.periodType;
+        let newFromData = this.props.fromData;
+        let newToData = this.props.toData;
+        if (!newFromData || !newToData || isNaN(newFromData) || isNaN(newToData) || !(newToData instanceof Date) || !(newFromData instanceof Date)) {
             // restore defult values
             this.props.onChangePeriodToData(new Date(this.state.defaultToData));
             return;
         }
         // Set fromData, toData, periodKey and variabile meteo
         if ( this.props.activeRangeManager === FIXED_RANGE) {
-            fromData = DateAPI.calculateDateFromKeyReal( periodApplied, toData).fromData;
+            // fromData = DateAPI.calculateDateFromKeyReal( periodApplied, toData).fromData;
+            newFromData = moment(newToData).clone().subtract(periodApplied.max, 'days').toDate();
         } else {
             // set default period
-            periodApplied = this.props.periodTypes[0]?.key;
+            periodApplied = this.props.periodTypes.find(period => period.isDefault);
         }
         const variableIds = selectedVariables ? selectedVariables.map(variable => variable.id).join(',')
             : this.getActiveTab().variables.map(variable => variable.id).join(',');
         const idTab = tabVariable || this.getActiveTab().id;
 
         // Date validations
-        const validation = DateAPI.validateDateRange(fromData, toData, this.props.firstAvailableDate, this.props.lastAvailableDate, this.props.timeUnit);
+        const validation = DateAPI.validateDateRange(newFromData, newToData, this.props.firstAvailableDate, this.props.lastAvailableDate, this.props.timeUnit);
         if (!validation.isValid) {
             this.props.onOpenAlert(validation.errorMessage);
             return;
@@ -549,16 +557,16 @@ class InfoChart extends React.Component {
         // Ensure dates are in 'YYYY-MM-DD' format before making the fetch call
         this.props.onFetchInfoChartData({
             latlng: this.props.infoChartData.latlng,
-            toData: moment(toData).clone().format(this.props.timeUnit),
-            fromData: moment(fromData).clone().format(this.props.timeUnit),
+            toData: moment(newToData).clone().format(this.props.timeUnit),
+            fromData: moment(newFromData).clone().format(this.props.timeUnit),
             variables: variableIds,
-            periodType: periodApplied,
+            periodType: periodApplied.key,
             idTab: idTab
         });
         this.props.onResetChartRelayout();
         // set default values
-        this.setState({ defaultFromData: new Date(fromData)});
-        this.setState({ defaultToData: new Date(toData)});
+        this.setState({ defaultFromData: new Date(newFromData)});
+        this.setState({ defaultToData: new Date(newToData)});
     }
 }
 

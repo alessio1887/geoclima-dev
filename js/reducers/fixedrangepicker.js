@@ -9,19 +9,21 @@
 import {TODATA_CHANGED, MAP_PERIOD_CHANGED, TOGGLE_PLUGIN, OPEN_ALERT, CLOSE_ALERT,
     PLUGIN_LOADED, PLUGIN_NOT_LOADED, COLLAPSE_RANGE_PICKER } from '../actions/fixedrangepicker';
 import { FETCHED_AVAILABLE_DATES } from '../actions/updateDatesParams';
-import DateAPI, { DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO } from '../utils/ManageDateUtils';
+import { DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO } from '../utils/ManageDateUtils';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
 
 const defaultState = {
     isCollapsedPlugin: false,
-    periodType: "1",
-    fromData: moment(DEFAULT_DATA_FINE).clone().subtract(1, 'month').startOf('day').toDate(),
+    // periodType: "1",
+    // fromData: moment(DEFAULT_DATA_FINE).clone().subtract(1, 'month').startOf('day').toDate(),
+    // toData: DEFAULT_DATA_FINE,
+    fromData: moment(DEFAULT_DATA_FINE).clone().subtract(20, 'days').toDate(),
     toData: DEFAULT_DATA_FINE,
+    periodType: { key: 10, label: "20 giorni", min: 9, max: 20, isDefault: true  },
     showModal: false,
     imgSrc: "",
-    map: "geoclima",
     showFixedRangePicker: false,
     isInteractionDisabled: false,
     isPluginLoaded: false
@@ -32,15 +34,14 @@ function fixedrangepicker(state = defaultState, action) {
     case TODATA_CHANGED:
         return {
             ...state,
-            fromData: new Date(DateAPI.calculateDateFromKeyReal(state.periodType, action.toData).fromData),
-            toData: new Date(DateAPI.calculateDateFromKeyReal(state.periodType, action.toData).toData),
-            periodType: state.periodType
+            fromData: moment(action.toData).clone().subtract(Number(state.periodType.max), 'days').toDate(),
+            toData: action.toData
         };
     case MAP_PERIOD_CHANGED:
         return {
             ...state,
-            fromData: new Date(DateAPI.calculateDateFromKeyReal(action.periodType, state.toData).fromData),
-            toData: new Date(DateAPI.calculateDateFromKeyReal(action.periodType, state.toData).toData),
+            fromData: moment(state.toData).clone().subtract(action.periodType.max, 'days').toDate(),
+            // toData: new Date(DateAPI.calculateDateFromKeyReal(action.periodType, state.toData).toData),
             periodType: action.periodType
         };
     case TOGGLE_PLUGIN:
@@ -77,7 +78,8 @@ function fixedrangepicker(state = defaultState, action) {
     case PLUGIN_LOADED:
         return {
             ...state,
-            isPluginLoaded: true
+            isPluginLoaded: true,
+            showOneDatePicker: action.showOneDatePicker
         };
     case PLUGIN_NOT_LOADED:
         return {
@@ -87,13 +89,17 @@ function fixedrangepicker(state = defaultState, action) {
     case FETCHED_AVAILABLE_DATES:
         const newDataFine = action.dataFine || DEFAULT_DATA_FINE;
         const newDataInizio = action.dataInizio || DEFAULT_DATA_INIZIO;
-        const newFromData = moment(newDataFine).subtract(1, 'month').toDate();
+        const defaultPeriod = action.periodTypes.find(period => period.isDefault);
+        // const newFromData = moment(newDataFine).subtract(1, 'month').toDate();
+        const newFromData = moment(newDataFine).clone().subtract(defaultPeriod.max, 'days').toDate();
         return {
             ...state,
             toData: newDataFine,
             fromData: newFromData,
             firstAvailableDate: newDataInizio,
-            lastAvailableDate: newDataFine
+            lastAvailableDate: newDataFine,
+            periodTypes: action.periodTypes,
+            periodType: defaultPeriod
         };
     default:
         return state;
