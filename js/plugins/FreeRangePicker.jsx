@@ -44,6 +44,18 @@ Plugin configuration
 "name": "FreeRangePicker",
       "defaultConfig" : {
         "id": "mapstore-freerangepicker-map",
+        "defaultUrlSelectDate": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
+        "variabileSelectDate": "prec",
+        "isFetchAvailableDates": false,  // If true, fetch the first and last available dates calling fetchSelectDate action
+        "periodTypes": [
+          { "key": 1, "label": "5 giorni", "min": 1, "max": 5 },
+          { "key": 7, "label": "8 giorni", "min": 6, "max": 8 },
+          { "key": 10, "label": "20 giorni", "min": 9, "max": 20, "isDefault": true  },
+          { "key": 30, "label": "60 giorni", "min": 21, "max": 60 },
+          { "key": 120, "label": "160 giorni", "min": 61, "max": 160 },
+          { "key": 180, "label": "250 giorni", "min": 161, "max": 250 },
+          { "key": 365, "label": "366 giorni", "min": 251, "max": 366 }
+      ],
         "variabiliMeteo": {
           "precipitazione": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima","Pioggia_Cumulata_Giornaliera"],
           "temperatura": ["Temperatura_Media", "Temperatura_Media_Anomalia", "Temperatura_Minima", "Temperatura_Minima_Anomalia",
@@ -53,7 +65,8 @@ Plugin configuration
                   "BilancioIdricoSemplificato_clima"],
           "spi": [ "spi1", "spi3", "spi6", "spi12"],
           "spei":[ "spei1", "spei3", "spei6", "spei12"]
-        }
+        },
+        "timeUnit": "YYYY-MM-DD"
       }
 */
 class FreeRangePicker extends React.Component {
@@ -62,7 +75,7 @@ class FreeRangePicker extends React.Component {
         id: PropTypes.string,
         className: PropTypes.string,
         isCollapsedPlugin: PropTypes.bool,
-        isFetchAvailableDates: PropTypes.bool,
+        isFetchAvailableDates: PropTypes.bool, // If true, fetch the first and last available dates calling fetchSelectDate action
         fromData: PropTypes.instanceOf(Date),
         toData: PropTypes.instanceOf(Date),
         firstAvailableDate: PropTypes.instanceOf(Date),

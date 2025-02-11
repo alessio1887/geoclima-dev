@@ -43,26 +43,85 @@ const isLayerLoadingSelector = createSelector(
 Plugin configuration
 "name": "FixedRangePicker",
           "cfg" : {
-            "id": "mapstore-fixedrangepicker-map",
-            "periodTypes": [
-                    { "key": "1", "label": "1 Mese" },
-                    { "key": "3", "label": "3 Mesi" },
-                    { "key": "4", "label": "4 Mesi" },
-                    { "key": "6", "label": "6 Mesi" },
-                    { "key": "12", "label": "12 Mesi" },
-                    { "key": "10", "label": "dal 1° Ottobre" }
-                ],
-            "variabiliMeteo": {
-                  "precipitazione": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima","Pioggia_Cumulata_Giornaliera"],
-                  "temperatura": ["Temperatura_Media", "Temperatura_Media_Anomalia", "Temperatura_Minima", "Temperatura_Minima_Anomalia",
-                          "Temperatura_Massima", "Temperatura_Massima_Anomalia", "Temperatura_Media_clima", "Temperatura_Massima_clima", "Temperatura_Minima_clima"],
-                  "evapotraspirazione": ["Evapotraspirazione", "Evapotraspirazione_Anomalia_mm", "Evapotraspirazione_Anomalia_perc", "Evapotraspirazione_clima"],
-                  "bilancioIdricoSemplificato": ["BilancioIdricoSemplificato", "BilancioIdricoSemplificato_Anomalia_mm", "BilancioIdricoSemplificato_Anomalia_perc",
-                          "BilancioIdricoSemplificato_clima"],
-                  "spi": [ "spi1", "spi3", "spi6", "spi12"],
-                  "spei":[ "spei1", "spei3", "spei6", "spei12"]
-            },
-            "showOneDatePicker": false
+        "id": "mapstore-fixedrangepicker-map",
+        "defaultUrlSelectDate": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
+        "variabileSelectDate": "prec",
+        "isFetchAvailableDates": true, // If true, fetch the first and last available dates calling fetchSelectDate action
+        "periodTypes": [
+            { "key": 1, "label": "5 giorni", "max": 5 },
+            { "key": 7, "label": "8 giorni", "max": 8 },
+            { "key": 10, "label": "20 giorni", "max": 20, "isDefault": true  },
+            { "key": 30, "label": "60 giorni", "max": 60 },
+            { "key": 120, "label": "160 giorni", "max": 160 },
+            { "key": 180, "label": "250 giorni", "max": 250 },
+            { "key": 365, "label": "366 giorni", "max": 366 }
+        ],
+        "variabiliMeteo": {
+          "precipitazione": [
+            "Pioggia_Anomalia_perc",
+            "Pioggia_Anomalia_mm",
+            "Pioggia_Cumulata",
+            "Pioggia_Cumulata_clima",
+            "Pioggia_Cumulata_Giornaliera",
+            "Prec_stazioni",
+            "Prec_stazioni_non_utilizzate"
+          ],
+          "temperatura": [
+            "Temperatura_Media",
+            "Temperatura_Media_Anomalia",
+            "Temperatura_Minima",
+            "Temperatura_Minima_Anomalia",
+            "Temperatura_Massima",
+            "Temperatura_Massima_Anomalia",
+            "Temperatura_Media_clima",
+            "Temperatura_Massima_clima",
+            "Temperatura_Minima_clima",
+            "Temperatura_Minima_Giornaliera",
+            "Tmin_stazioni",
+            "Tmin_stazioni_non_utilizzate",
+            "Temperatura_Massima_Giornaliera",
+            "Tmax_stazioni",
+            "Tmax_stazioni_non_utilizzate",
+            "Velocita_vento_giornaliera",
+            "Vven_stazioni",
+            "Vven_stazioni_non_utilizzate",
+            "Umidita_media_giornaliera",
+            "Umid_stazioni",
+            "Umid_stazioni_non_utilizzate",
+            "Pressione_Mare_Giornaliera",
+            "Pressione_Suolo_Giornaliera",
+            "Mslp_stazioni",
+            "Mslp_stazioni_non_utilizzate",
+            "Radiazione_Globale_Giornaliera",
+            "Evapotraspirazione_Potenziale_Giornaliera"
+          ],
+          "evapotraspirazione": [
+            "Evapotraspirazione",
+            "Evapotraspirazione_Anomalia_mm",
+            "Evapotraspirazione_Anomalia_perc",
+            "Evapotraspirazione_clima"
+          ],
+          "bilancioIdricoSemplificato": [
+            "BilancioIdricoSemplificato",
+            "BilancioIdricoSemplificato_Anomalia_mm",
+            "BilancioIdricoSemplificato_Anomalia_perc",
+            "BilancioIdricoSemplificato_clima"
+          ],
+          "spi": [
+            "spi1",
+            "spi3",
+            "spi6",
+            "spi12"
+          ],
+          "spei": [
+            "spei1",
+            "spei3",
+            "spei6",
+            "spei12"
+          ]
+        },
+        "timeUnit": "YYYY-MM-DD",
+        "showOneDatePicker": false // If true, show the DailyManager component instead of the FixedRangeManager
           }
 */
 class FixedRangePicker extends React.Component {
@@ -71,7 +130,7 @@ class FixedRangePicker extends React.Component {
         className: PropTypes.string,
         fromData: PropTypes.instanceOf(Date),
         isCollapsedPlugin: PropTypes.bool,
-        isFetchAvailableDates: PropTypes.bool,
+        isFetchAvailableDates: PropTypes.bool, // If true, fetch the first and last available dates calling fetchSelectDate action
         toData: PropTypes.instanceOf(Date),
         firstAvailableDate: PropTypes.instanceOf(Date),
         isInteractionDisabled: PropTypes.bool,

@@ -84,10 +84,10 @@ const Api = {
         }, name);
     },
     /**
-     * getMapFileFromSuffix and getMapFileFromDates returns the name of the mapfile to be passed as a parameter in the HTTP request.
-     * This is because, depending on the duration of the cumulative data, the legend values in the mapfile change.
-     * For instance, a one-month rainfall cumulative has very different values compared to a one-year rainfall cumulative.
-     * Each mapfile has a different reclassification for the legend. Attached are the various mapfiles currently used in the online application.
+     * getMapFileFromSuffix returns the name of the mapfile to be passed as a parameter in the HTTP request.
+     * This is because, depending on the duration of the cumulative data, the legend values (and therefore the mapfile) sometimes change.
+     * For example, a one-month rainfall cumulative has very different values compared to a one-year rainfall cumulative.
+     * Each mapfile has a different reclassification for the legend. The various mapfiles currently used in the online application are attached.
      */
     getMapNameFromSuffix(mapLayerParam, validSuffixes, mapNameSuffix) {
         const cleanedMapName = this.removeValidSuffixes(mapLayerParam, validSuffixes);

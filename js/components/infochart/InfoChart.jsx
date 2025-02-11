@@ -31,7 +31,7 @@ import './infochart.css';
 class InfoChart extends React.Component {
     static propTypes = {
         id: PropTypes.string,
-        isFetchAvailableDates: PropTypes.bool,
+        isFetchAvailableDates: PropTypes.bool, // If true, fetch the first and last available dates calling fetchSelectDate action
         panelClassName: PropTypes.string,
         closeGlyph: PropTypes.string,
         onSetInfoChartVisibility: PropTypes.func,

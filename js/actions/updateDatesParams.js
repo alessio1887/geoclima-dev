@@ -34,8 +34,8 @@ export function updateParams(dataInizio, dataFine, timeUnit, periodTypes) {
  * through the updateParams action.
  *
  * This action is called only once at the beginning during map loading.
- * It is triggered, via its corresponding epic, by one of these three plugins:
- * FixedRangePlugin, FreeRangePlugin, or InfoChart.
+ * It is triggered by one of these three plugins—FixedRangePlugin, FreeRangePlugin, or InfoChart—
+ * based on their showOneDatePicker prop.
  */
 export function fetchSelectDate(variabileLastAvailableData, urlGetLastAvailableData, timeUnit, periodTypes) {
     return (dispatch) => {

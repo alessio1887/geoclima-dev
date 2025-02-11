@@ -33,14 +33,16 @@ Plugin configuration
          "defaultUrlGeoclimaChart": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/geoclima_chart_test.py",
          "defaultUrlSelectDate": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
          "variabileSelectDate": "prec",
+        "isFetchAvailableDates": true,
          "periodTypes": [
-              { "key": "1", "label": "1 Mese" },
-              { "key": "3", "label": "3 Mesi" },
-              { "key": "4", "label": "4 Mesi" },
-              { "key": "6", "label": "6 Mesi" },
-              { "key": "12", "label": "12 Mesi" },
-              { "key": "10", "label": "dal 1° Ottobre" }
-          ],
+            { "key": 1, "label": "5 giorni", "min": 1, "max": 5 },
+            { "key": 7, "label": "8 giorni", "min": 6, "max": 8 },
+            { "key": 10, "label": "20 giorni", "min": 9, "max": 20, "isDefault": true  },
+            { "key": 30, "label": "60 giorni", "min": 21, "max": 60 },
+            { "key": 120, "label": "160 giorni", "min": 61, "max": 160 },
+            { "key": 180, "label": "250 giorni", "min": 161, "max": 250 },
+            { "key": 365, "label": "366 giorni", "min": 251, "max": 366 }
+        ],
           "tabList": [
             {"id": "variableList", "name": "Variabili Meteo", "groupList": [
                                                                   { "id": "prec", "name": "Precipitazione", "unit": "mm", "yaxis": "Valore (mm)" },
@@ -50,8 +52,8 @@ Plugin configuration
                                                                   { "id": "ret", "name": "Evapotraspirazione Potenziale", "unit": "mm", "yaxis": "Valore (mm)"  },
                                                                   { "id": "bis", "name": "Bilancio Idrico Semplificato", "unit": "mm", "yaxis": "Valore (mm)"  }
                                                               ],
-                                                          "menuType": "single_select", // The type of variable selection for this tab menu: single variable (single_select) or multiple variables selected (multi_select)
-                                                          "chartType": "single_variable" // The chart type: 'single_variable' for a chart with one variable, 'multi_variable' for multiple variables (specific for layout in InfoChartRender)
+                                                          "menuType": "single_select",
+                                                          "chartType": "single_variable"
               },
             {"id": "spiList", "name": "SPI", "groupList": [
                                                                   { "id": "spi1", "name": "SPI-1" },
@@ -60,8 +62,8 @@ Plugin configuration
                                                                   { "id": "spi12", "name": "SPI-12" }
                                                                 ],
                                                           "chartTitle": "Indice SPI - Standardized Precipitation Index",
-                                                          "menuType": "multi_select", // The type of variable selection for this tab menu: single variable (single_select) or multiple variables selected (multi_select)
-                                                          "chartType": "multi_variable"  // The chart type: 'single_variable' for a chart with one variable, 'multi_variable' for multiple variables (specific for layout in InfoChartRender)
+                                                          "menuType": "multi_select",
+                                                          "chartType": "multi_variable"
               },
             {"id": "speiList", "name": "SPEI", "groupList": [
                                                                     { "id": "spei1", "name": "SPEI-1" },
@@ -70,15 +72,36 @@ Plugin configuration
                                                                     { "id": "spei12", "name": "SPEI-12" }
                                                           ],
                                                           "chartTitle": "Indice SPEI - Standardized Precipitation-Evapotranspiration Index",
-                                                          "menuType": "multi_select", // The type of variable selection for this tab menu: single variable (single_select) or multiple variables selected (multi_select)
-                                                          "chartType": "multi_variable" // The chart type: 'single_variable' for a chart with one variable, 'multi_variable' for multiple variables (specific for layout in InfoChartRender)
+                                                          "menuType": "multi_select",
+                                                          "chartType": "multi_variable"
             }
           ],
           "idVariabiliLayers": {
-            "prec": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima"],
-            "tmed": ["Temperatura_Media", "Temperatura_Media_Anomalia", "Temperatura_Media_clima"],
-            "tmin": ["Temperatura_Minima", "Temperatura_Minima_Anomalia", "Temperatura_Minima_clima"],
-            "tmax": [ "Temperatura_Massima", "Temperatura_Massima_Anomalia", "Temperatura_Massima_clima"],
+            "prec": [
+              "Pioggia_Anomalia_perc",
+              "Pioggia_Anomalia_mm",
+              "Pioggia_Cumulata",
+              "Pioggia_Cumulata_clima",
+              "Pioggia_Cumulata_Giornaliera",
+              "Prec_stazioni",
+              "Prec_stazioni_non_utilizzate"],
+            "tmed": ["Temperatura_Media", "Temperatura_Media_Anomalia", "Temperatura_Media_clima","Vven_stazioni",
+              "Vven_stazioni_non_utilizzate",
+              "Umidita_media_giornaliera",
+              "Umid_stazioni",
+              "Umid_stazioni_non_utilizzate",
+              "Pressione_Mare_Giornaliera",
+              "Pressione_Suolo_Giornaliera",
+              "Mslp_stazioni",
+              "Mslp_stazioni_non_utilizzate",
+              "Radiazione_Globale_Giornaliera",
+              "Evapotraspirazione_Potenziale_Giornaliera"],
+            "tmin": ["Temperatura_Minima", "Temperatura_Minima_Anomalia", "Temperatura_Minima_clima", "Temperatura_Minima_Giornaliera","Tmin_stazioni",
+              "Tmin_stazioni_non_utilizzate"],
+            "tmax": [ "Temperatura_Massima", "Temperatura_Massima_Anomalia", "Temperatura_Massima_clima",
+              "Temperatura_Massima_Giornaliera",
+              "Tmax_stazioni",
+              "Tmax_stazioni_non_utilizzate"],
             "ret": ["Evapotraspirazione", "Evapotraspirazione_Anomalia_mm", "Evapotraspirazione_Anomalia_perc", "Evapotraspirazione_clima"],
             "bis": ["BilancioIdricoSemplificato", "BilancioIdricoSemplificato_Anomalia_mm", "BilancioIdricoSemplificato_Anomalia_perc",
                     "BilancioIdricoSemplificato_clima"],
