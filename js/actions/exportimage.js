@@ -15,7 +15,7 @@ export const INITIALIZE_TABS = 'EXPORTIMAGE:INITIALIZE_TABS';
 export const TAB_CHANGED = 'EXPORTIMAGE:TAB_CHANGED';
 export const IMAGEVARIABLE_CHANGED = 'EXPORTIMAGE:IMAGEVARIABLE_CHANGED';
 export const EXPORTIMAGE_ERROR = 'EXPORTIMAGE:EXPORTIMAGE_ERROR';
-// export const EXPORTIMAGE_SUCCESS = 'EXPORTIMAGE:EXPORTIMAGE_SUCCESS';
+export const EXPORTIMAGE_SUCCESS = 'EXPORTIMAGE:EXPORTIMAGE_SUCCESS';
 
 export function updateExportImageDates(layerId, fromData, toData) {
     return {
@@ -76,20 +76,20 @@ export function apiError(errorMessage) {
     };
 }
 
-// export function exportImageSuccess(responseData) {
-//     return {
-//         type: EXPORTIMAGE_SUCCESS,
-//         responseData
-//     };
-// }
+export function exportImageSuccess(responseData) {
+    return {
+        type: EXPORTIMAGE_SUCCESS,
+        responseData
+    };
+}
 
 
 export function exportImage(layerName, fromData, toData, defaultUrlExportImage) {
     return (dispatch) => {
         GeoClimaAPI.exportImage(layerName, fromData, toData, defaultUrlExportImage)
-        //     .then(response => {
-        //         dispatch(exportImageSuccess(response.data));
-        //     })
+            .then(response => {
+                dispatch(exportImageSuccess(response.data));
+            })
             .catch(error => {
                 dispatch(apiError(error));
             });

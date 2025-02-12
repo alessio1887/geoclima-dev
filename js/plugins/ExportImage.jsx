@@ -88,7 +88,7 @@ const ExportImage = ({
                 isInteractionDisabled={isInteractionDisabled}
                 handleChangeTab={onChangeTab}
                 handleChangeVariable={onChangeImageVariable}
-                handleExportImage={exportImage}
+                apiUrl={defaultUrlExportImage}
             />
         </ResponsivePanel>
     );

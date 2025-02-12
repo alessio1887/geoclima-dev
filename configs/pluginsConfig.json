@@ -881,32 +881,18 @@
         },
         "tabList": [
             {"id": "variableList", "name": "Variabili Meteo", "groupList": [
-                                                                  { "id": "prec", "name": "Precipitazione" },
-                                                                  { "id": "tmed", "name": "Temperatura Media" },
-                                                                  { "id": "tmax", "name": "Temperatura Massima" },
-                                                                  { "id": "tmin", "name": "Temperatura Minima"  },
-                                                                  { "id": "ret", "name": "Evapotraspirazione Potenziale" },
-                                                                  { "id": "bis", "name": "Bilancio Idrico Semplificato" }
+                                                                  { "id": "Pioggia_Cumulata", "name": "Pioggia Cumulata" },
+                                                                  { "id": "Pioggia_Anomalia_mm", "name": "Pioggia Anomalia (mm)" },
+                                                                  { "id": "Pioggia_Anomalia_perc", "name": "Pioggia Anomalia (%)" },
+                                                                  { "id": "Temperatura_Media", "name": "Temperatura Media" },
+                                                                  { "id": "Temperatura_Media_Anomalia", "name": "Temperatura Media Anomalia" },
+                                                                  { "id": "Temperatura_Minima", "name": "Temperatura Minima" },
+                                                                  { "id": "Temperatura_Minima_Anomalia", "name": "Temperatura Minima Anomalia" },
+                                                                  { "id": "Temperatura_Massima", "name": "Temperatura Massima" },
+                                                                  { "id": "Temperatura_Massima_Anomalia", "name": "Temperatura Massima Anomalia" }
                                                               ],
                                                               "menuType": "single_select"
-              },
-            {"id": "spiList", "name": "SPI", "groupList": [
-                                                                  { "id": "spi1", "name": "SPI-1" },
-                                                                  { "id": "spi3", "name": "SPI-3" },
-                                                                  { "id": "spi6", "name": "SPI-6" },
-                                                                  { "id": "spi12", "name": "SPI-12" }
-                                                                ],
-                                                                "menuType": "single_select"
-              },
-            {"id": "speiList", "name": "SPEI", "groupList": [
-                                                                    { "id": "spei1", "name": "SPEI-1" },
-                                                                    { "id": "spei3", "name": "SPEI-3" },
-                                                                    { "id": "spei6", "name": "SPEI-6" },
-                                                                    { "id": "spei12", "name": "SPEI-12" }
-                                                          ],
-                                                          "menuType": "single_select"
-            }
-          ]
+              }]
         }
     }
   ]
