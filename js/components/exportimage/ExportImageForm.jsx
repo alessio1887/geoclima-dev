@@ -3,6 +3,7 @@ import {Button, FormGroup, Label } from 'react-bootstrap';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
 import SelectVariableTab from '../../components/dropdowns/SelectVariableTab';
 import Message from '@mapstore/components/I18N/Message';
+import './exportimage.css';
 
 const ExportImageForm = ({ fromData, toData, timeUnit, tabList, tabVariables, isInteractionDisabled, handleChangeTab, handleChangeVariable
 }) => {
@@ -11,20 +12,25 @@ const ExportImageForm = ({ fromData, toData, timeUnit, tabList, tabVariables, is
         return tabVariables.find(tab => tab.active === true);
     };
 
+    const changeSingleVariable = (selectedVariable, tabVariable) => {
+        handleChangeVariable(tabVariable, [selectedVariable]);
+    };
+
     return (
-        <FormGroup>
-            <Label className="labels-infochart"><Message msgId="gcapp.exportImage.selectMeteoVariable"/></Label>
+        <FormGroup className="exportimage-from">
+            <Label className="labels-exportimage"><Message msgId="gcapp.exportImage.selectMeteoVariable"/></Label>
             <SelectVariableTab
                 tabList={tabList}
-                onChangeSingleVariable={handleChangeVariable}
+                onChangeSingleVariable={changeSingleVariable}
                 activeTab={getActiveTab()}
                 onChangeTab={handleChangeTab}
+                isInteractionDisabled={isInteractionDisabled}
             />
             <FreeRangeManager
                 fromData={fromData}
                 toData={toData}
                 isInteractionDisabled={isInteractionDisabled}
-                styleLabels="labels-infochart"
+                styleLabels="labels-exportimage"
                 lablesType="gcapp.exportImage"
                 format={timeUnit}
                 isReadOnly={true}

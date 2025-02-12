@@ -386,6 +386,7 @@ class InfoChart extends React.Component {
                             onChangeMultiVariable={this.props.onChangeChartVariable}
                             activeTab={this.getActiveTab()}
                             onChangeTab={this.handleChangeTab}
+                            isInteractionDisabled={false}
                         />
                         {/* Toggle between FixedRangeManager and FreeRangeManager based on activeRangeManager*/}
                         {this.props.activeRangeManager === FIXED_RANGE ? (

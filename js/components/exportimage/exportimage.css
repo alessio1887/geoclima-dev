@@ -1,0 +1,13 @@
+.exportimage-from {
+    padding: 0px 20px 20px;
+}
+
+.labels-exportimage {
+    color: black;
+    background-color: white;
+    display: block; /* Allineamento corretto */
+    text-align: left; /* Testo allineato a sinistra */
+    padding: 30px 10px 10px; /* Margini ottimizzati */
+    font-size: 15px;
+    font-weight: bold;
+}

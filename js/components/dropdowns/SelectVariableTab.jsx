@@ -7,8 +7,14 @@ const DROP_DOWN = "single_select";
 const MULTI_SELECT = "multi_select";
 
 
-const SelectVariableTab = ({ tabList, onChangeSingleVariable, onChangeMultiVariable, onChangeTab, activeTab }) => {
-
+const SelectVariableTab = ({
+    tabList,
+    onChangeSingleVariable,
+    onChangeMultiVariable,
+    onChangeTab,
+    activeTab,
+    isInteractionDisabled
+}) => {
     return (
         <div id="infochart-dropdown-container">
             {/* Tab Bar */}
@@ -44,6 +50,7 @@ const SelectVariableTab = ({ tabList, onChangeSingleVariable, onChangeMultiVaria
                                     textField="name"
                                     value={activeTab.variables[0]}
                                     onChange={(value) => onChangeSingleVariable(value, activeTab.id)}
+                                    disabled={isInteractionDisabled}
                                 />
                             );
                         } else if (tab.menuType === MULTI_SELECT) {
@@ -56,6 +63,7 @@ const SelectVariableTab = ({ tabList, onChangeSingleVariable, onChangeMultiVaria
                                     textField="name"
                                     onChange={(value) => onChangeMultiVariable(activeTab.id, value)}
                                     value={activeTab.variables}
+                                    disabled={isInteractionDisabled}
                                 />
                             );
                         }
