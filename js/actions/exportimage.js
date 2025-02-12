@@ -5,6 +5,8 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
+import GeoClimaAPI from '../api/GeoClimaApi';
+
 export const UPDATE_DATES = 'EXPORTIMAGE:UPDATE_DATES';
 export const NOT_FOUND_LAYER = 'EXPORTIMAGE:NOT_FOUND_LAYER';
 export const LAYER_DATE_MISSING = 'EXPORTIMAGE:LAYER_DATE_MISSING';
@@ -12,6 +14,8 @@ export const SET_VARIABILIMETEO = 'EXPORTIMAGE:SET_VARIABILIMETEO';
 export const INITIALIZE_TABS = 'EXPORTIMAGE:INITIALIZE_TABS';
 export const TAB_CHANGED = 'EXPORTIMAGE:TAB_CHANGED';
 export const IMAGEVARIABLE_CHANGED = 'EXPORTIMAGE:IMAGEVARIABLE_CHANGED';
+export const EXPORTIMAGE_ERROR = 'EXPORTIMAGE:EXPORTIMAGE_ERROR';
+// export const EXPORTIMAGE_SUCCESS = 'EXPORTIMAGE:EXPORTIMAGE_SUCCESS';
 
 export function updateExportImageDates(layerId, fromData, toData) {
     return {
@@ -62,5 +66,32 @@ export function changeImageVariable(idTab, variable) {
         type: IMAGEVARIABLE_CHANGED,
         idTab,
         variable
+    };
+}
+
+export function apiError(errorMessage) {
+    return {
+        type: EXPORTIMAGE_ERROR,
+        errorMessage
+    };
+}
+
+// export function exportImageSuccess(responseData) {
+//     return {
+//         type: EXPORTIMAGE_SUCCESS,
+//         responseData
+//     };
+// }
+
+
+export function exportImage(layerName, fromData, toData, defaultUrlExportImage) {
+    return (dispatch) => {
+        GeoClimaAPI.exportImage(layerName, fromData, toData, defaultUrlExportImage)
+        //     .then(response => {
+        //         dispatch(exportImageSuccess(response.data));
+        //     })
+            .catch(error => {
+                dispatch(apiError(error));
+            });
     };
 }

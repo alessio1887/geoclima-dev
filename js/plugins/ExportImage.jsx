@@ -16,7 +16,7 @@ import ResponsivePanel from '@mapstore/components/misc/panels/ResponsivePanel';
 import { exportImageEnabledSelector, fromDataSelector, toDataSelector, isLayerLoadingSelector } from '../utils/geoclimaSelectors';
 import * as exportImageEpics from '../epics/exportImage';
 import exportimage from '../reducers/exportimage';
-import { initializeVariableTabs, setVariabiliMeteo, changeTab, changeImageVariable } from '../actions/exportimage';
+import { initializeVariableTabs, setVariabiliMeteo, changeTab, changeImageVariable, exportImage } from '../actions/exportimage';
 
 
 import moment from 'moment';
@@ -88,6 +88,7 @@ const ExportImage = ({
                 isInteractionDisabled={isInteractionDisabled}
                 handleChangeTab={onChangeTab}
                 handleChangeVariable={onChangeImageVariable}
+                handleExportImage={exportImage}
             />
         </ResponsivePanel>
     );

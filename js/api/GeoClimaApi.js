@@ -21,8 +21,8 @@ import urlUtil from 'url';
  * The proxy URL and allowed CORS domains are defined in localConfig.json
  */
 const Api = {
-    downloadImage: function(defaultUrlExportImage, layerName, fromData, toData, options) {
-        var params = assign({ layerName: layerName}, options || {});
+    exportImage: function(layerName, fromData, toData, defaultUrlExportImage, options) {
+        var params = assign({ layerName: layerName, fromData: fromData, toData: toData}, options || {});
         var url = urlUtil.format({
             protocol: window.location.hostname === 'localhost' ? 'https:' : window.location.protocol,
             host: defaultUrlExportImage,
