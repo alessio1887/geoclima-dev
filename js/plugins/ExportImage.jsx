@@ -33,6 +33,7 @@ const PLUGIN_GLYPH_ICON = "export";
  */
 const ExportImage = ({
     active,
+    defaultUrlExportImage,
     fromData,
     isInteractionDisabled,
     onToggleControl,
@@ -41,6 +42,7 @@ const ExportImage = ({
     toData,
     onChangeImageVariable,
     onChangeTab,
+    onExportImage,
     onInitializeVariableTabs,
     onSetVariabiliMeteo,
     variabiliMeteo,
@@ -89,6 +91,7 @@ const ExportImage = ({
                 handleChangeTab={onChangeTab}
                 handleChangeVariable={onChangeImageVariable}
                 apiUrl={defaultUrlExportImage}
+                exportImage={onExportImage}
             />
         </ResponsivePanel>
     );
@@ -105,6 +108,7 @@ const mapStateToProps = createStructuredSelector({
 const mapDispatchToProps = {
     onChangeImageVariable: changeImageVariable,
     onChangeTab: changeTab,
+    onExportImage: exportImage,
     onInitializeVariableTabs: initializeVariableTabs,
     onSetVariabiliMeteo: setVariabiliMeteo,
     onToggleControl: () => toggleControl('exportImage', 'enabled')

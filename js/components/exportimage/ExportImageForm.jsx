@@ -3,7 +3,6 @@ import { Button, FormGroup, Label } from 'react-bootstrap';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
 import SelectVariableTab from '../../components/dropdowns/SelectVariableTab';
 import Message from '@mapstore/components/I18N/Message';
-import {  exportImage } from '../../actions/exportimage';
 import './exportimage.css';
 
 const ExportImageForm = ({
@@ -15,7 +14,8 @@ const ExportImageForm = ({
     isInteractionDisabled,
     handleChangeTab,
     handleChangeVariable,
-    apiUrl
+    apiUrl,
+    exportImage
 }) => {
 
     const getActiveTab = () => {

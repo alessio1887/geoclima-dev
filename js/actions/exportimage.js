@@ -5,6 +5,7 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
+
 import GeoClimaAPI from '../api/GeoClimaApi';
 
 export const UPDATE_DATES = 'EXPORTIMAGE:UPDATE_DATES';
@@ -16,6 +17,7 @@ export const TAB_CHANGED = 'EXPORTIMAGE:TAB_CHANGED';
 export const IMAGEVARIABLE_CHANGED = 'EXPORTIMAGE:IMAGEVARIABLE_CHANGED';
 export const EXPORTIMAGE_ERROR = 'EXPORTIMAGE:EXPORTIMAGE_ERROR';
 export const EXPORTIMAGE_SUCCESS = 'EXPORTIMAGE:EXPORTIMAGE_SUCCESS';
+export const EXPORT_IMAGE = 'EXPORTIMAGE:EXPORT_IMAGE';
 
 export function updateExportImageDates(layerId, fromData, toData) {
     return {
@@ -87,11 +89,15 @@ export function exportImageSuccess(responseData) {
 export function exportImage(layerName, fromData, toData, defaultUrlExportImage) {
     return (dispatch) => {
         GeoClimaAPI.exportImage(layerName, fromData, toData, defaultUrlExportImage)
-            .then(response => {
-                dispatch(exportImageSuccess(response.data));
-            })
             .catch(error => {
                 dispatch(apiError(error));
             });
     };
 }
+
+// export function exportImage(layerName, fromData, toData, defaultUrlExportImage) {
+//     return {
+//         type: EXPORT_IMAGE,
+//         layerName, fromData, toData, defaultUrlExportImage
+//     };
+// }
