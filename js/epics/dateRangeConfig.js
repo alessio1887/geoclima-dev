@@ -19,15 +19,14 @@ momentLocaliser(moment);
 
 const COMBINED_DATE_MAPCONFIG = 'COMBINED_DATE_MAPCONFIG';
 
-const updateLayersParams = (layers, periodTypes, toData, timeUnit, isMapfilenameNotChange) => {
+const updateLayersParams = (layers, defaultPeriod, toData, timeUnit, isMapfilenameNotChange) => {
     let actionsUpdateParams = [];
     const toDataFormatted = moment(toData).format(timeUnit);
-    const defaultPeriod = periodTypes.find(period => period.isDefault);
     const fromDataFormatted = moment(toData).clone().subtract(defaultPeriod.max, 'days').format(timeUnit);
     for (const layer of layers) {
         if (layer.params?.map) {
             const mapFileName = !isMapfilenameNotChange ?
-                DateAPI.getMapNameFromSuffix(layer.params.map, periodTypes.map(t => t.key), defaultPeriod.key)
+                DateAPI.getMapfilenameFromSuffix(layer.params.map, defaultPeriod.key)
                 : layer.params.map;
             const newParams = {
                 params: {
@@ -43,6 +42,7 @@ const updateLayersParams = (layers, periodTypes, toData, timeUnit, isMapfilename
     // Returns action for updated layers
     return actionsUpdateParams;
 };
+
 /**
  * Epic that listens for the COMBINED_DATE_MAPCONFIG action and updates layer parameters
  * based on the selected date range.
@@ -65,8 +65,8 @@ const updateParamsByDateRangeEpic = (action$, store) =>
             const layers = action.payload.config?.map?.layers || [];
             const toData = action.payload.availableDate;
             const timeUnit = action.payload.timeUnit;
-            const periodTypes = action.payload.periodTypes;
-            const actionsUpdateParams = updateLayersParams(layers, periodTypes, toData, timeUnit, isMapfilenameNotChange);
+            const defaultPeriod = action.payload.defaultPeriod;
+            const actionsUpdateParams = updateLayersParams(layers, defaultPeriod, toData, timeUnit, isMapfilenameNotChange);
             return Observable.of(...actionsUpdateParams);
         });
 
@@ -93,11 +93,29 @@ const combinedDateMapConfigEpic = (action$) => {
                 availableDate: availableDateAction.dataFine,
                 config: mapConfigAction.config,
                 timeUnit: availableDateAction.timeUnit,
-                periodTypes: availableDateAction.periodTypes
+                defaultPeriod: availableDateAction.defaultPeriod
             }
         }));
 };
 
+/**
+ * Sets the plugin dates on their first launch, based on the data received from the FETCHED_AVAILABLE_DATES action.
+ */
+const setPluginsDatesEpic = (action$, store) =>
+    action$.ofType(FETCHED_AVAILABLE_DATES)
+        .switchMap((action) => {
+            const appState = store.getState();
+            let actionsSetPluginsDates = [];
+            if (appState.fixedrangepicker?.isPluginLoaded ) {
+                actionsSetPluginsDates.push(changePeriodToData(action.dataFine));
+            }
+            if (appState.freerangepicker?.isPluginLoaded) {
+                const fromData = moment(action.dataFine).clone().subtract(action.defaultPeriod.max, 'days').toDate();
+                actionsSetPluginsDates.push(changeFromData(fromData));
+                actionsSetPluginsDates.push(changeToData(action.dataFine));
+            }
+            return Observable.of(...actionsSetPluginsDates);
+        });
 
 // Function to get the layer configuration based on the date range
 // const getMapLayersConfiguration = (configName, toData) => {
@@ -186,7 +204,6 @@ const combinedDateMapConfigEpic = (action$) => {
 //             Observable.of(fetchSelectDate(action.variableSelectDate, action.urlSelectDate, action.type, action.timeUnit))
 //         );
 
-
 /**
  * Epic that handles the toggling of a plugin based on action parameters.
  *
@@ -238,6 +255,7 @@ const togglePluginEpic = (action$, store) =>
 
 
 export {
+    setPluginsDatesEpic,
     combinedDateMapConfigEpic,
     updateParamsByDateRangeEpic,
     togglePluginEpic

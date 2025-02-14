@@ -16,9 +16,6 @@ momentLocaliser(moment);
 
 const defaultState = {
     isCollapsedPlugin: false,
-    // periodType: "1",
-    // fromData: moment(DEFAULT_DATA_FINE).clone().subtract(1, 'month').startOf('day').toDate(),
-    // toData: DEFAULT_DATA_FINE,
     fromData: moment(DEFAULT_DATA_FINE).clone().subtract(20, 'days').toDate(),
     toData: DEFAULT_DATA_FINE,
     periodType: { key: 10, label: "20 giorni", min: 9, max: 20, isDefault: true  },
@@ -89,17 +86,10 @@ function fixedrangepicker(state = defaultState, action) {
     case FETCHED_AVAILABLE_DATES:
         const newDataFine = action.dataFine || DEFAULT_DATA_FINE;
         const newDataInizio = action.dataInizio || DEFAULT_DATA_INIZIO;
-        const defaultPeriod = action.periodTypes.find(period => period.isDefault);
-        // const newFromData = moment(newDataFine).subtract(1, 'month').toDate();
-        const newFromData = moment(newDataFine).clone().subtract(defaultPeriod.max, 'days').toDate();
         return {
             ...state,
-            toData: newDataFine,
-            fromData: newFromData,
             firstAvailableDate: newDataInizio,
-            lastAvailableDate: newDataFine,
-            periodTypes: action.periodTypes,
-            periodType: defaultPeriod
+            lastAvailableDate: newDataFine
         };
     default:
         return state;

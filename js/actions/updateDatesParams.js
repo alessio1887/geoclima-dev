@@ -18,13 +18,13 @@ export function apiError(errorMessage) {
     };
 }
 
-export function updateParams(dataInizio, dataFine, timeUnit, periodTypes) {
+export function updateParams(dataInizio, dataFine, timeUnit, defaultPeriod) {
     return {
         type: FETCHED_AVAILABLE_DATES,
         dataInizio,
         dataFine,
         timeUnit,
-        periodTypes
+        defaultPeriod
     };
 }
 
@@ -37,13 +37,13 @@ export function updateParams(dataInizio, dataFine, timeUnit, periodTypes) {
  * It is triggered by one of these three plugins—FixedRangePlugin, FreeRangePlugin, or InfoChart—
  * based on their showOneDatePicker prop.
  */
-export function fetchSelectDate(variabileLastAvailableData, urlGetLastAvailableData, timeUnit, periodTypes) {
+export function fetchSelectDate(variabileLastAvailableData, urlGetLastAvailableData, timeUnit, defaultPeriod) {
     return (dispatch) => {
         GeoClimaAPI.getAvailableDates(variabileLastAvailableData, urlGetLastAvailableData)
             .then(response => {
                 const dataFine = new Date(response.data[0].data_fine);
                 const dataInizio = new Date(response.data[0].data_inizio);
-                dispatch(updateParams(dataInizio, dataFine, timeUnit, periodTypes));
+                dispatch(updateParams(dataInizio, dataFine, timeUnit, defaultPeriod));
             })
             .catch(error => {
                 dispatch(apiError(error));

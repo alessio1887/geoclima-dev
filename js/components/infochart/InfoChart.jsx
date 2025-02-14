@@ -197,8 +197,6 @@ class InfoChart extends React.Component {
         this.props.onInitializeVariableTabs(variableTabs);
     }
 
-    mapfilenameSuffixes = [];
-
     // Set some props to the plugin's state
     componentDidMount() {
         if (!this.props.isPluginLoaded) {
@@ -207,9 +205,9 @@ class InfoChart extends React.Component {
             this.props.onSetTimeUnit(this.props.timeUnit);
             this.initializeTabs();
             this.props.onSetDefaultUrlGeoclimaChart(this.props.defaultUrlGeoclimaChart);
-            this.mapfilenameSuffixes = this.props.periodTypes.map(t => t.key);
             if ( this.props.isFetchAvailableDates && this.props.defaultUrlSelectDate && this.props.variabileSelectDate) {
-                this.props.onFetchAvailableDates(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, this.props.timeUnit, this.props.periodTypes);
+                const defaultPeriod = DateAPI.getDefaultPeriod(this.props.periodTypes);
+                this.props.onFetchAvailableDates(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, this.props.timeUnit, defaultPeriod);
             }
             this.props.onMarkPluginAsLoaded();
         }

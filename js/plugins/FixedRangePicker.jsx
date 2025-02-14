@@ -219,12 +219,12 @@ class FixedRangePicker extends React.Component {
     }
 
     componentDidMount() {
+        const defaultPeriod = DateAPI.getDefaultPeriod(this.props.periodTypes);
+        this.props.onChangePeriod(defaultPeriod);
         this.props.onToggleFixedRangePicker();
         this.props.onMarkPluginAsLoaded(this.props.showOneDatePicker);
-        // Setta mapfilenameSuffixes solo al primo caricamento del componente
-        this.mapfilenameSuffixes = this.props.periodTypes.map(t => t.key);
         if ( this.props.isFetchAvailableDates && this.props.defaultUrlSelectDate && this.props.variabileSelectDate) {
-            this.props.onFetchAvailableDates(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, this.props.timeUnit, this.props.periodTypes);
+            this.props.onFetchAvailableDates(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, this.props.timeUnit, defaultPeriod);
         }
     }
 
@@ -284,8 +284,6 @@ class FixedRangePicker extends React.Component {
             </div>
         );
     }
-
-    mapfilenameSuffixes = [];
 
     showFixedRangeManager = () => {
         return (
@@ -380,7 +378,7 @@ class FixedRangePicker extends React.Component {
         this.props.layers.flat.map((layer) => {
             if (onUpdateNode && isVariabiliMeteoLayer(layer.name, this.props.variabiliMeteo)) {
                 const mapFile = !this.props.showOneDatePicker ?
-                    DateAPI.getMapNameFromSuffix(layer.params.map, this.mapfilenameSuffixes, datesParam.mapNameSuffix)
+                    DateAPI.getMapfilenameFromSuffix(layer.params.map, datesParam.mapNameSuffix)
                     : layer.params.map;
                 const newParams = {
                     params: {

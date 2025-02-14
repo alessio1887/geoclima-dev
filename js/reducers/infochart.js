@@ -11,7 +11,7 @@ import {CHARTVARIABLE_CHANGED, TAB_CHANGED, TODATA_FIXEDRANGE_CHANGED, FROMDATA_
     FETCHED_INFOCHART_DATA, COLLAPSE_RANGE_PICKER,  OPEN_ALERT, CLOSE_ALERT, SET_CHART_RELAYOUT, RESET_CHART_RELAYOUT, RESIZE_INFOCHART,
     SET_RANGE_MANAGER, SET_IDVARIABILI_LAYERS, SET_DEFAULT_URL, SET_DEFAULT_DATES, INITIALIZE_TABS,
     PLUGIN_LOADED, PLUGIN_NOT_LOADED, SET_TABLIST, SET_TIMEUNIT } from '../actions/infochart';
-import { DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO, PERIOD_TYPES } from '../utils/ManageDateUtils';
+import { DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO } from '../utils/ManageDateUtils';
 import assign from 'object-assign';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
@@ -194,17 +194,10 @@ function infochart(state = infoChartDefaultState, action) {
     case FETCHED_AVAILABLE_DATES:
         const newDataFine = action.dataFine || DEFAULT_DATA_FINE;
         const newDataInizio = action.dataInizio || DEFAULT_DATA_INIZIO;
-        const defaultPeriod = action.periodTypes.find(period => period.isDefault);
-        // const newFromData = moment(newDataFine).subtract(1, 'month').toDate();
-        const newFromData = moment(newDataFine).clone().subtract(defaultPeriod.max, 'days').toDate();
         return {
             ...state,
-            toData: newDataFine,
-            fromData: newFromData,
             firstAvailableDate: newDataInizio,
-            lastAvailableDate: newDataFine,
-            periodTypes: action.periodTypes,
-            periodType: defaultPeriod
+            lastAvailableDate: newDataFine
         };
     case SET_TIMEUNIT:
         return {

@@ -145,17 +145,16 @@ class FreeRangePicker extends React.Component {
     state = {
         // Default date values to use in case of invalid or missing date input
         defaultFromData: this.props.lastAvailableDate,
-        defaultToData: moment(this.props.lastAvailableDate).clone().subtract(1, 'month').startOf('day').toDate()
+        defaultToData: moment(this.props.lastAvailableDate).clone().subtract(DateAPI.getDefaultPeriod(this.props.periodTypes).max, 'days').startOf('day').toDate()
     }
 
     componentDidMount() {
         if (!this.props.isPluginLoaded) {
-            // Setta mapfilenameSuffixes solo al primo caricamento del componente
-            this.mapfilenameSuffixes = this.props.periodTypes.map(t => t.key);
-            if ( this.props.isFetchAvailableDates && this.props.defaultUrlSelectDate && this.props.variabileSelectDate) {
-                this.props.onFetchAvailableDates(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, this.props.timeUnit, this.props.periodTypes);
-            }
             this.props.onMarkPluginAsLoaded();
+            if ( this.props.isFetchAvailableDates && this.props.defaultUrlSelectDate && this.props.variabileSelectDate) {
+                const defaultPeriod = DateAPI.getDefaultPeriod(this.props.periodTypes);
+                this.props.onFetchAvailableDates(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, this.props.timeUnit, defaultPeriod);
+            }
         }
     }
 
@@ -194,8 +193,6 @@ class FreeRangePicker extends React.Component {
             </div>
         );
     }
-
-    mapfilenameSuffixes = [];
 
     setDefaultDates() {
         const defaultPeriod = this.props.periodTypes.find(period => period.isDefault);
@@ -276,7 +273,7 @@ class FreeRangePicker extends React.Component {
     updateParams(datesParam, onUpdateNode = true) {
         this.props.layers.flat.map((layer) => {
             if (onUpdateNode && isVariabiliMeteoLayer(layer.name, this.props.variabiliMeteo)) {
-                const mapFile = DateAPI.getMapNameFromSuffix(layer.params?.map, this.mapfilenameSuffixes,
+                const mapFile = DateAPI.getMapfilenameFromSuffix(layer.params?.map,
                     DateAPI.getMapSuffixFromDates(datesParam.fromData, datesParam.toData, this.props.periodTypes));
                 const newParams = {
                     params: {
