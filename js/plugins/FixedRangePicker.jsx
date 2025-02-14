@@ -12,7 +12,7 @@ import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-boots
 import Message from '@mapstore/components/I18N/Message';
 import { updateSettings, updateNode } from '@mapstore/actions/layers';
 import { layersSelector } from '@mapstore/selectors/layers';
-import { fromDataLayerSelector, toDataLayerSelector } from '../selectors/fixedrangepicker';
+import { fromDataLayerSelector, toDataLayerSelector } from '../utils/fixedRangePickerSelectors';
 import { compose } from 'redux';
 import { changePeriodToData, changePeriod, toggleRangePickerPlugin, openAlert,
     closeAlert, collapsePlugin, markFixedRangeAsLoaded, markFixedRangeAsNotLoaded } from '../actions/fixedrangepicker';
