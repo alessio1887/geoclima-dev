@@ -10,6 +10,9 @@ import GeoClimaAPI from '../api/GeoClimaApi';
 export const UPDATEPARAMS_ERROR_FETCH = 'UPDATEPARAMS_ERROR_FETCH';
 export const FETCH_AVAILABLE_DATES = 'FETCH_AVAILABLE_DATES';
 export const FETCHED_AVAILABLE_DATES = 'FETCHED_AVAILABLE_DATES';
+export const UPDATE_DATES_LAYER = 'UPDATE_DATES_LAYER';
+export const NOT_FOUND_LAYER = 'UPDATE_DATES_LAYER:NOT_FOUND_LAYER';
+export const LAYER_DATE_MISSING = 'UPDATE_DATES_LAYER:LAYER_DATE_MISSING';
 
 export function apiError(errorMessage) {
     return {
@@ -27,6 +30,32 @@ export function updateParams(dataInizio, dataFine, timeUnit, defaultPeriod) {
         defaultPeriod
     };
 }
+
+export function updateDatesLayer(layerId, fromDataLayer, toDataLayer) {
+    return {
+        type: UPDATE_DATES_LAYER,
+        layerId,
+        fromDataLayer,
+        toDataLayer
+    };
+}
+
+export function errorLayerNotFound(layerId) {
+    return {
+        type: NOT_FOUND_LAYER,
+        layerId
+    };
+}
+
+export function errorLayerDateMissing(layerId,  fromData, toData) {
+    return {
+        type: LAYER_DATE_MISSING,
+        layerId,
+        fromData,
+        toData
+    };
+}
+
 
 /**
  * This action calls the getAvailableDates service, which retrieves the first and last dates
@@ -50,3 +79,4 @@ export function fetchSelectDate(variabileLastAvailableData, urlGetLastAvailableD
             });
     };
 }
+

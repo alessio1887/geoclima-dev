@@ -7,12 +7,13 @@
 */
 import { Observable } from 'rxjs';
 import { MAP_CONFIG_LOADED } from '@mapstore/actions/config';
-import { updateSettings, updateNode } from '@mapstore/actions/layers';
-import { FETCHED_AVAILABLE_DATES } from '../actions/updateDatesParams';
+import { LAYER_LOAD, updateSettings, updateNode } from '@mapstore/actions/layers';
+import { FETCHED_AVAILABLE_DATES,  updateDatesLayer, errorLayerNotFound, errorLayerDateMissing  } from '../actions/updateDatesParams';
 import { TOGGLE_PLUGIN, changePeriod, changePeriodToData } from '../actions/fixedrangepicker';
 import { changeFromData, changeToData  } from '../actions/freerangepicker';
 import DateAPI from '../utils/ManageDateUtils';
 import { getVisibleLayers, FIXED_RANGE, FREE_RANGE } from '@js/utils/VariabiliMeteoUtils';
+import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -101,7 +102,7 @@ const combinedDateMapConfigEpic = (action$) => {
 /**
  * Sets the plugin dates on their first launch, based on the data received from the FETCHED_AVAILABLE_DATES action.
  */
-const setPluginsDatesEpic = (action$, store) =>
+const setPluginsDatesOnInitEpic = (action$, store) =>
     action$.ofType(FETCHED_AVAILABLE_DATES)
         .switchMap((action) => {
             const appState = store.getState();
@@ -115,6 +116,27 @@ const setPluginsDatesEpic = (action$, store) =>
                 actionsSetPluginsDates.push(changeToData(action.dataFine));
             }
             return Observable.of(...actionsSetPluginsDates);
+        });
+
+const updateRangePickerInfoEpic = (action$, store) =>
+    action$.ofType(LAYER_LOAD)
+        .mergeMap(({layerId}) => {
+            const currentState = store.getState();
+            const layers = currentState.layers?.flat || [];
+            const variabiliMeteo = currentState.daterangelabel.variabiliMeteo;
+            const activeLayer = layers.find(layer => layer.id === layerId);
+            if (!activeLayer) {
+                return Observable.of(errorLayerNotFound(layerId));
+            }
+            if (!isVariabiliMeteoLayer(activeLayer?.name, variabiliMeteo)) {
+                // do nothing
+                return Observable.empty();
+            }
+            const { fromData, toData } = activeLayer.params || {};
+            if (!fromData || !toData) {
+                return Observable.of(errorLayerDateMissing(layerId, fromData, toData));
+            }
+            return Observable.of(updateDatesLayer(layerId, fromData, toData));
         });
 
 // Function to get the layer configuration based on the date range
@@ -255,8 +277,9 @@ const togglePluginEpic = (action$, store) =>
 
 
 export {
-    setPluginsDatesEpic,
+    setPluginsDatesOnInitEpic,
     combinedDateMapConfigEpic,
     updateParamsByDateRangeEpic,
-    togglePluginEpic
+    togglePluginEpic,
+    updateRangePickerInfoEpic
 };

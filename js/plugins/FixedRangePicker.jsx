@@ -12,6 +12,7 @@ import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-boots
 import Message from '@mapstore/components/I18N/Message';
 import { updateSettings, updateNode } from '@mapstore/actions/layers';
 import { layersSelector } from '@mapstore/selectors/layers';
+import { fromDataLayerSelector, toDataLayerSelector } from '../selectors/fixedrangepicker';
 import { compose } from 'redux';
 import { changePeriodToData, changePeriod, toggleRangePickerPlugin, openAlert,
     closeAlert, collapsePlugin, markFixedRangeAsLoaded, markFixedRangeAsNotLoaded } from '../actions/fixedrangepicker';
@@ -129,9 +130,9 @@ class FixedRangePicker extends React.Component {
         id: PropTypes.string,
         className: PropTypes.string,
         fromData: PropTypes.instanceOf(Date),
+        fromDataLayer: PropTypes.instanceOf(Date),
         isCollapsedPlugin: PropTypes.bool,
         isFetchAvailableDates: PropTypes.bool, // If true, fetch the first and last available dates calling fetchSelectDate action
-        toData: PropTypes.instanceOf(Date),
         firstAvailableDate: PropTypes.instanceOf(Date),
         isInteractionDisabled: PropTypes.bool,
         isPluginLoaded: PropTypes.bool,
@@ -161,7 +162,9 @@ class FixedRangePicker extends React.Component {
         showOneDatePicker: PropTypes.bool,
         showChangeRangePickerButton: PropTypes.bool,
         style: PropTypes.object,
-        timeUnit: PropTypes.string
+        timeUnit: PropTypes.string,
+        toData: PropTypes.instanceOf(Date),
+        toDataLayer: PropTypes.instanceOf(Date)
     };
     static defaultProps = {
         isCollapsedPlugin: true,
@@ -290,8 +293,8 @@ class FixedRangePicker extends React.Component {
             <div className="ms-fixedrangepicker-action">
                 <RangePickerInfo
                     labelTitleId="gcapp.fixedRangePicker.titlePeriod"
-                    fromData={this.props.fromData}
-                    toData={this.props.toData}
+                    fromData={this.props.fromDataLayer}
+                    toData={this.props.toDataLayer}
                     format={this.props.timeUnit}
                 />
                 <FixedRangeManager
@@ -401,11 +404,12 @@ class FixedRangePicker extends React.Component {
 const mapStateToProps = (state) => {
     return {
         isCollapsedPlugin: state?.fixedrangepicker?.isCollapsedPlugin,
-        fromData: state?.fixedrangepicker?.fromData || moment(this.props.lastAvailableDate).clone().subtract(20, 'days').toDate(),
-        toData: state?.fixedrangepicker?.toData || this.props.lastAvailableDate,
+        fromData: state?.fixedrangepicker?.fromData || moment(state?.fixedrangepicker?.lastAvailableDate).clone().subtract(20, 'days').toDate(),
+        fromDataLayer: fromDataLayerSelector(state),
+        toData: state?.fixedrangepicker?.toData || state?.fixedrangepicker?.lastAvailableDate,
         periodType: state?.fixedrangepicker?.periodType || { key: 10, label: "20 giorni", min: 9, max: 20, isDefault: true  },
         settings: state?.layers?.settings || { expanded: false, options: { opacity: 1 } },
-        layers: state?.layers || {},
+        layers: layersSelector(state),
         showFixedRangePicker: (state?.fixedrangepicker?.showFixedRangePicker) ? true : false,
         alertMessage: state?.fixedrangepicker?.alertMessage || null,
         isInteractionDisabled: isLayerLoadingSelector(state),
@@ -413,7 +417,8 @@ const mapStateToProps = (state) => {
         showChangeRangePickerButton: state.freerangepicker?.isPluginLoaded ? true : false,
         isPluginLoaded: state?.fixedrangepicker?.isPluginLoaded,
         firstAvailableDate: state?.fixedrangepicker?.firstAvailableDate,
-        lastAvailableDate: state?.fixedrangepicker?.lastAvailableDate
+        lastAvailableDate: state?.fixedrangepicker?.lastAvailableDate,
+        toDataLayer: toDataLayerSelector(state)
     };
 };
 
