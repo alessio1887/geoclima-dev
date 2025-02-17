@@ -12,6 +12,7 @@ import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-boots
 import Message from '@mapstore/components/I18N/Message';
 import { updateSettings, updateNode } from '@mapstore/actions/layers';
 import { layersSelector } from '@mapstore/selectors/layers';
+import { fromDataLayerSelector, toDataLayerSelector } from '../selectors/freeRangePicker';
 import { compose } from 'redux';
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO} from '../utils/ManageDateUtils';
 import { FREE_RANGE, isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
@@ -77,7 +78,7 @@ class FreeRangePicker extends React.Component {
         isCollapsedPlugin: PropTypes.bool,
         isFetchAvailableDates: PropTypes.bool, // If true, fetch the first and last available dates calling fetchSelectDate action
         fromData: PropTypes.instanceOf(Date),
-        toData: PropTypes.instanceOf(Date),
+        fromDataLayer: PropTypes.instanceOf(Date),
         firstAvailableDate: PropTypes.instanceOf(Date),
         lastAvailableDate: PropTypes.instanceOf(Date),
         onChangeFromData: PropTypes.func,
@@ -103,7 +104,9 @@ class FreeRangePicker extends React.Component {
         isPluginLoaded: PropTypes.bool,
         settings: PropTypes.object,
         showChangeRangePickerButton: PropTypes.bool,
-        timeUnit: PropTypes.string
+        timeUnit: PropTypes.string,
+        toData: PropTypes.instanceOf(Date),
+        toDataLayer: PropTypes.instanceOf(Date)
     };
     static defaultProps = {
         isCollapsedPlugin: false,
@@ -207,9 +210,10 @@ class FreeRangePicker extends React.Component {
             <div className="ms-freerangepicker-action">
                 <RangePickerInfo
                     labelTitleId="gcapp.freeRangePicker.titlePeriod"
-                    fromData={this.props.fromData}
-                    toData={this.props.toData}
+                    fromData={this.props.fromDataLayer}
+                    toData={this.props.toDataLayer}
                     format={this.props.timeUnit}
+                    isInteractionDisabled={this.props.isInteractionDisabled}
                 />
                 <FreeRangeManager
                     minDate={this.props.firstAvailableDate}
@@ -271,7 +275,7 @@ class FreeRangePicker extends React.Component {
         this.setState({ defaultToData: new Date(toData)});
     }
     updateParams(datesParam, onUpdateNode = true) {
-        this.props.layers.flat.map((layer) => {
+        this.props.layers.map((layer) => {
             if (onUpdateNode && isVariabiliMeteoLayer(layer.name, this.props.variabiliMeteo)) {
                 const mapFile = DateAPI.getMapfilenameFromSuffix(layer.params?.map,
                     DateAPI.getMapSuffixFromDates(datesParam.fromData, datesParam.toData, this.props.periodTypes));
@@ -298,8 +302,9 @@ const mapStateToProps = (state) => {
         isCollapsedPlugin: state?.freerangepicker?.isCollapsedPlugin,
         fromData: state?.freerangepicker?.fromData,
         toData: state?.freerangepicker?.toData,
+        fromDataLayer: fromDataLayerSelector(state),
         settings: state?.layers?.settings || {expanded: false, options: {opacity: 1}},
-        layers: state?.layers || {},
+        layers: layersSelector(state),
         showFreeRangePicker: (!state?.fixedrangepicker?.showFixedRangePicker ) ? true : false,
         alertMessage: state?.freerangepicker?.alertMessage || null,
         isInteractionDisabled: isLayerLoadingSelector(state),
@@ -307,7 +312,8 @@ const mapStateToProps = (state) => {
         showChangeRangePickerButton: state.fixedrangepicker.isPluginLoaded ? true : false,
         isPluginLoaded: state?.freerangepicker?.isPluginLoaded,
         firstAvailableDate: state?.freerangepicker?.firstAvailableDate,
-        lastAvailableDate: state?.freerangepicker?.lastAvailableDate
+        lastAvailableDate: state?.freerangepicker?.lastAvailableDate,
+        toDataLayer: toDataLayerSelector(state)
     };
 };
 

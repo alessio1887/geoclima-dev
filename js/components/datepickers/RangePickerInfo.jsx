@@ -15,16 +15,27 @@ momentLocaliser(moment);
 
 import './rangepickerinfo.css';
 
-const RangePickerInfo = ({ fromData, toData, labelTitleId, format }) => (
+const RangePickerInfo = ({ fromData,
+    toData,
+    labelTitleId,
+    format,
+    isInteractionDisabled
+}) => (
     <div className="labels-container">
         <Label className="labels-rangepicker">
             <Message msgId={labelTitleId} />
         </Label>
-        <div style={{ padding: "6px", textAlign: 'center' }}>
+        <strong>
+            <div style={{
+                padding: "6px",
+                textAlign: 'center',
+                backgroundColor: isInteractionDisabled ? 'lightgray' : 'white'
+            }}>
             Dal: <span id="from-data-statistics">{moment(fromData).format(format)}</span>
-            {format !== DATE_FORMAT && <br />}
+                {format !== DATE_FORMAT && <br />}
             - al: <span id="to-data-statistics">{moment(toData).format(format)}</span>
-        </div>
+            </div>
+        </strong>
     </div>
 );
 

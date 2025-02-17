@@ -12,7 +12,7 @@ import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-boots
 import Message from '@mapstore/components/I18N/Message';
 import { updateSettings, updateNode } from '@mapstore/actions/layers';
 import { layersSelector } from '@mapstore/selectors/layers';
-import { fromDataLayerSelector, toDataLayerSelector } from '../utils/fixedRangePickerSelectors';
+import { fromDataLayerSelector, toDataLayerSelector } from '../selectors/fixedRangePicker';
 import { compose } from 'redux';
 import { changePeriodToData, changePeriod, toggleRangePickerPlugin, openAlert,
     closeAlert, collapsePlugin, markFixedRangeAsLoaded, markFixedRangeAsNotLoaded } from '../actions/fixedrangepicker';
@@ -296,6 +296,7 @@ class FixedRangePicker extends React.Component {
                     fromData={this.props.fromDataLayer}
                     toData={this.props.toDataLayer}
                     format={this.props.timeUnit}
+                    isInteractionDisabled={this.props.isInteractionDisabled}
                 />
                 <FixedRangeManager
                     minDate={this.props.firstAvailableDate}
@@ -378,7 +379,7 @@ class FixedRangePicker extends React.Component {
         this.setState({ defaultToData: new Date(toData)});
     }
     updateParams = (datesParam, onUpdateNode = true) => {
-        this.props.layers.flat.map((layer) => {
+        this.props.layers.map((layer) => {
             if (onUpdateNode && isVariabiliMeteoLayer(layer.name, this.props.variabiliMeteo)) {
                 const mapFile = !this.props.showOneDatePicker ?
                     DateAPI.getMapfilenameFromSuffix(layer.params.map, datesParam.mapNameSuffix)

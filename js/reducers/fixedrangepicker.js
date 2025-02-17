@@ -8,7 +8,7 @@
 // import { LAYER_LOADING, LAYER_LOAD, LAYER_ERROR} from '@mapstore/actions/layers';
 import {TODATA_CHANGED, MAP_PERIOD_CHANGED, TOGGLE_PLUGIN, OPEN_ALERT, CLOSE_ALERT,
     PLUGIN_LOADED, PLUGIN_NOT_LOADED, COLLAPSE_RANGE_PICKER } from '../actions/fixedrangepicker';
-import { FETCHED_AVAILABLE_DATES } from '../actions/updateDatesParams';
+import { FETCHED_AVAILABLE_DATES, UPDATE_DATES_LAYER } from '../actions/updateDatesParams';
 import { DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO } from '../utils/ManageDateUtils';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
@@ -16,8 +16,10 @@ momentLocaliser(moment);
 
 const defaultState = {
     isCollapsedPlugin: false,
-    fromData: moment(DEFAULT_DATA_FINE).clone().subtract(20, 'days').toDate(),
+    fromData: moment(DEFAULT_DATA_FINE).clone().subtract(10, 'days').startOf('day').toDate(),
     toData: DEFAULT_DATA_FINE,
+    fromDataLayer: moment(DEFAULT_DATA_FINE).clone().subtract(10, 'days').startOf('day').toDate(),
+    toDataLayer: DEFAULT_DATA_FINE,
     periodType: { key: 10, label: "20 giorni", min: 9, max: 20, isDefault: true  },
     showModal: false,
     imgSrc: "",
@@ -40,6 +42,12 @@ function fixedrangepicker(state = defaultState, action) {
             fromData: moment(state.toData).clone().subtract(action.periodType.max, 'days').toDate(),
             // toData: new Date(DateAPI.calculateDateFromKeyReal(action.periodType, state.toData).toData),
             periodType: action.periodType
+        };
+    case UPDATE_DATES_LAYER:
+        return {
+            ...state,
+            fromDataLayer: action.fromDataLayer,
+            toDataLayer: action.toDataLayer
         };
     case TOGGLE_PLUGIN:
         return {
