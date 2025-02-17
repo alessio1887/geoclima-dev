@@ -9,15 +9,17 @@
 import { DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../utils/ManageDateUtils';
 import {FROMDATA_CHANGED, TODATA_CHANGED, OPEN_ALERT, CLOSE_ALERT, PLUGIN_NOT_LOADED,
     PLUGIN_LOADED, COLLAPSE_RANGE_PICKER} from '../actions/freerangepicker';
-import { FETCHED_AVAILABLE_DATES } from '../actions/updateDatesParams';
+import { FETCHED_AVAILABLE_DATES, UPDATE_DATES_LAYER } from '../actions/updateDatesParams';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
 
 const defaultState = {
     isCollapsedPlugin: false,
-    fromData: moment(DEFAULT_DATA_FINE).clone().subtract(1, 'month').startOf('day').toDate(),
+    fromData: moment(DEFAULT_DATA_FINE).clone().subtract(10, 'days').startOf('day').toDate(),
     toData: DEFAULT_DATA_FINE,
+    fromDataLayer: moment(DEFAULT_DATA_FINE).clone().subtract(10, 'days').startOf('day').toDate(),
+    toDataLayer: DEFAULT_DATA_FINE,
     showModal: false,
     imgSrc: "",
     alertMessage: null,
@@ -52,17 +54,12 @@ function freerangepicker(state = defaultState, action) {
             ...state,
             alertMessage: null
         };
-    // case LAYER_LOADING:
-    //     return {
-    //         ...state,
-    //         isInteractionDisabled: true
-    //     };
-    // case LAYER_LOAD:
-    // case LAYER_ERROR:
-    //     return {
-    //         ...state,
-    //         isInteractionDisabled: false
-    //     };
+    case UPDATE_DATES_LAYER:
+        return {
+            ...state,
+            fromDataLayer: action.fromDataLayer,
+            toDataLayer: action.toDataLayer
+        };
     case COLLAPSE_RANGE_PICKER:
         return {
             ...state,
@@ -81,16 +78,10 @@ function freerangepicker(state = defaultState, action) {
     case FETCHED_AVAILABLE_DATES:
         const newDataFine = action.dataFine || DEFAULT_DATA_FINE;
         const newDataInizio = action.dataInizio || DEFAULT_DATA_INIZIO;
-        const defaultPeriod = action.periodTypes.find(period => period.isDefault);
-        // const newFromData = moment(newDataFine).subtract(1, 'month').toDate();
-        const newFromData = moment(newDataFine).clone().subtract(defaultPeriod.max, 'days').toDate();
         return {
             ...state,
-            toData: newDataFine,
-            fromData: newFromData,
             firstAvailableDate: newDataInizio,
-            lastAvailableDate: newDataFine,
-            periodTypes: action.periodTypes
+            lastAvailableDate: newDataFine
         };
     default:
         return state;

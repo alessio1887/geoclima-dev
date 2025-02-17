@@ -10,6 +10,9 @@ import GeoClimaAPI from '../api/GeoClimaApi';
 export const UPDATEPARAMS_ERROR_FETCH = 'UPDATEPARAMS_ERROR_FETCH';
 export const FETCH_AVAILABLE_DATES = 'FETCH_AVAILABLE_DATES';
 export const FETCHED_AVAILABLE_DATES = 'FETCHED_AVAILABLE_DATES';
+export const UPDATE_DATES_LAYER = 'UPDATE_DATES_LAYER';
+export const NOT_FOUND_LAYER = 'UPDATE_DATES_LAYER:NOT_FOUND_LAYER';
+export const LAYER_DATE_MISSING = 'UPDATE_DATES_LAYER:LAYER_DATE_MISSING';
 
 export function apiError(errorMessage) {
     return {
@@ -18,15 +21,41 @@ export function apiError(errorMessage) {
     };
 }
 
-export function updateParams(dataInizio, dataFine, timeUnit, periodTypes) {
+export function updateParams(dataInizio, dataFine, timeUnit, defaultPeriod) {
     return {
         type: FETCHED_AVAILABLE_DATES,
         dataInizio,
         dataFine,
         timeUnit,
-        periodTypes
+        defaultPeriod
     };
 }
+
+export function updateDatesLayer(layerId, fromDataLayer, toDataLayer) {
+    return {
+        type: UPDATE_DATES_LAYER,
+        layerId,
+        fromDataLayer,
+        toDataLayer
+    };
+}
+
+export function errorLayerNotFound(layerId) {
+    return {
+        type: NOT_FOUND_LAYER,
+        layerId
+    };
+}
+
+export function errorLayerDateMissing(layerId,  fromData, toData) {
+    return {
+        type: LAYER_DATE_MISSING,
+        layerId,
+        fromData,
+        toData
+    };
+}
+
 
 /**
  * This action calls the getAvailableDates service, which retrieves the first and last dates
@@ -37,16 +66,17 @@ export function updateParams(dataInizio, dataFine, timeUnit, periodTypes) {
  * It is triggered by one of these three plugins—FixedRangePlugin, FreeRangePlugin, or InfoChart—
  * based on their showOneDatePicker prop.
  */
-export function fetchSelectDate(variabileLastAvailableData, urlGetLastAvailableData, timeUnit, periodTypes) {
+export function fetchSelectDate(variabileLastAvailableData, urlGetLastAvailableData, timeUnit, defaultPeriod) {
     return (dispatch) => {
         GeoClimaAPI.getAvailableDates(variabileLastAvailableData, urlGetLastAvailableData)
             .then(response => {
                 const dataFine = new Date(response.data[0].data_fine);
                 const dataInizio = new Date(response.data[0].data_inizio);
-                dispatch(updateParams(dataInizio, dataFine, timeUnit, periodTypes));
+                dispatch(updateParams(dataInizio, dataFine, timeUnit, defaultPeriod));
             })
             .catch(error => {
                 dispatch(apiError(error));
             });
     };
 }
+

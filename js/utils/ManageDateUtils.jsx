@@ -77,23 +77,39 @@ const Api = {
     //     }
     //     return date;
     // },
-    removeValidSuffixes(name, validSuffixes) {
-        return validSuffixes.reduce((cleanedName, suffix) => {
-            const suffixPattern = new RegExp(`${suffix}$`); // Match suffix at the end
-            return cleanedName.replace(suffixPattern, '');
-        }, name);
-    },
-    /**
-     * getMapFileFromSuffix returns the name of the mapfile to be passed as a parameter in the HTTP request.
-     * This is because, depending on the duration of the cumulative data, the legend values (and therefore the mapfile) sometimes change.
-     * For example, a one-month rainfall cumulative has very different values compared to a one-year rainfall cumulative.
-     * Each mapfile has a different reclassification for the legend. The various mapfiles currently used in the online application are attached.
-     */
-    getMapNameFromSuffix(mapLayerParam, validSuffixes, mapNameSuffix) {
-        const cleanedMapName = this.removeValidSuffixes(mapLayerParam, validSuffixes);
-        return cleanedMapName + mapNameSuffix;
+    getDefaultPeriod(periodTypes) {
+        return periodTypes.find(t => t.isDefault) || periodTypes[0];
     },
 
+    /**
+     * Generates a map filename by removing any numeric values from the given map layer parameter
+     * and appending a specified suffix.
+     *
+     * @param {string} mapLayerParam - The name of the map layer, which may contain numeric values.
+     * @param {string} mapNameSuffix - The suffix to append to the cleaned map layer name, which derives from the applied periodType on map.
+     * @returns {string} The cleaned map filename with the appended suffix.
+     *
+     * This function removes all numbers from the `mapLayerParam` and concatenates the result
+     * with `mapNameSuffix` to generate the final map filename.
+     */
+    getMapfilenameFromSuffix(mapLayerParam, mapNameSuffix) {
+        const cleanedMapName = mapLayerParam.replace(/\d+/g, '');
+        return cleanedMapName + mapNameSuffix;
+    },
+    /**
+     * Determines the appropriate map suffix based on the given date range.
+     *
+     * @param {string|Date} fromData - The starting date of the range.
+     * @param {string|Date} toData - The ending date of the range.
+     * @param {Array} periodTypes - An array of period type objects, each containing:
+     *        - {string} key: The identifier for the period, which could be the mapfile suffix.
+     *        - {number} min: The minimum number of days for this period.
+     *        - {number} max: The maximum number of days for this period.
+     * @returns {string} The key of the matching period type.
+     *
+     * This function calculates the difference in days between the two dates and
+     * finds the first period type whose range (min-max) includes the calculated difference.
+     */
     getMapSuffixFromDates(fromData, toData, periodTypes) {
         const fromDataMoment = moment(fromData);
         const toDataMoment = moment(toData);
@@ -101,48 +117,6 @@ const Api = {
         const periodType = periodTypes.find(t => periodLength >= Number(t.min) && periodLength <= Number(t.max));
         return periodType.key;
     },
-
-    // setGCMapFile(fromData, toData, mapName, periodTypes) {
-    //     /*
-    //     const thresholdsFixedrange = [
-    //         { key: 7, label: "7 giorni ",  max: 8, default: true },
-    //         { key: 7, label: "8 giorni ",  max: 8 },
-    //         { key: 7, label: "8 giorni ",max: 69 },
-    //         { key: 10, label: "20 giorni ", max: 20 },
-    //     ];
-
-    //     const thresholdsFreeRange = [
-    //         { key: 1,  min: 1, max: 5, default: true  },
-    //         { key: 7,  min: 6, max: 8},
-    //         { key: 10,  min: 9, max: 20 },
-    //     ];
-
-    //     const thresholdsInfochart = [
-    //         { key: 1,  min: 1, max: 5, default: true  },
-    //         { key: 7,  min: 6, max: 8},
-    //         { key: 10,  min: 9, max: 20 },
-    //     ];
-
-    //     */
-
-    //     // Extract valid suffixes from thresholds
-    //     const validSuffixes = periodTypes.map(t => t.key);
-
-    //     // Remove any existing threshold suffix from the mapName
-    //     const cleanedMapName = validSuffixes.reduce((name, suffix) => {
-    //         const suffixPattern = new RegExp(suffix + '$'); // Match suffix at the end
-    //         return name.replace(suffixPattern, '');
-    //     }, mapName);
-
-    //     const fromDataMoment = moment(fromData);
-    //     const toDataMoment = moment(toData);
-    //     const durationMonths = Math.floor(toDataMoment.diff(fromDataMoment, 'days') / 30);
-    //     // Determine the appropriate suffix based on duration
-    //     const threshold = periodTypes.find(t => durationMonths > t.min && durationMonths <= t.max);
-    //     // Construct the mapfile name by appending the correct suffix
-    //     const mapfileName = threshold ? cleanedMapName + threshold.suffix : cleanedMapName;
-    //     return mapfileName;
-    // },
     validateDateRange(fromData, toData, firstAvailableDate, lastAvailableDate, timeUnit) {
         let firstDate = moment(firstAvailableDate);
         let lastDate = moment(lastAvailableDate);
