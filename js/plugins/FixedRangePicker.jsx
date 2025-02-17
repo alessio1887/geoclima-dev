@@ -232,7 +232,7 @@ class FixedRangePicker extends React.Component {
     componentWillUnmount() {
         const TO_DATA = this.props.lastAvailableDate;
         this.props.onChangePeriodToData(TO_DATA);
-        this.props.onChangePeriod(this.props.periodTypes.find(period => period.isDefault));
+        this.props.onChangePeriod(DateAPI.getDefaultPeriod(this.props.periodTypes));
         this.props.onMarkFixedRangeAsNotLoaded();
         if (this.props.showFixedRangePicker) {
             this.props.onToggleFixedRangePicker();
@@ -311,7 +311,7 @@ class FixedRangePicker extends React.Component {
                         <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton" />
                     </Button>
                     { this.props.showChangeRangePickerButton && (
-                        <Button onClick={() => this.props.onToggleFixedRangePicker(this.props.variabiliMeteo, FIXED_RANGE)} disabled={this.props.isInteractionDisabled}>
+                        <Button onClick={() => this.props.onToggleFixedRangePicker(this.props.variabiliMeteo, FIXED_RANGE, DateAPI.getDefaultPeriod(this.props.periodTypes))} disabled={this.props.isInteractionDisabled}>
                             <Message msgId="gcapp.fixedRangePicker.dateRangeButton" />
                         </Button>
                     )}

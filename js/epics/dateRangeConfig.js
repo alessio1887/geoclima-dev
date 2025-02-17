@@ -8,6 +8,7 @@
 import { Observable } from 'rxjs';
 import { MAP_CONFIG_LOADED } from '@mapstore/actions/config';
 import { updateSettings, updateNode } from '@mapstore/actions/layers';
+import { layersSelector } from '@mapstore/selectors/layers';
 import { FETCHED_AVAILABLE_DATES } from '../actions/updateDatesParams';
 import { TOGGLE_PLUGIN, changePeriod, changePeriodToData } from '../actions/fixedrangepicker';
 import { changeFromData, changeToData  } from '../actions/freerangepicker';
@@ -205,19 +206,24 @@ const setPluginsDatesEpic = (action$, store) =>
 //         );
 
 /**
- * Epic that handles the toggling of a plugin based on action parameters.
+ * Epic that handles toggling a plugin and updating its date parameters.
  *
- * This function listens for the `TOGGLE_PLUGIN` action type and, based on the
- * `source` (either `FixedRangePlugin` or `FreeRangePlugin`), performs different operations.
- * The purpose of this epic is to set the plugin's dates.
- * If the necessary parameters (like `layerParams`) are not provided, the epic does nothing.
+ * This function listens for the `TOGGLE_PLUGIN` action type and performs different
+ * operations depending on the `source` (`FixedRangePlugin` or `FreeRangePlugin`).
+ * Its main purpose is to set the appropriate date range for the selected plugin.
+ * If the required parameters (such as `variabiliMeteoLayers`) are missing, the epic does nothing.
  *
- * - If `source` is `FIXED_RANGE`, it calculates a start and end date (using the active layer's data
- *   or a default value) and emits actions to update the dates for `FixedRangePlugin`.
- * - If `source` is `FREE_RANGE`, it only updates the end date and emits an action to modify the
- *   period for `FreeRangePlugin`.
+ * - If the `source` is `FIXED_RANGE`, it determines the start (`fromData`) and end date (`toData`)
+ *   either from the active layer's parameters or default values. It then emits actions to:
+ *     - Set the start date (`fromData`)
+ *     - Restore the default period for the `FixedRangePlugin`
+ *     - Validate and update both `fromData` and `toData`
  *
- * The function returns an Observable that emits the generated actions.
+ * - If the `source` is `FREE_RANGE`, it retrieves the end date (`toData`) from the layer parameters
+ *   or a default value and emits an action to update the period for `FreeRangePlugin`, ensuring
+ *   that the date is valid.
+ *
+ * The function returns an Observable that emits the generated Redux actions.
  *
  * @param {Object} action$ - Stream of incoming actions, managed by redux-observable.
  * @param {Object} store - The application state, used to access global data.
@@ -226,16 +232,18 @@ const setPluginsDatesEpic = (action$, store) =>
 const togglePluginEpic = (action$, store) =>
     action$.ofType(TOGGLE_PLUGIN)
         .switchMap((action) => {
-            if (!action.layerParams) {
+            if (!action.variabiliMeteoLayers) {
                 return Observable.empty();
             }
             const appState = store.getState();
             let newActions = [];
-            const layers = getVisibleLayers(appState.layers.flat, action.layerParams);
+            const layers = getVisibleLayers(layersSelector(appState), action.variabiliMeteoLayers);
             if (action.source === FIXED_RANGE) {
                 const toData = layers[0]?.params?.toData || appState.fixedrangepicker.lastAvailableDate;
                 const fromData = layers[0]?.params?.fromData || moment(toData).clone().subtract(1, 'month');
-                // Verifica validità delle date
+                // Restore the default period in the FixedRange plugin
+                newActions.push(changePeriod(action.defaultPeriod));
+                // Validate dates before applying changes
                 if (toData && !isNaN(new Date(toData)) && fromData && !isNaN(new Date(fromData))) {
                     newActions.push(changeFromData(new Date(fromData)));
                     newActions.push(changeToData(new Date(toData)));
@@ -243,10 +251,8 @@ const togglePluginEpic = (action$, store) =>
             }
             if (action.source === FREE_RANGE) {
                 const toData = layers[0]?.params?.toData || appState.freerangepicker.lastAvailableDate;
-                // Verifica validità delle date
+                // Validate dates before applying changes
                 if (toData && !isNaN(new Date(toData))) {
-                    const defaultPeriod = appState.fixedrangepicker?.periodTypes?.find(period => period.isDefault);
-                    newActions.push(changePeriod(defaultPeriod));
                     newActions.push(changePeriodToData(new Date(toData)));
                 }
             }
