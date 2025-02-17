@@ -211,6 +211,7 @@ function infochart(state = infoChartDefaultState, action) {
             ...state,
             toData: defaultToData,
             fromData: defaultFromData,
+            periodType: action.defaultPeriod,
             infoChartData: {
                 ...state.infoChartData,
                 toData: defaultToData,

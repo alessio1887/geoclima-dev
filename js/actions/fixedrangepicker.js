@@ -34,11 +34,12 @@ export function changePeriod(periodType) {
     };
 }
 
-export function toggleRangePickerPlugin(layerParams, source) {
+export function toggleRangePickerPlugin(variabiliMeteoLayers, source, defaultPeriod) {
     return {
         type: TOGGLE_PLUGIN,
-        layerParams,
-        source
+        variabiliMeteoLayers,
+        source,
+        defaultPeriod
     };
 }
 

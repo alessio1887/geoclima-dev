@@ -205,8 +205,9 @@ class InfoChart extends React.Component {
             this.props.onSetTimeUnit(this.props.timeUnit);
             this.initializeTabs();
             this.props.onSetDefaultUrlGeoclimaChart(this.props.defaultUrlGeoclimaChart);
+            const defaultPeriod = DateAPI.getDefaultPeriod(this.props.periodTypes);
+            this.props.onChangePeriod(defaultPeriod);
             if ( this.props.isFetchAvailableDates && this.props.defaultUrlSelectDate && this.props.variabileSelectDate) {
-                const defaultPeriod = DateAPI.getDefaultPeriod(this.props.periodTypes);
                 this.props.onFetchAvailableDates(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, this.props.timeUnit, defaultPeriod);
             }
             this.props.onMarkPluginAsLoaded();
@@ -498,7 +499,7 @@ class InfoChart extends React.Component {
     }
     closePanel = () => {
         this.props.onSetInfoChartVisibility(false);
-        this.props.onSetInfoChartDates(this.props.lastAvailableDate, this.props.periodTypes.find(period => period.isDefault));
+        this.props.onSetInfoChartDates(this.props.lastAvailableDate, DateAPI.getDefaultPeriod(this.props.periodTypes));
         this.props.onResetChartRelayout();
         if ( this.props.infoChartSize.widthResizable !== 880 || this.props.infoChartSize.heightResizable !== 880) {
             this.props.onResizeInfoChart(880, 880);

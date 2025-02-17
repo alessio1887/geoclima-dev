@@ -24,7 +24,6 @@ import {
     changeFromData,
     changeToData,
     changeFixedRangeToData,
-    changePeriod,
     markInfoChartAsNotLoaded,
     changeTab, changeChartVariable,
     closeAlert,
@@ -82,7 +81,8 @@ const getDefaultValues = (idVariabiliLayers, appState) => {
     const toData = appState.infochart.lastAvailableDate;
     const fromData = moment(toData).subtract(1, 'month').toDate();
     const defaultVariable = Object.keys(idVariabiliLayers)[0] || '';
-    const defaultPeriod = appState.infochart.periodTypes.find(period => period.isDefault);
+    // const defaultPeriod = appState.infochart.periodTypes.find(period => period.isDefault);
+    const defaultPeriod = appState.infochart.periodType;
     return {
         variable: Object.keys(idVariabiliLayers)[0] || '',
         fromData,
@@ -93,14 +93,14 @@ const getDefaultValues = (idVariabiliLayers, appState) => {
 };
 
 // Function to get values when the InfoChart panel is visible
-const getInfoChartValues = (appState, rangeManager) => {
+const getInfoChartValues = (appState) => {
     const { variables, fromData, toData, periodType,  idTab} = appState.infochart.infoChartData;
-    const periodTypeAdjusted = rangeManager === FIXED_RANGE ? periodType : "1";
+    // const periodTypeAdjusted = rangeManager === FIXED_RANGE ? periodType : "1";
     return {
         variable: variables,
         fromData,
         toData,
-        periodType: periodTypeAdjusted,
+        periodType: periodType,
         idTab: idTab
     };
 };
@@ -220,7 +220,7 @@ const getVisibleLayerValues = (visibleLayer, appState) => {
 const getChartVariables = (appState, rangeManager, idVariabiliLayers) => {
     // If the InfoChart panel is visible, use data from appState
     if (appState.infochart.showInfoChartPanel) {
-        return getInfoChartValues(appState, rangeManager);
+        return getInfoChartValues(appState);
     }
     // If there is a visible layer, use the layer's values
     const visibleLayer = getFirstVisibleLayer(getVisibleLayers(appState.layers.flat, idVariabiliLayers), getVisibleGroups(appState.layers.groups));
@@ -380,7 +380,7 @@ const clickedPointCheckEpic = (action$, store) =>
                 let actions = [];
                 if (!appState.infochart.showInfoChartPanel) {
                     actions.push(setRangeManager(rangeManager));
-                    actions.push(changePeriod(periodType));
+                    // actions.push(changePeriod(periodType));
                     actions.push(changeFixedRangeToData(new Date(toData)));
                     actions.push(changeFromData(new Date(fromData)));
                     actions.push(changeToData(new Date(toData)));

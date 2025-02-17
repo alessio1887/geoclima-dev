@@ -7,7 +7,7 @@
 */
 import { Observable } from 'rxjs';
 import { LAYER_LOAD } from '@mapstore/actions/layers';
-import { updateRangeLabelDates, errorLayerNotFound, errorLayerDateMissing } from '../actions/daterangelabel';
+import { updateDatesLayer, errorLayerNotFound, errorLayerDateMissing } from '../actions/daterangelabel';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 
 const updateDateLabelEpic = (action$, store) =>
@@ -28,7 +28,7 @@ const updateDateLabelEpic = (action$, store) =>
             if (!fromData || !toData) {
                 return Observable.of(errorLayerDateMissing(layerId, fromData, toData));
             }
-            return Observable.of(updateRangeLabelDates(layerId, fromData, toData));
+            return Observable.of(updateDatesLayer(layerId, fromData, toData));
         });
 
 export default updateDateLabelEpic;
