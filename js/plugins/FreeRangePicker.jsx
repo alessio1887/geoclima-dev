@@ -13,7 +13,7 @@ import { updateSettings, updateNode } from '@mapstore/actions/layers';
 import { layersSelector } from '@mapstore/selectors/layers';
 import { fromDataLayerSelector, toDataLayerSelector } from '../selectors/freeRangePicker';
 import { compose } from 'redux';
-import { isLayerLoadingSelector } from '../utils/geoclimaSelectors';
+import { isLayerLoadingSelector } from '../selectors/exportImage';
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO} from '../utils/ManageDateUtils';
 import { FREE_RANGE, isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 import { connect } from 'react-redux';

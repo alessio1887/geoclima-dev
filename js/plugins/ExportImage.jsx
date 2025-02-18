@@ -13,10 +13,12 @@ import Message from '@mapstore/components/I18N/Message';
 import { toggleControl } from '@mapstore/actions/controls';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
 import ResponsivePanel from '@mapstore/components/misc/panels/ResponsivePanel';
-import { exportImageEnabledSelector, fromDataSelector, toDataSelector, isLayerLoadingSelector } from '../utils/geoclimaSelectors';
+import { exportImageEnabledSelector, fromDataSelector, toDataSelector,
+    isLayerLoadingSelector, tabVariablesSelector, imageUrlSelector } from '../selectors/exportImage';
 import * as exportImageEpics from '../epics/exportImage';
 import exportimage from '../reducers/exportimage';
-import { initializeVariableTabs, setVariabiliMeteo, changeTab, changeImageVariable, exportImage } from '../actions/exportimage';
+import { initializeVariableTabs, setVariabiliMeteo, changeTab, changeImageVariable,
+    exportImage, clearImageUrl } from '../actions/exportimage';
 
 
 import moment from 'moment';
@@ -40,13 +42,15 @@ const ExportImage = ({
     tabList,
     timeUnit,
     toData,
+    onClearImageUrl,
     onChangeImageVariable,
     onChangeTab,
     onExportImage,
     onInitializeVariableTabs,
     onSetVariabiliMeteo,
     variabiliMeteo,
-    tabVariables
+    tabVariables,
+    imageUrl
 }) => {
 
     const initializeTabs = useCallback(() => {
@@ -91,7 +95,9 @@ const ExportImage = ({
                 handleChangeTab={onChangeTab}
                 handleChangeVariable={onChangeImageVariable}
                 apiUrl={defaultUrlExportImage}
+                imageUrl={imageUrl}
                 exportImage={onExportImage}
+                clearImageUrl={onClearImageUrl}
             />
         </ResponsivePanel>
     );
@@ -102,12 +108,14 @@ const mapStateToProps = createStructuredSelector({
     toData: toDataSelector,
     active: exportImageEnabledSelector,
     isInteractionDisabled: isLayerLoadingSelector,
-    tabVariables: state => state.exportimage.tabVariables
+    tabVariables: tabVariablesSelector,
+    imageUrl: imageUrlSelector
 });
 
 const mapDispatchToProps = {
     onChangeImageVariable: changeImageVariable,
     onChangeTab: changeTab,
+    onClearImageUrl: clearImageUrl,
     onExportImage: exportImage,
     onInitializeVariableTabs: initializeVariableTabs,
     onSetVariabiliMeteo: setVariabiliMeteo,

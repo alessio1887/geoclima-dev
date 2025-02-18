@@ -6,7 +6,9 @@
               "selectFromDate": "Data d'inizio periodo",
               "selectToDate": "Data di fine periodo",
                "selectMeteoVariable": "Seleziona una variabile",
-               "downloadImage": "Scarica immagine"
+               "apiCall": "Execute",
+               "clearImageUrl": "Clear",
+               "downloadImage": "Donwnload file"
             },
             "fixedRangePicker": {
               "titlePeriod": "Periodo considerato",

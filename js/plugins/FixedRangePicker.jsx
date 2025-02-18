@@ -16,7 +16,7 @@ import { compose } from 'redux';
 import { changePeriodToData, changePeriod, toggleRangePickerPlugin, openAlert,
     closeAlert, collapsePlugin, markFixedRangeAsLoaded, markFixedRangeAsNotLoaded } from '../actions/fixedrangepicker';
 import { fetchSelectDate } from '@js/actions/updateDatesParams';
-import { isLayerLoadingSelector } from '../utils/geoclimaSelectors';
+import { isLayerLoadingSelector } from '../selectors/exportImage';
 import { FIXED_RANGE, isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../utils/ManageDateUtils';
 import { connect } from 'react-redux';

@@ -5,7 +5,8 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
 */
-import { UPDATE_DATES, SET_VARIABILIMETEO, INITIALIZE_TABS, TAB_CHANGED, IMAGEVARIABLE_CHANGED } from '../actions/exportimage';
+import { UPDATE_DATES, SET_VARIABILIMETEO, INITIALIZE_TABS, TAB_CHANGED,
+    IMAGEVARIABLE_CHANGED, EXPORTIMAGE_SUCCESS, CLEAR_IMAGE_URL } from '../actions/exportimage';
 
 const defaultState = {
     fromData: new Date(),
@@ -48,6 +49,10 @@ function daterangelabel(state = defaultState, action) {
             )
 
         };
+    case EXPORTIMAGE_SUCCESS:
+        return { ...state, imageUrl: action.urlExportImage };
+    case CLEAR_IMAGE_URL:
+        return { ...state, imageUrl: null };
     default:
         return state;
     }

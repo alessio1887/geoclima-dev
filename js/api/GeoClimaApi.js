@@ -28,7 +28,7 @@ const Api = {
             host: defaultUrlExportImage,
             query: params
         });
-        return axios.get(url);
+        return axios.get(url, { responseType: 'blob' });
     },
     geoclimachart: function(data, defaultUrlGeoclimaChart, options) {
         var params = assign({lat: data.latlng.lat, lng: data.latlng.lng, toData: data.toData, fromData: data.fromData, variable: data.variables}, options || {});

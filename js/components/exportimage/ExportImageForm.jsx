@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, FormGroup, Label } from 'react-bootstrap';
+import { Button, ButtonGroup, FormGroup, Label } from 'react-bootstrap';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
 import SelectVariableTab from '../../components/dropdowns/SelectVariableTab';
 import Message from '@mapstore/components/I18N/Message';
@@ -15,7 +15,9 @@ const ExportImageForm = ({
     handleChangeTab,
     handleChangeVariable,
     apiUrl,
-    exportImage
+    imageUrl,
+    exportImage,
+    clearImageUrl
 }) => {
 
     const getActiveTab = () => {
@@ -28,6 +30,9 @@ const ExportImageForm = ({
 
     const handleExportImage = () => {
         const layerName = getActiveTab().variables[0].id;
+        if (imageUrl) {
+            clearImageUrl();
+        }
         exportImage(layerName, fromData, toData, apiUrl);
     };
 
@@ -50,9 +55,22 @@ const ExportImageForm = ({
                 format={timeUnit}
                 isReadOnly={true}
             />
-            <Button onClick={() => handleExportImage()} disabled={isInteractionDisabled}>
-                <Message msgId="gcapp.exportImage.downloadImage" />
-            </Button>
+            <ButtonGroup>
+                <Button onClick={() => handleExportImage()} disabled={isInteractionDisabled}>
+                    <Message msgId="gcapp.exportImage.apiCall" />
+                </Button>
+                <Button onClick={() => clearImageUrl()} disabled={isInteractionDisabled}>
+                    <Message msgId="gcapp.exportImage.clearImageUrl" />
+                </Button>
+                {imageUrl && (<Button  variant="success"
+                    className="mt-2"
+                    href={imageUrl}
+                    download="exported_image.png"
+                    disabled={isInteractionDisabled}>
+                    <Message msgId="gcapp.exportImage.downloadImage" />
+                </Button>
+                )}
+            </ButtonGroup>
         </FormGroup>
     );
 };
