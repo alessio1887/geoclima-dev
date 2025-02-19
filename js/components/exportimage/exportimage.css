@@ -5,9 +5,23 @@
 .labels-exportimage {
     color: black;
     background-color: white;
-    display: block; /* Allineamento corretto */
+    display: block;
     text-align: left; /* Testo allineato a sinistra */
     padding: 30px 10px 10px; /* Margini ottimizzati */
     font-size: 15px;
     font-weight: bold;
+}
+
+#button-exportimage-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 3px;
+    margin: 20px;
+    /* gap: 40px; */
+}
+#button-exportimage-container button {
+    /* margin: 0 10px; */
+    width: 120px;
 }

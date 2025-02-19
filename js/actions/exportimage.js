@@ -79,10 +79,11 @@ export function apiError(errorMessage) {
     };
 }
 
-export function exportImageSuccess(urlExportImage) {
+export function exportImageSuccess(urlExportImage, fileName) {
     return {
         type: EXPORTIMAGE_SUCCESS,
-        urlExportImage
+        urlExportImage,
+        fileName
     };
 }
 
@@ -100,7 +101,16 @@ export function exportImage(layerName, fromData, toData, defaultUrlExportImage) 
                 const blob = new Blob([response.data], { type: 'image/png' });
                 const url = window.URL.createObjectURL(blob);
 
-                dispatch(exportImageSuccess(url));
+                const contentDisposition = response.headers['content-disposition'];
+                let fileName = 'exported_image.png'; // Nome di default
+                if (contentDisposition) {
+                    const match = contentDisposition.match(/filename="?([^"]+)"?/);
+                    if (match && match[1]) {
+                        fileName = match[1];
+                    }
+                }
+
+                dispatch(exportImageSuccess(url, fileName));
             })
             .catch(error => {
                 dispatch(apiError(error));

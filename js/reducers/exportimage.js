@@ -7,10 +7,13 @@
 */
 import { UPDATE_DATES, SET_VARIABILIMETEO, INITIALIZE_TABS, TAB_CHANGED,
     IMAGEVARIABLE_CHANGED, EXPORTIMAGE_SUCCESS, CLEAR_IMAGE_URL } from '../actions/exportimage';
+import { DEFAULT_FILENAME } from '../utils/VariabiliMeteoUtils';
+
 
 const defaultState = {
     fromData: new Date(),
-    toData: new Date()
+    toData: new Date(),
+    fileName: DEFAULT_FILENAME
 };
 
 function daterangelabel(state = defaultState, action) {
@@ -50,9 +53,9 @@ function daterangelabel(state = defaultState, action) {
 
         };
     case EXPORTIMAGE_SUCCESS:
-        return { ...state, imageUrl: action.urlExportImage };
+        return { ...state, imageUrl: action.urlExportImage, fileName: action.fileName };
     case CLEAR_IMAGE_URL:
-        return { ...state, imageUrl: null };
+        return { ...state, imageUrl: null, fileName: DEFAULT_FILENAME };
     default:
         return state;
     }

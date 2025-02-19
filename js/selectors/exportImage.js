@@ -9,6 +9,7 @@ export const fromDataSelector = state => state.exportimage?.fromData;
 export const toDataSelector = state => state.exportimage?.toData;
 export const tabVariablesSelector = state => state.exportimage.tabVariables;
 export const imageUrlSelector = state => state.exportimage?.imageUrl;
+export const fileNameSelector = state => state.exportimage?.fileName;
 
 export const isLayerLoadingSelector = createSelector(
     [layersSelector],

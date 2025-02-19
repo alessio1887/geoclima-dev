@@ -6,6 +6,7 @@ import Message from '@mapstore/components/I18N/Message';
 import './exportimage.css';
 
 const ExportImageForm = ({
+    fileNameExported,
     fromData,
     toData,
     timeUnit,
@@ -55,17 +56,19 @@ const ExportImageForm = ({
                 format={timeUnit}
                 isReadOnly={true}
             />
-            <ButtonGroup>
-                <Button onClick={() => handleExportImage()} disabled={isInteractionDisabled}>
-                    <Message msgId="gcapp.exportImage.apiCall" />
-                </Button>
-                <Button onClick={() => clearImageUrl()} disabled={isInteractionDisabled}>
-                    <Message msgId="gcapp.exportImage.clearImageUrl" />
-                </Button>
-                {imageUrl && (<Button  variant="success"
-                    className="mt-2"
+            <ButtonGroup id="button-exportimage-container">
+                <div id="button-exportimage-apicall-clear">
+                    <Button onClick={() => handleExportImage()} disabled={isInteractionDisabled}>
+                        <Message msgId="gcapp.exportImage.apiCall" />
+                    </Button>
+                    <Button onClick={() => clearImageUrl()} disabled={isInteractionDisabled}>
+                        <Message msgId="gcapp.exportImage.clearImageUrl" />
+                    </Button>
+                </div>
+                {imageUrl && (<Button id="button-exportimage-downloadImage"
+                    variant="success"
                     href={imageUrl}
-                    download="exported_image.png"
+                    download={fileNameExported}
                     disabled={isInteractionDisabled}>
                     <Message msgId="gcapp.exportImage.downloadImage" />
                 </Button>

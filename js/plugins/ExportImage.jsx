@@ -13,7 +13,7 @@ import Message from '@mapstore/components/I18N/Message';
 import { toggleControl } from '@mapstore/actions/controls';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
 import ResponsivePanel from '@mapstore/components/misc/panels/ResponsivePanel';
-import { exportImageEnabledSelector, fromDataSelector, toDataSelector,
+import { exportImageEnabledSelector, fileNameSelector, fromDataSelector, toDataSelector,
     isLayerLoadingSelector, tabVariablesSelector, imageUrlSelector } from '../selectors/exportImage';
 import * as exportImageEpics from '../epics/exportImage';
 import exportimage from '../reducers/exportimage';
@@ -36,6 +36,7 @@ const PLUGIN_GLYPH_ICON = "export";
 const ExportImage = ({
     active,
     defaultUrlExportImage,
+    fileNameExported,
     fromData,
     isInteractionDisabled,
     onToggleControl,
@@ -85,6 +86,7 @@ const ExportImage = ({
             onClose={onToggleControl}
         >
             <ExportImageForm
+                fileNameExported={fileNameExported}
                 fromData={fromData}
                 toData={toData}
                 variabiliMeteo={variabiliMeteo}
@@ -104,6 +106,7 @@ const ExportImage = ({
 };
 
 const mapStateToProps = createStructuredSelector({
+    fileNameExported: fileNameSelector,
     fromData: fromDataSelector,
     toData: toDataSelector,
     active: exportImageEnabledSelector,
