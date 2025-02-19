@@ -5,7 +5,7 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
 */
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Glyphicon } from 'react-bootstrap';
@@ -53,6 +53,9 @@ const ExportImage = ({
     tabVariables,
     imageUrl
 }) => {
+    // useRef stores the previous values of fromData and toData
+    const prevFromData = useRef(fromData);
+    const prevToData = useRef(toData);
 
     const initializeTabs = useCallback(() => {
         const tabVariablesInit = tabList.map((tab, index) => ({
@@ -64,13 +67,25 @@ const ExportImage = ({
     }, [tabList, onInitializeVariableTabs]); // Aggiungi tabList come dipendenza
 
     useEffect(() => {
-        // Quando il componente si monta, setta variabiliMeteo nello stato Redux
+        // When the component mounts, set variabiliMeteo in the Redux state
         if (variabiliMeteo) {
             onSetVariabiliMeteo(variabiliMeteo);
         }
         initializeTabs();
-    }, [variabiliMeteo, onSetVariabiliMeteo, initializeTabs]); // Aggiungi initializeTabs come dipendenza
+    }, [variabiliMeteo, onSetVariabiliMeteo, initializeTabs]);
 
+    useEffect(() => {
+        // Check if fromData or toData have changed compared to the previous values
+        if (prevFromData.current !== fromData || prevToData.current !== toData) {
+            // If imageUrl is already set, reset it by calling onClearImageUrl
+            if (imageUrl) {
+                onClearImageUrl();
+            }
+        }
+        // Update refs with the new values
+        prevFromData.current = fromData;
+        prevToData.current = toData;
+    }, [fromData, toData, onClearImageUrl]);
 
     return (
         <ResponsivePanel
