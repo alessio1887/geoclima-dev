@@ -10,10 +10,10 @@ import PropTypes from 'prop-types';
 import { Resizable } from 'react-resizable';
 
 import { Collapse, Button, ButtonGroup, Glyphicon, Panel, Grid, FormGroup, Label} from 'react-bootstrap';
-import Message from '../../../MapStore2/web/client/components/I18N/Message';
+import Message from '@mapstore/components/I18N/Message';
 
-import Dialog from '../../../MapStore2/web/client/components/misc/Dialog';
-import BorderLayout from '../../../MapStore2/web/client/components/layout/BorderLayout';
+import Dialog from '@mapstore/components/misc/Dialog';
+import BorderLayout from '@mapstore/components/layout/BorderLayout';
 import InfoChartRender from './InfoChartRender';
 import SelectVariableTab from '../../components/dropdowns/SelectVariableTab';
 import FixedRangeManager from '../../components/datepickers/FixedRangeManager';

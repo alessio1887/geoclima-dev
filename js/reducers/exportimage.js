@@ -5,8 +5,8 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
 */
-import { UPDATE_DATES, SET_VARIABILIMETEO, INITIALIZE_TABS, TAB_CHANGED,
-    IMAGEVARIABLE_CHANGED, EXPORTIMAGE_SUCCESS, CLEAR_IMAGE_URL } from '../actions/exportimage';
+import { UPDATE_DATES, SET_VARIABILIMETEO, INITIALIZE_TABS, TAB_CHANGED, EXPORTIMAGE_ERROR,
+    IMAGEVARIABLE_CHANGED, EXPORTIMAGE_SUCCESS, CLEAR_IMAGE_URL, EXPORTIMAGE_LOADING } from '../actions/exportimage';
 import { DEFAULT_FILENAME } from '../utils/VariabiliMeteoUtils';
 
 
@@ -52,8 +52,12 @@ function daterangelabel(state = defaultState, action) {
             )
 
         };
+    case EXPORTIMAGE_LOADING:
+        return { ...state, maskLoading: true };
     case EXPORTIMAGE_SUCCESS:
-        return { ...state, imageUrl: action.urlExportImage, fileName: action.fileName };
+        return { ...state, imageUrl: action.urlExportImage, fileName: action.fileName, maskLoading: false };
+    case EXPORTIMAGE_ERROR:
+        return { ...state, imageUrl: null, fileName: DEFAULT_FILENAME, maskLoading: false };
     case CLEAR_IMAGE_URL:
         return { ...state, imageUrl: null, fileName: DEFAULT_FILENAME };
     default:

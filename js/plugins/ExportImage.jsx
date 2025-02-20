@@ -13,13 +13,14 @@ import Message from '@mapstore/components/I18N/Message';
 import { toggleControl } from '@mapstore/actions/controls';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
 import ResponsivePanel from '@mapstore/components/misc/panels/ResponsivePanel';
+import Dialog from '@mapstore/components/misc/Dialog';
+
 import { exportImageEnabledSelector, fileNameSelector, fromDataSelector, toDataSelector,
-    isLayerLoadingSelector, tabVariablesSelector, imageUrlSelector } from '../selectors/exportImage';
+    isLayerLoadingSelector, tabVariablesSelector, imageUrlSelector, exportImageApiSelector } from '../selectors/exportImage';
 import * as exportImageEpics from '../epics/exportImage';
 import exportimage from '../reducers/exportimage';
 import { initializeVariableTabs, setVariabiliMeteo, changeTab, changeImageVariable,
     exportImage, clearImageUrl } from '../actions/exportimage';
-
 
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
@@ -30,8 +31,10 @@ const PLUGIN_GLYPH_ICON = "export";
 
 /**
  * ExportImage component
- * @memberof plugins
- * @name ExportImage
+ *
+ * This component acts as a container for the ExportImage plugin.
+ * It wraps the content inside a Dialog component with maskLoading enabled,
+ * so that a loading mask (with react-spinkit spinner) is displayed during loading.
  */
 const ExportImage = ({
     active,
@@ -39,6 +42,7 @@ const ExportImage = ({
     fileNameExported,
     fromData,
     isInteractionDisabled,
+    maskLoading,
     onToggleControl,
     tabList,
     timeUnit,
@@ -60,11 +64,11 @@ const ExportImage = ({
     const initializeTabs = useCallback(() => {
         const tabVariablesInit = tabList.map((tab, index) => ({
             id: tab.id,
-            variables: [tab.groupList[0]], // Seleziona il primo come default
-            active: index === 0 // Imposta il primo tab come attivo
+            variables: [tab.groupList[0]], // Select the first group as default
+            active: index === 0 // Set the first tab as active
         }));
         onInitializeVariableTabs(tabVariablesInit);
-    }, [tabList, onInitializeVariableTabs]); // Aggiungi tabList come dipendenza
+    }, [tabList, onInitializeVariableTabs]);
 
     useEffect(() => {
         // When the component mounts, set variabiliMeteo in the Redux state
@@ -75,9 +79,9 @@ const ExportImage = ({
     }, [variabiliMeteo, onSetVariabiliMeteo, initializeTabs]);
 
     useEffect(() => {
-        // Check if fromData or toData have changed compared to the previous values
+        // Check if fromData or toData have changed compared to previous values
         if (prevFromData.current !== fromData || prevToData.current !== toData) {
-            // If imageUrl is already set, reset it by calling onClearImageUrl
+            // If imageUrl is set, clear it by calling onClearImageUrl
             if (imageUrl) {
                 onClearImageUrl();
             }
@@ -85,14 +89,13 @@ const ExportImage = ({
         // Update refs with the new values
         prevFromData.current = fromData;
         prevToData.current = toData;
-    }, [fromData, toData, onClearImageUrl]);
+    }, [fromData, toData, imageUrl, onClearImageUrl]);
 
     return (
         <ResponsivePanel
             containerId="export-image-container"
             containerClassName="export-image-container"
-            // dock={true}
-            size={400} // Imposta una larghezza massima (puoi modificarla a piacere)
+            size={400}
             open={active}
             position="right"
             bsStyle="primary"
@@ -100,22 +103,37 @@ const ExportImage = ({
             title={<Message msgId="exportImage.title" />}
             onClose={onToggleControl}
         >
-            <ExportImageForm
-                fileNameExported={fileNameExported}
-                fromData={fromData}
-                toData={toData}
-                variabiliMeteo={variabiliMeteo}
-                tabList={tabList}
-                tabVariables={tabVariables}
-                timeUnit={timeUnit}
-                isInteractionDisabled={isInteractionDisabled}
-                handleChangeTab={onChangeTab}
-                handleChangeVariable={onChangeImageVariable}
-                apiUrl={defaultUrlExportImage}
-                imageUrl={imageUrl}
-                exportImage={onExportImage}
-                clearImageUrl={onClearImageUrl}
-            />
+            <Dialog
+                id="export-image-dialog"
+                // maskLoading={isInteractionDisabled}  // This enables the loading mask with react-spinkit animation
+                maskLoading={maskLoading}
+                draggable={false}  // Puoi modificare se vuoi rendere il dialog trascinabile
+                backgroundStyle={{ background: "rgba(0, 0, 0, 0.5)" }}
+                containerClassName="export-image-dialog-container"
+                onClickOut={onToggleControl}
+                style={{
+                    top: "-200px",
+                    right: "20px"
+                }}
+            >
+                <ExportImageForm
+                    fileNameExported={fileNameExported}
+                    fromData={fromData}
+                    toData={toData}
+                    variabiliMeteo={variabiliMeteo}
+                    tabList={tabList}
+                    tabVariables={tabVariables}
+                    timeUnit={timeUnit}
+                    isInteractionDisabled={isInteractionDisabled}
+                    handleChangeTab={onChangeTab}
+                    handleChangeVariable={onChangeImageVariable}
+                    apiUrl={defaultUrlExportImage}
+                    imageUrl={imageUrl}
+                    exportImage={onExportImage}
+                    clearImageUrl={onClearImageUrl}
+                    role="body"
+                />
+            </Dialog>
         </ResponsivePanel>
     );
 };
@@ -123,6 +141,7 @@ const ExportImage = ({
 const mapStateToProps = createStructuredSelector({
     fileNameExported: fileNameSelector,
     fromData: fromDataSelector,
+    maskLoading: exportImageApiSelector,
     toData: toDataSelector,
     active: exportImageEnabledSelector,
     isInteractionDisabled: isLayerLoadingSelector,
@@ -163,6 +182,6 @@ export default createPlugin('ExportImage', {
             doNotHide: true
         }
     },
-    reducers: {  exportimage },
+    reducers: { exportimage },
     epics: exportImageEpics
 });

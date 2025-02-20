@@ -4,6 +4,9 @@ import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
 import SelectVariableTab from '../../components/dropdowns/SelectVariableTab';
 import Message from '@mapstore/components/I18N/Message';
 import './exportimage.css';
+import moment from 'moment';
+import momentLocaliser from 'react-widgets/lib/localizers/moment';
+momentLocaliser(moment);
 
 const ExportImageForm = ({
     fileNameExported,
@@ -35,7 +38,9 @@ const ExportImageForm = ({
         if (imageUrl) {
             clearImageUrl();
         }
-        exportImage(layerName, fromData, toData, apiUrl);
+        const fromDataFormatted = moment(fromData).format(timeUnit);
+        const toDataFormatted = moment(toData).format(timeUnit);
+        exportImage(layerName, fromDataFormatted, toDataFormatted, apiUrl);
     };
 
     return (

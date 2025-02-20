@@ -5,8 +5,7 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
-import GeoClimaAPI from '../api/GeoClimaApi';
+// import GeoClimaAPI from '../api/GeoClimaApi';
 
 export const UPDATE_DATES = 'EXPORTIMAGE:UPDATE_DATES';
 export const NOT_FOUND_LAYER = 'EXPORTIMAGE:NOT_FOUND_LAYER';
@@ -17,7 +16,7 @@ export const TAB_CHANGED = 'EXPORTIMAGE:TAB_CHANGED';
 export const IMAGEVARIABLE_CHANGED = 'EXPORTIMAGE:IMAGEVARIABLE_CHANGED';
 export const EXPORTIMAGE_ERROR = 'EXPORTIMAGE:EXPORTIMAGE_ERROR';
 export const EXPORTIMAGE_SUCCESS = 'EXPORTIMAGE:EXPORTIMAGE_SUCCESS';
-export const EXPORT_IMAGE = 'EXPORTIMAGE:EXPORT_IMAGE';
+export const EXPORTIMAGE_LOADING = 'EXPORTIMAGE:EXPORT_IMAGE_LOADING';
 export const CLEAR_IMAGE_URL = 'EXPORTIMAGE:CLEAR_IMAGE_URL';
 
 export function updateExportImageDates(layerId, fromData, toData) {
@@ -94,33 +93,33 @@ export function clearImageUrl() {
 }
 
 
-export function exportImage(layerName, fromData, toData, defaultUrlExportImage) {
-    return (dispatch) => {
-        GeoClimaAPI.exportImage(layerName, fromData, toData, defaultUrlExportImage)
-            .then(response => {
-                const blob = new Blob([response.data], { type: 'image/png' });
-                const url = window.URL.createObjectURL(blob);
-
-                const contentDisposition = response.headers['content-disposition'];
-                let fileName = 'exported_image.png'; // Nome di default
-                if (contentDisposition) {
-                    const match = contentDisposition.match(/filename="?([^"]+)"?/);
-                    if (match && match[1]) {
-                        fileName = match[1];
-                    }
-                }
-
-                dispatch(exportImageSuccess(url, fileName));
-            })
-            .catch(error => {
-                dispatch(apiError(error));
-            });
-    };
-}
-
 // export function exportImage(layerName, fromData, toData, defaultUrlExportImage) {
-//     return {
-//         type: EXPORT_IMAGE,
-//         layerName, fromData, toData, defaultUrlExportImage
+//     return (dispatch) => {
+//         GeoClimaAPI.exportImage(layerName, fromData, toData, defaultUrlExportImage)
+//             .then(response => {
+//                 const blob = new Blob([response.data], { type: 'image/png' });
+//                 const url = window.URL.createObjectURL(blob);
+
+//                 const contentDisposition = response.headers['content-disposition'];
+//                 let fileName = 'exported_image.png'; // Nome di default
+//                 if (contentDisposition) {
+//                     const match = contentDisposition.match(/filename="?([^"]+)"?/);
+//                     if (match && match[1]) {
+//                         fileName = match[1];
+//                     }
+//                 }
+
+//                 dispatch(exportImageSuccess(url, fileName));
+//             })
+//             .catch(error => {
+//                 dispatch(apiError(error));
+//             });
 //     };
 // }
+
+export function exportImage(layerName, fromData, toData, defaultUrlExportImage) {
+    return {
+        type: EXPORTIMAGE_LOADING,
+        layerName, fromData, toData, defaultUrlExportImage
+    };
+}
