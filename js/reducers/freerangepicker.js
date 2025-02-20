@@ -57,8 +57,8 @@ function freerangepicker(state = defaultState, action) {
     case UPDATE_DATES_LAYER:
         return {
             ...state,
-            fromDataLayer: action.fromDataLayer,
-            toDataLayer: action.toDataLayer
+            fromDataLayer: new Date(action.fromDataLayer),
+            toDataLayer: new Date(action.toDataLayer)
         };
     case COLLAPSE_RANGE_PICKER:
         return {

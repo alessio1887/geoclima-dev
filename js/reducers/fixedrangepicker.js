@@ -46,8 +46,8 @@ function fixedrangepicker(state = defaultState, action) {
     case UPDATE_DATES_LAYER:
         return {
             ...state,
-            fromDataLayer: action.fromDataLayer,
-            toDataLayer: action.toDataLayer
+            fromDataLayer: new Date(action.fromDataLayer),
+            toDataLayer: new Date(action.toDataLayer)
         };
     case TOGGLE_PLUGIN:
         return {

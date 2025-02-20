@@ -36,30 +36,28 @@ const FreeRangeManager = ({
             </Label>
             <DateTimePicker
                 culture="it"
-                time={format === DATE_FORMAT ? false : true}
+                time={ format === DATE_FORMAT ? false : true }
                 min={minDate}
                 max={maxDate}
                 format={format}
                 editFormat={format}
-                value={!isReadOnly ? moment(fromData, format).toDate() : undefined} // Usa value solo se editabile
-                defaultValue={isReadOnly ? moment(fromData, format).toDate() : undefined} // Mostra valore iniziale se read-only
-                onChange={!isReadOnly ? onChangeFromData : undefined} // Usa onChange solo se editabile
+                value={moment(fromData, format).toDate()}
+                onChange={!isReadOnly ? onChangeFromData : undefined}
                 disabled={isInteractionDisabled}
                 readOnly={isReadOnly}
             />
             <Label className={styleLabels}>
-                <Message msgId={lablesType + ".selectToDate"} />
+                <Message msgId={lablesType + ".selectToDate"}/>
             </Label>
             <DateTimePicker
                 culture="it"
-                time={format === DATE_FORMAT ? false : true}
+                time={ format === DATE_FORMAT ? false : true }
                 min={minDate}
                 max={maxDate}
                 format={format}
                 editFormat={format}
-                value={!isReadOnly ? moment(toData, format).toDate() : undefined} // Usa value solo se editabile
-                defaultValue={isReadOnly ? moment(toData, format).toDate() : undefined} // Mostra valore iniziale se read-only
-                onChange={!isReadOnly ? onChangeToData : undefined} // Usa onChange solo se editabile
+                value={moment(toData, format).toDate()}
+                oonChange={!isReadOnly ? onChangeToData : undefined}
                 disabled={isInteractionDisabled}
                 readOnly={isReadOnly}
             />

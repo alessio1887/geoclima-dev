@@ -21,8 +21,8 @@ function daterangelabel(state = defaultState, action) {
     case UPDATE_DATES:
         return {
             ...state,
-            fromData: action.fromData,
-            toData: action.toData
+            fromData: new Date(action.fromData),
+            toData: new Date(action.toData)
         };
     case SET_VARIABILIMETEO:
         return {

@@ -26,6 +26,7 @@ const ExportImageForm = ({
     };
 
     const changeSingleVariable = (selectedVariable, tabVariable) => {
+        clearImageUrl();
         handleChangeVariable(tabVariable, [selectedVariable]);
     };
 
