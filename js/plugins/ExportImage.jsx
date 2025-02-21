@@ -164,7 +164,7 @@ export default createPlugin('ExportImage', {
     containers: {
         BurgerMenu: {
             name: 'exportImage',
-            position: 7,
+            position: 1,
             text: <Message msgId="exportImage.title" />,
             icon: <Glyphicon glyph={PLUGIN_GLYPH_ICON} />,
             action: () => toggleControl('exportImage', 'enabled'),
@@ -173,7 +173,7 @@ export default createPlugin('ExportImage', {
         },
         SidebarMenu: {
             name: 'exportImage',
-            position: 7,
+            position: 1,
             icon: <Glyphicon glyph={PLUGIN_GLYPH_ICON} />,
             text: <Message msgId="exportImage.title" />,
             action: () => toggleControl('exportImage', 'enabled'),
