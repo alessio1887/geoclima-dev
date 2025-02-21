@@ -865,7 +865,7 @@
     }, {
       "name": "ExportImage",
       "defaultConfig": {
-        "defaultUrlExportImage": "geoportale.lamma.rete.toscana.it/geoclima_api/gdownload-image",
+        "defaultUrlExportImage": "geoportale.lamma.rete.toscana.it/geoclima_api/gdownload_image/download-image",
         "timeUnit": "YYYY-MM-DD",
         "variabiliMeteo": {
           "precipitazione": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima","Pioggia_Cumulata_Giornaliera"],

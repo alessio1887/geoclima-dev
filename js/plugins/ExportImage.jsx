@@ -95,7 +95,7 @@ const ExportImage = ({
         <ResponsivePanel
             containerId="export-image-container"
             containerClassName="export-image-container"
-            size={400}
+            size={440}
             open={active}
             position="right"
             bsStyle="primary"

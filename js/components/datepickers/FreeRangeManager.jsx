@@ -57,7 +57,7 @@ const FreeRangeManager = ({
                 format={format}
                 editFormat={format}
                 value={moment(toData, format).toDate()}
-                oonChange={!isReadOnly ? onChangeToData : undefined}
+                onChange={!isReadOnly ? onChangeToData : undefined}
                 disabled={isInteractionDisabled}
                 readOnly={isReadOnly}
             />

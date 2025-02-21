@@ -40,7 +40,8 @@ function daterangelabel(state = defaultState, action) {
             tabVariables: state.tabVariables.map(tab => ({
                 ...tab,
                 active: tab.id === action.idTab // Imposta true solo per il tab con id uguale a idTab
-            }))
+            })),
+            imageUrl: state.imageUrl ? null : state.imageUrl
         };
     case IMAGEVARIABLE_CHANGED:
         return {
@@ -50,7 +51,6 @@ function daterangelabel(state = defaultState, action) {
                     ? { ...tab, variables: action.variable } // Aggiorna le variabili del tab corrispondente
                     : tab
             )
-
         };
     case EXPORTIMAGE_LOADING:
         return { ...state, maskLoading: true };
