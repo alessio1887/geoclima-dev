@@ -6,12 +6,13 @@
  * LICENSE file in the root directory of this source tree.
 */
 import React from 'react';
+import { createStructuredSelector } from 'reselect';
 import PropTypes from 'prop-types';
 import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-bootstrap';
 import Message from '@mapstore/components/I18N/Message';
 import { updateSettings, updateNode } from '@mapstore/actions/layers';
 import { layersSelector } from '@mapstore/selectors/layers';
-import { fromDataLayerSelector, toDataLayerSelector } from '../selectors/freeRangePicker';
+import { fromDataLayerSelector, toDataLayerSelector, isFreeRangePluginLoadedSelector } from '../selectors/freeRangePicker';
 import { compose } from 'redux';
 import { isLayerLoadingSelector } from '../selectors/exportImage';
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO} from '../utils/ManageDateUtils';
@@ -42,15 +43,15 @@ Plugin configuration
         "id": "mapstore-freerangepicker-map",
         "defaultUrlSelectDate": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
         "variabileSelectDate": "prec",
-        "isFetchAvailableDates": false,  // If true, fetch the first and last available dates calling fetchSelectDate action
+        "isFetchAvailableDates": false,
         "periodTypes": [
-          { "key": 1, "label": "5 giorni", "min": 1, "max": 5 },
-          { "key": 7, "label": "8 giorni", "min": 6, "max": 8 },
-          { "key": 10, "label": "20 giorni", "min": 9, "max": 20, "isDefault": true  },
-          { "key": 30, "label": "60 giorni", "min": 21, "max": 60 },
-          { "key": 120, "label": "160 giorni", "min": 61, "max": 160 },
-          { "key": 180, "label": "250 giorni", "min": 161, "max": 250 },
-          { "key": 365, "label": "366 giorni", "min": 251, "max": 366 }
+          { "key": 1, "min": 0, "max": 5 },
+          { "key": 7, "min": 6, "max": 8 },
+          { "key": 10, "min": 9, "max": 20, "isDefault": true  },
+          { "key": 30, "min": 21, "max": 60 },
+          { "key": 120, "min": 61, "max": 160 },
+          { "key": 180, "min": 161, "max": 250 },
+          { "key": 365, "min": 251, "max": 366 }
       ],
         "variabiliMeteo": {
           "precipitazione": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima","Pioggia_Cumulata_Giornaliera"],
@@ -294,25 +295,23 @@ class FreeRangePicker extends React.Component {
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        isCollapsedPlugin: state?.freerangepicker?.isCollapsedPlugin,
-        fromData: state?.freerangepicker?.fromData,
-        toData: state?.freerangepicker?.toData,
-        fromDataLayer: fromDataLayerSelector(state),
-        settings: state?.layers?.settings || {expanded: false, options: {opacity: 1}},
-        layers: layersSelector(state),
-        showFreeRangePicker: (!state?.fixedrangepicker?.showFixedRangePicker ) ? true : false,
-        alertMessage: state?.freerangepicker?.alertMessage || null,
-        isInteractionDisabled: isLayerLoadingSelector(state),
-        shiftRight: state.controls.drawer ? state.controls.drawer.enabled : false,
-        showChangeRangePickerButton: state.fixedrangepicker.isPluginLoaded ? true : false,
-        isPluginLoaded: state?.freerangepicker?.isPluginLoaded,
-        firstAvailableDate: state?.freerangepicker?.firstAvailableDate,
-        lastAvailableDate: state?.freerangepicker?.lastAvailableDate,
-        toDataLayer: toDataLayerSelector(state)
-    };
-};
+const mapStateToProps = createStructuredSelector({
+    isCollapsedPlugin: (state) => state?.freerangepicker?.isCollapsedPlugin,
+    fromData: (state) => state?.freerangepicker?.fromData,
+    toData: (state) => state?.freerangepicker?.toData,
+    fromDataLayer: fromDataLayerSelector,
+    settings: (state) => state?.layers?.settings || { expanded: false, options: { opacity: 1 } },
+    layers: layersSelector,
+    showFreeRangePicker: (state) => !state?.fixedrangepicker?.showFixedRangePicker,
+    alertMessage: (state) => state?.freerangepicker?.alertMessage || null,
+    isInteractionDisabled: isLayerLoadingSelector,
+    shiftRight: (state) => state?.controls?.drawer?.enabled || false,
+    showChangeRangePickerButton: (state) => state.fixedrangepicker.isPluginLoaded,
+    isPluginLoaded: isFreeRangePluginLoadedSelector,
+    firstAvailableDate: (state) => state?.freerangepicker?.firstAvailableDate,
+    lastAvailableDate: (state) => state?.freerangepicker?.lastAvailableDate,
+    toDataLayer: toDataLayerSelector
+});
 
 const FreeRangePickerPlugin = connect(mapStateToProps, {
     onMarkPluginAsLoaded: markFreeRangeAsLoaded,

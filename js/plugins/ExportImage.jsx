@@ -29,13 +29,54 @@ momentLocaliser(moment);
 
 const PLUGIN_GLYPH_ICON = "export";
 
-/**
- * ExportImage component
- *
- * This component acts as a container for the ExportImage plugin.
- * It wraps the content inside a Dialog component with maskLoading enabled,
- * so that a loading mask (with react-spinkit spinner) is displayed during loading.
- */
+/*
+Plugin configuration
+"name": "ExportImage",
+      "defaultConfig": {
+        "defaultUrlExportImage": "geoportale.lamma.rete.toscana.it/geoclima_api/gdownload_image/download-image",
+        "timeUnit": "YYYY-MM-DD",
+        "variabiliMeteo": {
+          "precipitazione": ["Pioggia_Anomalia_perc", "Pioggia_Anomalia_mm", "Pioggia_Cumulata", "Pioggia_Cumulata_clima","Pioggia_Cumulata_Giornaliera"],
+          "temperatura": ["Temperatura_Media", "Temperatura_Media_Anomalia", "Temperatura_Minima", "Temperatura_Minima_Anomalia",
+                  "Temperatura_Massima", "Temperatura_Massima_Anomalia", "Temperatura_Media_clima", "Temperatura_Massima_clima", "Temperatura_Minima_clima"],
+          "evapotraspirazione": ["Evapotraspirazione", "Evapotraspirazione_Anomalia_mm", "Evapotraspirazione_Anomalia_perc", "Evapotraspirazione_clima"],
+          "bilancioIdricoSemplificato": ["BilancioIdricoSemplificato", "BilancioIdricoSemplificato_Anomalia_mm", "BilancioIdricoSemplificato_Anomalia_perc",
+                  "BilancioIdricoSemplificato_clima"],
+          "spi": [ "spi1", "spi3", "spi6", "spi12"],
+          "spei":[ "spei1", "spei3", "spei6", "spei12"]
+        },
+        "tabList": [
+            {"id": "variableList", "name": "Variabili Meteo", "groupList": [
+                                                                  { "id": "Pioggia_Cumulata", "name": "Pioggia Cumulata" },
+                                                                  { "id": "Pioggia_Anomalia_mm", "name": "Pioggia Anomalia (mm)" },
+                                                                  { "id": "Pioggia_Anomalia_perc", "name": "Pioggia Anomalia (%)" },
+                                                                  { "id": "Temperatura_Media", "name": "Temperatura Media" },
+                                                                  { "id": "Temperatura_Media_Anomalia", "name": "Temperatura Media Anomalia" },
+                                                                  { "id": "Temperatura_Minima", "name": "Temperatura Minima" },
+                                                                  { "id": "Temperatura_Minima_Anomalia", "name": "Temperatura Minima Anomalia" },
+                                                                  { "id": "Temperatura_Massima", "name": "Temperatura Massima" },
+                                                                  { "id": "Temperatura_Massima_Anomalia", "name": "Temperatura Massima Anomalia" }
+                                                              ],
+                                                              "menuType": "single_select"
+              },
+              {"id": "spiList", "name": "SPI", "groupList": [
+                { "id": "spi1", "name": "SPI-1" },
+                { "id": "spi3", "name": "SPI-3" },
+                { "id": "spi6", "name": "SPI-6" },
+                { "id": "spi12", "name": "SPI-12" }
+            ],
+            "menuType": "single_select"
+          },
+          {"id": "speiList", "name": "SPEI", "groupList": [
+            { "id": "spei1", "name": "SPEI-1" },
+            { "id": "spei3", "name": "SPEI-3" },
+            { "id": "spei6", "name": "SPEI-6" },
+            { "id": "spei12", "name": "SPEI-12" }
+          ],
+          "menuType": "single_select"
+          }]
+      }
+*/
 const ExportImage = ({
     active,
     defaultUrlExportImage,

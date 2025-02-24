@@ -6,12 +6,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 import React from 'react';
+import { createStructuredSelector } from 'reselect';
 import PropTypes from 'prop-types';
 import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-bootstrap';
 import Message from '@mapstore/components/I18N/Message';
 import { updateSettings, updateNode } from '@mapstore/actions/layers';
 import { layersSelector } from '@mapstore/selectors/layers';
-import { fromDataLayerSelector, toDataLayerSelector } from '../selectors/fixedRangePicker';
+import { fromDataFormSelector, fromDataLayerSelector, toDataFormSelector, toDataLayerSelector,
+    isFixedRangePluginLoadedSelector, showFixedRangePickerSelector } from '../selectors/fixedRangePicker';
 import { compose } from 'redux';
 import { changePeriodToData, changePeriod, toggleRangePickerPlugin, openAlert,
     closeAlert, collapsePlugin, markFixedRangeAsLoaded, markFixedRangeAsNotLoaded } from '../actions/fixedrangepicker';
@@ -21,7 +23,6 @@ import { FIXED_RANGE, isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../utils/ManageDateUtils';
 import { connect } from 'react-redux';
 import assign from 'object-assign';
-import moment from 'moment';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
 import './rangepicker.css';
 import RangePickerInfo from '../components/datepickers/RangePickerInfo';
@@ -32,6 +33,7 @@ import fixedrangepicker from '../reducers/fixedrangepicker';
 import layers from '@mapstore/reducers/layers';
 
 import * as rangePickerEpics from '../epics/dateRangeConfig';
+import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
 
@@ -397,26 +399,24 @@ class FixedRangePicker extends React.Component {
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        isCollapsedPlugin: state?.fixedrangepicker?.isCollapsedPlugin,
-        fromData: state?.fixedrangepicker?.fromData || moment(state?.fixedrangepicker?.lastAvailableDate).clone().subtract(20, 'days').toDate(),
-        fromDataLayer: fromDataLayerSelector(state),
-        toData: state?.fixedrangepicker?.toData || state?.fixedrangepicker?.lastAvailableDate,
-        periodType: state?.fixedrangepicker?.periodType || { key: 10, label: "20 giorni", min: 9, max: 20, isDefault: true  },
-        settings: state?.layers?.settings || { expanded: false, options: { opacity: 1 } },
-        layers: layersSelector(state),
-        showFixedRangePicker: (state?.fixedrangepicker?.showFixedRangePicker) ? true : false,
-        alertMessage: state?.fixedrangepicker?.alertMessage || null,
-        isInteractionDisabled: isLayerLoadingSelector(state),
-        shiftRight: state.controls.drawer ? state.controls.drawer.enabled : false,
-        showChangeRangePickerButton: state.freerangepicker?.isPluginLoaded ? true : false,
-        isPluginLoaded: state?.fixedrangepicker?.isPluginLoaded,
-        firstAvailableDate: state?.fixedrangepicker?.firstAvailableDate,
-        lastAvailableDate: state?.fixedrangepicker?.lastAvailableDate,
-        toDataLayer: toDataLayerSelector(state)
-    };
-};
+const mapStateToProps = createStructuredSelector({
+    isCollapsedPlugin: (state) => state?.fixedrangepicker?.isCollapsedPlugin,
+    fromData: fromDataFormSelector,
+    fromDataLayer: fromDataLayerSelector,
+    periodType: (state) => state?.fixedrangepicker?.periodType || { key: 10, label: "20 giorni", min: 9, max: 20, isDefault: true },
+    settings: (state) => state?.layers?.settings || { expanded: false, options: { opacity: 1 } },
+    layers: layersSelector,
+    showFixedRangePicker: (state) => !!state?.fixedrangepicker?.showFixedRangePicker,
+    alertMessage: (state) => state?.fixedrangepicker?.alertMessage || null,
+    isInteractionDisabled: isLayerLoadingSelector,
+    shiftRight: (state) => !!state?.controls?.drawer?.enabled,
+    showChangeRangePickerButton: showFixedRangePickerSelector,
+    isPluginLoaded: isFixedRangePluginLoadedSelector,
+    firstAvailableDate: (state) => state?.fixedrangepicker?.firstAvailableDate,
+    lastAvailableDate: (state) => state?.fixedrangepicker?.lastAvailableDate,
+    toData: toDataFormSelector,
+    toDataLayer: toDataLayerSelector
+});
 
 const FixedRangePickerPlugin = connect(mapStateToProps, {
     onMarkPluginAsLoaded: markFixedRangeAsLoaded,

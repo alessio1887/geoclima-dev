@@ -33,6 +33,10 @@ import { CLICK_ON_MAP } from '../../MapStore2/web/client/actions/map';
 import { LOADING } from '@mapstore/actions/maps';
 import API from '../api/GeoClimaApi';
 import { FIXED_RANGE, FREE_RANGE, getVisibleLayers } from '../utils/VariabiliMeteoUtils';
+import DateAPI from '../utils/ManageDateUtils';
+import { isFixedRangePluginLoadedSelector, showFixedRangePickerSelector,
+    fromDataFormSelector as fromDataFixedRangeForm, toDataFormSelector as toDataFixedRangeForm } from '../selectors/fixedRangePicker';
+import { isFreeRangePluginLoadedSelector, fromDataFormSelector as fromDataFreeRangeForm, toDataFormSelector as toDataFreeRangeForm } from '../selectors/freeRangePicker';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -78,32 +82,28 @@ const getVisibleGroups = (groupMS2List = []) => {
 
 // Function to get default values
 const getDefaultValues = (idVariabiliLayers, appState) => {
-    const toData = appState.infochart.lastAvailableDate;
-    const fromData = moment(toData).subtract(1, 'month').toDate();
     const defaultVariable = Object.keys(idVariabiliLayers)[0] || '';
-    // const defaultPeriod = appState.infochart.periodTypes.find(period => period.isDefault);
-    const defaultPeriod = appState.infochart.periodType;
     return {
         variable: Object.keys(idVariabiliLayers)[0] || '',
-        fromData,
-        toData,
-        periodType: defaultPeriod,
+        // fromData,
+        // toData,
+        // periodType: defaultPeriod,
         idTab: getIdTabFromVariable(defaultVariable, appState.infochart.tabList)
     };
 };
 
-// Function to get values when the InfoChart panel is visible
-const getInfoChartValues = (appState) => {
-    const { variables, fromData, toData, periodType,  idTab} = appState.infochart.infoChartData;
-    // const periodTypeAdjusted = rangeManager === FIXED_RANGE ? periodType : "1";
-    return {
-        variable: variables,
-        fromData,
-        toData,
-        periodType: periodType,
-        idTab: idTab
-    };
-};
+// // Function to get values when the InfoChart panel is visible
+// const getInfoChartValues = (appState) => {
+//     const { variables, idTab} = appState.infochart.infoChartData;
+//     const periodTypeAdjusted = rangeManager === FIXED_RANGE ? periodType : "1";
+//     return {
+//         variable: variables,
+//         fromData,
+//         toData,
+//         periodType: appState.infochart.periodType,
+//         idTab: idTab
+//     };
+// };
 
 /**
  * This method returns the first visible layer from an array of layers,
@@ -187,18 +187,18 @@ const setVisVariable = (visibleLayer, idVariabiliLayers) => {
 const getVisibleLayerValues = (visibleLayer, appState) => {
     const idVariabiliLayers = appState.infochart.idVariabiliLayers;
     const variable = setVisVariable(visibleLayer.name, idVariabiliLayers);
-    const fromData = visibleLayer.params?.fromData || getDefaultValues(idVariabiliLayers, appState).fromData;
-    const toData = visibleLayer.params?.toData || getDefaultValues(idVariabiliLayers, appState).toData;
-    const periodType = appState.fixedrangepicker?.showFixedRangePicker
-        ? appState.fixedrangepicker?.periodType
-        : getDefaultValues(idVariabiliLayers, appState).periodType;
+    // const fromData = visibleLayer.params?.fromData || getDefaultValues(idVariabiliLayers, appState).fromData;
+    // const toData = visibleLayer.params?.toData || getDefaultValues(idVariabiliLayers, appState).toData;
+    // const periodType = appState.fixedrangepicker?.showFixedRangePicker
+    // ? appState.fixedrangepicker?.periodType
+    // : getDefaultValues(idVariabiliLayers, appState).periodType;
     // Dynamically determine idTab based on the variable using the tabList from appState
     const idTab = getIdTabFromVariable(variable, appState.infochart.tabList); // Use the function to get idTab
     return {
         variable,
-        fromData,
-        toData,
-        periodType,
+        // fromData,
+        // toData,
+        // periodType,
         idTab // Added idTab
     };
 };
@@ -208,20 +208,12 @@ const getVisibleLayerValues = (visibleLayer, appState) => {
  *
  * @param {Object} appState - The global state of the application.
  * @param {Object|null} visibleLayer - The currently selected visible layer, or `null` if none are available.
- * @param {string} rangeManager - The type of range manager (e.g., FIXED_RANGE or FREE_RANGE).
  * @param {Object} idVariabiliLayers - An object mapping layer IDs to their respective variables.
  * @returns {Object} - An object containing:
  *   - `variable` (string): The selected variable.
- *   - `fromData` (string): The start date for the data range.
- *   - `toData` (string): The end date for the data range.
- *   - `periodType` (string): The type of period used for the data range.
  *   - 'idTab' (string): chart's type
  */
-const getChartVariables = (appState, rangeManager, idVariabiliLayers) => {
-    // If the InfoChart panel is visible, use data from appState
-    if (appState.infochart.showInfoChartPanel) {
-        return getInfoChartValues(appState);
-    }
+const getVariableFromLayer = (appState, idVariabiliLayers) => {
     // If there is a visible layer, use the layer's values
     const visibleLayer = getFirstVisibleLayer(getVisibleLayers(appState.layers.flat, idVariabiliLayers), getVisibleGroups(appState.layers.groups));
     if (visibleLayer) {
@@ -356,6 +348,75 @@ const toggleControlEpic = (action$, store) => {
 };
 
 
+// const clickedPointCheckEpic = (action$, store) =>
+//     action$.ofType(CLICK_ON_MAP)
+//         .switchMap((action) => {
+//             const appState = store.getState();
+//             if (appState.controls?.chartinfo?.enabled) {
+//                 const idVariabiliLayers = appState.infochart.idVariabiliLayers;
+//                 const timeUnit = appState.infochart.timeUnit;
+//                 const rangeManager = appState.fixedrangepicker?.showFixedRangePicker ? FIXED_RANGE : FREE_RANGE;
+//                 const { variable, fromData, toData, periodType, idTab (
+//                     appState,
+//                     rangeManager,
+//                     idVariabiliLayers
+//                 );
+//                 let actions = [];
+//                 if (!appState.infochart.showInfoChartPanel) {
+//                     actions.push(setRangeManager(rangeManager));
+//                     // actions.push(changePeriod(periodType));
+//                     actions.push(changeFixedRangeToData(new Date(toData)));
+//                     actions.push(changeFromData(new Date(fromData)));
+//                     actions.push(changeToData(new Date(toData)));
+//                     actions.push(changeTab(idTab));
+//                     actions.push(changeChartVariable(idTab,
+//                         [getVariableParamsFromTab(idTab, variable, appState.infochart.tabList)]));
+//                 }
+//                 actions.push(setInfoChartVisibility(true));
+//                 actions.push(fetchInfoChartData({
+//                     latlng: action.point.latlng,
+//                     toData: moment(toData).format(timeUnit),
+//                     fromData: moment(fromData).format(timeUnit),
+//                     variables: variable,
+//                     periodType: periodType,
+//                     idTab: idTab
+//                 }));
+//                 actions.push(featureInfoClick(action.point));
+//                 actions.push(purgeMapInfoResults());
+//                 return Observable.of(...actions);
+//             }
+//             return Observable.empty();
+//         });
+
+/**
+ * Retrieves the date range from the active range picker plugin.
+ * If a plugin is active, it extracts the date range from the corresponding state.
+ * If no plugin is active or the selected range is invalid, it falls back to the default date range.
+ *
+ * @param {Object} appState - The application state.
+ * @param {string} timeUnit - The time unit format for date calculations.
+ * @returns {Object} An object containing fromData, toData, and rangeManager.
+ */
+const getDateFromRangePicker = (appState, timeUnit) => {
+    let fromData = null; let toData = null;
+    let rangeManager = FIXED_RANGE;
+    if (isFixedRangePluginLoadedSelector(appState) && showFixedRangePickerSelector(appState)) {
+        fromData = fromDataFixedRangeForm(appState);
+        toData = toDataFixedRangeForm(appState);
+    } else if (isFreeRangePluginLoadedSelector(appState) && !showFixedRangePickerSelector(appState)) {
+        rangeManager = FREE_RANGE;
+        fromData = fromDataFreeRangeForm(appState);
+        toData = toDataFreeRangeForm(appState);
+    }
+    // Se nessun plugin è attivo o il range non è valido, usa le date di default
+    if (!fromData || !toData ||
+        !DateAPI.validateDateRange(fromData, toData, appState.infochart.firstAvailableDate, appState.infochart.lastAvailableDate, timeUnit).isValid) {
+        toData = appState.infochart.lastAvailableDate;
+        fromData = moment(toData).clone().subtract(appState.infochart.periodType.max, 'days').toDate();
+    }
+    return { fromData, toData, rangeManager };
+};
+
 /**
  * Redux-Observable epic that listens for the CLICK_ON_MAP action and handles updating
  * the InfoChart panel state and fetching its data.
@@ -366,42 +427,48 @@ const toggleControlEpic = (action$, store) => {
  */
 const clickedPointCheckEpic = (action$, store) =>
     action$.ofType(CLICK_ON_MAP)
+        .filter(() => store.getState().controls?.chartinfo?.enabled)
         .switchMap((action) => {
+
             const appState = store.getState();
-            if (appState.controls?.chartinfo?.enabled) {
-                const idVariabiliLayers = appState.infochart.idVariabiliLayers;
-                const timeUnit = appState.infochart.timeUnit;
-                const rangeManager = appState.fixedrangepicker?.showFixedRangePicker ? FIXED_RANGE : FREE_RANGE;
-                const { variable, fromData, toData, periodType, idTab } = getChartVariables(
-                    appState,
-                    rangeManager,
-                    idVariabiliLayers
-                );
-                let actions = [];
-                if (!appState.infochart.showInfoChartPanel) {
-                    actions.push(setRangeManager(rangeManager));
-                    // actions.push(changePeriod(periodType));
-                    actions.push(changeFixedRangeToData(new Date(toData)));
-                    actions.push(changeFromData(new Date(fromData)));
-                    actions.push(changeToData(new Date(toData)));
-                    actions.push(changeTab(idTab));
-                    actions.push(changeChartVariable(idTab,
-                        [getVariableParamsFromTab(idTab, variable, appState.infochart.tabList)]));
-                }
-                actions.push(setInfoChartVisibility(true));
-                actions.push(fetchInfoChartData({
-                    latlng: action.point.latlng,
-                    toData: moment(toData).format(timeUnit),
-                    fromData: moment(fromData).format(timeUnit),
-                    variables: variable,
-                    periodType: periodType,
-                    idTab: idTab
-                }));
-                actions.push(featureInfoClick(action.point));
-                actions.push(purgeMapInfoResults());
-                return Observable.of(...actions);
+            const timeUnit = appState.infochart.timeUnit;
+            let actions = [];
+            let fromData; let toData; let variable; let idTab;
+
+            if (!appState.infochart.showInfoChartPanel) {
+                const { fromData: fromDataTmp, toData: toDataTmp, rangeManager } = getDateFromRangePicker(appState, timeUnit);
+                const { variable: variableTmp, idTab: idTabTmp } = getVariableFromLayer(appState, appState.infochart.idVariabiliLayers);
+                fromData = fromDataTmp;
+                toData = toDataTmp;
+                variable = variableTmp;
+                idTab = idTabTmp;
+                actions.push(setRangeManager(rangeManager));
+                actions.push(changeFixedRangeToData(new Date(toData)));
+                actions.push(changeFromData(new Date(fromData)));
+                actions.push(changeToData(new Date(toData)));
+                actions.push(changeTab(idTab));
+                actions.push(changeChartVariable(idTab,
+                    [getVariableParamsFromTab(idTab, variable, appState.infochart.tabList)]));
+            } else {
+                // Se InfoChart è già aperto, le date e la variabile non cambiano.
+                fromData = appState.infochart.infoChartData.fromData;
+                toData = appState.infochart.infoChartData.toData;
+                variable = appState.infochart.infoChartData.variables;
+                idTab = appState.infochart.infoChartData.idTab;
             }
-            return Observable.empty();
+
+            actions.push(setInfoChartVisibility(true));
+            actions.push(fetchInfoChartData({
+                latlng: action.point.latlng,
+                toData: moment(toData).format(timeUnit),
+                fromData: moment(fromData).format(timeUnit),
+                variables: variable,
+                periodType: appState.infochart.periodType,
+                idTab: idTab
+            }));
+            actions.push(featureInfoClick(action.point));
+            actions.push(purgeMapInfoResults());
+            return Observable.of(...actions);
         });
 
 
