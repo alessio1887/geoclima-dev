@@ -60,7 +60,7 @@ const ExportImageForm = ({
                 styleLabels="labels-exportimage"
                 lablesType="gcapp.exportImage"
                 format={timeUnit}
-                isReadOnly={true}
+                isReadOnly
             />
             <ButtonGroup id="button-exportimage-container">
                 <div id="button-exportimage-apicall-clear">
