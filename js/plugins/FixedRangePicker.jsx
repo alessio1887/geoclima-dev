@@ -299,12 +299,12 @@ class FixedRangePicker extends React.Component {
                     minDate={this.props.firstAvailableDate}
                     maxDate={this.props.lastAvailableDate}
                     toData={this.props.toData}
-                    onChangeToData={this.props.onChangePeriodToData}
+                    onChangeToData={this.handleChangeToData}
                     isInteractionDisabled={this.props.isInteractionDisabled}
                     periodType={this.props.periodType}
                     periodTypes={this.props.periodTypes}
                     format={this.props.timeUnit}
-                    onChangePeriod={this.handleChangePeriod}
+                    onChangePeriod={this.handleChangePeriodType}
                     styleLabels="labels-fixedrangepicker"
                 />
                 <ButtonGroup id="button-rangepicker-container">
@@ -337,28 +337,25 @@ class FixedRangePicker extends React.Component {
             />
         );
     }
-    handleChangePeriod = (periodType) => {
-        this.props.onChangePeriod(periodType);
-        this.handleApplyPeriod(periodType);
+    handleChangePeriodType = (newPeriodType) => {
+        this.props.onChangePeriod(newPeriodType);
+        this.handleApplyPeriod(newPeriodType, this.props.toData);
     }
-    handleApplyPeriod = (periodType = null) => {
-        const toData = this.props.toData;
-        let fromData;
-        let mapNameSuffix;
-        if (!periodType) {
-            fromData = this.props.fromData;
-            mapNameSuffix = this.props.periodType.key;
-        } else {
-            fromData =  moment(toData).clone().subtract(Number(periodType.max), 'days').toDate();
-            mapNameSuffix = periodType.key;
-        }
-        if (!fromData || !toData || isNaN(fromData) || isNaN(toData) || !(toData instanceof Date) || !(fromData instanceof Date)) {
-            // restore defult values
-            this.props.onChangePeriodToData(new Date(this.state.defaultToData));
+    handleChangeToData = (newToData) => {
+        this.props.onChangePeriodToData(newToData);
+        this.handleApplyPeriod(this.props.periodType, newToData);
+    }
+    handleApplyPeriod = (newPeriodType, newToData) => {
+        if (!newPeriodType || !newToData || isNaN(newToData) || !(newToData instanceof Date)) {
+            this.props.onChangePeriodToData(new Date(this.state.defaultToData)); // ripristina i valori di default
             return;
         }
-        // Verifiche sulle date
-        const validation = DateAPI.validateDateRange(fromData, toData, this.props.firstAvailableDate, this.props.lastAvailableDate, this.props.timeUnit);
+        const newFromData = moment(newToData).clone().subtract(Number(newPeriodType.max), 'days').toDate();
+        const mapNameSuffix = newPeriodType.key;
+        // Verifica dell'intervallo di date
+        const validation = DateAPI.validateDateRange(newFromData, newToData,
+            this.props.firstAvailableDate, this.props.lastAvailableDate, this.props.timeUnit
+        );
         if (!validation.isValid) {
             this.props.onOpenAlert(validation.errorMessage);
             return;
@@ -367,13 +364,15 @@ class FixedRangePicker extends React.Component {
             this.props.onCloseAlert();
         }
         this.updateParams({
-            fromData: fromData,
-            toData: toData,
-            mapNameSuffix: mapNameSuffix
+            fromData: newFromData,
+            toData: newToData,
+            mapNameSuffix
         });
         // set default values
-        this.setState({ defaultFromData: new Date(fromData)});
-        this.setState({ defaultToData: new Date(toData)});
+        this.setState({
+            defaultFromData: new Date(newFromData),
+            defaultToData: new Date(newToData)
+        });
     }
     updateParams = (datesParam, onUpdateNode = true) => {
         this.props.layers.map((layer) => {
