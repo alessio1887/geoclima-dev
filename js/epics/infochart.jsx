@@ -21,6 +21,7 @@ import {
     setInfoChartVisibility,
     fetchInfoChartData,
     setRangeManager,
+    changePeriod,
     changeFromData,
     changeToData,
     changeFixedRangeToData,
@@ -34,9 +35,10 @@ import { LOADING } from '@mapstore/actions/maps';
 import API from '../api/GeoClimaApi';
 import { FIXED_RANGE, FREE_RANGE, getVisibleLayers } from '../utils/VariabiliMeteoUtils';
 import DateAPI from '../utils/ManageDateUtils';
-import { isFixedRangePluginLoadedSelector, showFixedRangePickerSelector,
+import { isFixedRangePluginLoadedSelector, showFixedRangePickerSelector, periodTypeSelector,
     fromDataFormSelector as fromDataFixedRangeForm, toDataFormSelector as toDataFixedRangeForm } from '../selectors/fixedRangePicker';
-import { isFreeRangePluginLoadedSelector, fromDataFormSelector as fromDataFreeRangeForm, toDataFormSelector as toDataFreeRangeForm } from '../selectors/freeRangePicker';
+import { isFreeRangePluginLoadedSelector, fromDataFormSelector as fromDataFreeRangeForm,
+    toDataFormSelector as toDataFreeRangeForm } from '../selectors/freeRangePicker';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -398,11 +400,12 @@ const toggleControlEpic = (action$, store) => {
  * @returns {Object} An object containing fromData, toData, and rangeManager.
  */
 const getDateFromRangePicker = (appState, timeUnit) => {
-    let fromData = null; let toData = null;
+    let fromData = null; let toData = null; let periodType = null;
     let rangeManager = FIXED_RANGE;
     if (isFixedRangePluginLoadedSelector(appState) && showFixedRangePickerSelector(appState)) {
         fromData = fromDataFixedRangeForm(appState);
         toData = toDataFixedRangeForm(appState);
+        periodType = periodTypeSelector(appState);
     } else if (isFreeRangePluginLoadedSelector(appState) && !showFixedRangePickerSelector(appState)) {
         rangeManager = FREE_RANGE;
         fromData = fromDataFreeRangeForm(appState);
@@ -412,9 +415,10 @@ const getDateFromRangePicker = (appState, timeUnit) => {
     if (!fromData || !toData ||
         !DateAPI.validateDateRange(fromData, toData, appState.infochart.firstAvailableDate, appState.infochart.lastAvailableDate, timeUnit).isValid) {
         toData = appState.infochart.lastAvailableDate;
+        // Perche in componentDidMount() viene settato il defaultPeriod
         fromData = moment(toData).clone().subtract(appState.infochart.periodType.max, 'days').toDate();
     }
-    return { fromData, toData, rangeManager };
+    return { fromData, toData, periodType, rangeManager };
 };
 
 /**
@@ -433,13 +437,15 @@ const clickedPointCheckEpic = (action$, store) =>
             const appState = store.getState();
             const timeUnit = appState.infochart.timeUnit;
             let actions = [];
-            let fromData; let toData; let variable; let idTab;
-
+            let fromData; let toData;
+            let variable; let idTab;
+            let periodType = null;
             if (!appState.infochart.showInfoChartPanel) {
-                const { fromData: fromDataTmp, toData: toDataTmp, rangeManager } = getDateFromRangePicker(appState, timeUnit);
+                const { fromData: fromDataTmp, toData: toDataTmp, periodType: periodTypeTmp, rangeManager } = getDateFromRangePicker(appState, timeUnit);
                 const { variable: variableTmp, idTab: idTabTmp } = getVariableFromLayer(appState, appState.infochart.idVariabiliLayers);
                 fromData = fromDataTmp;
                 toData = toDataTmp;
+                periodType = periodTypeTmp;
                 variable = variableTmp;
                 idTab = idTabTmp;
                 actions.push(setRangeManager(rangeManager));
@@ -449,12 +455,16 @@ const clickedPointCheckEpic = (action$, store) =>
                 actions.push(changeTab(idTab));
                 actions.push(changeChartVariable(idTab,
                     [getVariableParamsFromTab(idTab, variable, appState.infochart.tabList)]));
+                if (periodType) {
+                    actions.push(changePeriod(periodType));
+                }
             } else {
                 // Se InfoChart è già aperto, le date e la variabile non cambiano.
                 fromData = appState.infochart.infoChartData.fromData;
                 toData = appState.infochart.infoChartData.toData;
                 variable = appState.infochart.infoChartData.variables;
                 idTab = appState.infochart.infoChartData.idTab;
+                periodType = appState.infochart.periodType;
             }
 
             actions.push(setInfoChartVisibility(true));
@@ -463,7 +473,7 @@ const clickedPointCheckEpic = (action$, store) =>
                 toData: moment(toData).format(timeUnit),
                 fromData: moment(fromData).format(timeUnit),
                 variables: variable,
-                periodType: appState.infochart.periodType,
+                periodType: periodType || appState.infochart.periodType,
                 idTab: idTab
             }));
             actions.push(featureInfoClick(action.point));

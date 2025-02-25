@@ -13,7 +13,7 @@ import Message from '@mapstore/components/I18N/Message';
 import { updateSettings, updateNode } from '@mapstore/actions/layers';
 import { layersSelector } from '@mapstore/selectors/layers';
 import { fromDataFormSelector, fromDataLayerSelector, toDataFormSelector, toDataLayerSelector,
-    isFixedRangePluginLoadedSelector, showFixedRangePickerSelector } from '../selectors/fixedRangePicker';
+    isFixedRangePluginLoadedSelector, showFixedRangePickerSelector, periodTypeSelector } from '../selectors/fixedRangePicker';
 import { compose } from 'redux';
 import { changePeriodToData, changePeriod, toggleRangePickerPlugin, openAlert,
     closeAlert, collapsePlugin, markFixedRangeAsLoaded, markFixedRangeAsNotLoaded } from '../actions/fixedrangepicker';
@@ -403,7 +403,7 @@ const mapStateToProps = createStructuredSelector({
     isCollapsedPlugin: (state) => state?.fixedrangepicker?.isCollapsedPlugin,
     fromData: fromDataFormSelector,
     fromDataLayer: fromDataLayerSelector,
-    periodType: (state) => state?.fixedrangepicker?.periodType || { key: 10, label: "20 giorni", min: 9, max: 20, isDefault: true },
+    periodType: periodTypeSelector,
     settings: (state) => state?.layers?.settings || { expanded: false, options: { opacity: 1 } },
     layers: layersSelector,
     showFixedRangePicker: (state) => !!state?.fixedrangepicker?.showFixedRangePicker,

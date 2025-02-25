@@ -26,6 +26,11 @@ export const toDataLayerSelector = createSelector(
     (fixedrangepicker) => fixedrangepicker?.toDataLayer || null
 );
 
+export const periodTypeSelector = createSelector(
+    [getFixedRangePickerState],
+    (fixedrangepicker) => fixedrangepicker?.periodType || { key: 10, label: "20 giorni", min: 9, max: 20, isDefault: true }
+);
+
 export const isFixedRangePluginLoadedSelector = createSelector(
     [getFixedRangePickerState],
     (fixedrangepicker) => fixedrangepicker?.isPluginLoaded || false
@@ -35,3 +40,4 @@ export const showFixedRangePickerSelector = createSelector(
     [getFixedRangePickerState],
     (fixedrangepicker) => fixedrangepicker?.showFixedRangePicker || false
 );
+

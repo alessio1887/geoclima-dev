@@ -771,12 +771,12 @@
          "variabileSelectDate": "prec",
          "isFetchAvailableDates": false,
         "periodTypes": [
-          { "key": 7, "label": "7 giorni", "max": 6 },
-          { "key": 10, "label": "10 giorni", "max": 9, "isDefault": true  },
-          { "key": 30, "label": "30 giorni", "max": 29 },
-          { "key": 120, "label": "90 giorni", "max": 89 },
-          { "key": 180, "label": "180 giorni", "max": 179 },
-          { "key": 365, "label": "365 giorni", "max": 364 }
+          { "key": "a", "label": "7 giorni", "max": 6 },
+          { "key": "b", "label": "10 giorni", "max": 9, "isDefault": true  },
+          { "key": "c", "label": "30 giorni", "max": 29 },
+          { "key": "d", "label": "90 giorni", "max": 89 },
+          { "key": "e", "label": "180 giorni", "max": 179 },
+          { "key": "f", "label": "365 giorni", "max": 364 }
       ],
           "tabList": [
             {"id": "variableList", "name": "Variabili Meteo", "groupList": [
