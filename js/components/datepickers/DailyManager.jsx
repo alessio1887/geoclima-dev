@@ -10,6 +10,7 @@ import { DateTimePicker } from 'react-widgets';
 import { ButtonGroup, Button, Glyphicon } from 'react-bootstrap';
 import Message from '../../../MapStore2/web/client/components/I18N/Message';
 import DateAPI, { DATE_FORMAT } from '../../utils/ManageDateUtils';
+import LoadingSpinner from '../misc/LoadingSpinner';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -96,22 +97,26 @@ const DailyManager = ({
         setDefaultToData(toData);
     };
 
+    const renderDateTimePicker = () => (
+        <DateTimePicker
+            culture="it"
+            time={ format === DATE_FORMAT ? false : true }
+            min={minDate}
+            max={maxDate}
+            format={format}
+            editFormat={format}
+            value={moment(toData, format).toDate()}
+            onChange={onChangePeriodToData}
+            disabled={isInteractionDisabled} />
+    );
+
     return (
         <div className="ms-dailydatepicker-container">
             <div className="ms-dailydatepicker-calendar">
                 <Button  onClick={() => changeDateTime('days', -1)} disabled={isDecrementDayDisabled}>
                     <Glyphicon glyph="glyphicon glyphicon-chevron-left" />
                 </Button>
-                <DateTimePicker
-                    culture="it"
-                    time={ format === DATE_FORMAT ? false : true }
-                    min={minDate}
-                    max={maxDate}
-                    format={format}
-                    editFormat={format}
-                    value={moment(toData, format).toDate()}
-                    onChange={onChangePeriodToData}
-                    disabled={isInteractionDisabled} />
+                { isInteractionDisabled ? ( <LoadingSpinner />) : ( renderDateTimePicker() )}
                 <Button onClick={() => changeDateTime('days', +1)} disabled={isIncrementDayDisabled}>
                     <Glyphicon glyph="glyphicon glyphicon-chevron-right" />
                 </Button>

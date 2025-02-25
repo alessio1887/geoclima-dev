@@ -2,9 +2,9 @@ import React from 'react';
 import { Label } from 'react-bootstrap';
 import Message from '../../../MapStore2/web/client/components/I18N/Message';
 import { DATE_FORMAT } from '../../utils/ManageDateUtils';
+import LoadingSpinner from '../misc/LoadingSpinner';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
-import Spinner from 'react-spinkit'; // Assumendo che tu stia usando react-spinkit per lo spinner
 momentLocaliser(moment);
 
 import './rangepickerinfo.css';
@@ -16,16 +16,6 @@ const RangePickerInfo = ({
     format,
     isInteractionDisabled
 }) => {
-    // Funzione per visualizzare lo spinner
-    const renderLoading = () => (
-        <div className="loading-overlay" aria-live="assertive">
-            <div className="loading-spinner">
-                <Message msgId="gcapp.loading" />
-                <Spinner spinnerName="circle" noFadeIn overrideSpinnerClassName="spinner" />
-            </div>
-        </div>
-    );
-
     const renderPickerInfo = () => (
         <>
          Dal: <span id="from-data-statistics">{moment(fromData).format(format)}</span>
@@ -47,7 +37,7 @@ const RangePickerInfo = ({
                         backgroundColor: isInteractionDisabled ? 'lightgray' : 'white'
                     }}
                 >
-                    { isInteractionDisabled ? ( renderLoading() ) : ( renderPickerInfo() )}
+                    { isInteractionDisabled ? ( <LoadingSpinner /> ) : ( renderPickerInfo() )}
                 </div>
             </strong>
         </div>
