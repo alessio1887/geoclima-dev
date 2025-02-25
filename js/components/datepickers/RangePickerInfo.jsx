@@ -47,7 +47,7 @@ const RangePickerInfo = ({
                         backgroundColor: isInteractionDisabled ? 'lightgray' : 'white'
                     }}
                 >
-                    { true ? ( renderLoading() ) : ( renderPickerInfo() )}
+                    { isInteractionDisabled ? ( renderLoading() ) : ( renderPickerInfo() )}
                 </div>
             </strong>
         </div>
