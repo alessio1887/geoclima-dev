@@ -38,10 +38,10 @@ export const getVisibleLayers = (layers, idVariabiliLayers) => {
         .filter(layer => layer.visibility && isVariabiliMeteoLayer(layer.name, idVariabiliLayers));
 };
 //  Function to calculate the intersection between two line segments
-function getIntersection(x1, y1, x2, y2, clim_y1, clim_y2) {
+function getIntersection(x1, y1, x2, y2, climY1, climY2) {
     // Calculate slopes
     const obsSlope = (y2 - y1) / (x2 - x1);
-    const climSlope = (clim_y2 - clim_y1) / (x2 - x1);
+    const climSlope = (climY2 - climY1) / (x2 - x1);
 
     // Check for parallel lines
     if (obsSlope === climSlope) {
@@ -49,7 +49,7 @@ function getIntersection(x1, y1, x2, y2, clim_y1, clim_y2) {
     }
 
     // Calculate intersection point
-    const intersectionX = (clim_y1 - y1 + obsSlope * x1 - climSlope * x1) / (obsSlope - climSlope);
+    const intersectionX = (climY1 - y1 + obsSlope * x1 - climSlope * x1) / (obsSlope - climSlope);
 
     // Calculate corresponding y value using either line's equation
     const yIntersect = y1 + obsSlope * (intersectionX - x1);
