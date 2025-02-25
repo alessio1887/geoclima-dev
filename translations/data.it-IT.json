@@ -32,6 +32,7 @@
             },
             "applyPeriodButton": " Applica periodo",
             "dailyDatePicker": "Seleziona una data",
+            "loading": "In caricamento...",
             "infochart": {
               "collapse": "Collassa",
               "expand": "Espandi"
