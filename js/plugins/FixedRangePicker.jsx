@@ -13,12 +13,12 @@ import Message from '@mapstore/components/I18N/Message';
 import { updateSettings, updateNode } from '@mapstore/actions/layers';
 import { layersSelector } from '@mapstore/selectors/layers';
 import { fromDataFormSelector, fromDataLayerSelector, toDataFormSelector, toDataLayerSelector,
-    isFixedRangePluginLoadedSelector, showFixedRangePickerSelector, periodTypeSelector } from '../selectors/fixedRangePicker';
+    isPluginLoadedSelector, showFixedRangePickerSelector, periodTypeSelector } from '../selectors/fixedRangePicker';
 import { compose } from 'redux';
 import { changePeriodToData, changePeriod, toggleRangePickerPlugin, openAlert,
     closeAlert, collapsePlugin, markFixedRangeAsLoaded, markFixedRangeAsNotLoaded } from '../actions/fixedrangepicker';
 import { fetchSelectDate } from '@js/actions/updateDatesParams';
-import { isLayerLoadingSelector } from '../selectors/exportImage';
+import { isLayerLoadingSelector, exportImageApiSelector } from '../selectors/exportImage';
 import { FIXED_RANGE, isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../utils/ManageDateUtils';
 import { connect } from 'react-redux';
@@ -133,6 +133,7 @@ class FixedRangePicker extends React.Component {
         isCollapsedPlugin: PropTypes.bool,
         isFetchAvailableDates: PropTypes.bool, // If true, fetch the first and last available dates calling fetchSelectDate action
         isInteractionDisabled: PropTypes.bool,
+        isLayerLoading: PropTypes.bool,
         isPluginLoaded: PropTypes.bool,
         lastAvailableDate: PropTypes.instanceOf(Date),
         onChangePeriodToData: PropTypes.func,
@@ -293,7 +294,7 @@ class FixedRangePicker extends React.Component {
                     fromData={this.props.fromDataLayer}
                     toData={this.props.toDataLayer}
                     format={this.props.timeUnit}
-                    isInteractionDisabled={this.props.isInteractionDisabled}
+                    isInteractionDisabled={this.props.isLayerLoading}
                 />
                 <FixedRangeManager
                     minDate={this.props.firstAvailableDate}
@@ -407,10 +408,11 @@ const mapStateToProps = createStructuredSelector({
     layers: layersSelector,
     showFixedRangePicker: (state) => !!state?.fixedrangepicker?.showFixedRangePicker,
     alertMessage: (state) => state?.fixedrangepicker?.alertMessage || null,
-    isInteractionDisabled: isLayerLoadingSelector,
+    isInteractionDisabled: (state) => isLayerLoadingSelector(state) || exportImageApiSelector(state),
+    isLayerLoading: isLayerLoadingSelector,
     shiftRight: (state) => !!state?.controls?.drawer?.enabled,
     showChangeRangePickerButton: showFixedRangePickerSelector,
-    isPluginLoaded: isFixedRangePluginLoadedSelector,
+    isPluginLoaded: isPluginLoadedSelector,
     firstAvailableDate: (state) => state?.fixedrangepicker?.firstAvailableDate,
     lastAvailableDate: (state) => state?.fixedrangepicker?.lastAvailableDate,
     toData: toDataFormSelector,

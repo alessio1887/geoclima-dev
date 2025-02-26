@@ -12,9 +12,9 @@ import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-boots
 import Message from '@mapstore/components/I18N/Message';
 import { updateSettings, updateNode } from '@mapstore/actions/layers';
 import { layersSelector } from '@mapstore/selectors/layers';
-import { fromDataLayerSelector, toDataLayerSelector, isFreeRangePluginLoadedSelector } from '../selectors/freeRangePicker';
+import { fromDataLayerSelector, toDataLayerSelector, isPluginLoadedSelector } from '../selectors/freeRangePicker';
 import { compose } from 'redux';
-import { isLayerLoadingSelector } from '../selectors/exportImage';
+import { exportImageApiSelector, isLayerLoadingSelector } from '../selectors/exportImage';
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO} from '../utils/ManageDateUtils';
 import { FREE_RANGE, isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 import { connect } from 'react-redux';
@@ -72,10 +72,13 @@ class FreeRangePicker extends React.Component {
         id: PropTypes.string,
         className: PropTypes.string,
         isCollapsedPlugin: PropTypes.bool,
-        isFetchAvailableDates: PropTypes.bool, // If true, fetch the first and last available dates calling fetchSelectDate action
         fromData: PropTypes.instanceOf(Date),
         fromDataLayer: PropTypes.instanceOf(Date),
         firstAvailableDate: PropTypes.instanceOf(Date),
+        isFetchAvailableDates: PropTypes.bool, // If true, fetch the first and last available dates calling fetchSelectDate action
+        isInteractionDisabled: PropTypes.bool,
+        isLayerLoading: PropTypes.bool,
+        isPluginLoaded: PropTypes.bool,
         lastAvailableDate: PropTypes.instanceOf(Date),
         onChangeFromData: PropTypes.func,
         onChangeToData: PropTypes.func,
@@ -95,9 +98,7 @@ class FreeRangePicker extends React.Component {
         showFreeRangePicker: PropTypes.bool, // serve per la visibilita del componente
         onToggleFreeRangePicker: PropTypes.func,
         alertMessage: PropTypes.string,
-        isInteractionDisabled: PropTypes.bool,
         shiftRight: PropTypes.bool,
-        isPluginLoaded: PropTypes.bool,
         settings: PropTypes.object,
         showChangeRangePickerButton: PropTypes.bool,
         timeUnit: PropTypes.string,
@@ -209,7 +210,7 @@ class FreeRangePicker extends React.Component {
                     fromData={this.props.fromDataLayer}
                     toData={this.props.toDataLayer}
                     format={this.props.timeUnit}
-                    isInteractionDisabled={this.props.isInteractionDisabled}
+                    isInteractionDisabled={this.props.isLayerLoading}
                 />
                 <FreeRangeManager
                     minDate={this.props.firstAvailableDate}
@@ -304,10 +305,11 @@ const mapStateToProps = createStructuredSelector({
     layers: layersSelector,
     showFreeRangePicker: (state) => !state?.fixedrangepicker?.showFixedRangePicker,
     alertMessage: (state) => state?.freerangepicker?.alertMessage || null,
-    isInteractionDisabled: isLayerLoadingSelector,
-    shiftRight: (state) => state?.controls?.drawer?.enabled || false,
+    isInteractionDisabled: (state) => isLayerLoadingSelector(state) || exportImageApiSelector(state),
+    isLayerLoading: isLayerLoadingSelector,
+    shiftRight: (state) => state?.controls?.drawer?.enabled,
     showChangeRangePickerButton: (state) => state.fixedrangepicker.isPluginLoaded,
-    isPluginLoaded: isFreeRangePluginLoadedSelector,
+    isPluginLoaded: isPluginLoadedSelector,
     firstAvailableDate: (state) => state?.freerangepicker?.firstAvailableDate,
     lastAvailableDate: (state) => state?.freerangepicker?.lastAvailableDate,
     toDataLayer: toDataLayerSelector

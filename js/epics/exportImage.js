@@ -70,7 +70,7 @@ const updateDatesExportImageEpic = (action$, store) =>
             if (!fromData || !toData) {
                 return Observable.of(errorLayerDateMissing(layerId, fromData, toData));
             }
-            return Observable.of(updateExportImageDates(layerId, fromData, toData));
+            return Observable.of(updateExportImageDates(fromData, toData, layerId));
         });
 
 export default updateDatesExportImageEpic;

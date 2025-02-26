@@ -31,7 +31,7 @@ export const periodTypeSelector = createSelector(
     (fixedrangepicker) => fixedrangepicker?.periodType || { key: 10, label: "20 giorni", min: 9, max: 20, isDefault: true }
 );
 
-export const isFixedRangePluginLoadedSelector = createSelector(
+export const isPluginLoadedSelector = createSelector(
     [getFixedRangePickerState],
     (fixedrangepicker) => fixedrangepicker?.isPluginLoaded || false
 );

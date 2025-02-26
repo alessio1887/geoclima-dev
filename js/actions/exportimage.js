@@ -19,7 +19,7 @@ export const EXPORTIMAGE_SUCCESS = 'EXPORTIMAGE:EXPORTIMAGE_SUCCESS';
 export const EXPORTIMAGE_LOADING = 'EXPORTIMAGE:EXPORT_IMAGE_LOADING';
 export const CLEAR_IMAGE_URL = 'EXPORTIMAGE:CLEAR_IMAGE_URL';
 
-export function updateExportImageDates(layerId, fromData, toData) {
+export function updateExportImageDates(fromData, toData, layerId) {
     return {
         type: UPDATE_DATES,
         layerId,

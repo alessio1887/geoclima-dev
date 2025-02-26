@@ -26,7 +26,7 @@ export const toDataLayerSelector = createSelector(
     (freerangepicker) => freerangepicker?.toDataLayer || null
 );
 
-export const isFreeRangePluginLoadedSelector = createSelector(
+export const isPluginLoadedSelector = createSelector(
     [getFreeRangePickerState],
     (freerangepicker) => freerangepicker?.isPluginLoaded || false
 );

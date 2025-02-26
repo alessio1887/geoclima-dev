@@ -35,9 +35,9 @@ import { LOADING } from '@mapstore/actions/maps';
 import API from '../api/GeoClimaApi';
 import { FIXED_RANGE, FREE_RANGE, getVisibleLayers } from '../utils/VariabiliMeteoUtils';
 import DateAPI from '../utils/ManageDateUtils';
-import { isFixedRangePluginLoadedSelector, showFixedRangePickerSelector, periodTypeSelector,
-    fromDataFormSelector as fromDataFixedRangeForm, toDataFormSelector as toDataFixedRangeForm } from '../selectors/fixedRangePicker';
-import { isFreeRangePluginLoadedSelector, fromDataFormSelector as fromDataFreeRangeForm,
+import { showFixedRangePickerSelector, periodTypeSelector, isPluginLoadedSelector as isFixedRangeLoaded,
+    fromDataFormSelector as fromDataFixedRangeForm, toDataFormSelector as toDataFixedRangeForm  } from '../selectors/fixedRangePicker';
+import { isPluginLoadedSelector as isFreeRangeLoaded, fromDataFormSelector as fromDataFreeRangeForm,
     toDataFormSelector as toDataFreeRangeForm } from '../selectors/freeRangePicker';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
@@ -402,11 +402,11 @@ const toggleControlEpic = (action$, store) => {
 const getDateFromRangePicker = (appState, timeUnit) => {
     let fromData = null; let toData = null; let periodType = null;
     let rangeManager = FIXED_RANGE;
-    if (isFixedRangePluginLoadedSelector(appState) && showFixedRangePickerSelector(appState)) {
+    if (isFixedRangeLoaded(appState) && showFixedRangePickerSelector(appState)) {
         fromData = fromDataFixedRangeForm(appState);
         toData = toDataFixedRangeForm(appState);
         periodType = periodTypeSelector(appState);
-    } else if (isFreeRangePluginLoadedSelector(appState) && !showFixedRangePickerSelector(appState)) {
+    } else if (isFreeRangeLoaded(appState) && !showFixedRangePickerSelector(appState)) {
         rangeManager = FREE_RANGE;
         fromData = fromDataFreeRangeForm(appState);
         toData = toDataFreeRangeForm(appState);
