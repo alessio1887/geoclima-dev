@@ -1,7 +1,9 @@
 import React from 'react';
+import { DateTimePicker } from 'react-widgets';
 import { Button, ButtonGroup, FormGroup, Label } from 'react-bootstrap';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
 import SelectVariableTab from '../../components/dropdowns/SelectVariableTab';
+import { DATE_FORMAT } from '../../utils/ManageDateUtils';
 import Message from '@mapstore/components/I18N/Message';
 import './exportimage.css';
 import moment from 'moment';
@@ -43,6 +45,37 @@ const ExportImageForm = ({
         exportImage(layerName, fromDataFormatted, toDataFormatted, apiUrl);
     };
 
+    const noop = () => {};   // Funzione vuota per evitare warning
+
+    const renderRangeManager = () => (
+        <FreeRangeManager
+            fromData={fromData}
+            toData={toData}
+            isInteractionDisabled
+            styleLabels="labels-exportimage"
+            lablesType="gcapp.exportImage"
+            format={timeUnit}
+            onChangeFromData={noop}
+            onChangeToData={noop}
+        />
+    );
+
+    const renderOneDate = () => (
+        <div className="ms-freerangemanager-action">
+            <Label className="labels-exportimage">
+                <Message msgId= {"gcapp.exportImage.selectOneDate" }/>
+            </Label>
+            <DateTimePicker
+                culture="it"
+                time={ timeUnit === DATE_FORMAT ? false : true }
+                format={timeUnit}
+                value={moment(toData, timeUnit).toDate()}
+                onChange={noop}
+                disabled
+            />
+        </div>
+    );
+
     return (
         <FormGroup className="exportimage-from">
             <Label className="labels-exportimage"><Message msgId="gcapp.exportImage.selectMeteoVariable"/></Label>
@@ -53,15 +86,7 @@ const ExportImageForm = ({
                 onChangeTab={handleChangeTab}
                 isInteractionDisabled={isInteractionDisabled}
             />
-            <FreeRangeManager
-                fromData={fromData}
-                toData={toData}
-                isInteractionDisabled={isInteractionDisabled}
-                styleLabels="labels-exportimage"
-                lablesType="gcapp.exportImage"
-                format={timeUnit}
-                isReadOnly
-            />
+            { getActiveTab().showOneDatePicker ? ( renderOneDate() ) : ( renderRangeManager() )}
             <ButtonGroup id="button-exportimage-container">
                 <div id="button-exportimage-apicall-clear">
                     <Button onClick={() => handleExportImage()} disabled={isInteractionDisabled}>

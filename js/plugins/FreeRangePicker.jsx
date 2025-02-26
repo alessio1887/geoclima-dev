@@ -223,7 +223,6 @@ class FreeRangePicker extends React.Component {
                     styleLabels="labels-freerangepicker"
                     lablesType="gcapp.freeRangePicker"
                     format={this.props.timeUnit}
-                    isReadOnly={false}
                 />
                 <ButtonGroup id="button-rangepicker-container">
                     <Button onClick={this.handleApplyPeriod}  disabled={this.props.isInteractionDisabled}>

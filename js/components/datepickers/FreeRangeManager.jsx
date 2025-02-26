@@ -26,8 +26,7 @@ const FreeRangeManager = ({
     isInteractionDisabled,
     styleLabels,
     format,
-    lablesType,
-    isReadOnly
+    lablesType
 }) => {
     return (
         <div className="ms-freerangemanager-action">
@@ -42,9 +41,8 @@ const FreeRangeManager = ({
                 format={format}
                 editFormat={format}
                 value={moment(fromData, format).toDate()}
-                onChange={!isReadOnly ? onChangeFromData : undefined}
+                onChange={ onChangeFromData }
                 disabled={isInteractionDisabled}
-                readOnly={isReadOnly}
             />
             <Label className={styleLabels}>
                 <Message msgId={lablesType + ".selectToDate"}/>
@@ -57,9 +55,8 @@ const FreeRangeManager = ({
                 format={format}
                 editFormat={format}
                 value={moment(toData, format).toDate()}
-                onChange={!isReadOnly ? onChangeToData : undefined}
+                onChange={onChangeToData}
                 disabled={isInteractionDisabled}
-                readOnly={isReadOnly}
             />
         </div>
     );

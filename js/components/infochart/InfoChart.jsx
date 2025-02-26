@@ -413,7 +413,6 @@ class InfoChart extends React.Component {
                                 styleLabels="labels-infochart"
                                 lablesType="gcapp.freeRangePicker"
                                 format={this.props.timeUnit}
-                                isReadOnly={false}
                             />
                         )}
                         <ButtonGroup className="button-group-wrapper">

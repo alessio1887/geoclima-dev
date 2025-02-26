@@ -5,6 +5,7 @@
             "exportImage": {
               "selectFromDate": "Data d'inizio periodo",
               "selectToDate": "Data di fine periodo",
+              "selectOneDate": "Data della mappa",
                "selectMeteoVariable": "Seleziona una variabile",
                "apiCall": "Execute",
                "clearImageUrl": "Clear",

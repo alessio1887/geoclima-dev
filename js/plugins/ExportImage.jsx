@@ -106,7 +106,8 @@ const ExportImage = ({
         const tabVariablesInit = tabList.map((tab, index) => ({
             id: tab.id,
             variables: [tab.groupList[0]], // Select the first group as default
-            active: index === 0 // Set the first tab as active
+            active: index === 0, // Set the first tab as active
+            showOneDatePicker: tab.showOneDatePicker ?? false
         }));
         onInitializeVariableTabs(tabVariablesInit);
     }, [tabList, onInitializeVariableTabs]);
