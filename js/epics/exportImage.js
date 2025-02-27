@@ -26,29 +26,33 @@ import GeoClimaAPI from '../api/GeoClimaApi';
 export const exportImageEpic = (action$) =>
     action$.ofType(EXPORTIMAGE_LOADING)
         .switchMap(action =>
-            Observable.fromPromise(GeoClimaAPI.exportImage(
-                action.layerName,
-                action.fromData,
-                action.toData,
-                action.defaultUrlExportImage
-            ).then(response => response)))
-        .switchMap(response => {
-            // Crea un blob dalla response data e genera un URL per il download
-            const blob = new Blob([response.data], { type: 'image/png' });
-            const url = window.URL.createObjectURL(blob);
-            // Estrai il nome del file dall'header Content-Disposition se presente
-            const contentDisposition = response.headers['content-disposition'];
-            let fileName = 'exported_image.png';
-            if (contentDisposition) {
-                const match = contentDisposition.match(/filename="?([^"]+)"?/);
-                if (match && match[1]) {
-                    fileName = match[1];
-                }
-            }
-            // Restituisce l'azione di successo con l'URL e il nome del file
-            return Observable.of(exportImageSuccess(url, fileName));
-        })
-        .catch(error => Observable.of(apiError(error))
+        // Usa defer per ritardare l'esecuzione della funzione
+            Observable.defer(() => {
+                return GeoClimaAPI.exportImage(
+                    action.layerName,
+                    action.fromData,
+                    action.toData,
+                    action.defaultUrlExportImage
+                ).then(response => {
+                    // Crea un blob dalla response data e genera un URL per il download
+                    const blob = new Blob([response.data], { type: 'image/png' });
+                    const url = window.URL.createObjectURL(blob);
+                    // Estrai il nome del file dall'header Content-Disposition se presente
+                    const contentDisposition = response.headers['content-disposition'];
+                    let fileName = 'exported_image.png';
+                    if (contentDisposition) {
+                        const match = contentDisposition.match(/filename="?([^"]+)"?/);
+                        if (match && match[1]) {
+                            fileName = match[1];
+                        }
+                    }
+                    // Restituisce l'azione di successo con l'URL e il nome del file
+                    return exportImageSuccess(url, fileName);
+                }).catch(error => {
+                    // Gestione degli errori
+                    return apiError(error);
+                });
+            })
         );
 
 const updateDatesExportImageEpic = (action$, store) =>
