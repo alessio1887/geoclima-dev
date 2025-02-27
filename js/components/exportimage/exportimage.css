@@ -26,3 +26,19 @@
     /* margin: 0 10px; */
     width: 120px;
 }
+
+.exportimage-alert-date strong {
+    display: block;
+    color: #d32f2f; /* Colore del testo in grassetto rosso */
+    margin-bottom: 5px; /* Spazio a destra del testo in grassetto */
+}
+
+
+.exportimage-alert-date {
+    background-color: #f8d7da; /* Colore di sfondo rosso chiaro */
+    color: #721c24; /* Colore del testo rosso scuro */
+    border: 1px solid #f5c6cb; /* Bordo rosso chiaro */
+    padding: 10px; /* Spaziatura interna */
+    margin-top: 10px; /* Margine superiore per distanziare dagli elementi superiori */
+    font-size: 16px; /* Dimensione del testo */
+}

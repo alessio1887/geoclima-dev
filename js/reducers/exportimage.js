@@ -55,9 +55,19 @@ function daterangelabel(state = defaultState, action) {
     case EXPORTIMAGE_LOADING:
         return { ...state, maskLoading: true };
     case EXPORTIMAGE_SUCCESS:
-        return { ...state, imageUrl: action.urlExportImage, fileName: action.fileName, maskLoading: false };
+        return { ...state,
+            imageUrl: action.urlExportImage,
+            fileName: action.fileName,
+            maskLoading: false,
+            alertMessage: state.alertMessage ? null : state.alertMessage
+        };
     case EXPORTIMAGE_ERROR:
-        return { ...state, imageUrl: null, fileName: DEFAULT_FILENAME, maskLoading: false };
+        return { ...state,
+            imageUrl: state.imageUrl ? null : state.imageUrl,
+            fileName: DEFAULT_FILENAME,
+            maskLoading: false,
+            alertMessage: "gcapp.exportImage.alertMessage"
+        };
     case CLEAR_IMAGE_URL:
         return { ...state, imageUrl: null, fileName: DEFAULT_FILENAME };
     default:

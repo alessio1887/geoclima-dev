@@ -96,7 +96,8 @@ const ExportImage = ({
     onSetVariabiliMeteo,
     variabiliMeteo,
     tabVariables,
-    imageUrl
+    imageUrl,
+    alertMessage
 }) => {
     // useRef stores the previous values of fromData and toData
     const prevFromData = useRef(fromData);
@@ -121,17 +122,23 @@ const ExportImage = ({
     }, [variabiliMeteo, onSetVariabiliMeteo, initializeTabs]);
 
     useEffect(() => {
-        // Check if fromData or toData have changed compared to previous values
-        if (prevFromData.current !== fromData || prevToData.current !== toData) {
+        // Format fromData and toData using timeUnit
+        const formattedFromData = moment(fromData).format(timeUnit);
+        const formattedToData = moment(toData).format(timeUnit);
+        // Format the previous values stored in refs
+        const formattedPrevFromData = moment(prevFromData.current).format(timeUnit);
+        const formattedPrevToData = moment(prevToData.current).format(timeUnit);
+        // Check if the formatted values have changed compared to previous formatted values
+        if (formattedPrevFromData !== formattedFromData || formattedPrevToData !== formattedToData) {
             // If imageUrl is set, clear it by calling onClearImageUrl
             if (imageUrl) {
                 onClearImageUrl();
             }
         }
-        // Update refs with the new values
+        // Update refs with the new formatted values
         prevFromData.current = fromData;
         prevToData.current = toData;
-    }, [fromData, toData, imageUrl, onClearImageUrl]);
+    }, [fromData, toData, imageUrl, onClearImageUrl, timeUnit]);
 
     return (
         <ResponsivePanel
@@ -173,6 +180,7 @@ const ExportImage = ({
                     imageUrl={imageUrl}
                     exportImage={onExportImage}
                     clearImageUrl={onClearImageUrl}
+                    alertMessage={alertMessage}
                     role="body"
                 />
             </Dialog>
@@ -188,7 +196,8 @@ const mapStateToProps = createStructuredSelector({
     active: exportImageEnabledSelector,
     isInteractionDisabled: isLayerLoadingSelector,
     tabVariables: tabVariablesSelector,
-    imageUrl: imageUrlSelector
+    imageUrl: imageUrlSelector,
+    alertMessage: state => state.exportimage.alertMessage
 });
 
 const mapDispatchToProps = {

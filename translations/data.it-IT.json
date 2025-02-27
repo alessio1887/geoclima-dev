@@ -9,7 +9,8 @@
                "selectMeteoVariable": "Seleziona una variabile",
                "apiCall": "Execute",
                "clearImageUrl": "Clear",
-               "downloadImage": "Donwnload file"
+               "downloadImage": "Donwnload file",
+               "alertMessage": "Immagine non disponibile"
             },
             "fixedRangePicker": {
               "titlePeriod": "Periodo considerato",

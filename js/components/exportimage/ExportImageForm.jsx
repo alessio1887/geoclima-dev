@@ -23,7 +23,8 @@ const ExportImageForm = ({
     apiUrl,
     imageUrl,
     exportImage,
-    clearImageUrl
+    clearImageUrl,
+    alertMessage
 }) => {
 
     const getActiveTab = () => {
@@ -105,6 +106,12 @@ const ExportImageForm = ({
                 </Button>
                 )}
             </ButtonGroup>
+            {alertMessage && (
+                <div className="exportimage-alert-date" >
+                    <strong><Message msgId="warning"/></strong>
+                    <span ><Message msgId={alertMessage}/></span>
+                </div>
+            )}
         </FormGroup>
     );
 };
