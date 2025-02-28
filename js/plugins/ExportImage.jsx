@@ -16,7 +16,8 @@ import ResponsivePanel from '@mapstore/components/misc/panels/ResponsivePanel';
 import Dialog from '@mapstore/components/misc/Dialog';
 
 import { exportImageEnabledSelector, fileNameSelector, fromDataSelector, toDataSelector,
-    isLayerLoadingSelector, tabVariablesSelector, imageUrlSelector, exportImageApiSelector } from '../selectors/exportImage';
+    isLayerLoadingSelector, tabVariablesSelector, imageUrlSelector, exportImageApiSelector,
+    alertMessageSelector } from '../selectors/exportImage';
 import * as exportImageEpics from '../epics/exportImage';
 import exportimage from '../reducers/exportimage';
 import { initializeVariableTabs, setVariabiliMeteo, changeTab, changeImageVariable,
@@ -114,7 +115,7 @@ const ExportImage = ({
     }, [tabList, onInitializeVariableTabs]);
 
     useEffect(() => {
-        // When the component mounts, set variabiliMeteo in the Redux state
+        // TODO migliorarlo perche ci entra troppe volte
         if (variabiliMeteo) {
             onSetVariabiliMeteo(variabiliMeteo);
         }
@@ -197,7 +198,7 @@ const mapStateToProps = createStructuredSelector({
     isInteractionDisabled: isLayerLoadingSelector,
     tabVariables: tabVariablesSelector,
     imageUrl: imageUrlSelector,
-    alertMessage: state => state.exportimage.alertMessage
+    alertMessage: alertMessageSelector
 });
 
 const mapDispatchToProps = {

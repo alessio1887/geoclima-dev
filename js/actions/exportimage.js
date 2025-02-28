@@ -18,6 +18,14 @@ export const EXPORTIMAGE_ERROR = 'EXPORTIMAGE:EXPORTIMAGE_ERROR';
 export const EXPORTIMAGE_SUCCESS = 'EXPORTIMAGE:EXPORTIMAGE_SUCCESS';
 export const EXPORTIMAGE_LOADING = 'EXPORTIMAGE:EXPORT_IMAGE_LOADING';
 export const CLEAR_IMAGE_URL = 'EXPORTIMAGE:CLEAR_IMAGE_URL';
+export const TOGGLE_PLUGIN = 'EXPORTIMAGE:TOGGLE_PLUGIN';
+
+export function togglePlugin(isOpen) {
+    return {
+        type: TOGGLE_PLUGIN,
+        payload: isOpen
+    };
+}
 
 export function updateExportImageDates(fromData, toData, layerId) {
     return {

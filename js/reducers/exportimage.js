@@ -6,7 +6,8 @@
  * LICENSE file in the root directory of this source tree.
 */
 import { UPDATE_DATES, SET_VARIABILIMETEO, INITIALIZE_TABS, TAB_CHANGED, EXPORTIMAGE_ERROR,
-    IMAGEVARIABLE_CHANGED, EXPORTIMAGE_SUCCESS, CLEAR_IMAGE_URL, EXPORTIMAGE_LOADING } from '../actions/exportimage';
+    IMAGEVARIABLE_CHANGED, EXPORTIMAGE_SUCCESS, CLEAR_IMAGE_URL, EXPORTIMAGE_LOADING,
+    TOGGLE_PLUGIN } from '../actions/exportimage';
 import { DEFAULT_FILENAME } from '../utils/VariabiliMeteoUtils';
 
 
@@ -70,6 +71,8 @@ function daterangelabel(state = defaultState, action) {
         };
     case CLEAR_IMAGE_URL:
         return { ...state, imageUrl: null, fileName: DEFAULT_FILENAME };
+    case TOGGLE_PLUGIN:
+        return { ...state, isPluginOpen: action.payload };
     default:
         return state;
     }

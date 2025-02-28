@@ -8,9 +8,34 @@
 import { Observable } from 'rxjs';
 import { LAYER_LOAD } from '@mapstore/actions/layers';
 import { EXPORTIMAGE_LOADING, updateExportImageDates,
-    errorLayerNotFound, errorLayerDateMissing, exportImageSuccess, apiError } from '../actions/exportimage';
+    errorLayerNotFound, errorLayerDateMissing, exportImageSuccess, apiError,
+    togglePlugin } from '../actions/exportimage';
+import { isPluginOpenSelector } from '../selectors/exportImage';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
+import { TOGGLE_CONTROL } from '@mapstore/actions/controls';
+import { UPDATE_MAP_LAYOUT, updateMapLayout } from '@mapstore/actions/maplayout';
 import GeoClimaAPI from '../api/GeoClimaApi';
+
+const TOOLBAR_OFFSET_RIGHT = {
+    bottom: 0,
+    left: 0,
+    right: 440,
+    transform: 'none',
+    height: 'calc(100% - 30px)',
+    boundingMapRect: {
+        bottom: 0,
+        left: 0,
+        right: 440
+    },
+    boundingSidebarRect: {
+        right: 0,
+        left: 0,
+        bottom: 0
+    },
+    rightPanel: true,
+    leftPanel: false
+};
+
 
 /**
  * exportImageEpic listens for the EXPORT_IMAGE action and performs the following steps:
@@ -23,7 +48,7 @@ import GeoClimaAPI from '../api/GeoClimaApi';
  * 3. Dispatches the exportImageSuccess action with the generated URL and the file name.
  * 4. If an error occurs during the API call, it catches the error and dispatches an apiError action.
  */
-export const exportImageEpic = (action$) =>
+const exportImageEpic = (action$) =>
     action$.ofType(EXPORTIMAGE_LOADING)
         .switchMap(action =>
         // Usa defer per ritardare l'esecuzione della funzione
@@ -76,5 +101,45 @@ const updateDatesExportImageEpic = (action$, store) =>
             }
             return Observable.of(updateExportImageDates(fromData, toData, layerId));
         });
+/**
+ * Epic that listens for the TOGGLE_CONTROL action related to the "exportImage" plugin.
+ * - If the control is toggled and the plugin is not open, it sets `isOpen` to true.
+ * - Dispatches the `togglePlugin` action to update the plugin's state.
+ */
+const toggleExportImageEpic = (action$, store) =>
+    action$.ofType(TOGGLE_CONTROL)
+        .filter(({ control, property }) => {
+            return control === "exportImage" && property === "enabled";
+        })
+        .switchMap(() => {
+            const appState = store.getState();
+            let actions = [];
+            let isOpen = false;
+            if (!isPluginOpenSelector(appState)) {
+                isOpen = true;
+            }
+            actions.push(togglePlugin(isOpen));
+            return Observable.of(...actions);
+        });
+/**
+ * Epic that ensures the correct map layout when the plugin is open.
+ * - Listens for the UPDATE_MAP_LAYOUT action.
+ * - If the "exportImage" plugin is open and the right panel's width is set to 0,
+ *   it updates the layout to move the toolbar to the right.
+ */
+const updateToolbarLayoutEpic  = (action$, store) =>
+    action$.ofType(UPDATE_MAP_LAYOUT)
+        .filter(() => {
+            const appState = store.getState();
+            return isPluginOpenSelector(appState) && appState.maplayout?.layout?.right === 0;
+        })
+        .switchMap(() => {
+            return Observable.of(updateMapLayout(TOOLBAR_OFFSET_RIGHT));
+        });
 
-export default updateDatesExportImageEpic;
+
+export { exportImageEpic,
+    updateDatesExportImageEpic,
+    toggleExportImageEpic,
+    updateToolbarLayoutEpic
+};
