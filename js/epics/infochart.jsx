@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
 */
 import { Observable } from 'rxjs';
-import { TOGGLE_CONTROL, SET_CONTROL_PROPERTY, setControlProperty } from '../../MapStore2/web/client/actions/controls';
+import { TOGGLE_CONTROL, SET_CONTROL_PROPERTY, setControlProperty } from '@mapstore/actions/controls';
 import { TOGGLE_MAPINFO_STATE,
     CHANGE_MAPINFO_STATE,
     changeMapInfoState,
@@ -330,7 +330,7 @@ const changeMapInfoStateEpic = (action$, store) =>
  */
 const toggleControlEpic = (action$, store) => {
     // Controls to exclude from toggling
-    const excludedControls = ["toolbar", "chartinfo", "burgermenu", "about", "backgroundSelector", "drawer"];
+    const excludedControls = ["toolbar", "chartinfo", "burgermenu", "about", "backgroundSelector", "drawer", "exportImage"];
 
     return action$
         .ofType(TOGGLE_CONTROL, SET_CONTROL_PROPERTY)

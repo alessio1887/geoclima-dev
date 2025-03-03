@@ -10,9 +10,11 @@ import { LAYER_LOAD } from '@mapstore/actions/layers';
 import { EXPORTIMAGE_LOADING, updateExportImageDates,
     errorLayerNotFound, errorLayerDateMissing, exportImageSuccess, apiError,
     togglePlugin } from '../actions/exportimage';
-import { isPluginOpenSelector } from '../selectors/exportImage';
+import { isPluginOpenSelector, exportImageEnabledSelector } from '../selectors/exportImage';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
-import { TOGGLE_CONTROL } from '@mapstore/actions/controls';
+import { TOGGLE_CONTROL, toggleControl } from '@mapstore/actions/controls';
+import { SET_INFOCHART_VISIBILITY }  from '../actions/infochart';
+import { CLICK_ON_MAP } from '../../MapStore2/web/client/actions/map';
 import { UPDATE_MAP_LAYOUT, updateMapLayout } from '@mapstore/actions/maplayout';
 import GeoClimaAPI from '../api/GeoClimaApi';
 
@@ -137,9 +139,33 @@ const updateToolbarLayoutEpic  = (action$, store) =>
             return Observable.of(updateMapLayout(TOOLBAR_OFFSET_RIGHT));
         });
 
+const disablePluginWhenLoadFeatureInfo = (action$, store) =>
+    action$.ofType(CLICK_ON_MAP)
+        .filter(() => {
+            const appState = store.getState();
+            // return appState.controls?.chartinfo?.enabled && exportImageEnabledSelector(appState);
+            return appState.mapInfo?.enabled && exportImageEnabledSelector(appState);
+        })
+        .switchMap(() => {
+            return Observable.of(toggleControl('exportImage', 'enabled'));
+        });
+
+const disablePluginWhenFetchInfoChartData = (action$, store) =>
+    action$.ofType(SET_INFOCHART_VISIBILITY)
+        .filter(({ status }) => {
+            const appState = store.getState();
+            // Controlla se mapInfo è attivo o se l'azione ha status === true
+            return appState.controls?.chartinfo?.enabled && status === true && exportImageEnabledSelector(appState);
+        })
+        .switchMap(() => {
+            return Observable.of(toggleControl('exportImage', 'enabled'));
+        });
 
 export { exportImageEpic,
     updateDatesExportImageEpic,
     toggleExportImageEpic,
-    updateToolbarLayoutEpic
+    updateToolbarLayoutEpic,
+    disablePluginWhenLoadFeatureInfo,
+    disablePluginWhenFetchInfoChartData
 };
+
