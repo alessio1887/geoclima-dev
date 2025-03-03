@@ -683,7 +683,7 @@
         {
           "name": "Attribution",
           "cfg": {
-            "src": "../js/assets/img/LogoLamma-hr.jpg",
+            "src": "js/assets/img/LogoLamma-hr.jpg",
             "href": "https://www.lamma.toscana.it/",
             "label": "Consorzio LaMMA"
           }
@@ -774,7 +774,7 @@
           {
             "name": "Attribution",
             "cfg": {
-              "src": "../js/assets/img/LogoLamma-hr.jpg",
+              "src": "js/assets/img/LogoLamma-hr.jpg",
               "href": "https://www.lamma.toscana.it/",
               "label": "Consorzio LaMMA"
             }
@@ -934,7 +934,7 @@
           {
             "name": "Attribution",
             "cfg": {
-              "src": "../js/assets/img/LogoLamma-hr.jpg",
+              "src": "js/assets/img/LogoLamma-hr.jpg",
               "href": "https://www.lamma.toscana.it/",
               "label": "Consorzio LaMMA"
             }
@@ -1005,7 +1005,7 @@
           {
             "name": "Attribution",
             "cfg": {
-              "src": "../js/assets/img/LogoLamma-hr.jpg",
+              "src": "js/assets/img/LogoLamma-hr.jpg",
               "href": "https://www.lamma.toscana.it/",
               "label": "Consorzio LaMMA"
             }
