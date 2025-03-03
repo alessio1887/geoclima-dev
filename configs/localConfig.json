@@ -679,7 +679,16 @@
             "cfg": {
                 "enableContextManager": true
             }
-        }, "Login","Language", "NavMenu", "Attribution", "ScrollTop", "Notifications"],
+        }, "Login","Language", "NavMenu",
+        {
+          "name": "Attribution",
+          "cfg": {
+            "src": "../js/assets/img/LogoLamma-hr.jpg",
+            "href": "https://www.lamma.toscana.it/",
+            "label": "Consorzio LaMMA"
+          }
+        },
+         "ScrollTop", "Notifications"],
         "maps": [
           {
           "name":"HomeDescription",
@@ -762,7 +771,14 @@
           "NavMenu",
           "DashboardSave",
           "DashboardSaveAs",
-          "Attribution",
+          {
+            "name": "Attribution",
+            "cfg": {
+              "src": "../js/assets/img/LogoLamma-hr.jpg",
+              "href": "https://www.lamma.toscana.it/",
+              "label": "Consorzio LaMMA"
+            }
+          },
           {
             "name": "Home",
             "override": {
@@ -915,7 +931,14 @@
           },
           "Language",
           "NavMenu",
-          "Attribution",
+          {
+            "name": "Attribution",
+            "cfg": {
+              "src": "../js/assets/img/LogoLamma-hr.jpg",
+              "href": "https://www.lamma.toscana.it/",
+              "label": "Consorzio LaMMA"
+            }
+          },
           "Home",
           {
             "name": "GeoStory"
@@ -979,7 +1002,14 @@
           "Login",
           "Language",
           "NavMenu",
-          "Attribution",
+          {
+            "name": "Attribution",
+            "cfg": {
+              "src": "../js/assets/img/LogoLamma-hr.jpg",
+              "href": "https://www.lamma.toscana.it/",
+              "label": "Consorzio LaMMA"
+            }
+          },
           "Tutorial",
           {
               "name": "ContextCreator",
