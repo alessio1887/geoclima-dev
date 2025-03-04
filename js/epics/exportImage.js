@@ -7,14 +7,14 @@
 */
 import { Observable } from 'rxjs';
 import { LAYER_LOAD } from '@mapstore/actions/layers';
-import { EXPORTIMAGE_LOADING, updateExportImageDates,
-    errorLayerNotFound, errorLayerDateMissing, exportImageSuccess, apiError,
-    togglePlugin } from '../actions/exportimage';
-import { isPluginOpenSelector, exportImageEnabledSelector } from '../selectors/exportImage';
+import { EXPORTIMAGE_LOADING, updateExportImageDates, apiError,
+    errorLayerNotFound, errorLayerDateMissing, exportImageSuccess } from '../actions/exportimage';
+import { exportImageEnabledSelector } from '../selectors/exportImage';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
-import { TOGGLE_CONTROL, toggleControl } from '@mapstore/actions/controls';
+import { toggleControl } from '@mapstore/actions/controls';
 import { SET_INFOCHART_VISIBILITY }  from '../actions/infochart';
-import { CLICK_ON_MAP } from '../../MapStore2/web/client/actions/map';
+import { CLICK_ON_MAP } from '@mapstore/actions/map';
+import { LOADING } from '@mapstore/actions/maps';
 import { UPDATE_MAP_LAYOUT, updateMapLayout } from '@mapstore/actions/maplayout';
 import GeoClimaAPI from '../api/GeoClimaApi';
 
@@ -88,7 +88,7 @@ const updateDatesExportImageEpic = (action$, store) =>
         .mergeMap(({layerId}) => {
             const currentState = store.getState();
             const layers = currentState.layers?.flat || [];
-            const variabiliMeteo = currentState.exportimage.variabiliMeteo;
+            const variabiliMeteo = currentState.exportimage.climateLayers;
             const activeLayer = layers.find(layer => layer.id === layerId);
             if (!activeLayer) {
                 return Observable.of(errorLayerNotFound(layerId));
@@ -103,26 +103,15 @@ const updateDatesExportImageEpic = (action$, store) =>
             }
             return Observable.of(updateExportImageDates(fromData, toData, layerId));
         });
-/**
- * Epic that listens for the TOGGLE_CONTROL action related to the "exportImage" plugin.
- * - If the control is toggled and the plugin is not open, it sets `isOpen` to true.
- * - Dispatches the `togglePlugin` action to update the plugin's state.
- */
-const toggleExportImageEpic = (action$, store) =>
-    action$.ofType(TOGGLE_CONTROL)
-        .filter(({ control, property }) => {
-            return control === "exportImage" && property === "enabled";
-        })
-        .switchMap(() => {
-            const appState = store.getState();
-            let actions = [];
-            let isOpen = false;
-            if (!isPluginOpenSelector(appState)) {
-                isOpen = true;
-            }
-            actions.push(togglePlugin(isOpen));
-            return Observable.of(...actions);
-        });
+
+// Close ExportImage when user come back to homepage
+const closeExportImagePanel = (action$, store) =>
+    action$.ofType(LOADING)
+        .filter(() => exportImageEnabledSelector(store.getState()))
+        .map(() => toggleControl('exportImage', 'enabled')
+        );
+
+
 /**
  * Epic that ensures the correct map layout when the plugin is open.
  * - Listens for the UPDATE_MAP_LAYOUT action.
@@ -133,7 +122,7 @@ const updateToolbarLayoutEpic  = (action$, store) =>
     action$.ofType(UPDATE_MAP_LAYOUT)
         .filter(() => {
             const appState = store.getState();
-            return isPluginOpenSelector(appState) && appState.maplayout?.layout?.right === 0;
+            return exportImageEnabledSelector(appState) && appState.maplayout?.layout?.right === 0;
         })
         .switchMap(() => {
             return Observable.of(updateMapLayout(TOOLBAR_OFFSET_RIGHT));
@@ -163,9 +152,9 @@ const disablePluginWhenFetchInfoChartData = (action$, store) =>
 
 export { exportImageEpic,
     updateDatesExportImageEpic,
-    toggleExportImageEpic,
     updateToolbarLayoutEpic,
     disablePluginWhenLoadFeatureInfo,
-    disablePluginWhenFetchInfoChartData
+    disablePluginWhenFetchInfoChartData,
+    closeExportImagePanel
 };
 

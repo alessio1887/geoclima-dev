@@ -225,7 +225,7 @@ const getVariableFromLayer = (appState, idVariabiliLayers) => {
     return getDefaultValues(idVariabiliLayers, appState);
 };
 
-
+// Close infochart when user come back to homepage
 const closeInfoChartPanel = (action$, store) =>
     action$.ofType(LOADING).switchMap(() => {
         const storeState = store.getState();

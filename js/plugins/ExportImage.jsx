@@ -80,14 +80,13 @@ Plugin configuration
 */
 const ExportImage = ({
     active,
+    climateLayers,
     defaultUrlExportImage,
     fileNameExported,
     fromData,
     isInteractionDisabled,
     maskLoading,
     onToggleControl,
-    tabList,
-    timeUnit,
     toData,
     onClearImageUrl,
     onChangeImageVariable,
@@ -96,7 +95,9 @@ const ExportImage = ({
     onInitializeVariableTabs,
     onSetVariabiliMeteo,
     variabiliMeteo,
+    tabList,
     tabVariables,
+    timeUnit,
     imageUrl,
     alertMessage
 }) => {
@@ -115,11 +116,12 @@ const ExportImage = ({
     }, [tabList, onInitializeVariableTabs]);
 
     useEffect(() => {
-        // TODO migliorarlo perche ci entra troppe volte
-        if (variabiliMeteo) {
+        if (!tabVariables) {
+            initializeTabs();
+        }
+        if (!climateLayers ) {
             onSetVariabiliMeteo(variabiliMeteo);
         }
-        initializeTabs();
     }, [variabiliMeteo, onSetVariabiliMeteo, initializeTabs]);
 
     useEffect(() => {
@@ -190,6 +192,7 @@ const ExportImage = ({
 };
 
 const mapStateToProps = createStructuredSelector({
+    climateLayers: state => state.exportimage?.climateLayers,
     fileNameExported: fileNameSelector,
     fromData: fromDataSelector,
     maskLoading: exportImageApiSelector,
