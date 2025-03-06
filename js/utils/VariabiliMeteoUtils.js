@@ -13,6 +13,7 @@ export const FREE_RANGE = "free_range_picker";
 // type of chart based on tabLyst.type of pluginsConfig
 export const SINGLE_VARIABLE_CHART = "single_variable";
 export const MULTI_VARIABLE_CHART = "multi_variable";
+export const MARKER_ID = "InfoChartMarker";
 
 export const DEFAULT_FILENAME = 'exported_image.png';
 

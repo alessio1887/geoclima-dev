@@ -19,7 +19,7 @@ import SelectVariableTab from '../../components/dropdowns/SelectVariableTab';
 import FixedRangeManager from '../../components/datepickers/FixedRangeManager';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../../utils/ManageDateUtils';
-import { FIXED_RANGE, FREE_RANGE, MULTI_VARIABLE_CHART }  from '../../utils/VariabiliMeteoUtils';
+import { FIXED_RANGE, FREE_RANGE, MARKER_ID, MULTI_VARIABLE_CHART }  from '../../utils/VariabiliMeteoUtils';
 import { get, isEqual } from 'lodash';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
@@ -507,7 +507,7 @@ class InfoChart extends React.Component {
             this.props.onResizeInfoChart(880, 880);
         }
         this.initializeTabs();
-        this.props.onHideMapinfoMarker();
+        this.props.onHideMapinfoMarker({ id: MARKER_ID});
         if (this.props.alertMessage) {
             this.props.onCloseAlert();
         }

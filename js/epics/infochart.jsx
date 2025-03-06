@@ -8,8 +8,8 @@
 import { Observable } from 'rxjs';
 import { TOGGLE_CONTROL, SET_CONTROL_PROPERTY, setControlProperty } from '@mapstore/actions/controls';
 import { TOGGLE_MAPINFO_STATE,
-    changeMapInfoState,
-    hideMapinfoMarker } from '../../MapStore2/web/client/actions/mapInfo';
+    changeMapInfoState } from '../../MapStore2/web/client/actions/mapInfo';
+import { updateAdditionalLayer, addAdditionalLayers, removeAdditionalLayer  } from '../../MapStore2/web/client/actions/additionallayers';
 import {
     TOGGLE_INFOCHART,
     FETCH_INFOCHART_DATA,
@@ -24,12 +24,12 @@ import {
     markInfoChartAsNotLoaded,
     changeTab, changeChartVariable,
     closeAlert,
-    resizeInfoChart
-} from '../actions/infochart';
-import { CLICK_ON_MAP } from '../../MapStore2/web/client/actions/map';
+    resizeInfoChart } from '../actions/infochart';
+import { CLICK_ON_MAP } from '@mapstore/actions/map';
 import { LOADING } from '@mapstore/actions/maps';
+import { getMarkerLayer } from '../../MapStore2/web/client/utils/MapInfoUtils';
 import API from '../api/GeoClimaApi';
-import { FIXED_RANGE, FREE_RANGE, getVisibleLayers } from '../utils/VariabiliMeteoUtils';
+import { FIXED_RANGE, FREE_RANGE, MARKER_ID, getVisibleLayers } from '../utils/VariabiliMeteoUtils';
 import DateAPI from '../utils/ManageDateUtils';
 import { showFixedRangePickerSelector, periodTypeSelector, isPluginLoadedSelector as isFixedRangeLoaded,
     fromDataFormSelector as fromDataFixedRangeForm, toDataFormSelector as toDataFixedRangeForm  } from '../selectors/fixedRangePicker';
@@ -61,14 +61,6 @@ const getVariableParamsFromTab = (idTab, idVariable, tabList) => {
     );
 };
 
-
-// const checkSelectDateEpic = (action$, store) =>
-//     action$.ofType(CHECK_FETCH_AVAILABLE_DATES)
-//         .filter(() => !store.getState().fixedrangepicker?.isPluginLoaded && !store.getState().freerangepicker?.isPluginLoaded)
-//         .switchMap((action) => {
-//             return Observable.of(fetchSelectDate(action.variableSelectDate, action.urlSelectDate, action.type, action.timeUnit));
-//         });
-
 const getVisibleGroups = (groupMS2List = []) => {
     if (!Array.isArray(groupMS2List)) {
         return [];
@@ -90,18 +82,31 @@ const getDefaultValues = (idVariabiliLayers, appState) => {
     };
 };
 
-// // Function to get values when the InfoChart panel is visible
-// const getInfoChartValues = (appState) => {
-//     const { variables, idTab} = appState.infochart.infoChartData;
-//     const periodTypeAdjusted = rangeManager === FIXED_RANGE ? periodType : "1";
-//     return {
-//         variable: variables,
-//         fromData,
-//         toData,
-//         periodType: appState.infochart.periodType,
-//         idTab: idTab
-//     };
-// };
+const getNewMarker = (latlng) => {
+    const newMarkerLayer = getMarkerLayer(
+        MARKER_ID,
+        latlng,
+        "marker",
+        { overrideOLStyle: true, style: { color: "red", weight: 2 } },
+        "Punto selezionato"
+    );
+    return addAdditionalLayers([{
+        id: MARKER_ID,
+        options: newMarkerLayer,
+        actionType: "overlay"
+    }]);
+};
+
+const updateMarkerPosition = (latlng) => {
+    const newMarkerLayer = getMarkerLayer(
+        MARKER_ID,
+        latlng,
+        "marker",
+        { overrideOLStyle: true, style: { color: "red", weight: 2 } },
+        "Punto selezionato"
+    );
+    return updateAdditionalLayer(MARKER_ID, newMarkerLayer, "overlay", newMarkerLayer);
+};
 
 /**
  * This method returns the first visible layer from an array of layers,
@@ -224,16 +229,22 @@ const getVariableFromLayer = (appState, idVariabiliLayers) => {
 // Close infochart when user come back to homepage
 const closeInfoChartPanel = (action$, store) =>
     action$.ofType(LOADING).switchMap(() => {
-        const storeState = store.getState();
-        if (storeState?.infochart?.isPluginLoaded) {
-            return Observable.of(
-                setControlProperty("chartinfo", "enabled", false),
-                setInfoChartVisibility(false, []),
-                changeMapInfoState(true),
-                markInfoChartAsNotLoaded()
-            );
+        const appState = store.getState();
+        let disableInfoChartActions = [];
+        if (!appState.mapInfo?.enabled) {
+            disableInfoChartActions.push(changeMapInfoState(true));
         }
-        return Observable.empty();
+        if (appState.infochart?.isPluginLoaded) {
+            markInfoChartAsNotLoaded();
+        }
+        if (appState.infochart?.showInfoChartPanel) {
+            disableInfoChartActions.push(setInfoChartVisibility(false, []));
+        }
+        if (appState.controls?.chartinfo?.enabled) {
+            disableInfoChartActions.push(setControlProperty("chartinfo", "enabled", false));
+        }
+        disableInfoChartActions.push(removeAdditionalLayer({ id: MARKER_ID }));
+        return Observable.of(...disableInfoChartActions);
     });
 
 /**
@@ -255,10 +266,10 @@ const toggleMapInfoEpic = (action$, store) =>
         .filter(() => store.getState().controls.chartinfo.enabled)
         .switchMap(() => {
             const appState = store.getState();
-            if (!appState.mapInfo.enabled) { // case MapInfoButton is to be disabled
+            if (!appState.mapInfo.enabled) { // case MapInfoButton is going to be disabled
                 return Observable.of(setControlProperty("chartinfo", "enabled", true));
             }
-            // case MapInfoButton is to be abled
+            // case MapInfoButton is going to be abled
             const disableInfoChartActions = [setControlProperty("chartinfo", "enabled", false)];
             if (appState.infochart.showInfoChartPanel) {
                 disableInfoChartActions.push(setInfoChartVisibility(false));
@@ -329,7 +340,6 @@ const toggleControlEpic = (action$, store) => {
             if (appState.controls?.chartinfo?.enabled) {
                 actions.push(setInfoChartVisibility(false));
                 actions.push(setControlProperty("chartinfo", "enabled", false));
-                actions.push(hideMapinfoMarker());
             }
             return Observable.of(...actions);
         });
@@ -368,7 +378,7 @@ const getDateFromRangePicker = (appState, timeUnit) => {
 
 /**
  * Redux-Observable epic that listens for the CLICK_ON_MAP action and handles updating
- * the InfoChart panel state and fetching its data.
+ * the InfoChart panel state, fetching its data and adding new marker.
  *
  * @param {Observable} action$ - The stream of Redux actions.
  * @param {Object} store - The Redux store instance, used to access the current application state.
@@ -378,13 +388,14 @@ const clickedPointCheckEpic = (action$, store) =>
     action$.ofType(CLICK_ON_MAP)
         .filter(() => store.getState().controls?.chartinfo?.enabled)
         .switchMap((action) => {
-
             const appState = store.getState();
             const timeUnit = appState.infochart.timeUnit;
+            const latlng = action.point.latlng;
             let actions = [];
             let fromData; let toData;
             let variable; let idTab;
             let periodType = null;
+            let markerAction;
             if (!appState.infochart.showInfoChartPanel) {
                 const { fromData: fromDataTmp, toData: toDataTmp, periodType: periodTypeTmp, rangeManager } = getDateFromRangePicker(appState, timeUnit);
                 const { variable: variableTmp, idTab: idTabTmp } = getVariableFromLayer(appState, appState.infochart.idVariabiliLayers);
@@ -400,6 +411,7 @@ const clickedPointCheckEpic = (action$, store) =>
                 actions.push(changeTab(idTab));
                 actions.push(changeChartVariable(idTab,
                     [getVariableParamsFromTab(idTab, variable, appState.infochart.tabList)]));
+                markerAction = getNewMarker(latlng);
                 if (periodType) {
                     actions.push(changePeriod(periodType));
                 }
@@ -410,19 +422,19 @@ const clickedPointCheckEpic = (action$, store) =>
                 variable = appState.infochart.infoChartData.variables;
                 idTab = appState.infochart.infoChartData.idTab;
                 periodType = appState.infochart.periodType;
+                markerAction = updateMarkerPosition(latlng);
             }
 
             actions.push(setInfoChartVisibility(true));
             actions.push(fetchInfoChartData({
-                latlng: action.point.latlng,
+                latlng: latlng,
                 toData: moment(toData).format(timeUnit),
                 fromData: moment(fromData).format(timeUnit),
                 variables: variable,
                 periodType: periodType || appState.infochart.periodType,
                 idTab: idTab
             }));
-            // actions.push(featureInfoClick(action.point));
-            // actions.push(purgeMapInfoResults());
+            actions.push(markerAction);
             return Observable.of(...actions);
         });
 

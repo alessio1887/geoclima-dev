@@ -13,7 +13,7 @@ import {setInfoChartVisibility, changeFixedRangeToData, fetchInfoChartData, fetc
     openAlert, closeAlert, setChartRelayout, resetChartRelayout, resizeInfoChart, setIdVariabiliLayers,
     setRangeManager, setDefaultUrlGeoclimaChart, setTimeUnit,
     markInfoChartAsLoaded, changeTab, setTabList, initializeVariableTabs } from '../actions/infochart';
-import { hideMapinfoMarker } from '@mapstore/actions/mapInfo';
+import { removeAdditionalLayer  } from '@mapstore/actions/additionallayers';
 import InfoChartButton from '../components/buttons/InfoChartButton';
 import InfoChart from '../components/infochart/InfoChart';
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
@@ -195,7 +195,7 @@ const InfoChartPanel = connect((state) => ({
     onSetIdVariabiliLayers: setIdVariabiliLayers,
     onSetDefaultUrlGeoclimaChart: setDefaultUrlGeoclimaChart,
     onMarkPluginAsLoaded: markInfoChartAsLoaded,
-    onHideMapinfoMarker: hideMapinfoMarker
+    onHideMapinfoMarker: removeAdditionalLayer
 })(InfoChart);
 
 
