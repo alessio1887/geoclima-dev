@@ -6,6 +6,7 @@
  * LICENSE file in the root directory of this source tree.
 */
 import React, { useEffect, useCallback, useRef } from 'react';
+import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Glyphicon } from 'react-bootstrap';
@@ -86,7 +87,7 @@ const ExportImage = ({
     fromData,
     isInteractionDisabled,
     maskLoading,
-    onToggleControl,
+    onToggleControlExportImage,
     toData,
     onClearImageUrl,
     onChangeImageVariable,
@@ -143,7 +144,7 @@ const ExportImage = ({
         prevToData.current = toData;
     }, [fromData, toData, imageUrl, onClearImageUrl, timeUnit]);
 
-    return (
+    const contentExportImage =  (
         <ResponsivePanel
             containerId="export-image-container"
             containerClassName="export-image-container"
@@ -153,7 +154,7 @@ const ExportImage = ({
             bsStyle="primary"
             glyph={PLUGIN_GLYPH_ICON}
             title={<Message msgId="exportImage.title" />}
-            onClose={onToggleControl}
+            onClose={onToggleControlExportImage}
         >
             <Dialog
                 id="export-image-dialog"
@@ -162,7 +163,7 @@ const ExportImage = ({
                 draggable={false}  // Puoi modificare se vuoi rendere il dialog trascinabile
                 backgroundStyle={{ background: "rgba(0, 0, 0, 0.5)" }}
                 containerClassName="export-image-dialog-container"
-                onClickOut={onToggleControl}
+                onClickOut={onToggleControlExportImage}
                 style={{
                     top: "-200px",
                     right: "20px"
@@ -189,6 +190,10 @@ const ExportImage = ({
             </Dialog>
         </ResponsivePanel>
     );
+    // Ottieni il nodo dove montare il Portal, vedi idenx.html
+    const portalRoot = document.getElementById('exportimage-portal-root');
+
+    return ReactDOM.createPortal(contentExportImage, portalRoot);
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -211,7 +216,7 @@ const mapDispatchToProps = {
     onExportImage: exportImage,
     onInitializeVariableTabs: initializeVariableTabs,
     onSetVariabiliMeteo: setVariabiliMeteo,
-    onToggleControl: () => toggleControl('exportImage', 'enabled')
+    onToggleControlExportImage: () => toggleControl('exportImage', 'enabled')
 };
 
 export default createPlugin('ExportImage', {

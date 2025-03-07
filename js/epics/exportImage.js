@@ -139,22 +139,22 @@ const disablePluginWhenLoadFeatureInfo = (action$, store) =>
             return Observable.of(toggleControl('exportImage', 'enabled'));
         });
 
-const disablePluginWhenFetchInfoChartData = (action$, store) =>
-    action$.ofType(SET_INFOCHART_VISIBILITY)
-        .filter(({ status }) => {
-            const appState = store.getState();
-            // Controlla se mapInfo è attivo o se l'azione ha status === true
-            return appState.controls?.chartinfo?.enabled && status === true && exportImageEnabledSelector(appState);
-        })
-        .switchMap(() => {
-            return Observable.of(toggleControl('exportImage', 'enabled'));
-        });
+// const disablePluginWhenFetchInfoChartData = (action$, store) =>
+//     action$.ofType(SET_INFOCHART_VISIBILITY)
+//         .filter(({ status }) => {
+//             const appState = store.getState();
+//             // Controlla se mapInfo è attivo o se l'azione ha status === true
+//             return appState.controls?.chartinfo?.enabled && status === true && exportImageEnabledSelector(appState);
+//         })
+//         .switchMap(() => {
+//             return Observable.of(toggleControl('exportImage', 'enabled'));
+//         });
 
 export { exportImageEpic,
     updateDatesExportImageEpic,
     updateToolbarLayoutEpic,
     disablePluginWhenLoadFeatureInfo,
-    disablePluginWhenFetchInfoChartData,
+    // disablePluginWhenFetchInfoChartData,
     closeExportImagePanel
 };
 

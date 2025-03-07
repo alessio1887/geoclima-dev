@@ -81,6 +81,7 @@ const ExportImageForm = ({
         <FormGroup className="exportimage-from">
             <Label className="labels-exportimage"><Message msgId="gcapp.exportImage.selectMeteoVariable"/></Label>
             <SelectVariableTab
+                idContainer="exportimage-dropdown-container"
                 tabList={tabList}
                 onChangeSingleVariable={changeSingleVariable}
                 activeTab={getActiveTab()}

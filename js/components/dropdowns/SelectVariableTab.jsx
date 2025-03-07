@@ -8,6 +8,7 @@ const MULTI_SELECT = "multi_select";
 
 
 const SelectVariableTab = ({
+    idContainer,
     tabList,
     onChangeSingleVariable,
     onChangeMultiVariable,
@@ -16,7 +17,7 @@ const SelectVariableTab = ({
     isInteractionDisabled
 }) => {
     return (
-        <div id="infochart-dropdown-container">
+        <div id={idContainer}>
             {/* Tab Bar */}
             <div style={{
                 display: 'flex',

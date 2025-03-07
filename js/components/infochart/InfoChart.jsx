@@ -293,76 +293,6 @@ class InfoChart extends React.Component {
                 unitPrecipitazione = { this.props.unitPrecipitazione }
                 format={ this.props.timeUnit }
             />);
-            // const PREC = this.props.variablePrecipitazione;
-            // const RET = this.props.variableEvotrasporazione;
-            // const TEMP_LIST = this.props.variableTemperaturaList;
-            // const chartVariable = this.props.infoChartData.variables;
-            // const propVariable = "st_value_" + chartVariable;
-            // const chartData = chartVariable === PREC || chartVariable === RET
-            //     ? formatDataCum(this.props.data, propVariable)
-            //     : formatDataTemp(this.props.data, propVariable);
-            //     // Definizione delle unità di misura dinamiche
-            // const unit = TEMP_LIST.includes(chartVariable) ? '°C' : 'mm';
-            // const climaLabel = "Climatologia " + unit;
-            // const currentYearLabel = "Anno in corso " + unit;
-
-            // const dates = chartData.map(item => new Date(item.data));
-            // const observedData = chartData.map(item => item[propVariable]);
-            // const climatologicalData = chartData.map(item => item.st_value_clima);
-            // const fillTraces = fillAreas(dates, observedData, climatologicalData, chartVariable, PREC);
-
-            // const colorTraceObserved = chartVariable === PREC ? 'rgba(0, 0, 255, 1)' : 'rgba(255, 0, 0, 1)';
-            // const trace1 = {
-            //     x: dates,
-            //     y: climatologicalData,
-            //     mode: 'lines',
-            //     name: climaLabel,
-            //     line: { color: '#38293C',  width: 1 }
-            // };
-
-            // const trace2 = {
-            //     x: dates,
-            //     y: observedData,
-            //     mode: 'lines',
-            //     name: currentYearLabel,
-            //     line: { color: colorTraceObserved,  width: 1 }
-            // };
-            // dataChart = [trace1, trace2].concat(fillTraces);
-            // layoutChart = {
-            //     width: this.props.infoChartSize.widthResizable - 10,
-            //     height: this.props.infoChartSize.heightResizable - (this.props.isCollapsedFormGroup ? 140 : 440 ), // Set the height based on the collapse state of the FormGroup
-            //     xaxis: { // Dates format
-            //         tickformat: '%Y-%m-%d',
-            //         range: [this.props.chartRelayout?.startDate || Math.min(...dates), this.props.chartRelayout?.endDate || Math.max(...dates)]
-            //     },
-            //     yaxis: {
-            //         title: TEMP_LIST.includes(this.props.infoChartData.variable)  ? 'Temperatura (°C)' : 'Valore (mm)',
-            //         range: [this.props.chartRelayout?.variabileStart || Math.min(...observedData, ...climatologicalData),
-            //             this.props.chartRelayout?.variabileEnd || Math.max(...observedData, ...climatologicalData)]
-            //     },
-            //     margin: this.props.chartStyle.margin,
-            //     showlegend: true,
-            //     hovermode: 'x unified',
-            //     legend: {
-            //         orientation: 'h',
-            //         x: 0.5,
-            //         y: -0.2
-            //     },
-            //     dragmode: this.props.chartRelayout?.dragmode
-            // };
-            // return (
-            //     <Plot
-            //         data={dataChart}
-            //         layout={layoutChart}
-            //         style={{ width: '100%', height: '100%' }}
-            //         onRelayout={this.handleRelayout}
-            //         config={{ // Chart toolbar config
-            //             displayModeBar: true,
-            //             modeBarButtonsToRemove: ['resetScale2d'],
-            //             autosizable: true
-            //         }}
-            //     />
-            // );
         }
         return null;
     }
@@ -380,6 +310,7 @@ class InfoChart extends React.Component {
                     <FormGroup>
                         <Label className="labels-infochart"><Message msgId="infochart.selectMeteoVariable"/></Label>
                         <SelectVariableTab
+                            idContainer="infochart-dropdown-container"
                             tabList={this.props.tabList}
                             onChangeSingleVariable={this.updateSingleVariable}
                             onChangeMultiVariable={this.props.onChangeChartVariable}

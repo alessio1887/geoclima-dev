@@ -909,7 +909,10 @@
         "menuType": "single_select",
         "showOneDatePicker": true
         }]
-        }
+      },
+      "dependencies": [
+        "SidebarMenu"
+      ]
     }
   ]
 }
