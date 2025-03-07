@@ -12,32 +12,10 @@ import { EXPORTIMAGE_LOADING, updateExportImageDates, apiError,
 import { exportImageEnabledSelector } from '../selectors/exportImage';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 import { toggleControl } from '@mapstore/actions/controls';
-import { SET_INFOCHART_VISIBILITY }  from '../actions/infochart';
 import { CLICK_ON_MAP } from '@mapstore/actions/map';
 import { LOADING } from '@mapstore/actions/maps';
 import { UPDATE_MAP_LAYOUT, updateMapLayout } from '@mapstore/actions/maplayout';
 import GeoClimaAPI from '../api/GeoClimaApi';
-
-const TOOLBAR_OFFSET_RIGHT = {
-    bottom: 0,
-    left: 0,
-    right: 440,
-    transform: 'none',
-    height: 'calc(100% - 30px)',
-    boundingMapRect: {
-        bottom: 0,
-        left: 0,
-        right: 440
-    },
-    boundingSidebarRect: {
-        right: 0,
-        left: 0,
-        bottom: 0
-    },
-    rightPanel: true,
-    leftPanel: false
-};
-
 
 /**
  * exportImageEpic listens for the EXPORT_IMAGE action and performs the following steps:
@@ -124,8 +102,14 @@ const updateToolbarLayoutEpic  = (action$, store) =>
             const appState = store.getState();
             return exportImageEnabledSelector(appState) && appState.maplayout?.layout?.right === 0;
         })
-        .switchMap(() => {
-            return Observable.of(updateMapLayout(TOOLBAR_OFFSET_RIGHT));
+        .switchMap((action) => {
+            const updatedLayout = {
+                ...action.layout,
+                right: 440,  // Imposta right a 440
+                rightPanel: true  // Imposta rightPanel a true
+            };
+
+            return Observable.of(updateMapLayout(updatedLayout));
         });
 
 const disablePluginWhenLoadFeatureInfo = (action$, store) =>

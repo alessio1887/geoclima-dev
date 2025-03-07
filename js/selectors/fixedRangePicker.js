@@ -1,3 +1,10 @@
+/**
+ * Copyright 2024, Consorzio LaMMA.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree.
+*/
 import { createSelector } from 'reselect';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
