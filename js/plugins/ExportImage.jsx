@@ -5,7 +5,7 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
 */
-import React, { useEffect, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -111,6 +111,8 @@ const ExportImage = ({
     // useRef stores the previous values of fromData and toData
     const prevFromData = useRef(fromData);
     const prevToData = useRef(toData);
+    // Stato per il container del portal
+    const [portalContainer, setPortalContainer] = useState(null);
 
     const initializeTabs = useCallback(() => {
         const tabVariablesInit = tabList.map((tab, index) => ({
@@ -149,6 +151,16 @@ const ExportImage = ({
         prevFromData.current = fromData;
         prevToData.current = toData;
     }, [fromData, toData, imageUrl, onClearImageUrl, timeUnit]);
+
+    useEffect(() => {
+        const div = document.createElement('div');
+        div.id = 'exportimage-portal-root';
+        document.body.appendChild(div);
+        setPortalContainer(div);
+        return () => {
+            document.body.removeChild(div);
+        };
+    }, []);
 
     const contentExportImage =  (
         <ResponsivePanel
@@ -196,10 +208,11 @@ const ExportImage = ({
             </Dialog>
         </ResponsivePanel>
     );
-    // Ottieni il nodo dove montare il Portal, vedi idenx.html
-    const portalRoot = document.getElementById('exportimage-portal-root');
-
-    return ReactDOM.createPortal(contentExportImage, portalRoot);
+    // If the container is not ready yet, render nothing
+    if (!portalContainer) {
+        return null;
+    }
+    return ReactDOM.createPortal(contentExportImage, portalContainer);
 };
 
 const mapStateToProps = createStructuredSelector({
