@@ -164,3 +164,16 @@ export function formatDataTemp(values, propVariable) {
     }));
 }
 
+// Function to calculate the dynamic dtick for the y-axis
+export function  getDtick(maxValue) {
+    if (maxValue <= 10) {
+        return 1;
+    } else if (maxValue <= 100) {
+        return 10;
+    } else if (maxValue <= 1000) {
+        return 100;
+    }
+    return Math.pow(10, Math.floor(Math.log10(maxValue)));
+}
+
+
