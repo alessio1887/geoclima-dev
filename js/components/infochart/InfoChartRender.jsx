@@ -9,7 +9,7 @@
 import React from 'react';
 import Plot from '@mapstore/components/charts/PlotlyChart.jsx';
 import { DATE_FORMAT } from '../../utils/ManageDateUtils';
-import { fillAreas, formatDataCum, formatDataTemp, MULTI_VARIABLE_CHART }  from '../../utils/VariabiliMeteoUtils';
+import { fillAreas, formatDataCum, formatDataTemp, MULTI_VARIABLE_CHART, getDtick }  from '../../utils/VariabiliMeteoUtils';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -19,6 +19,7 @@ const colors = ['green', 'black', 'teal', 'gray'];
 const MIN_Y_INDEX = -3.0;
 const MAX_Y_INDEX = 3.0;
 
+// for MultiTraces graph
 const createBackgroundBands = (dates) => {
     const bands = [
         { min: MIN_Y_INDEX, max: -2.0, color: 'rgba(99,0,4, 0.5)' },
@@ -99,70 +100,120 @@ const createObservedAndClimatologicalTraces = (variable, dates, dataFetched, uni
 
     return [trace1, trace2].concat(fillTraces);
 };
-/*
-const createObservedAndClimaLayout = (variable, dates, format, climaAndObservedData, chartRelayout, infoChartSize, isCollapsedFormGroup) => ({
-    width: infoChartSize.widthResizable - 10,
-    height: infoChartSize.heightResizable - (isCollapsedFormGroup ? 140 : 420),
-    title: variable.name,
-    xaxis: {
-        tickformat: format !== DATE_FORMAT ? '%Y-%m-%d %H:%M:%S' : '%Y-%m-%d',
-        tickangle: -20,
-        range: [chartRelayout?.startDate || Math.min(...dates), chartRelayout?.endDate || Math.max(...dates)],
-        ticks: 'inside',
-        ticklen: 5,
-        tickwidth: 1,
-        tickcolor: '#000'
-    },
-    yaxis: {
-        title: variable.yaxis,
-        range: [chartRelayout?.variabileStart || Math.min(...climaAndObservedData),
-            chartRelayout?.variabileEnd || Math.max(...climaAndObservedData)],
-        tickformat: '.1f',
-        ticks: 'inside',
-        ticklen: 5,
-        tickwidth: 1,
-        tickcolor: '#000'
-    },
-    margin: chartMargin,
-    showlegend: true,
-    hovermode: 'x unified',
-    legend: { orientation: 'h', x: 0.5,
-        y: 1.1 },
-    dragmode: chartRelayout?.dragmode
-});
 
-const createMultiLayout = (chartTitle, dates, format, chartRelayout, infoChartSize, isCollapsedFormGroup) => ({
-    width: infoChartSize.widthResizable - 10,
-    height: infoChartSize.heightResizable - ( isCollapsedFormGroup ? 140 : 420 ), // Set the height based on the collapse state of the FormGroup
-    title: chartTitle,
-    xaxis: {
-        tickangle: -20,
-        tickformat: format !== DATE_FORMAT ? '%Y-%m-%d %H:%M:%S' : '%Y-%m-%d',
-        // range: [-0.05, dates.length - 0.95], // Aggiunge un piccolo spazio
-        range: [chartRelayout?.startDate || Math.min(...dates), chartRelayout?.endDate || Math.max(...dates)],
-        ticks: 'inside',
-        ticklen: 5, // Lunghezza delle stanghette in pixel
-        tickwidth: 1, // Spessore delle stanghette
-        tickcolor: '#000' // Colore delle stanghette
-    },
-    yaxis: {
-        range: [ chartRelayout?.variabileStart || MIN_Y_INDEX, chartRelayout?.variabileEnd || MAX_Y_INDEX],
-        tickvals: [MIN_Y_INDEX, -2, -1.5, -0.5, 0.5, 1.0, 1.5, 2.0, MAX_Y_INDEX],
-        tickformat: '.1f',
-        ticks: 'inside', // Mostra le stanghette all'esterno
-        ticklen: 5, // Lunghezza delle stanghette in pixel
-        tickwidth: 1, // Spessore delle stanghette
-        tickcolor: '#000' // Colore delle stanghette
-    },
-    margin: chartMargin,
-    showlegend: true,
-    hovermode: 'x unified',
-    legend: { orientation: 'h', x: 0.5,
-        y: 1 },
-    autosize: true,
-    dragmode: chartRelayout?.dragmode
-});
-*/
+
+const createPrecipitationTraces = (variables, dataFetched, chartRelayout) => {
+    const chartVariable = variables[0].id;
+    const unit = variables[0].unit;
+    const propVariable = ST_VALUE + chartVariable;
+
+    // Converte direttamente le date dai dati ricevuti
+    const times = dataFetched.map(item => new Date(item.data));
+
+    // Estrae le precipitazioni e le converte in numeri
+    const precipitations = dataFetched.map(item => parseFloat(item[propVariable]));
+
+    // Calcola la precipitazione cumulata
+    let cumulative = 0;
+    const cumulativePrecip = precipitations.map(value => {
+        cumulative += value;
+        return cumulative;
+    });
+
+    // Determina il range delle date
+    const startDate = chartRelayout?.startDate
+        ? new Date(chartRelayout.startDate)
+        : new Date(Math.min(...times));
+    const endDate = chartRelayout?.endDate
+        ? new Date(chartRelayout.endDate)
+        : new Date(Math.max(...times));
+
+    // Traccia a barre per la precipitazione istantanea
+    const barTrace = {
+        x: times,
+        y: precipitations,
+        type: 'bar',
+        name: `Precipitazione [${unit}]`,
+        marker: { color: '#FFAF1F', opacity: 0.6 },
+        hovertemplate: '%{y:.1f} mm<br>%{x:%d/%m/%Y}'
+    };
+
+    // Traccia a linea per la precipitazione cumulata (asse y secondario)
+    const lineTrace = {
+        x: times,
+        y: cumulativePrecip,
+        type: 'scatter',
+        mode: 'lines+markers',
+        name: `Precipitazione cumulata [${unit}]`,
+        line: { color: '#0000FF' },
+        hovertemplate: '%{y:.1f} mm<br>%{x:%d/%m/%Y}',
+        yaxis: 'y2'
+    };
+
+    return { traces: [barTrace, lineTrace], startDate, endDate, times, precipitations, cumulativePrecip };
+};
+
+
+const createPrecipitationLayout = (chartTitle, startDate, endDate, times, precipitations, cumulativePrecip, format, chartRelayout, infoChartSize, isCollapsedFormGroup) => {
+    const maxPrecip = Math.max(...precipitations);
+    const y1max = Math.max(maxPrecip, 6);
+    const maxCum = Math.max(...cumulativePrecip);
+    const y2max = Math.max(maxCum, 6);
+    const dtick1 = getDtick(y1max);
+    const scaleFactor = y2max / y1max;
+    const dtick2 = dtick1 * scaleFactor;
+
+    return {
+        width: infoChartSize.widthResizable - 10,
+        height: infoChartSize.heightResizable - (isCollapsedFormGroup ? 140 : 400),
+        title: {
+            text: chartTitle,
+            x: 0.05,
+            xanchor: 'left'
+        },
+        barmode: 'overlay',
+        xaxis: {
+            tickformat: format !== DATE_FORMAT ? '%Y-%m-%d %H:%M:%S' : '%Y-%m-%d',
+            tickangle: -20,
+            range: [startDate, endDate],
+            ticks: 'inside',
+            ticklen: 5,
+            tickwidth: 1,
+            tickcolor: '#000'
+        },
+        yaxis: {
+            title: 'Precipitazione [mm]',
+            range: [0, y1max],
+            tick0: 0,
+            dtick: dtick1,
+            tickfont: { color: '#FFAF1F' },
+            titlefont: { color: '#FFAF1F' },
+            rangemode: 'tozero'
+        },
+        yaxis2: {
+            title: 'Precipitazione cumulata [mm]',
+            overlaying: 'y',
+            side: 'right',
+            range: [0, y2max],
+            tick0: 0,
+            dtick: dtick2,
+            tickfont: { color: '#0000FF' },
+            titlefont: { color: '#0000FF' },
+            automargin: true,
+            position: 1,
+            rangemode: 'tozero'
+        },
+        legend: {
+            orientation: 'h',
+            x: 0.5,
+            y: -0.2,
+            xanchor: 'center'
+        },
+        margin: { t: 80, r: 40, l: 60, b: (format === DATE_FORMAT ? 40 : 60 )}
+    };
+};
+
+
 const createLayout = (variable, chartTitle,  dates, format, dataTraces, chartRelayout, infoChartSize, isCollapsedFormGroup, chartType) => {
     const isMultiVariable = chartType === MULTI_VARIABLE_CHART;
     const yaxisRange = isMultiVariable
@@ -211,18 +262,25 @@ const createLayout = (variable, chartTitle,  dates, format, dataTraces, chartRel
 const InfoChartRender = ({ dataFetched, variables, variableParams, handleRelayout,
     chartRelayout, infoChartSize, isCollapsedFormGroup, unitPrecipitazione, format }) => {
 
-    // Formattare i dati
-    const dates = dataFetched.map(item => moment(item.data).clone().startOf('day').toDate());
-    const dataTraces = variableParams.type === MULTI_VARIABLE_CHART ? createMultiTraces(variables, dates, dataFetched)
-        : createObservedAndClimatologicalTraces(variables, dates, dataFetched, unitPrecipitazione);
+    let traces;
+    let layout;
+    const chartTitle = variableParams.chartTitle || variables[0].name;
+    const dates = dataFetched.map(item => moment(item.data).toDate());
+    if (variables[0].unit === unitPrecipitazione && variables[0].name.toLowerCase() === 'precipitazione') {
+        const { traces: precipTraces, startDate, endDate, times, precipitations, cumulativePrecip } =
+            createPrecipitationTraces(variables, dataFetched, chartRelayout);
+        traces = precipTraces;
+        layout = createPrecipitationLayout(chartTitle, startDate, endDate, times, precipitations, cumulativePrecip, format, chartRelayout, infoChartSize, isCollapsedFormGroup);
+    } else if (variableParams.type === MULTI_VARIABLE_CHART) {
+        const multiTraces = createMultiTraces(variables, dates, dataFetched);
+        traces = createBackgroundBands(dates).concat(multiTraces);
+        layout = createLayout(variables[0], chartTitle, dates, format, multiTraces, chartRelayout, infoChartSize, isCollapsedFormGroup, variableParams.type);
+    } else {
+        const observedTraces = createObservedAndClimatologicalTraces(variables, dates, dataFetched, unitPrecipitazione);
+        traces = observedTraces;
+        layout = createLayout(variables[0], chartTitle, dates, format, observedTraces, chartRelayout, infoChartSize, isCollapsedFormGroup, variableParams.type);
+    }
 
-    const traces = variableParams.type === MULTI_VARIABLE_CHART ? createBackgroundBands(dates).concat(dataTraces) : dataTraces;
-    const chartTitle = variableParams.type === MULTI_VARIABLE_CHART ? variableParams.chartTitle : variables[0].name;
-
-    // Configurazione del layout
-    // const layout = variableParams.type === MULTI_VARIABLE_CHART ? createMultiLayout(variableParams.chartTitle, dates, format, chartRelayout, infoChartSize, isCollapsedFormGroup)
-    //     : createObservedAndClimaLayout(variables[0], dates, format, [dataTraces[0], dataTraces[1]], chartRelayout, infoChartSize, isCollapsedFormGroup, unitPrecipitazione);
-    const layout = createLayout(variables[0], chartTitle, dates, format, dataTraces,  chartRelayout, infoChartSize, isCollapsedFormGroup, variableParams.type);
     return (
         <Plot
             data={traces}

@@ -40,19 +40,18 @@ momentLocaliser(moment);
 /*
 Plugin configuration
 "name": "FixedRangePicker",
-          "cfg" : {
+          "defaultConfig" : {
         "id": "mapstore-fixedrangepicker-map",
         "defaultUrlSelectDate": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
         "variabileSelectDate": "prec",
-        "isFetchAvailableDates": true, // If true, fetch the first and last available dates calling fetchSelectDate action
+        "isFetchAvailableDates": true,
         "periodTypes": [
-            { "key": 1, "label": "5 giorni", "max": 5 },
-            { "key": 7, "label": "8 giorni", "max": 8 },
-            { "key": 10, "label": "20 giorni", "max": 20, "isDefault": true  },
-            { "key": 30, "label": "60 giorni", "max": 60 },
-            { "key": 120, "label": "160 giorni", "max": 160 },
-            { "key": 180, "label": "250 giorni", "max": 250 },
-            { "key": 365, "label": "366 giorni", "max": 366 }
+            { "key": 7, "label": "7 giorni", "max": 6 },
+            { "key": 10, "label": "10 giorni", "max": 9, "isDefault": true  },
+            { "key": 30, "label": "30 giorni", "max": 29 },
+            { "key": 120, "label": "90 giorni", "max": 89 },
+            { "key": 180, "label": "180 giorni", "max": 179 },
+            { "key": 365, "label": "365 giorni", "max": 364 }
         ],
         "variabiliMeteo": {
           "precipitazione": [
@@ -119,8 +118,8 @@ Plugin configuration
           ]
         },
         "timeUnit": "YYYY-MM-DD",
-        "showOneDatePicker": false // If true, show the DailyManager component instead of the FixedRangeManager
-          }
+        "showOneDatePicker": false
+      }
 */
 class FixedRangePicker extends React.Component {
     static propTypes = {

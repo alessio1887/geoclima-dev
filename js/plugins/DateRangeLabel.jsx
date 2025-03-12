@@ -33,6 +33,7 @@ Plugin configuration:
           "spei":[ "spei1", "spei3", "spei6", "spei12"]
         },
         "timeUnit": "YYYY-MM-DD"
+    }
 */
 class DateRangeLabel extends React.Component {
     static propTypes = {

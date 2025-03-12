@@ -67,17 +67,23 @@ Plugin configuration
                 { "id": "spi6", "name": "SPI-6" },
                 { "id": "spi12", "name": "SPI-12" }
             ],
-            "menuType": "single_select"
+            "menuType": "single_select",
+            "showOneDatePicker": true
           },
           {"id": "speiList", "name": "SPEI", "groupList": [
             { "id": "spei1", "name": "SPEI-1" },
             { "id": "spei3", "name": "SPEI-3" },
             { "id": "spei6", "name": "SPEI-6" },
             { "id": "spei12", "name": "SPEI-12" }
-          ],
-          "menuType": "single_select"
-          }]
-      }
+        ],
+        "menuType": "single_select",
+        "showOneDatePicker": true
+        }]
+      },
+      "dependencies": [
+        "SidebarMenu"
+      ]
+    }
 */
 const ExportImage = ({
     active,

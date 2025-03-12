@@ -33,16 +33,15 @@ Plugin configuration
          "defaultUrlGeoclimaChart": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/geoclima_chart_test.py",
          "defaultUrlSelectDate": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
          "variabileSelectDate": "prec",
-        "isFetchAvailableDates": true,
-         "periodTypes": [
-            { "key": 1, "label": "5 giorni", "min": 1, "max": 5 },
-            { "key": 7, "label": "8 giorni", "min": 6, "max": 8 },
-            { "key": 10, "label": "20 giorni", "min": 9, "max": 20, "isDefault": true  },
-            { "key": 30, "label": "60 giorni", "min": 21, "max": 60 },
-            { "key": 120, "label": "160 giorni", "min": 61, "max": 160 },
-            { "key": 180, "label": "250 giorni", "min": 161, "max": 250 },
-            { "key": 365, "label": "366 giorni", "min": 251, "max": 366 }
-        ],
+         "isFetchAvailableDates": false,
+        "periodTypes": [
+          { "key": "a", "label": "7 giorni", "max": 6 },
+          { "key": "b", "label": "10 giorni", "max": 9, "isDefault": true  },
+          { "key": "c", "label": "30 giorni", "max": 29 },
+          { "key": "d", "label": "90 giorni", "max": 89 },
+          { "key": "e", "label": "180 giorni", "max": 179 },
+          { "key": "f", "label": "365 giorni", "max": 364 }
+      ],
           "tabList": [
             {"id": "variableList", "name": "Variabili Meteo", "groupList": [
                                                                   { "id": "prec", "name": "Precipitazione", "unit": "mm", "yaxis": "Valore (mm)" },
@@ -117,7 +116,7 @@ Plugin configuration
           "timeUnit": "YYYY-MM-DD",
           "unitPrecipitazione": "mm",
           "unitTemperatura": "°C"
-      }
+      },
       "override": {
         "Toolbar": {
           "alwaysVisible": true
