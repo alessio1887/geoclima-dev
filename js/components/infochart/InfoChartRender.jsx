@@ -102,7 +102,7 @@ const createObservedAndClimatologicalTraces = (variable, dates, dataFetched, uni
 };
 
 
-const createPrecipitationTraces = (variables, dataFetched, chartRelayout) => {
+const createPrecipitationTraces = (variables, dataFetched) => {
     const chartVariable = variables[0].id;
     const unit = variables[0].unit;
     const propVariable = ST_VALUE + chartVariable;
@@ -121,12 +121,12 @@ const createPrecipitationTraces = (variables, dataFetched, chartRelayout) => {
     });
 
     // Determina il range delle date
-    const startDate = chartRelayout?.startDate
-        ? new Date(chartRelayout.startDate)
-        : new Date(Math.min(...times));
-    const endDate = chartRelayout?.endDate
-        ? new Date(chartRelayout.endDate)
-        : new Date(Math.max(...times));
+    // const startDate = chartRelayout?.startDate
+    //     ? new Date(chartRelayout.startDate)
+    //     : new Date(Math.min(...times));
+    // const endDate = chartRelayout?.endDate
+    //     ? new Date(chartRelayout.endDate)
+    //     : new Date(Math.max(...times));
 
     // Traccia a barre per la precipitazione istantanea
     const barTrace = {
@@ -150,11 +150,11 @@ const createPrecipitationTraces = (variables, dataFetched, chartRelayout) => {
         yaxis: 'y2'
     };
 
-    return { traces: [barTrace, lineTrace], startDate, endDate, times, precipitations, cumulativePrecip };
+    return { traces: [barTrace, lineTrace], precipitations, cumulativePrecip };
 };
 
 
-const createPrecipitationLayout = (chartTitle, startDate, endDate, times, precipitations, cumulativePrecip, format, chartRelayout, infoChartSize, isCollapsedFormGroup) => {
+const createPrecipitationLayout = (chartTitle, precipitations, cumulativePrecip, dates, format, chartRelayout, infoChartSize, isCollapsedFormGroup) => {
     const maxPrecip = Math.max(...precipitations);
     const y1max = Math.max(maxPrecip, 6);
     const maxCum = Math.max(...cumulativePrecip);
@@ -162,6 +162,14 @@ const createPrecipitationLayout = (chartTitle, startDate, endDate, times, precip
     const dtick1 = getDtick(y1max);
     const scaleFactor = y2max / y1max;
     const dtick2 = dtick1 * scaleFactor;
+
+    // Determina il range delle date
+    const startDate = chartRelayout?.startDate
+        ? new Date(chartRelayout.startDate)
+        : new Date(Math.min(...dates));
+    const endDate = chartRelayout?.endDate
+        ? new Date(chartRelayout.endDate)
+        : new Date(Math.max(...dates));
 
     return {
         width: infoChartSize.widthResizable - 10,
@@ -267,10 +275,9 @@ const InfoChartRender = ({ dataFetched, variables, variableParams, handleRelayou
     const chartTitle = variableParams.chartTitle || variables[0].name;
     const dates = dataFetched.map(item => moment(item.data).toDate());
     if (variables[0].unit === unitPrecipitazione && variables[0].name.toLowerCase() === 'precipitazione') {
-        const { traces: precipTraces, startDate, endDate, times, precipitations, cumulativePrecip } =
-            createPrecipitationTraces(variables, dataFetched, chartRelayout);
+        const { traces: precipTraces, precipitations, cumulativePrecip } = createPrecipitationTraces(variables, dataFetched);
         traces = precipTraces;
-        layout = createPrecipitationLayout(chartTitle, startDate, endDate, times, precipitations, cumulativePrecip, format, chartRelayout, infoChartSize, isCollapsedFormGroup);
+        layout = createPrecipitationLayout(chartTitle, precipitations, cumulativePrecip, dates, format, chartRelayout, infoChartSize, isCollapsedFormGroup);
     } else if (variableParams.type === MULTI_VARIABLE_CHART) {
         const multiTraces = createMultiTraces(variables, dates, dataFetched);
         traces = createBackgroundBands(dates).concat(multiTraces);
