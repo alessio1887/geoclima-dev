@@ -780,7 +780,7 @@
       ],
           "tabList": [
             {"id": "variableList", "name": "Variabili Meteo", "groupList": [
-                                                                  { "id": "prec", "name": "Precipitazione", "unit": "mm", "yaxis": "Valore (mm)" },
+                                                                  { "id": "prec", "name": "Precipitazione", "unit": "mm", "yaxis": "Precipitazione (mm)", "yaxis2": "Precipitazione cumulata (mm)" },
                                                                   { "id": "tmed", "name": "Temperatura Media", "unit": "°C", "yaxis": "Temperatura (°C)"  },
                                                                   { "id": "tmax", "name": "Temperatura Massima", "unit": "°C", "yaxis": "Temperatura (°C)"  },
                                                                   { "id": "tmin", "name": "Temperatura Minima", "unit": "°C", "yaxis": "Temperatura (°C)"  },

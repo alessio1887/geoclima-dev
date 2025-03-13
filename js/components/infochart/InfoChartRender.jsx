@@ -119,21 +119,14 @@ const createPrecipitationTraces = (variables, dataFetched) => {
         cumulative += value;
         return cumulative;
     });
-
-    // Determina il range delle date
-    // const startDate = chartRelayout?.startDate
-    //     ? new Date(chartRelayout.startDate)
-    //     : new Date(Math.min(...times));
-    // const endDate = chartRelayout?.endDate
-    //     ? new Date(chartRelayout.endDate)
-    //     : new Date(Math.max(...times));
+    // const cumulativePrecip = formatDataCum(dataFetched, propVariable).map(item => item[propVariable]);
 
     // Traccia a barre per la precipitazione istantanea
     const barTrace = {
         x: times,
         y: precipitations,
         type: 'bar',
-        name: `Precipitazione [${unit}]`,
+        name: variables[0].yaxis2,
         marker: { color: '#FFAF1F', opacity: 0.6 },
         hovertemplate: '%{y:.1f} mm<br>%{x:%d/%m/%Y}'
     };
@@ -143,7 +136,7 @@ const createPrecipitationTraces = (variables, dataFetched) => {
         x: times,
         y: cumulativePrecip,
         type: 'scatter',
-        mode: 'lines+markers',
+        mode: 'lines',
         name: `Precipitazione cumulata [${unit}]`,
         line: { color: '#0000FF' },
         hovertemplate: '%{y:.1f} mm<br>%{x:%d/%m/%Y}',
@@ -154,7 +147,7 @@ const createPrecipitationTraces = (variables, dataFetched) => {
 };
 
 
-const createPrecipitationLayout = (chartTitle, precipitations, cumulativePrecip, dates, format, chartRelayout, infoChartSize, isCollapsedFormGroup) => {
+const createPrecipitationLayout = (variables, chartTitle, precipitations, cumulativePrecip, dates, format, chartRelayout, infoChartSize, isCollapsedFormGroup) => {
     const maxPrecip = Math.max(...precipitations);
     const y1max = Math.max(maxPrecip, 6);
     const maxCum = Math.max(...cumulativePrecip);
@@ -190,7 +183,7 @@ const createPrecipitationLayout = (chartTitle, precipitations, cumulativePrecip,
             tickcolor: '#000'
         },
         yaxis: {
-            title: 'Precipitazione [mm]',
+            title: variables[0].yaxis,
             range: [0, y1max],
             tick0: 0,
             dtick: dtick1,
@@ -199,7 +192,7 @@ const createPrecipitationLayout = (chartTitle, precipitations, cumulativePrecip,
             rangemode: 'tozero'
         },
         yaxis2: {
-            title: 'Precipitazione cumulata [mm]',
+            title: variables[0].yaxis2,
             overlaying: 'y',
             side: 'right',
             range: [0, y2max],
@@ -274,10 +267,10 @@ const InfoChartRender = ({ dataFetched, variables, variableParams, handleRelayou
     let layout;
     const chartTitle = variableParams.chartTitle || variables[0].name;
     const dates = dataFetched.map(item => moment(item.data).toDate());
-    if (variables[0].unit === unitPrecipitazione && variables[0].name.toLowerCase() === 'precipitazione') {
+    if (variables[0].yaxis2 !== undefined) {
         const { traces: precipTraces, precipitations, cumulativePrecip } = createPrecipitationTraces(variables, dataFetched);
         traces = precipTraces;
-        layout = createPrecipitationLayout(chartTitle, precipitations, cumulativePrecip, dates, format, chartRelayout, infoChartSize, isCollapsedFormGroup);
+        layout = createPrecipitationLayout(variables, chartTitle, precipitations, cumulativePrecip, dates, format, chartRelayout, infoChartSize, isCollapsedFormGroup);
     } else if (variableParams.type === MULTI_VARIABLE_CHART) {
         const multiTraces = createMultiTraces(variables, dates, dataFetched);
         traces = createBackgroundBands(dates).concat(multiTraces);
