@@ -120,13 +120,14 @@ const createPrecipitationTraces = (variables, dataFetched) => {
         return cumulative;
     });
     // const cumulativePrecip = formatDataCum(dataFetched, propVariable).map(item => item[propVariable]);
+    const climatologicalData = formatDataCum(dataFetched, propVariable).map(item => item.st_value_clima);
 
     // Traccia a barre per la precipitazione istantanea
     const barTrace = {
         x: times,
         y: precipitations,
         type: 'bar',
-        name: variables[0].yaxis2,
+        name: variables[0].yaxis,
         marker: { color: '#FFAF1F', opacity: 0.6 },
         hovertemplate: '%{y:.1f} mm<br>%{x:%d/%m/%Y}'
     };
@@ -137,13 +138,21 @@ const createPrecipitationTraces = (variables, dataFetched) => {
         y: cumulativePrecip,
         type: 'scatter',
         mode: 'lines',
-        name: `Precipitazione cumulata [${unit}]`,
-        line: { color: '#0000FF' },
+        name: variables[0].yaxis2,
+        line: { color: 'rgba(255, 0, 0, 1)', width: 1 },
         hovertemplate: '%{y:.1f} mm<br>%{x:%d/%m/%Y}',
         yaxis: 'y2'
     };
 
-    return { traces: [barTrace, lineTrace], precipitations, cumulativePrecip };
+    const clomatologicalTrace = {
+        x: times,
+        y: climatologicalData,
+        mode: 'lines',
+        name: "Climatologia " + ( unit || ""),
+        line: { color: 'rgba(0, 0, 255, 1)', width: 1 }
+    };
+
+    return [barTrace, lineTrace, clomatologicalTrace];
 };
 
 
@@ -204,12 +213,9 @@ const createPrecipitationLayout = (variables, chartTitle, precipitations, cumula
             position: 1,
             rangemode: 'tozero'
         },
-        legend: {
-            orientation: 'h',
-            x: 0.5,
-            y: -0.2,
-            xanchor: 'center'
-        },
+        hovermode: 'x unified',
+        legend: { orientation: 'h', x: 0.5, y: 1.05 },
+        dragmode: chartRelayout?.dragmode,
         margin: { t: 80, r: 40, l: 60, b: (format === DATE_FORMAT ? 40 : 60 )}
     };
 };
@@ -268,9 +274,9 @@ const InfoChartRender = ({ dataFetched, variables, variableParams, handleRelayou
     const chartTitle = variableParams.chartTitle || variables[0].name;
     const dates = dataFetched.map(item => moment(item.data).toDate());
     if (variables[0].yaxis2 !== undefined) {
-        const { traces: precipTraces, precipitations, cumulativePrecip } = createPrecipitationTraces(variables, dataFetched);
+        const precipTraces = createPrecipitationTraces(variables, dataFetched);
         traces = precipTraces;
-        layout = createPrecipitationLayout(variables, chartTitle, precipitations, cumulativePrecip, dates, format, chartRelayout, infoChartSize, isCollapsedFormGroup);
+        layout = createPrecipitationLayout(variables, chartTitle, precipTraces[0].y, precipTraces[1].y, dates, format, chartRelayout, infoChartSize, isCollapsedFormGroup);
     } else if (variableParams.type === MULTI_VARIABLE_CHART) {
         const multiTraces = createMultiTraces(variables, dates, dataFetched);
         traces = createBackgroundBands(dates).concat(multiTraces);
