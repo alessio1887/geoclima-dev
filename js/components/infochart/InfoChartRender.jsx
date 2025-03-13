@@ -108,7 +108,7 @@ const createPrecipitationTraces = (variables, times, dataFetched) => {
     const propVariable = ST_VALUE + chartVariable;
 
     // Estrae le precipitazioni e le converte in numeri
-    const precipitations = dataFetched.map(item => parseFloat(item[propVariable]));
+    const precipitations = dataFetched.map(item => parseFloat(parseFloat(item[propVariable]).toFixed(1)));
     const cumulativePrecip = formatDataCum(dataFetched, propVariable).map(item => item[propVariable]);
     const climatologicalData = formatDataCum(dataFetched, propVariable).map(item => item.st_value_clima);
     const fillTraces = fillAreas(times, cumulativePrecip, climatologicalData, variables, unit, 'y2');
