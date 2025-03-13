@@ -62,7 +62,7 @@ function getIntersection(x1, y1, x2, y2, climY1, climY2) {
  * one color if the observed values are below climatology, and another color if they are above.
  * It also handles intersections between the two curves.
  */
-export function fillAreas(dateObjects, observed, climatological, variable, unitPrecipitazione) {
+export function fillAreas(dateObjects, observed, climatological, variable, unitPrecipitazione, yaxis = 'y') {
     let fillTraces = [];
     let  upperColor;
     let  belowColor;
@@ -91,7 +91,8 @@ export function fillAreas(dateObjects, observed, climatological, variable, unitP
                 fillcolor: y1Obs > y1Clim ? upperColor : belowColor,
                 line: { color: 'transparent' },
                 showlegend: false,
-                hoverinfo: 'skip'
+                hoverinfo: 'skip',
+                yaxis: yaxis
             });
         } else if ((y0Obs < y0Clim && y1Obs > y1Clim) || (y0Obs > y0Clim && y1Obs < y1Clim)) {
             // Case of intersection when temperatures reverse
@@ -104,7 +105,8 @@ export function fillAreas(dateObjects, observed, climatological, variable, unitP
                     fillcolor: y0Obs > y0Clim ? upperColor : belowColor,
                     line: { color: 'transparent' },
                     showlegend: false,
-                    hoverinfo: 'skip'
+                    hoverinfo: 'skip',
+                    yaxis: yaxis
                 });
 
                 fillTraces.push({
@@ -114,7 +116,8 @@ export function fillAreas(dateObjects, observed, climatological, variable, unitP
                     fillcolor: y1Obs > y1Clim ? upperColor : belowColor,
                     line: { color: 'transparent' },
                     showlegend: false,
-                    hoverinfo: 'skip'
+                    hoverinfo: 'skip',
+                    yaxis: yaxis
                 });
             }
         } else {
@@ -126,7 +129,8 @@ export function fillAreas(dateObjects, observed, climatological, variable, unitP
                 fillcolor: y0Obs > y0Clim ? upperColor : belowColor,
                 line: { color: 'transparent' },
                 showlegend: false,
-                hoverinfo: 'skip'
+                hoverinfo: 'skip',
+                yaxis: yaxis
             });
         }
     }

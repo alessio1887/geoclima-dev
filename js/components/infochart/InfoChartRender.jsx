@@ -102,25 +102,16 @@ const createObservedAndClimatologicalTraces = (variable, dates, dataFetched, uni
 };
 
 
-const createPrecipitationTraces = (variables, dataFetched) => {
+const createPrecipitationTraces = (variables, times, dataFetched) => {
     const chartVariable = variables[0].id;
     const unit = variables[0].unit;
     const propVariable = ST_VALUE + chartVariable;
 
-    // Converte direttamente le date dai dati ricevuti
-    const times = dataFetched.map(item => new Date(item.data));
-
     // Estrae le precipitazioni e le converte in numeri
     const precipitations = dataFetched.map(item => parseFloat(item[propVariable]));
-
-    // Calcola la precipitazione cumulata
-    let cumulative = 0;
-    const cumulativePrecip = precipitations.map(value => {
-        cumulative += value;
-        return cumulative;
-    });
-    // const cumulativePrecip = formatDataCum(dataFetched, propVariable).map(item => item[propVariable]);
+    const cumulativePrecip = formatDataCum(dataFetched, propVariable).map(item => item[propVariable]);
     const climatologicalData = formatDataCum(dataFetched, propVariable).map(item => item.st_value_clima);
+    const fillTraces = fillAreas(times, cumulativePrecip, climatologicalData, variables, unit, 'y2');
 
     // Traccia a barre per la precipitazione istantanea
     const barTrace = {
@@ -128,8 +119,8 @@ const createPrecipitationTraces = (variables, dataFetched) => {
         y: precipitations,
         type: 'bar',
         name: variables[0].yaxis,
-        marker: { color: '#FFAF1F', opacity: 0.6 },
-        hovertemplate: '%{y:.1f} mm<br>%{x:%d/%m/%Y}'
+        marker: { color: '#FFAF1F', opacity: 0.6 }
+        // hovertemplate: '%{y:.1f} mm<br>%{x:%d/%m/%Y}'
     };
 
     // Traccia a linea per la precipitazione cumulata (asse y secondario)
@@ -140,7 +131,7 @@ const createPrecipitationTraces = (variables, dataFetched) => {
         mode: 'lines',
         name: variables[0].yaxis2,
         line: { color: 'rgba(255, 0, 0, 1)', width: 1 },
-        hovertemplate: '%{y:.1f} mm<br>%{x:%d/%m/%Y}',
+        // hovertemplate: '%{y:.1f} mm<br>%{x:%d/%m/%Y}',
         yaxis: 'y2'
     };
 
@@ -149,17 +140,19 @@ const createPrecipitationTraces = (variables, dataFetched) => {
         y: climatologicalData,
         mode: 'lines',
         name: "Climatologia " + ( unit || ""),
-        line: { color: 'rgba(0, 0, 255, 1)', width: 1 }
+        line: { color: 'rgba(0, 0, 255, 1)', width: 1 },
+        yaxis: 'y2'
     };
 
-    return [barTrace, lineTrace, clomatologicalTrace];
+    return [barTrace, lineTrace, clomatologicalTrace].concat(fillTraces);
 };
 
 
-const createPrecipitationLayout = (variables, chartTitle, precipitations, cumulativePrecip, dates, format, chartRelayout, infoChartSize, isCollapsedFormGroup) => {
-    const maxPrecip = Math.max(...precipitations);
+const createPrecipitationLayout = (variables, chartTitle, traces, dates, format, chartRelayout, infoChartSize, isCollapsedFormGroup) => {
+    const barTrace = traces[0].y;
+    const maxPrecip = Math.max(...barTrace);
     const y1max = Math.max(maxPrecip, 6);
-    const maxCum = Math.max(...cumulativePrecip);
+    const maxCum = Math.max(traces[1].y, traces[2].y);
     const y2max = Math.max(maxCum, 6);
     const dtick1 = getDtick(y1max);
     const scaleFactor = y2max / y1max;
@@ -274,9 +267,9 @@ const InfoChartRender = ({ dataFetched, variables, variableParams, handleRelayou
     const chartTitle = variableParams.chartTitle || variables[0].name;
     const dates = dataFetched.map(item => moment(item.data).toDate());
     if (variables[0].yaxis2 !== undefined) {
-        const precipTraces = createPrecipitationTraces(variables, dataFetched);
+        const precipTraces = createPrecipitationTraces(variables, dates, dataFetched);
         traces = precipTraces;
-        layout = createPrecipitationLayout(variables, chartTitle, precipTraces[0].y, precipTraces[1].y, dates, format, chartRelayout, infoChartSize, isCollapsedFormGroup);
+        layout = createPrecipitationLayout(variables, chartTitle, traces, dates, format, chartRelayout, infoChartSize, isCollapsedFormGroup);
     } else if (variableParams.type === MULTI_VARIABLE_CHART) {
         const multiTraces = createMultiTraces(variables, dates, dataFetched);
         traces = createBackgroundBands(dates).concat(multiTraces);
