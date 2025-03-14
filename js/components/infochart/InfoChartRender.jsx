@@ -104,14 +104,11 @@ const createObservedAndClimatologicalTraces = (variable, dates, dataFetched, uni
 
 const createPrecipitationTraces = (variables, times, dataFetched) => {
     const chartVariable = variables[0].id;
-    const unit = variables[0].unit;
     const propVariable = ST_VALUE + chartVariable;
 
     // Estrae le precipitazioni e le converte in numeri
     const precipitations = dataFetched.map(item => parseFloat(parseFloat(item[propVariable]).toFixed(1)));
     const cumulativePrecip = formatDataCum(dataFetched, propVariable).map(item => item[propVariable]);
-    const climatologicalData = formatDataCum(dataFetched, propVariable).map(item => item.st_value_clima);
-    const fillTraces = fillAreas(times, cumulativePrecip, climatologicalData, variables, unit, 'y2');
 
     // Traccia a barre per la precipitazione istantanea
     const barTrace = {
@@ -130,21 +127,12 @@ const createPrecipitationTraces = (variables, times, dataFetched) => {
         type: 'scatter',
         mode: 'lines',
         name: variables[0].yaxis2,
-        line: { color: 'rgba(255, 0, 0, 1)', width: 1 },
+        line: { color: 'rgba(0, 0, 255, 1)', width: 1 },
         // hovertemplate: '%{y:.1f} mm<br>%{x:%d/%m/%Y}',
         yaxis: 'y2'
     };
 
-    const clomatologicalTrace = {
-        x: times,
-        y: climatologicalData,
-        mode: 'lines',
-        name: "Climatologia " + ( unit || ""),
-        line: { color: 'rgba(0, 0, 255, 1)', width: 1 },
-        yaxis: 'y2'
-    };
-
-    return [barTrace, lineTrace, clomatologicalTrace].concat(fillTraces);
+    return [barTrace, lineTrace];
 };
 
 
@@ -152,7 +140,7 @@ const createPrecipitationLayout = (variables, chartTitle, traces, dates, format,
     const barTrace = traces[0].y;
     const maxPrecip = Math.max(...barTrace);
     const y1max = Math.max(maxPrecip, 6);
-    const maxCum = Math.max(traces[1].y, traces[2].y);
+    const maxCum = Math.max(traces[1].y);
     const y2max = Math.max(maxCum, 6);
     const dtick1 = getDtick(y1max);
     const scaleFactor = y2max / y1max;
@@ -165,6 +153,9 @@ const createPrecipitationLayout = (variables, chartTitle, traces, dates, format,
     const endDate = chartRelayout?.endDate
         ? new Date(chartRelayout.endDate)
         : new Date(Math.max(...dates));
+
+    // Determina il range per gli assy y e y2
+    // const yaxisRange = [chartRelayout?.variabileStart || Math.min([dataTraces[0], dataTraces[1]]), chartRelayout?.variabileEnd || Math.max([dataTraces[0], dataTraces[1]])];
 
     return {
         width: infoChartSize.widthResizable - 10,
