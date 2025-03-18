@@ -11,7 +11,7 @@ import { compose } from 'redux';
 import {setInfoChartVisibility, changeFixedRangeToData, fetchInfoChartData, fetchedInfoChartData, toggleInfoChart,
     changeChartVariable, changePeriod, changeFromData, changeToData, setDefaultDates, collapseRangePicker,
     openAlert, closeAlert, setChartRelayout, resetChartRelayout, resizeInfoChart, setIdVariabiliLayers,
-    setRangeManager, setDefaultUrlGeoclimaChart, setTimeUnit,
+    setRangeManager, setDefaultUrlGeoclimaChart, setTimeUnit, changeChartType,
     markInfoChartAsLoaded, changeTab, setTabList, initializeVariableTabs } from '../actions/infochart';
 import { removeAdditionalLayer  } from '@mapstore/actions/additionallayers';
 import InfoChartButton from '../components/buttons/InfoChartButton';
@@ -175,6 +175,7 @@ const InfoChartPanel = connect((state) => ({
     onFetchedInfoChartData: fetchedInfoChartData,
     onChangeChartVariable: changeChartVariable,
     onChangeTab: compose(changeTab, (event) => event),
+    onChangeChartType: changeChartType,
     onChangeToData: compose(changeToData, (event) => event),
     onChangeFromData: compose(changeFromData, (event) => event),
     onChangeFixedRangeTodata: compose(changeFixedRangeToData, (event) => event),

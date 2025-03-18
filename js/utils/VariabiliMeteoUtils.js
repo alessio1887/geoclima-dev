@@ -14,6 +14,9 @@ export const FREE_RANGE = "free_range_picker";
 export const SINGLE_VARIABLE_CHART = "single_variable";
 export const MULTI_VARIABLE_CHART = "multi_variable";
 export const MARKER_ID = "InfoChartMarker";
+// type of chart based on tabLyst.type of pluginsConfig
+export const DROP_DOWN = "single_select";
+export const MULTI_SELECT = "multi_select";
 
 export const DEFAULT_FILENAME = 'exported_image.png';
 
@@ -66,7 +69,7 @@ export function fillAreas(dateObjects, observed, climatological, variable, unitP
     let fillTraces = [];
     let  upperColor;
     let  belowColor;
-    if (unitPrecipitazione === variable[0].unit ) {
+    if (unitPrecipitazione === variable.unit ) {
         upperColor = 'rgba(0, 0, 255, 0.5)';
         belowColor = 'rgba(255, 0, 0, 0.5)';
     } else {

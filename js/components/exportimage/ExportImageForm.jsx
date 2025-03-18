@@ -2,7 +2,7 @@ import React from 'react';
 import { DateTimePicker } from 'react-widgets';
 import { Button, ButtonGroup, FormGroup, Label } from 'react-bootstrap';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
-import SelectVariableTab from '../../components/dropdowns/SelectVariableTab';
+import SelectVariableTab from '../buttons/SelectVariableTab';
 import { DATE_FORMAT } from '../../utils/ManageDateUtils';
 import Message from '@mapstore/components/I18N/Message';
 import './exportimage.css';

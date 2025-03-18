@@ -15,7 +15,8 @@ import Message from '@mapstore/components/I18N/Message';
 import Dialog from '@mapstore/components/misc/Dialog';
 import BorderLayout from '@mapstore/components/layout/BorderLayout';
 import InfoChartRender from './InfoChartRender';
-import SelectVariableTab from '../../components/dropdowns/SelectVariableTab';
+import SelectVariableTab from '../buttons/SelectVariableTab';
+import TabBar from '../buttons/TabBar';
 import FixedRangeManager from '../../components/datepickers/FixedRangeManager';
 import FreeRangeManager from '../../components/datepickers/FreeRangeManager';
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_INIZIO, DEFAULT_DATA_FINE } from '../../utils/ManageDateUtils';
@@ -42,6 +43,7 @@ class InfoChart extends React.Component {
         onResetChartRelayout: PropTypes.func,
         onResizeInfoChart: PropTypes.func,
         onSetRangeManager: PropTypes.func,
+        onChangeChartType: PropTypes.func,
         onSetTabList: PropTypes.func,
         onHideMapinfoMarker: PropTypes.func,
         show: PropTypes.bool,
@@ -93,9 +95,10 @@ class InfoChart extends React.Component {
         id: "mapstore-sarchart-panel",
         panelClassName: "toolbar-panel portal-dialog",
         closeGlyph: "1-close",
+        onChangeChartType: () => {},
+        onCollapseRangePicker: () => {},
         onSetInfoChartVisibility: () => {},
         onFetchInfoChartData: () => {},
-        onCollapseRangePicker: () => {},
         onSetRangeManager: () => {},
         onSetInfoChartDates: () => {},
         onSetTabList: () => {},
@@ -259,40 +262,60 @@ class InfoChart extends React.Component {
     getActiveTab = () => {
         return this.props.tabVariables.find(tab => tab.active === true);
     }
-    getVariableParams = () => {
-        const variableListParam = this.props.tabList.find(
+    getTabVariableSelected = () => {
+        const tabSelected = this.props.tabList.find(
             tab => tab.id === this.props.infoChartData.idTab
         );
         const variableArray = this.props.infoChartData.variables?.split(',') || [];
-        // Restituisci sempre variabili e tipo, con un check per chartTitle
-        const result = {
-            variables: variableListParam.groupList.filter(variable =>
-                variableArray.includes(variable.id)
-            ),
-            type: variableListParam.chartType,
-            variableName: variableListParam.name
+        return {
+            tabVariableParams: tabSelected.groupList.filter(variable =>
+                variableArray.includes(variable.id)),
+            name: tabSelected.chartTitle,
+            chartType: tabSelected.chartType
         };
-
-        if (variableListParam.chartType === MULTI_VARIABLE_CHART && variableListParam.chartTitle) {
-            result.chartTitle = variableListParam.chartTitle;
-        }
-        return result;
     };
 
     showChart = () => {
         if (!this.props.maskLoading) {
-            const variableParams = this.getVariableParams();
-            return (<InfoChartRender
-                dataFetched = {this.props.data}
-                variables =  { variableParams.variables }
-                handleRelayout= { this.handleRelayout }
-                chartRelayout= { this.props.chartRelayout}
-                infoChartSize={ this.props.infoChartSize}
-                isCollapsedFormGroup={this.props.isCollapsedFormGroup}
-                variableParams={ variableParams }
-                unitPrecipitazione = { this.props.unitPrecipitazione }
-                format={ this.props.timeUnit }
-            />);
+            const variableChartParams = this.getTabVariableSelected();
+            // const isTabBarVisible = variableParams.variables.chartList && variableParams.variables.chartList.variables.length > 1;
+            const isTabBarVisible = false;
+            let chartParamsChecked = {};
+            if (variableChartParams.chartType === MULTI_VARIABLE_CHART) {
+                chartParamsChecked = variableChartParams;
+            } else { // chart type chiice in the TabBar
+                const firstVariable = variableChartParams.tabVariableParams[0]; // Assumendo che ci sia almeno un elemento
+                if (firstVariable.chartList) {
+                    const firstChart = firstVariable.chartList[0]; // Prende il primo elemento di chartList
+                    chartParamsChecked = {
+                        id: firstVariable.id, // Usa l'id della variabile principale (es. "prec")
+                        name: firstVariable.name,
+                        unit: firstChart.unit,
+                        yaxis: firstChart.yaxis,
+                        yaxis2: firstChart.yaxis2,
+                        chartType: firstChart.chartType || ""
+                    };
+                } else {
+                    chartParamsChecked = variableChartParams.tabVariableParams[0];
+                }
+            }
+            return (
+                <div id="infochart-rendering">
+                    { isTabBarVisible &&
+                        <TabBar tabList={variableChartParams.variables.chartList} activeTab={this.getActiveTab()}
+                            onChangeTab={this.props.onChangeChartType} />
+                    }
+                    <InfoChartRender
+                        dataFetched = {this.props.data}
+                        handleRelayout= { this.handleRelayout }
+                        chartRelayout= { this.props.chartRelayout}
+                        infoChartSize={ this.props.infoChartSize}
+                        isCollapsedFormGroup={this.props.isCollapsedFormGroup}
+                        variableChartParams={ chartParamsChecked }
+                        unitPrecipitazione = { this.props.unitPrecipitazione }
+                        format={ this.props.timeUnit }
+                    />
+                </div>);
         }
         return null;
     }

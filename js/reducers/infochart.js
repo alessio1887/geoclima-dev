@@ -10,7 +10,7 @@ import {CHARTVARIABLE_CHANGED, TAB_CHANGED, TODATA_FIXEDRANGE_CHANGED, FROMDATA_
     TODATA_CHANGED, CHART_PERIOD_CHANGED, SET_INFOCHART_VISIBILITY, FETCH_INFOCHART_DATA,
     FETCHED_INFOCHART_DATA, COLLAPSE_RANGE_PICKER,  OPEN_ALERT, CLOSE_ALERT, SET_CHART_RELAYOUT, RESET_CHART_RELAYOUT, RESIZE_INFOCHART,
     SET_RANGE_MANAGER, SET_IDVARIABILI_LAYERS, SET_DEFAULT_URL, SET_DEFAULT_DATES, INITIALIZE_TABS,
-    PLUGIN_LOADED, PLUGIN_NOT_LOADED, SET_TABLIST, SET_TIMEUNIT } from '../actions/infochart';
+    PLUGIN_LOADED, PLUGIN_NOT_LOADED, SET_TABLIST, SET_TIMEUNIT, CHART_TYPE_CHANGED } from '../actions/infochart';
 import { DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO } from '../utils/ManageDateUtils';
 import assign from 'object-assign';
 import moment from 'moment';
@@ -47,23 +47,23 @@ const infoChartDefaultState = {
     firstAvailableDate: DEFAULT_DATA_INIZIO,
     lastAvailableDate: DEFAULT_DATA_FINE,
     // timeUnit: DATE_FORMAT,
-    tabVariables: [
-        {
-            id: "variableList",
-            variables: [{ "id": "prec", "name": "Precipitazione", "unit": "mm", "yaxis": "Valore (mm)" }],
-            active: true
-        },
-        {
-            id: "spiList",
-            variables: [{ id: "spi1", name: "SPI-1" }],
-            active: false
-        },
-        {
-            id: "speiList",
-            variables: [{ id: "spei1", name: "SPEI-1" }],
-            active: false
-        }
-    ]
+    tabVariables: []
+    //     {
+    //         id: "variableList",
+    //         variables: [{ "id": "prec", "name": "Precipitazione", "unit": "mm", "yaxis": "Valore (mm)" }],
+    //         active: true
+    //     },
+    //     {
+    //         id: "spiList",
+    //         variables: [{ id: "spi1", name: "SPI-1" }],
+    //         active: false
+    //     },
+    //     {
+    //         id: "speiList",
+    //         variables: [{ id: "spei1", name: "SPEI-1" }],
+    //         active: false
+    //     }
+    // ]
 };
 
 function infochart(state = infoChartDefaultState, action) {
@@ -76,7 +76,6 @@ function infochart(state = infoChartDefaultState, action) {
                     ? { ...tab, variables: action.variables } // Aggiorna le variabili del tab corrispondente
                     : tab
             )
-
         };
     case TAB_CHANGED:
         return {
@@ -85,6 +84,15 @@ function infochart(state = infoChartDefaultState, action) {
                 ...tab,
                 active: tab.id === action.idTab // Imposta true solo per il tab con id uguale a idTab
             }))
+        };
+    case CHART_TYPE_CHANGED:
+        return {
+            ...state,
+            tabVariables: state.tabVariables.map(tab =>
+                tab.id === action.idTab
+                    ? { ...tab, chartType: action.chartType } // Aggiorna le variabili del tab corrispondente
+                    : tab
+            )
         };
     case TODATA_CHANGED:
         return {
@@ -184,13 +192,6 @@ function infochart(state = infoChartDefaultState, action) {
             ...state,
             tabList: action.tabList
         };
-    // case FETCHED_AVAILABLE_DATES:
-    //     return {
-    //         ...state,
-    //         firstAvailableDate: action.dataInizio,
-    //         lastAvailableDate: action.dataFine,
-    //         periodTypes: action.periodTypes
-    //     };
     case FETCHED_AVAILABLE_DATES:
         const newDataFine = action.dataFine || DEFAULT_DATA_FINE;
         const newDataInizio = action.dataInizio || DEFAULT_DATA_INIZIO;

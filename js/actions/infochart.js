@@ -31,6 +31,7 @@ export const PLUGIN_LOADED = 'INFOCHART:PLUGIN_LOADED';
 export const PLUGIN_NOT_LOADED = 'INFOCHART:PLUGIN_NOT_LOADED';
 export const TAB_CHANGED = 'INFOCHART:TAB_CHANGED';
 export const SET_TIMEUNIT = 'INOFCHART:SET_TIMEUNIT';
+export const CHART_TYPE_CHANGED = 'INFOCHART:CHART_TYPE_CHANGED';
 
 export function changeChartVariable(idTab, variables) {
     return {
@@ -44,6 +45,13 @@ export function changeTab(idTab) {
     return {
         type: TAB_CHANGED,
         idTab
+    };
+}
+
+export function changeChartType(chartType) {
+    return {
+        type: CHART_TYPE_CHANGED,
+        chartType
     };
 }
 
