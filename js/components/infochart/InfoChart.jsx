@@ -262,13 +262,13 @@ class InfoChart extends React.Component {
     getActiveTab = () => {
         return this.props.tabVariables.find(tab => tab.active === true);
     }
-    getTabVariableSelected = () => {
-        const tabSelected = this.props.tabList.find(
-            tab => tab.id === this.props.infoChartData.idTab
-        );
+    getTabVariableSelected = (tabSelected) => {
+        // const tabSelected = this.props.tabList.find(
+        //     tab => tab.id === this.props.infoChartData.idTab
+        // );
         const variableArray = this.props.infoChartData.variables?.split(',') || [];
         return {
-            tabVariableParams: tabSelected.groupList.filter(variable =>
+            tabVariableParams: tabSelected.variables.filter(variable =>
                 variableArray.includes(variable.id)),
             name: tabSelected.chartTitle,
             chartType: tabSelected.chartType
@@ -277,18 +277,18 @@ class InfoChart extends React.Component {
 
     showChart = () => {
         if (!this.props.maskLoading) {
-            const variableChartParams = this.getTabVariableSelected();
-            // const isTabBarVisible = variableParams.variables.chartList && variableParams.variables.chartList.variables.length > 1;
-            const isTabBarVisible = false;
+            const activeVariableTab = this.getActiveTab();
+            const variableChartParams = this.getTabVariableSelected(activeVariableTab);
+            const isTabBarVisible = variableChartParams.tabVariableParams[0].chartList && variableChartParams.tabVariableParams[0].chartList.length > 1;
             let chartParamsChecked = {};
             if (variableChartParams.chartType === MULTI_VARIABLE_CHART) {
                 chartParamsChecked = variableChartParams;
             } else { // chart type chiice in the TabBar
-                const firstVariable = variableChartParams.tabVariableParams[0]; // Assumendo che ci sia almeno un elemento
+                const firstVariable = variableChartParams.tabVariableParams[0];
                 if (firstVariable.chartList) {
-                    const firstChart = firstVariable.chartList[0]; // Prende il primo elemento di chartList
+                    const firstChart = firstVariable.chartList[0];
                     chartParamsChecked = {
-                        id: firstVariable.id, // Usa l'id della variabile principale (es. "prec")
+                        id: firstVariable.id,
                         name: firstVariable.name,
                         unit: firstChart.unit,
                         yaxis: firstChart.yaxis,
@@ -302,7 +302,8 @@ class InfoChart extends React.Component {
             return (
                 <div id="infochart-rendering">
                     { isTabBarVisible &&
-                        <TabBar tabList={variableChartParams.variables.chartList} activeTab={this.getActiveTab()}
+                        <TabBar tabList={ variableChartParams.tabVariableParams[0].chartList}
+                            activeTab={variableChartParams.tabVariableParams[0].chartList[0]}
                             onChangeTab={this.props.onChangeChartType} />
                     }
                     <InfoChartRender
@@ -478,7 +479,7 @@ class InfoChart extends React.Component {
         this.props.onChangeChartVariable(tabVariable, [selectedVariable]);
         this.handleApplyPeriod([selectedVariable], tabVariable);
     }
-    handleApplyPeriod = (selectedVariables, tabVariable, newPeriod) => {
+    handleApplyPeriod = (selectedVariables, idTabVariable, newPeriod) => {
         let periodApplied = newPeriod || this.props.periodType;
         let newFromData = this.props.fromData;
         let newToData = this.props.toData;
@@ -497,7 +498,7 @@ class InfoChart extends React.Component {
         }
         const variableIds = selectedVariables ? selectedVariables.map(variable => variable.id).join(',')
             : this.getActiveTab().variables.map(variable => variable.id).join(',');
-        const idTab = tabVariable || this.getActiveTab().id;
+        const idTab = idTabVariable || this.getActiveTab().id;
 
         // Date validations
         const validation = DateAPI.validateDateRange(newFromData, newToData, this.props.firstAvailableDate, this.props.lastAvailableDate, this.props.timeUnit);

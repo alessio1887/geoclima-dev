@@ -235,7 +235,7 @@ const closeInfoChartPanel = (action$, store) =>
             disableInfoChartActions.push(changeMapInfoState(true));
         }
         if (appState.infochart?.isPluginLoaded) {
-            markInfoChartAsNotLoaded();
+            disableInfoChartActions.push(markInfoChartAsNotLoaded());
         }
         if (appState.infochart?.showInfoChartPanel) {
             disableInfoChartActions.push(setInfoChartVisibility(false, []));

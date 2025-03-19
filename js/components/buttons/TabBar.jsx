@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SelectVariableTab = ({
+const TabBar = ({
     tabList,
     onChangeTab,
     activeTab
@@ -29,4 +29,4 @@ const SelectVariableTab = ({
     );
 };
 
-export default SelectVariableTab;
+export default TabBar;

@@ -8,6 +8,7 @@
 
 import {connect} from 'react-redux';
 import { compose } from 'redux';
+import { createStructuredSelector } from 'reselect';
 import {setInfoChartVisibility, changeFixedRangeToData, fetchInfoChartData, fetchedInfoChartData, toggleInfoChart,
     changeChartVariable, changePeriod, changeFromData, changeToData, setDefaultDates, collapseRangePicker,
     openAlert, closeAlert, setChartRelayout, resetChartRelayout, resizeInfoChart, setIdVariabiliLayers,
@@ -22,6 +23,8 @@ import { fetchSelectDate } from '@js/actions/updateDatesParams';
 import * as infoChartEpic from '../epics/infochart';
 import assign from 'object-assign';
 import { FREE_RANGE } from '@js/utils/VariabiliMeteoUtils';
+import { isPluginLoadedSelector, fromDataFormSelector, toDataFormSelector,
+    firstAvailableDateSelector, lastAvailableDateSelector } from '../selectors/infoChart';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -140,63 +143,62 @@ const InfoChartPlugin = connect(
     mapDispatchToProps
 )(InfoChartButton);
 
-const InfoChartPanel = connect((state) => ({
-    active: state.controls?.chartinfo?.enabled || false,
-    activeRangeManager: state.infochart?.activeRangeManager || FREE_RANGE,
-    alertMessage: state.infochart?.alertMessage || null,
-    data: state.infochart?.data || '',
-    infoChartData: {
-        fromData: state.infochart?.infoChartData?.fromData,
-        toData: state.infochart?.infoChartData?.toData,
-        variables: state.infochart?.infoChartData?.variables,
-        latlng: state.infochart?.infoChartData?.latlng || {},
-        periodType: state.infochart?.infoChartData?.periodType,
-        idTab: state.infochart?.infoChartData?.idTab
-    },
-    mapinfoActive: state.mapInfo?.enabled || false,
-    maskLoading: state.infochart?.maskLoading,
-    // Initializes 'fromData' based on Infochart's date range; defaults to a calculated date if missing
-    fromData: state.infochart?.fromData,
-    periodType: state.infochart?.periodType,
-    isInteractionDisabled: state.infochart?.isInteractionDisabled || false,
-    isCollapsedFormGroup: state.infochart?.isCollapsedFormGroup || false,
-    chartRelayout: state.infochart?.chartRelayout,
-    infoChartSize: state.infochart?.infoChartSize || { widthResizable: 880, heightResizable: 880 },
-    firstAvailableDate: state?.infochart?.firstAvailableDate,
-    lastAvailableDate: state?.infochart?.lastAvailableDate,
-    isPluginLoaded: state?.infochart?.isPluginLoaded,
-    show: state.infochart && state.infochart.showInfoChartPanel || false,
-    tabVariables: state.infochart?.tabVariables,
-    // Initializes 'toData' based on Infochar's date range; defaults to a calculated date if missing
-    toData: state.infochart?.toData
-}), {
-    onFetchAvailableDates: fetchSelectDate,
-    onFetchInfoChartData: fetchInfoChartData,
-    onFetchedInfoChartData: fetchedInfoChartData,
-    onChangeChartVariable: changeChartVariable,
-    onChangeTab: compose(changeTab, (event) => event),
-    onChangeChartType: changeChartType,
-    onChangeToData: compose(changeToData, (event) => event),
-    onChangeFromData: compose(changeFromData, (event) => event),
-    onChangeFixedRangeTodata: compose(changeFixedRangeToData, (event) => event),
-    onChangePeriod: changePeriod,
-    onSetInfoChartDates: setDefaultDates,
-    onSetInfoChartVisibility: setInfoChartVisibility,
-    onSetTimeUnit: setTimeUnit,
-    onCollapseRangePicker: collapseRangePicker,
-    onInitializeVariableTabs: initializeVariableTabs,
-    onSetRangeManager: setRangeManager,
-    onSetTabList: setTabList,
-    onOpenAlert: openAlert,
-    onCloseAlert: closeAlert,
-    onSetChartRelayout: compose(setChartRelayout, (event) => event),
-    onResetChartRelayout: resetChartRelayout,
-    onResizeInfoChart: resizeInfoChart,
-    onSetIdVariabiliLayers: setIdVariabiliLayers,
-    onSetDefaultUrlGeoclimaChart: setDefaultUrlGeoclimaChart,
-    onMarkPluginAsLoaded: markInfoChartAsLoaded,
-    onHideMapinfoMarker: removeAdditionalLayer
-})(InfoChart);
+const InfoChartPanel = connect(
+    createStructuredSelector({
+        active: (state) => state.controls?.chartinfo?.enabled || false,
+        activeRangeManager: (state) => state.infochart?.activeRangeManager || FREE_RANGE,
+        alertMessage: (state) => state.infochart?.alertMessage || null,
+        data: (state) => state.infochart?.data || '',
+        infoChartData: (state) => ({
+            fromData: state.infochart?.infoChartData?.fromData,
+            toData: state.infochart?.infoChartData?.toData,
+            variables: state.infochart?.infoChartData?.variables,
+            latlng: state.infochart?.infoChartData?.latlng || {},
+            periodType: state.infochart?.infoChartData?.periodType,
+            idTab: state.infochart?.infoChartData?.idTab
+        }),
+        mapinfoActive: (state) => state.mapInfo?.enabled || false,
+        maskLoading: (state) => state.infochart?.maskLoading,
+        fromData: fromDataFormSelector,
+        periodType: (state) => state.infochart?.periodType,
+        isInteractionDisabled: (state) => state.infochart?.isInteractionDisabled || false,
+        isCollapsedFormGroup: (state) => state.infochart?.isCollapsedFormGroup || false,
+        chartRelayout: (state) => state.infochart?.chartRelayout,
+        infoChartSize: (state) => state.infochart?.infoChartSize || { widthResizable: 880, heightResizable: 880 },
+        firstAvailableDate: firstAvailableDateSelector,
+        lastAvailableDate: lastAvailableDateSelector,
+        isPluginLoaded: isPluginLoadedSelector,
+        show: (state) => state.infochart?.showInfoChartPanel || false,
+        tabVariables: (state) => state.infochart?.tabVariables,
+        toData: toDataFormSelector
+    }), {
+        onFetchAvailableDates: fetchSelectDate,
+        onFetchInfoChartData: fetchInfoChartData,
+        onFetchedInfoChartData: fetchedInfoChartData,
+        onChangeChartVariable: changeChartVariable,
+        onChangeTab: compose(changeTab, (event) => event),
+        onChangeChartType: changeChartType,
+        onChangeToData: compose(changeToData, (event) => event),
+        onChangeFromData: compose(changeFromData, (event) => event),
+        onChangeFixedRangeTodata: compose(changeFixedRangeToData, (event) => event),
+        onChangePeriod: changePeriod,
+        onSetInfoChartDates: setDefaultDates,
+        onSetInfoChartVisibility: setInfoChartVisibility,
+        onSetTimeUnit: setTimeUnit,
+        onCollapseRangePicker: collapseRangePicker,
+        onInitializeVariableTabs: initializeVariableTabs,
+        onSetRangeManager: setRangeManager,
+        onSetTabList: setTabList,
+        onOpenAlert: openAlert,
+        onCloseAlert: closeAlert,
+        onSetChartRelayout: compose(setChartRelayout, (event) => event),
+        onResetChartRelayout: resetChartRelayout,
+        onResizeInfoChart: resizeInfoChart,
+        onSetIdVariabiliLayers: setIdVariabiliLayers,
+        onSetDefaultUrlGeoclimaChart: setDefaultUrlGeoclimaChart,
+        onMarkPluginAsLoaded: markInfoChartAsLoaded,
+        onHideMapinfoMarker: removeAdditionalLayer
+    })(InfoChart);
 
 
 export default createPlugin(
