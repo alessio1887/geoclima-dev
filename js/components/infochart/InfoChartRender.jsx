@@ -9,7 +9,7 @@
 import React from 'react';
 import Plot from '@mapstore/components/charts/PlotlyChart.jsx';
 import { DATE_FORMAT } from '../../utils/ManageDateUtils';
-import { SINGLE_VARIABLE_CHART, MULTI_VARIABLE_CHART, fillAreas, formatDataCum, formatDataTemp, getDtick }  from '../../utils/VariabiliMeteoUtils';
+import { SINGLE_VARIABLE_CHART, MULTI_VARIABLE_CHART, CUMULATA_CHART, fillAreas, formatDataCum, formatDataTemp, getDtick }  from '../../utils/VariabiliMeteoUtils';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -102,8 +102,8 @@ const createObservedAndClimatologicalTraces = (variable, dates, dataFetched, uni
 };
 
 
-const createCilmaAndBarTraces = (variables, times, dataFetched) => {
-    const chartVariable = variables[0].id;
+const createCumulataBarTraces = (variables, times, dataFetched) => {
+    const chartVariable = variables.id;
     const propVariable = ST_VALUE + chartVariable;
 
     // Estrae le precipitazioni e le converte in numeri
@@ -115,7 +115,7 @@ const createCilmaAndBarTraces = (variables, times, dataFetched) => {
         x: times,
         y: precipitations,
         type: 'bar',
-        name: variables[0].yaxis,
+        name: variables.yaxis,
         marker: { color: '#FFAF1F', opacity: 0.6 }
         // hovertemplate: '%{y:.1f} mm<br>%{x:%d/%m/%Y}'
     };
@@ -126,7 +126,7 @@ const createCilmaAndBarTraces = (variables, times, dataFetched) => {
         y: cumulativePrecip,
         type: 'scatter',
         mode: 'lines',
-        name: variables[0].yaxis2,
+        name: variables.yaxis2,
         line: { color: 'rgba(0, 0, 255, 1)', width: 1 },
         // hovertemplate: '%{y:.1f} mm<br>%{x:%d/%m/%Y}',
         yaxis: 'y2'
@@ -136,7 +136,7 @@ const createCilmaAndBarTraces = (variables, times, dataFetched) => {
 };
 
 
-const createClimaAndBarLayout = (variables, chartTitle, traces, dates, format, chartRelayout, infoChartSize, isCollapsedFormGroup) => {
+const createCumulataBarLayout = (variables, chartTitle, traces, dates, format, chartRelayout, infoChartSize, isCollapsedFormGroup) => {
     const barTrace = traces[0].y;
     const maxPrecip = Math.max(...barTrace);
     const y1max = Math.max(maxPrecip, 6);
@@ -176,7 +176,7 @@ const createClimaAndBarLayout = (variables, chartTitle, traces, dates, format, c
             tickcolor: '#000'
         },
         yaxis: {
-            title: variables[0].yaxis,
+            title: variables.yaxis,
             range: [0, y1max],
             tick0: 0,
             dtick: dtick1,
@@ -185,7 +185,7 @@ const createClimaAndBarLayout = (variables, chartTitle, traces, dates, format, c
             rangemode: 'tozero'
         },
         yaxis2: {
-            title: variables[0].yaxis2,
+            title: variables.yaxis2,
             overlaying: 'y',
             side: 'right',
             range: [0, y2max],
@@ -258,15 +258,24 @@ const InfoChartRender = ({ dataFetched, variableChartParams, handleRelayout,
     const chartTitle = variableChartParams.name || "";
     const dates = dataFetched.map(item => moment(item.data).toDate());
 
-    if (variableChartParams.chartType === MULTI_VARIABLE_CHART) {
+    switch (variableChartParams.chartType) {
+    case MULTI_VARIABLE_CHART:
         const multiTraces = createMultiTraces(variableChartParams.tabVariableParams, dates, dataFetched);
         traces = createBackgroundBands(dates).concat(multiTraces);
         layout = createLayout(chartTitle, "", dates, format, multiTraces, chartRelayout, infoChartSize, isCollapsedFormGroup, MULTI_VARIABLE_CHART);
-    } else {
+        break;
+
+    case CUMULATA_CHART:
+        const precipTraces = createCumulataBarTraces(variableChartParams, dates, dataFetched);
+        traces = precipTraces;
+        layout = createCumulataBarLayout(variableChartParams, chartTitle, traces, dates, format, chartRelayout, infoChartSize, isCollapsedFormGroup);
+        break;
+
+    default: // SINGLE_VARIABLE_CHART o altri casi non definiti
         const observedTraces = createObservedAndClimatologicalTraces(variableChartParams, dates, dataFetched, unitPrecipitazione);
         traces = observedTraces;
         layout = createLayout(chartTitle, variableChartParams.yaxis, dates, format, observedTraces, chartRelayout, infoChartSize, isCollapsedFormGroup, SINGLE_VARIABLE_CHART);
-
+        break;
     }
     return (
         <Plot

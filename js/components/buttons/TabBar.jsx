@@ -5,6 +5,8 @@ const TabBar = ({
     onChangeTab,
     activeTab
 }) => {
+    const selectedTab = activeTab || tabList[0]; // Usa il primo elemento di tabList se activeTab è null
+
     return (
         <div style={{
             display: 'flex',
@@ -17,8 +19,8 @@ const TabBar = ({
                     key={tab.id}
                     style={{
                         padding: '10px 20px',
-                        borderBottom: activeTab.id === tab.id ? '2px solid #007bff' : 'none',
-                        color: activeTab.id === tab.id ? '#007bff' : '#000'
+                        borderBottom: selectedTab?.id === tab.id ? '2px solid #007bff' : 'none',
+                        color: selectedTab?.id === tab.id ? '#007bff' : '#000'
                     }}
                     onClick={() => onChangeTab(tab.id)}
                 >

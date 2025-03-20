@@ -195,7 +195,8 @@ class InfoChart extends React.Component {
         const variableTabs = this.props.tabList.map((tab, index) => ({
             id: tab.id,
             variables: [tab.groupList[0]], // Seleziona il primo come default
-            active: index === 0 // Imposta il primo tab come attivo
+            active: index === 0, // Imposta il primo tab come attivo
+            chartType: tab.chartType
         }));
         this.props.onInitializeVariableTabs(variableTabs);
     }
@@ -263,9 +264,6 @@ class InfoChart extends React.Component {
         return this.props.tabVariables.find(tab => tab.active === true);
     }
     getTabVariableSelected = (tabSelected) => {
-        // const tabSelected = this.props.tabList.find(
-        //     tab => tab.id === this.props.infoChartData.idTab
-        // );
         const variableArray = this.props.infoChartData.variables?.split(',') || [];
         return {
             tabVariableParams: tabSelected.variables.filter(variable =>
@@ -274,36 +272,54 @@ class InfoChart extends React.Component {
             chartType: tabSelected.chartType
         };
     };
-
+    getChartTypeSelected = (variableChartParams) => {
+        let chartTypeSelected;
+        if (variableChartParams.chartList) {
+            const chartActive = variableChartParams.chartList.find(chart =>
+                chart.active) || variableChartParams.chartList[0];
+            chartTypeSelected = {
+                id: variableChartParams.id,
+                name: variableChartParams.name,
+                unit: chartActive.unit,
+                yaxis: chartActive.yaxis,
+                yaxis2: chartActive.yaxis2,
+                chartType: chartActive.chartType || ""
+            };
+        } else {
+            chartTypeSelected = variableChartParams;
+        }
+        return chartTypeSelected;
+    };
     showChart = () => {
         if (!this.props.maskLoading) {
-            const activeVariableTab = this.getActiveTab();
-            const variableChartParams = this.getTabVariableSelected(activeVariableTab);
+            const variableChartParams = this.getTabVariableSelected(this.getActiveTab());
             const isTabBarVisible = variableChartParams.tabVariableParams[0].chartList && variableChartParams.tabVariableParams[0].chartList.length > 1;
-            let chartParamsChecked = {};
+            let chartTypeSelected = {};
             if (variableChartParams.chartType === MULTI_VARIABLE_CHART) {
-                chartParamsChecked = variableChartParams;
-            } else { // chart type chiice in the TabBar
-                const firstVariable = variableChartParams.tabVariableParams[0];
-                if (firstVariable.chartList) {
-                    const firstChart = firstVariable.chartList[0];
-                    chartParamsChecked = {
-                        id: firstVariable.id,
-                        name: firstVariable.name,
-                        unit: firstChart.unit,
-                        yaxis: firstChart.yaxis,
-                        yaxis2: firstChart.yaxis2,
-                        chartType: firstChart.chartType || ""
-                    };
-                } else {
-                    chartParamsChecked = variableChartParams.tabVariableParams[0];
-                }
+                chartTypeSelected = variableChartParams;
+            } else { // chart type choice in the TabBar
+                // const firstVariable = variableChartParams.tabVariableParams[0];
+                // if (variableChartParams.tabVariableParams[0].chartList) {
+                //     const firstChart = firstVariable.chartList[0];
+                //     chartParamsChecked = {
+                //         id: firstVariable.id,
+                //         name: firstVariable.name,
+                //         unit: firstChart.unit,
+                //         yaxis: firstChart.yaxis,
+                //         yaxis2: firstChart.yaxis2,
+                //         chartType: firstChart.chartType || ""
+                //     };
+                // } else {
+                //     chartParamsChecked = variableChartParams.tabVariableParams[0];
+                // }
+                chartTypeSelected = this.getChartTypeSelected(variableChartParams.tabVariableParams[0]);
             }
             return (
                 <div id="infochart-rendering">
                     { isTabBarVisible &&
                         <TabBar tabList={ variableChartParams.tabVariableParams[0].chartList}
-                            activeTab={variableChartParams.tabVariableParams[0].chartList[0]}
+                            activeTab={variableChartParams.tabVariableParams[0].chartList.find(chart =>
+                                chart.active)}
                             onChangeTab={this.props.onChangeChartType} />
                     }
                     <InfoChartRender
@@ -312,7 +328,7 @@ class InfoChart extends React.Component {
                         chartRelayout= { this.props.chartRelayout}
                         infoChartSize={ this.props.infoChartSize}
                         isCollapsedFormGroup={this.props.isCollapsedFormGroup}
-                        variableChartParams={ chartParamsChecked }
+                        variableChartParams={ chartTypeSelected }
                         unitPrecipitazione = { this.props.unitPrecipitazione }
                         format={ this.props.timeUnit }
                     />
@@ -423,23 +439,23 @@ class InfoChart extends React.Component {
                         minConstraints={[400, 600]}
                         style={{
                             flexDirection: "column",
-                            top: 10,
-                            right: 17
+                            // top: -15,
+                            right: 17,
+                            padding: "5px",
+                            margin: "-15px 0px -10px 0px"
                         }}>
                         <div style={{ display: "flex", flexDirection: "column",
                             width: this.props.infoChartSize.widthResizable,  padding: '5px'}}>
-                            <div style={{ position: "relative",  top: "-25px", marginBottom: "-15px"  }}>
-                                <Button onClick={this.props.onCollapseRangePicker} style={{ padding: "2px"}} >
-                                    <Message msgId={this.props.isCollapsedFormGroup
-                                        ? "gcapp.infochart.expand"
-                                        : "gcapp.infochart.collapse"}  />
-                                    <span className="collapse-rangepicker-icon"  style={{ transform: rotateIcon }}>&#9650;</span>
-                                </Button>
-                                <Collapse in={!this.props.isCollapsedFormGroup}>
-                                    {this.getPanelFormGroup()}
-                                </Collapse>
-                                {this.showChart()}
-                            </div>
+                            <Button onClick={this.props.onCollapseRangePicker} style={{ padding: "2px", width: "80px"}} >
+                                <Message msgId={this.props.isCollapsedFormGroup
+                                    ? "gcapp.infochart.expand"
+                                    : "gcapp.infochart.collapse"}  />
+                                <span className="collapse-rangepicker-icon"  style={{ transform: rotateIcon }}>&#9650;</span>
+                            </Button>
+                            <Collapse in={!this.props.isCollapsedFormGroup}>
+                                {this.getPanelFormGroup()}
+                            </Collapse>
+                            {this.showChart()}
                         </div>
                     </Resizable>
                 </div>

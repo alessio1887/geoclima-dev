@@ -48,22 +48,6 @@ const infoChartDefaultState = {
     lastAvailableDate: DEFAULT_DATA_FINE,
     // timeUnit: DATE_FORMAT,
     tabVariables: []
-    //     {
-    //         id: "variableList",
-    //         variables: [{ "id": "prec", "name": "Precipitazione", "unit": "mm", "yaxis": "Valore (mm)" }],
-    //         active: true
-    //     },
-    //     {
-    //         id: "spiList",
-    //         variables: [{ id: "spi1", name: "SPI-1" }],
-    //         active: false
-    //     },
-    //     {
-    //         id: "speiList",
-    //         variables: [{ id: "spei1", name: "SPEI-1" }],
-    //         active: false
-    //     }
-    // ]
 };
 
 function infochart(state = infoChartDefaultState, action) {
@@ -88,11 +72,23 @@ function infochart(state = infoChartDefaultState, action) {
     case CHART_TYPE_CHANGED:
         return {
             ...state,
-            tabVariables: state.tabVariables.map(tab =>
-                tab.id === action.idTab
-                    ? { ...tab, chartType: action.chartType } // Aggiorna le variabili del tab corrispondente
-                    : tab
-            )
+            tabVariables: state.tabVariables.map(tab => {
+                // Only update the active tab
+                if (tab.active) {
+                    return {
+                        ...tab,
+                        variables: tab.variables.map(variable => ({
+                            ...variable,
+                            chartList: variable.chartList.map(chart => ({
+                                ...chart,
+                                // Set active true if the chart's id matches, false otherwise
+                                active: chart.id === action.idChartType
+                            }))
+                        }))
+                    };
+                }
+                return tab;
+            })
         };
     case TODATA_CHANGED:
         return {

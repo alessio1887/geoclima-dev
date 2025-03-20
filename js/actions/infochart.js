@@ -48,10 +48,10 @@ export function changeTab(idTab) {
     };
 }
 
-export function changeChartType(chartType) {
+export function changeChartType(idChartType) {
     return {
         type: CHART_TYPE_CHANGED,
-        chartType
+        idChartType
     };
 }
 
