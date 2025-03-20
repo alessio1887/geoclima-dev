@@ -196,7 +196,8 @@ class InfoChart extends React.Component {
             id: tab.id,
             variables: [tab.groupList[0]], // Seleziona il primo come default
             active: index === 0, // Imposta il primo tab come attivo
-            chartType: tab.chartType
+            chartType: tab.chartType,
+            chartTitle: tab.chartTitle
         }));
         this.props.onInitializeVariableTabs(variableTabs);
     }
@@ -298,20 +299,6 @@ class InfoChart extends React.Component {
             if (variableChartParams.chartType === MULTI_VARIABLE_CHART) {
                 chartTypeSelected = variableChartParams;
             } else { // chart type choice in the TabBar
-                // const firstVariable = variableChartParams.tabVariableParams[0];
-                // if (variableChartParams.tabVariableParams[0].chartList) {
-                //     const firstChart = firstVariable.chartList[0];
-                //     chartParamsChecked = {
-                //         id: firstVariable.id,
-                //         name: firstVariable.name,
-                //         unit: firstChart.unit,
-                //         yaxis: firstChart.yaxis,
-                //         yaxis2: firstChart.yaxis2,
-                //         chartType: firstChart.chartType || ""
-                //     };
-                // } else {
-                //     chartParamsChecked = variableChartParams.tabVariableParams[0];
-                // }
                 chartTypeSelected = this.getChartTypeSelected(variableChartParams.tabVariableParams[0]);
             }
             return (
