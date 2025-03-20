@@ -40,7 +40,13 @@ const SelectVariableTab = ({
                                     data={tab.groupList}
                                     valueField="id"
                                     textField="name"
-                                    onChange={(value) => onChangeMultiVariable(activeTab.id, value)}
+                                    onChange={(value) => {
+                                        if (value.length === 0) {
+                                            onChangeMultiVariable(activeTab.id, [tab.groupList[0]]);
+                                        } else {
+                                            onChangeMultiVariable(activeTab.id, value);
+                                        }
+                                    }}
                                     value={activeTab.variables}
                                     disabled={isInteractionDisabled}
                                 />
