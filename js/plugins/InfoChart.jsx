@@ -32,7 +32,7 @@ momentLocaliser(moment);
 /*
 Plugin configuration
 "name": "InfoChart",
-      "defaultConfig": {
+    "defaultConfig": {
          "defaultUrlGeoclimaChart": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/geoclima_chart_test.py",
          "defaultUrlSelectDate": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
          "variabileSelectDate": "prec",
@@ -47,7 +47,10 @@ Plugin configuration
       ],
           "tabList": [
             {"id": "variableList", "name": "Variabili Meteo", "groupList": [
-                                                                  { "id": "prec", "name": "Precipitazione", "unit": "mm", "yaxis": "Valore (mm)" },
+                                                                  { "id": "prec", "name": "Precipitazione",
+                                                                  "chartList": [{"id": "prec1", "name": "Pioggia cumulata", "chartType": "cumulata", "unit": "mm", "yaxis": "Precipitazione (mm)", "yaxis2": "Precipitazione cumulata (mm)"},
+                                                                        {"id": "prec2", "name": "Pioggia clima", "chartType": "clima", "unit": "mm", "yaxis": "Precipitazione (mm)"}]
+                                                                  },
                                                                   { "id": "tmed", "name": "Temperatura Media", "unit": "°C", "yaxis": "Temperatura (°C)"  },
                                                                   { "id": "tmax", "name": "Temperatura Massima", "unit": "°C", "yaxis": "Temperatura (°C)"  },
                                                                   { "id": "tmin", "name": "Temperatura Minima", "unit": "°C", "yaxis": "Temperatura (°C)"  },
