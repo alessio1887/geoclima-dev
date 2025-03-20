@@ -194,8 +194,9 @@ class InfoChart extends React.Component {
     initializeTabs = () => {
         const variableTabs = this.props.tabList.map((tab, index) => ({
             id: tab.id,
-            variables: [tab.groupList[0]], // Seleziona il primo come default
-            active: index === 0, // Imposta il primo tab come attivo
+            // TODO aggiungi tutte le variabile con un flag active true\false
+            variables: [tab.groupList[0]],
+            active: index === 0,
             chartType: tab.chartType,
             chartTitle: tab.chartTitle
         }));
@@ -264,48 +265,55 @@ class InfoChart extends React.Component {
     getActiveTab = () => {
         return this.props.tabVariables.find(tab => tab.active === true);
     }
-    getTabVariableSelected = (tabSelected) => {
+    // Get the selected tab's parameters (chart title, chart list, etc.) based on the traces applied to the chart.
+    getMultiVariableChartParams = () => {
+        const variableListParam = this.props.tabList.find(
+            tab => tab.id === this.props.infoChartData.idTab
+        );
+        // get variable ids applied to the chart
         const variableArray = this.props.infoChartData.variables?.split(',') || [];
         return {
-            tabVariableParams: tabSelected.variables.filter(variable =>
+            tabVariableParams: variableListParam.groupList.filter(variable =>
                 variableArray.includes(variable.id)),
-            name: tabSelected.chartTitle,
-            chartType: tabSelected.chartType
+            name: variableListParam.chartTitle,
+            chartType: variableListParam.chartType
         };
     };
-    getChartTypeSelected = (variableChartParams) => {
-        let chartTypeSelected;
-        if (variableChartParams.chartList) {
-            const chartActive = variableChartParams.chartList.find(chart =>
-                chart.active) || variableChartParams.chartList[0];
-            chartTypeSelected = {
-                id: variableChartParams.id,
-                name: variableChartParams.name,
+    getSingleVariableChartParams = (tabSelected) => {
+        const variableParams = tabSelected.variables[0];
+        let chartParams;
+        if (variableParams.chartList) {
+            const chartActive = variableParams.chartList.find(chart =>
+                chart.active) || variableParams.chartList[0];
+            chartParams = {
+                id: variableParams.id,
+                name: variableParams.name,
                 unit: chartActive.unit,
                 yaxis: chartActive.yaxis,
                 yaxis2: chartActive.yaxis2,
                 chartType: chartActive.chartType || ""
             };
         } else {
-            chartTypeSelected = variableChartParams;
+            chartParams = variableParams;
         }
-        return chartTypeSelected;
+        return chartParams;
     };
     showChart = () => {
         if (!this.props.maskLoading) {
-            const variableChartParams = this.getTabVariableSelected(this.getActiveTab());
-            const isTabBarVisible = variableChartParams.tabVariableParams[0].chartList && variableChartParams.tabVariableParams[0].chartList.length > 1;
+            const activeTab = this.getActiveTab();
+            let isTabBarVisible = false;
             let chartTypeSelected = {};
-            if (variableChartParams.chartType === MULTI_VARIABLE_CHART) {
-                chartTypeSelected = variableChartParams;
-            } else { // chart type choice in the TabBar
-                chartTypeSelected = this.getChartTypeSelected(variableChartParams.tabVariableParams[0]);
+            if (activeTab.chartType === MULTI_VARIABLE_CHART) {
+                chartTypeSelected = this.getMultiVariableChartParams();
+            } else { // get chart type of single variable and check if chart choice tab bar is visible
+                chartTypeSelected = this.getSingleVariableChartParams(activeTab);
+                isTabBarVisible = activeTab.variables[0].chartList && activeTab.variables[0].chartList.length > 1;
             }
             return (
                 <div id="infochart-rendering">
                     { isTabBarVisible &&
-                        <TabBar tabList={ variableChartParams.tabVariableParams[0].chartList}
-                            activeTab={variableChartParams.tabVariableParams[0].chartList.find(chart =>
+                        <TabBar tabList={activeTab.variables[0].chartList}
+                            activeTab={activeTab.variables[0].chartList.find(chart =>
                                 chart.active)}
                             onChangeTab={this.props.onChangeChartType} />
                     }
