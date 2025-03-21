@@ -23,7 +23,7 @@ import { fetchSelectDate } from '@js/actions/updateDatesParams';
 import * as infoChartEpic from '../epics/infochart';
 import assign from 'object-assign';
 import { FREE_RANGE } from '@js/utils/VariabiliMeteoUtils';
-import { isPluginLoadedSelector, fromDataFormSelector, toDataFormSelector,
+import { isPluginLoadedSelector, fromDataFormSelector, toDataFormSelector, periodTypeSelector,
     firstAvailableDateSelector, lastAvailableDateSelector } from '../selectors/infoChart';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
@@ -163,7 +163,7 @@ const InfoChartPanel = connect(
         mapinfoActive: (state) => state.mapInfo?.enabled || false,
         maskLoading: (state) => state.infochart?.maskLoading,
         fromData: fromDataFormSelector,
-        periodType: (state) => state.infochart?.periodType,
+        periodType: periodTypeSelector,
         isInteractionDisabled: (state) => state.infochart?.isInteractionDisabled || false,
         isCollapsedFormGroup: (state) => state.infochart?.isCollapsedFormGroup || false,
         chartRelayout: (state) => state.infochart?.chartRelayout,

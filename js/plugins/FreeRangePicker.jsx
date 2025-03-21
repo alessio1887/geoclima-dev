@@ -12,7 +12,8 @@ import { Button, ButtonGroup, Collapse, FormGroup, Glyphicon } from 'react-boots
 import Message from '@mapstore/components/I18N/Message';
 import { updateSettings, updateNode } from '@mapstore/actions/layers';
 import { layersSelector } from '@mapstore/selectors/layers';
-import { fromDataLayerSelector, toDataLayerSelector, isPluginLoadedSelector } from '../selectors/freeRangePicker';
+import { fromDataLayerSelector, toDataLayerSelector, isPluginLoadedSelector,
+    firstAvailableDateSelector, lastAvailableDateSelector } from '../selectors/freeRangePicker';
 import { compose } from 'redux';
 import { exportImageApiSelector, isLayerLoadingSelector } from '../selectors/exportImage';
 import DateAPI, { DATE_FORMAT, DEFAULT_DATA_FINE, DEFAULT_DATA_INIZIO} from '../utils/ManageDateUtils';
@@ -309,8 +310,8 @@ const mapStateToProps = createStructuredSelector({
     shiftRight: (state) => state?.controls?.drawer?.enabled,
     showChangeRangePickerButton: (state) => state.fixedrangepicker.isPluginLoaded,
     isPluginLoaded: isPluginLoadedSelector,
-    firstAvailableDate: (state) => state?.freerangepicker?.firstAvailableDate,
-    lastAvailableDate: (state) => state?.freerangepicker?.lastAvailableDate,
+    firstAvailableDate: firstAvailableDateSelector,
+    lastAvailableDate: lastAvailableDateSelector,
     toDataLayer: toDataLayerSelector
 });
 

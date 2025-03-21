@@ -28,6 +28,11 @@ export const toDataFormSelector = createSelector(
     (infochart) => infochart?.toData
 );
 
+export const periodTypeSelector = createSelector(
+    [getInfoChartState],
+    (infochart) => infochart?.periodType || { key: 10, label: "20 giorni", min: 9, max: 20, isDefault: true }
+);
+
 export const firstAvailableDateSelector = createSelector(
     [getInfoChartState],
     (infochart) => infochart?.firstAvailableDate

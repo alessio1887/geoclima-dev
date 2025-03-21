@@ -48,3 +48,12 @@ export const showFixedRangePickerSelector = createSelector(
     (fixedrangepicker) => fixedrangepicker?.showFixedRangePicker || false
 );
 
+export const firstAvailableDateSelector = createSelector(
+    [getFixedRangePickerState],
+    (fixedrangepicker) => fixedrangepicker?.firstAvailableDate
+);
+
+export const lastAvailableDateSelector = createSelector(
+    [getFixedRangePickerState],
+    (fixedrangepicker) => fixedrangepicker?.lastAvailableDate
+);

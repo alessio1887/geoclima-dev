@@ -37,3 +37,13 @@ export const isPluginLoadedSelector = createSelector(
     [getFreeRangePickerState],
     (freerangepicker) => freerangepicker?.isPluginLoaded || false
 );
+
+export const firstAvailableDateSelector = createSelector(
+    [getFreeRangePickerState],
+    (freerangepicker) => freerangepicker?.firstAvailableDate
+);
+
+export const lastAvailableDateSelector = createSelector(
+    [getFreeRangePickerState],
+    (freerangepicker) => freerangepicker?.lastAvailableDate
+);

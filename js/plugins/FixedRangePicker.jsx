@@ -13,7 +13,8 @@ import Message from '@mapstore/components/I18N/Message';
 import { updateSettings, updateNode } from '@mapstore/actions/layers';
 import { layersSelector } from '@mapstore/selectors/layers';
 import { fromDataFormSelector, fromDataLayerSelector, toDataFormSelector, toDataLayerSelector,
-    isPluginLoadedSelector, showFixedRangePickerSelector, periodTypeSelector } from '../selectors/fixedRangePicker';
+    isPluginLoadedSelector, showFixedRangePickerSelector, periodTypeSelector,
+    firstAvailableDateSelector, lastAvailableDateSelector } from '../selectors/fixedRangePicker';
 import { compose } from 'redux';
 import { changePeriodToData, changePeriod, toggleRangePickerPlugin, openAlert,
     closeAlert, collapsePlugin, markFixedRangeAsLoaded, markFixedRangeAsNotLoaded } from '../actions/fixedrangepicker';
@@ -412,8 +413,8 @@ const mapStateToProps = createStructuredSelector({
     shiftRight: (state) => !!state?.controls?.drawer?.enabled,
     showChangeRangePickerButton: showFixedRangePickerSelector,
     isPluginLoaded: isPluginLoadedSelector,
-    firstAvailableDate: (state) => state?.fixedrangepicker?.firstAvailableDate,
-    lastAvailableDate: (state) => state?.fixedrangepicker?.lastAvailableDate,
+    firstAvailableDate: firstAvailableDateSelector,
+    lastAvailableDate: lastAvailableDateSelector,
     toData: toDataFormSelector,
     toDataLayer: toDataLayerSelector
 });
