@@ -195,7 +195,7 @@ const InfoChartPanel = connect(
         onOpenAlert: openAlert,
         onCloseAlert: closeAlert,
         onSetChartRelayout: compose(setChartRelayout, (event) => event),
-        onResetChartRelayout: resetChartRelayout,
+        onResetChartZoom: resetChartRelayout,
         onResizeInfoChart: resizeInfoChart,
         onSetIdVariabiliLayers: setIdVariabiliLayers,
         onSetDefaultUrlGeoclimaChart: setDefaultUrlGeoclimaChart,

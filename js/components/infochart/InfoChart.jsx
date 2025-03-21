@@ -40,7 +40,7 @@ class InfoChart extends React.Component {
         onCollapseRangePicker: PropTypes.func,
         onSetInfoChartDates: PropTypes.func,
         onSetChartRelayout: PropTypes.func,
-        onResetChartRelayout: PropTypes.func,
+        onResetChartZoom: PropTypes.func,
         onResizeInfoChart: PropTypes.func,
         onSetRangeManager: PropTypes.func,
         onChangeChartType: PropTypes.func,
@@ -103,7 +103,7 @@ class InfoChart extends React.Component {
         onSetInfoChartDates: () => {},
         onSetTabList: () => {},
         onSetChartRelayout: () => {},
-        onResetChartRelayout: () => {},
+        onResetChartZoom: () => {},
         onResizeInfoChart: () => {},
         onInitializeVariableTabs: () => {},
         unitPrecipitazione: "mm",
@@ -245,7 +245,7 @@ class InfoChart extends React.Component {
     handleRelayout = (eventData) => {
         // Autoscale case: reset zoom data to default values
         if (eventData['xaxis.autorange'] || eventData['yaxis.autorange']) {
-            this.props.onResetChartRelayout();
+            this.props.onResetChartZoom();
         } else {
             const zoomData = this.props.chartRelayout ? { ...this.props.chartRelayout } : {};
             if (eventData['xaxis.range[0]'] && eventData['xaxis.range[1]']) {
@@ -262,6 +262,10 @@ class InfoChart extends React.Component {
             this.props.onSetChartRelayout(zoomData);
         }
     };
+    handleChangeChartType = (idTab) => {
+        this.props.onChangeChartType(idTab);
+        this.props.onResetChartZoom();
+    }
     getActiveTab = () => {
         return this.props.tabVariables.find(tab => tab.active === true);
     }
@@ -315,7 +319,7 @@ class InfoChart extends React.Component {
                         <TabBar tabList={activeTab.variables[0].chartList}
                             activeTab={activeTab.variables[0].chartList.find(chart =>
                                 chart.active)}
-                            onChangeTab={this.props.onChangeChartType} />
+                            onChangeTab={this.handleChangeChartType} />
                     }
                     <InfoChartRender
                         dataFetched = {this.props.data}
@@ -468,7 +472,7 @@ class InfoChart extends React.Component {
     closePanel = () => {
         this.props.onSetInfoChartVisibility(false);
         this.props.onSetInfoChartDates(this.props.lastAvailableDate, DateAPI.getDefaultPeriod(this.props.periodTypes));
-        this.props.onResetChartRelayout();
+        this.props.onResetChartZoom();
         if ( this.props.infoChartSize.widthResizable !== 880 || this.props.infoChartSize.heightResizable !== 880) {
             this.props.onResizeInfoChart(880, 880);
         }
@@ -530,7 +534,7 @@ class InfoChart extends React.Component {
             periodType: periodApplied.key,
             idTab: idTab
         });
-        this.props.onResetChartRelayout();
+        this.props.onResetChartZoom();
         // set default values
         this.setState({ defaultFromData: new Date(newFromData)});
         this.setState({ defaultToData: new Date(newToData)});
