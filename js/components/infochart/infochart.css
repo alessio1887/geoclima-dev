@@ -36,3 +36,31 @@
 .infochart-panel {
     padding: 0 !important;
 }
+
+.infochart-dropdown-container-tabbar {
+    display: flex;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.infochart-dropdown-container-tabbar-item {
+    padding: 10px 20px;
+    transition: color 0.3s, border-bottom 0.3s;
+}
+
+.chart-type-tabbar {
+    display: flex;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+    position: relative;
+    top: -60px;
+    margin-bottom: -40px;
+    pointer-events: none;
+}
+
+.chart-type-tabbar-item {
+    padding: 10px 20px;
+    transition: color 0.3s, border-bottom 0.3s;
+    pointer-events: auto;
+}

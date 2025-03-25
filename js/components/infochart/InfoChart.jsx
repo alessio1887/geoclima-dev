@@ -315,11 +315,12 @@ class InfoChart extends React.Component {
             }
             return (
                 <div id="infochart-rendering">
-                    { isTabBarVisible &&
+                    { isTabBarVisible && !this.props.isCollapsedFormGroup && this.props.infoChartSize.widthResizable >= 550 &&
                         <TabBar tabList={activeTab.variables[0].chartList}
                             activeTab={activeTab.variables[0].chartList.find(chart =>
                                 chart.active)}
-                            onChangeTab={this.handleChangeChartType} />
+                            onChangeTab={this.handleChangeChartType}
+                            classAttribute={"chart-type"} />
                     }
                     <InfoChartRender
                         dataFetched = {this.props.data}

@@ -16,7 +16,7 @@ const SelectVariableTab = ({
     return (
         <div id={idContainer}>
             {/* Tab Bar */}
-            <TabBar tabList={tabList} activeTab={activeTab} onChangeTab={onChangeTab} />
+            <TabBar tabList={tabList} activeTab={activeTab} onChangeTab={onChangeTab} classAttribute={idContainer} />
             <div style={{ marginTop: '10px' }}>
                 {tabList.map(tab => {
                     if (tab.id === activeTab.id) {
