@@ -1,3 +1,10 @@
+/*
+ * Copyright 2024, Riccardo Mari - CNR-Ibimet - Consorzio LaMMA.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree.
+*/
 import React, { useState, useEffect } from 'react';
 import Plot from '@mapstore/components/charts/PlotlyChart.jsx';
 import {
