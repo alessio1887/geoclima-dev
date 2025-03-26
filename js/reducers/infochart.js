@@ -36,8 +36,8 @@ const infoChartDefaultState = {
     chartRelayout: {
         startDate: null,
         endDate: null,
-        variabileStart: null,
-        variabileEnd: null,
+        yaxisStart: null,
+        yaxisEnd: null,
         dragmode: null
     },
     infoChartSize: {

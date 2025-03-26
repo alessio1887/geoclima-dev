@@ -253,8 +253,8 @@ class InfoChart extends React.Component {
                 zoomData.endDate = new Date(eventData['xaxis.range[1]']);
             }
             if (eventData['yaxis.range[0]'] && eventData['yaxis.range[1]']) {
-                zoomData.variabileStart = eventData['yaxis.range[0]'];
-                zoomData.variabileEnd = eventData['yaxis.range[1]'];
+                zoomData.yaxisStart = eventData['yaxis.range[0]'];
+                zoomData.yaxisEnd = eventData['yaxis.range[1]'];
             }
             if (eventData.dragmode) {
                 zoomData.dragmode = eventData.dragmode;

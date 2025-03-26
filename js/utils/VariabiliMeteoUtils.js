@@ -379,8 +379,8 @@ export const createCumulataBarLayout = (variables, chartTitle, traces, dates, fo
 export const createLayout = (chartTitle, yaxisTitle, dates, format, dataTraces, chartRelayout, infoChartSize, isCollapsedFormGroup, chartType) => {
     const isMultiVariable = chartType === MULTI_VARIABLE_CHART;
     const yaxisRange = isMultiVariable
-        ? [chartRelayout?.variabileStart || MIN_Y_INDEX, chartRelayout?.variabileEnd || MAX_Y_INDEX]
-        : [chartRelayout?.variabileStart || Math.min([dataTraces[0], dataTraces[1]]), chartRelayout?.variabileEnd || Math.max([dataTraces[0], dataTraces[1]])];
+        ? [chartRelayout?.yaxisStart || MIN_Y_INDEX, chartRelayout?.yaxisEnd || MAX_Y_INDEX]
+        : [chartRelayout?.yaxisStart || Math.min([dataTraces[0], dataTraces[1]]), chartRelayout?.yaxisEnd || Math.max([dataTraces[0], dataTraces[1]])];
 
     return {
         width: infoChartSize.widthResizable - 10,
