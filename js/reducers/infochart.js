@@ -38,6 +38,8 @@ const infoChartDefaultState = {
         endDate: null,
         yaxisStart: null,
         yaxisEnd: null,
+        yaxis2Start: null,
+        yaxis2End: null,
         dragmode: null
     },
     infoChartSize: {

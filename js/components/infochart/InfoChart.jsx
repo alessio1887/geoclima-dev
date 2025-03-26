@@ -221,7 +221,7 @@ class InfoChart extends React.Component {
     }
 
     shouldComponentUpdate(newProps) {
-        // // List of prop to compare
+        // List of prop to compare
         const propsToCompare = ['show', 'maskLoading', 'active', 'mapinfoActive', 'tabVariables', 'data',
             'fromData', 'toData', 'periodType', 'isInteractionDisabled', 'isCollapsedFormGroup',
             'activeRangeManager', 'alertMessage', 'infoChartSize', 'isPluginLoaded' // , 'chartRelayout'
@@ -256,6 +256,10 @@ class InfoChart extends React.Component {
             if (eventData['yaxis.range[0]'] && eventData['yaxis.range[1]']) {
                 zoomData.yaxisStart = eventData['yaxis.range[0]'];
                 zoomData.yaxisEnd = eventData['yaxis.range[1]'];
+            }
+            if (eventData['yaxis2.range[0]'] && eventData['yaxis2.range[1]']) {
+                zoomData.yaxis2Start = eventData['yaxis2.range[0]'];
+                zoomData.yaxis2End = eventData['yaxis2.range[1]'];
             }
             if (eventData.dragmode) {
                 zoomData.dragmode = eventData.dragmode;
