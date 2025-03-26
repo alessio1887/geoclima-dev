@@ -35,6 +35,17 @@ const InfoChartRender = ({
     const [traces, setTraces] = useState([]);
     const [layout, setLayout] = useState({});
 
+    const getModeBarButtonsToRemove = (chartType) => {
+        switch (chartType) {
+        case MULTI_VARIABLE_CHART:
+            return [];
+        case CUMULATA_CHART:
+            return ['autoscale'];
+        default:
+            return ['resetScale2d'];
+        }
+    };
+
     useEffect(() => {
         const dates = dataFetched.map(item => moment(item.data).toDate());
         let newTraces = [];
@@ -68,7 +79,7 @@ const InfoChartRender = ({
             });
         });
         setLayout(newLayout);
-    }, [dataFetched, variableChartParams, unitPrecipitazione, format, chartRelayout, infoChartSize, isCollapsedFormGroup]);
+    }, [dataFetched, variableChartParams, unitPrecipitazione, format, infoChartSize, isCollapsedFormGroup]);
 
     // Function to toggle the visibility of the clicked trace
     const toggleLegendItem = (event) => {
@@ -81,7 +92,6 @@ const InfoChartRender = ({
         );
         return false; // Prevent the default Plotly behavior
     };
-
     return (
         <Plot
             data={traces}
@@ -91,7 +101,7 @@ const InfoChartRender = ({
             onLegendClick={toggleLegendItem}
             config={{
                 displayModeBar: true,
-                modeBarButtonsToRemove: ['resetScale2d'],
+                modeBarButtonsToRemove: getModeBarButtonsToRemove(variableChartParams.chartType),
                 autosizable: true
             }}
         />

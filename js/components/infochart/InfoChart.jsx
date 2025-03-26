@@ -224,7 +224,8 @@ class InfoChart extends React.Component {
         // // List of prop to compare
         const propsToCompare = ['show', 'maskLoading', 'active', 'mapinfoActive', 'tabVariables', 'data',
             'fromData', 'toData', 'periodType', 'isInteractionDisabled', 'isCollapsedFormGroup',
-            'activeRangeManager', 'alertMessage', 'chartRelayout', 'infoChartSize', 'isPluginLoaded'];
+            'activeRangeManager', 'alertMessage', 'infoChartSize', 'isPluginLoaded' // , 'chartRelayout'
+        ];
         for (let key of propsToCompare) {
         // Use get to access nested properties
             if (!isEqual(get(newProps, key), get(this.props, key))) {

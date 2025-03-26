@@ -307,7 +307,7 @@ export const createCumulataBarTraces = (variables, times, dataFetched) => {
 };
 
 
-export const createCumulataBarLayout = (variables, chartTitle, traces, dates, format, chartRelayout, infoChartSize, isCollapsedFormGroup) => {
+export const createCumulataBarLayout = (variables, chartTitle, traces, dates, format, infoChartSize, isCollapsedFormGroup) => {
     const barTrace = traces[0].y;
     const maxPrecip = Math.max(...barTrace);
     const y1max = Math.max(maxPrecip, 6);
@@ -318,15 +318,14 @@ export const createCumulataBarLayout = (variables, chartTitle, traces, dates, fo
     const dtick2 = dtick1 * scaleFactor;
 
     // Determina il range delle date
-    const startDate = chartRelayout?.startDate
-        ? new Date(chartRelayout.startDate)
-        : new Date(Math.min(...dates));
-    const endDate = chartRelayout?.endDate
-        ? new Date(chartRelayout.endDate)
-        : new Date(Math.max(...dates));
-
-    // Determina il range per l asse y
-    // const yaxisRange = [chartRelayout?.variabileStart || Math.min(...traces[0].y), chartRelayout?.variabileEnd || Math.max(...traces[0].y)];
+    // const startDate = chartRelayout?.startDate
+    //     ? new Date(chartRelayout.startDate)
+    //     : new Date(Math.min(...dates));
+    // const endDate = chartRelayout?.endDate
+    //     ? new Date(chartRelayout.endDate)
+    //     : new Date(Math.max(...dates));
+    const startDate = new Date(Math.min(...dates));
+    const endDate = new Date(Math.max(...dates));
 
     return {
         width: infoChartSize.widthResizable - 10,
@@ -370,7 +369,7 @@ export const createCumulataBarLayout = (variables, chartTitle, traces, dates, fo
         },
         hovermode: 'x unified',
         legend: { orientation: 'h', x: 0.5, y: 1.05 },
-        dragmode: chartRelayout?.dragmode,
+        //  dragmode: chartRelayout?.dragmode,
         margin: { t: 80, r: 40, l: 60, b: (format === DATE_FORMAT ? 40 : 60 )}
     };
 };
