@@ -5,7 +5,9 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
 */
+
 import { createSelector } from 'reselect';
+import { FREE_RANGE } from '@js/utils/VariabiliMeteoUtils';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -41,4 +43,19 @@ export const firstAvailableDateSelector = createSelector(
 export const lastAvailableDateSelector = createSelector(
     [getInfoChartState],
     (infochart) => infochart?.lastAvailableDate
+);
+
+export const activeRangeManagerSelector = createSelector(
+    [getInfoChartState],
+    (infochart) => infochart?.activeRangeManager || FREE_RANGE
+);
+
+export const alertMessageSelector = createSelector(
+    [getInfoChartState],
+    (infochart) => infochart?.alertMessage || null
+);
+
+export const dataSelector = createSelector(
+    [getInfoChartState],
+    (infochart) => infochart?.data || ''
 );

@@ -22,9 +22,9 @@ import infoChartReducer from '../reducers/infochart';
 import { fetchSelectDate } from '@js/actions/updateDatesParams';
 import * as infoChartEpic from '../epics/infochart';
 import assign from 'object-assign';
-import { FREE_RANGE } from '@js/utils/VariabiliMeteoUtils';
 import { isPluginLoadedSelector, fromDataFormSelector, toDataFormSelector, periodTypeSelector,
-    firstAvailableDateSelector, lastAvailableDateSelector } from '../selectors/infoChart';
+    firstAvailableDateSelector, lastAvailableDateSelector, activeRangeManagerSelector,
+    alertMessageSelector, dataSelector } from '../selectors/infoChart';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -149,9 +149,9 @@ const InfoChartPlugin = connect(
 const InfoChartPanel = connect(
     createStructuredSelector({
         active: (state) => state.controls?.chartinfo?.enabled || false,
-        activeRangeManager: (state) => state.infochart?.activeRangeManager || FREE_RANGE,
-        alertMessage: (state) => state.infochart?.alertMessage || null,
-        data: (state) => state.infochart?.data || '',
+        activeRangeManager: activeRangeManagerSelector,
+        alertMessage: alertMessageSelector,
+        data: dataSelector,
         infoChartData: (state) => ({
             fromData: state.infochart?.infoChartData?.fromData,
             toData: state.infochart?.infoChartData?.toData,
