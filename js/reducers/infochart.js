@@ -95,18 +95,18 @@ function infochart(state = infoChartDefaultState, action) {
     case TODATA_CHANGED:
         return {
             ...state,
-            toData: action.toData
+            toData: new Date(action.toData)
         };
     case FROMDATA_CHANGED:
         return {
             ...state,
-            fromData: action.fromData
+            fromData: new Date(action.fromData)
         };
     case TODATA_FIXEDRANGE_CHANGED:
         return {
             ...state,
             fromData: moment(action.toData).clone().subtract(Number(state.periodType.max), 'days').toDate(),
-            toData: action.toData
+            toData: new Date(action.toData)
         };
     case CHART_PERIOD_CHANGED:
         return {

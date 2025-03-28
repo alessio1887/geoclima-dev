@@ -185,12 +185,6 @@ class InfoChart extends React.Component {
         isPluginLoaded: false
     }
 
-    state = {
-        // Default date values to use in case of invalid or missing date input
-        defaultFromData: new Date(moment(this.props.lastAvailableDate).clone().subtract(1, 'month').startOf('day')),
-        defaultToData: new Date(this.props.lastAvailableDate)
-    }
-
     initializeTabs = () => {
         const variableTabs = this.props.tabList.map((tab, index) => ({
             id: tab.id,
@@ -501,13 +495,49 @@ class InfoChart extends React.Component {
         this.props.onChangeChartVariable(tabVariable, [selectedVariable]);
         this.handleApplyPeriod([selectedVariable], tabVariable);
     }
+    resetChartData = () => {
+        if ( this.props.activeRangeManager === FIXED_RANGE) {
+            this.props.onChangePeriod(this.props.periodTypes.find(period => period.key === this.props.infoChartData.periodType));
+            this.props.onChangeFixedRangeTodata(this.props.infoChartData.toData);
+        } else {
+            this.props.onChangeToData(this.props.infoChartData.toData);
+            this.props.onChangeFromData(this.props.infoChartData.fromData);
+        }
+    };
+    validateDates = (fromDate, toDate, periodApplied) => {
+        let fromDateToValidate = fromDate;
+        if (!fromDateToValidate || isNaN(fromDateToValidate) || !(fromDateToValidate instanceof Date)) {
+            this.props.onChangeFromData(this.props.infoChartData.fromData);
+            return false;
+        }
+        if (!toDate || isNaN(toDate) || !(toDate instanceof Date)) {
+            this.props.onChangeToData(this.props.infoChartData.toData);
+            return false;
+        }
+        if ( this.props.activeRangeManager === FIXED_RANGE) {
+            // fromData = DateAPI.calculateDateFromKeyReal( periodApplied, toData).fromData;
+            fromDateToValidate = moment(toDate).clone().subtract(periodApplied.max, 'days').toDate();
+        }
+        const validation = DateAPI.validateDateRange(
+            fromDateToValidate,
+            toDate,
+            this.props.firstAvailableDate,
+            this.props.lastAvailableDate,
+            this.props.timeUnit
+        );
+        if (!validation.isValid) {
+            this.props.onOpenAlert(validation.errorMessage);
+            this.resetChartData();
+            return false;
+        }
+        return true;
+    };
     handleApplyPeriod = (selectedVariables, idTabVariable, newPeriod) => {
         let periodApplied = newPeriod || this.props.periodType;
         let newFromData = this.props.fromData;
         let newToData = this.props.toData;
-        if (!newFromData || !newToData || isNaN(newFromData) || isNaN(newToData) || !(newToData instanceof Date) || !(newFromData instanceof Date)) {
-            // restore defult values
-            this.props.onChangePeriodToData(new Date(this.state.defaultToData));
+        // Date validations
+        if (!this.validateDates(newFromData, newToData, periodApplied)) {
             return;
         }
         // Set fromData, toData, periodKey and variabile meteo
@@ -521,13 +551,6 @@ class InfoChart extends React.Component {
         const variableIds = selectedVariables ? selectedVariables.map(variable => variable.id).join(',')
             : this.getActiveTab().variables.map(variable => variable.id).join(',');
         const idTab = idTabVariable || this.getActiveTab().id;
-
-        // Date validations
-        const validation = DateAPI.validateDateRange(newFromData, newToData, this.props.firstAvailableDate, this.props.lastAvailableDate, this.props.timeUnit);
-        if (!validation.isValid) {
-            this.props.onOpenAlert(validation.errorMessage);
-            return;
-        }
         // Clear alert message if validations pass
         if (this.props.alertMessage) {
             this.props.onCloseAlert();
@@ -542,9 +565,6 @@ class InfoChart extends React.Component {
             idTab: idTab
         });
         this.props.onResetChartZoom();
-        // set default values
-        this.setState({ defaultFromData: new Date(newFromData)});
-        this.setState({ defaultToData: new Date(newToData)});
     }
 }
 
