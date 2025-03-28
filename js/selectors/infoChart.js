@@ -59,3 +59,30 @@ export const dataSelector = createSelector(
     [getInfoChartState],
     (infochart) => infochart?.data || ''
 );
+
+export const infoChartDataSelector = createSelector(
+    [getInfoChartState],
+    (infochart) => ({
+        fromData: infochart?.infoChartData?.fromData,
+        toData: infochart?.infoChartData?.toData,
+        variables: infochart?.infoChartData?.variables,
+        latlng: infochart?.infoChartData?.latlng || {},
+        periodType: infochart?.infoChartData?.periodType,
+        idTab: infochart?.infoChartData?.idTab
+    })
+);
+
+export const maskLoadingSelector = createSelector(
+    [getInfoChartState],
+    (infochart) => infochart?.maskLoading
+);
+
+export const isInteractionDisabledSelector = createSelector(
+    [getInfoChartState],
+    (infochart) => infochart?.isInteractionDisabled || false
+);
+
+export const isCollapsedFormGroupSelector = createSelector(
+    [getInfoChartState],
+    (infochart) => infochart?.isCollapsedFormGroup || false
+);

@@ -24,7 +24,8 @@ import * as infoChartEpic from '../epics/infochart';
 import assign from 'object-assign';
 import { isPluginLoadedSelector, fromDataFormSelector, toDataFormSelector, periodTypeSelector,
     firstAvailableDateSelector, lastAvailableDateSelector, activeRangeManagerSelector,
-    alertMessageSelector, dataSelector } from '../selectors/infoChart';
+    alertMessageSelector, dataSelector, infoChartDataSelector, maskLoadingSelector,
+    isInteractionDisabledSelector, isCollapsedFormGroupSelector } from '../selectors/infoChart';
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
@@ -152,20 +153,13 @@ const InfoChartPanel = connect(
         activeRangeManager: activeRangeManagerSelector,
         alertMessage: alertMessageSelector,
         data: dataSelector,
-        infoChartData: (state) => ({
-            fromData: state.infochart?.infoChartData?.fromData,
-            toData: state.infochart?.infoChartData?.toData,
-            variables: state.infochart?.infoChartData?.variables,
-            latlng: state.infochart?.infoChartData?.latlng || {},
-            periodType: state.infochart?.infoChartData?.periodType,
-            idTab: state.infochart?.infoChartData?.idTab
-        }),
+        infoChartData: infoChartDataSelector,
         mapinfoActive: (state) => state.mapInfo?.enabled || false,
-        maskLoading: (state) => state.infochart?.maskLoading,
+        maskLoading: maskLoadingSelector,
         fromData: fromDataFormSelector,
         periodType: periodTypeSelector,
-        isInteractionDisabled: (state) => state.infochart?.isInteractionDisabled || false,
-        isCollapsedFormGroup: (state) => state.infochart?.isCollapsedFormGroup || false,
+        isInteractionDisabled: isInteractionDisabledSelector,
+        isCollapsedFormGroup: isCollapsedFormGroupSelector,
         chartRelayout: (state) => state.infochart?.chartRelayout,
         infoChartSize: (state) => state.infochart?.infoChartSize || { widthResizable: 880, heightResizable: 880 },
         firstAvailableDate: firstAvailableDateSelector,
