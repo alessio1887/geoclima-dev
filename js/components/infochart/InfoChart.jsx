@@ -497,7 +497,7 @@ class InfoChart extends React.Component {
     }
     resetChartData = () => {
         if ( this.props.activeRangeManager === FIXED_RANGE) {
-            this.props.onChangePeriod(this.props.periodTypes.find(period => period.key === this.props.infoChartData.periodType));
+            this.props.onChangePeriod(this.props.periodTypes.find(period => period.key === this.props.infoChartData.periodType.key));
             this.props.onChangeFixedRangeTodata(this.props.infoChartData.toData);
         } else {
             this.props.onChangeToData(this.props.infoChartData.toData);
@@ -559,7 +559,7 @@ class InfoChart extends React.Component {
             toData: moment(newToData).clone().format(this.props.timeUnit),
             fromData: moment(newFromData).clone().format(this.props.timeUnit),
             variables: variableIds,
-            periodType: periodApplied.key,
+            periodType: periodApplied,
             idTab: idTab
         });
         this.props.onResetChartZoom();
