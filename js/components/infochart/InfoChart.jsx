@@ -540,9 +540,7 @@ class InfoChart extends React.Component {
         if (!this.validateDates(newFromData, newToData, periodApplied)) {
             return;
         }
-        // Set fromData, toData, periodKey and variabile meteo
         if ( this.props.activeRangeManager === FIXED_RANGE) {
-            // fromData = DateAPI.calculateDateFromKeyReal( periodApplied, toData).fromData;
             newFromData = moment(newToData).clone().subtract(periodApplied.max, 'days').toDate();
         } else {
             // set default period
