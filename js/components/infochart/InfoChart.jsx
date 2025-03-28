@@ -321,6 +321,7 @@ class InfoChart extends React.Component {
             return (
                 <div id="infochart-rendering">
                     { isTabBarVisible && !this.props.isCollapsedFormGroup && this.props.infoChartSize.widthResizable >= 550 &&
+                        !this.props.alertMessage &&
                         <TabBar tabList={activeTab.variables[0].chartList}
                             activeTab={activeTab.variables[0].chartList.find(chart =>
                                 chart.active)}
