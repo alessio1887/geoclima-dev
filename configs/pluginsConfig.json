@@ -916,6 +916,8 @@
       "dependencies": [
         "SidebarMenu"
       ]
+    }, {
+      "name": "UpdateLayerPlugin"
     }
   ]
 }
