@@ -21,15 +21,40 @@ momentLocaliser(moment);
 
 const COMBINED_DATE_MAPCONFIG = 'COMBINED_DATE_MAPCONFIG';
 
-const updateLayersParams = (layers, defaultPeriod, toData, timeUnit, isMapfilenameNotChange) => {
-    let actionsUpdateParams = [];
+const updateLayersParams = (layers, defaultPeriod, toData, timeUnit, isMapfilenameNotChange, isCheckPrefixes) => {
+    const actionsUpdateParams = [];
     const toDataFormatted = moment(toData).format(timeUnit);
     const fromDataFormatted = moment(toData).clone().subtract(defaultPeriod.max, 'days').format(timeUnit);
+    const year = moment(toData).format("YYYY");
+
     for (const layer of layers) {
         if (layer.params?.map) {
-            const mapFileName = !isMapfilenameNotChange ?
-                DateAPI.getMapfilenameFromSuffix(layer.params.map, defaultPeriod.key)
+            const name = layer?.name || "";
+
+            // === 1. Caso: layer con nome che inizia con uno dei prefissi ===
+            if (isCheckPrefixes) {
+                const nameBase = name.replace(/_\d{4}-\d{2}-\d{2}$/, "");
+                const updatedName = `${nameBase}_${toDataFormatted}`;
+                const updatedTitle = `${layer.title?.split("–")[0].trim()} – ${toDataFormatted}`;
+
+                actionsUpdateParams.push(updateNode(layer.id, "layer", {
+                    title: updatedTitle,
+                    name: updatedName,
+                    description: updatedTitle,
+                    params: {
+                        LAYERS: `${updatedName}`,
+                        map: `wms_${year}/ris_prev_incendio_wms_${toDataFormatted}.map`
+                    }
+                }));
+
+                continue; // evita di applicare anche la logica sotto
+            }
+
+            // === 2. Caso: layer con params.map (logica originale)
+            const mapFileName = !isMapfilenameNotChange
+                ? DateAPI.getMapfilenameFromSuffix(layer.params.map, defaultPeriod.key)
                 : layer.params.map;
+
             const newParams = {
                 params: {
                     map: mapFileName,
@@ -37,11 +62,16 @@ const updateLayersParams = (layers, defaultPeriod, toData, timeUnit, isMapfilena
                     toData: toDataFormatted
                 }
             };
-            actionsUpdateParams.push(updateSettings(newParams));
+
+            actionsUpdateParams.push(updateSettings({
+                id: layer.id,
+                options: newParams.params
+            }));
+
             actionsUpdateParams.push(updateNode(layer.id, "layers", newParams));
         }
     }
-    // Returns action for updated layers
+
     return actionsUpdateParams;
 };
 
@@ -68,7 +98,8 @@ const updateParamsByDateRangeEpic = (action$, store) =>
             const toData = action.payload.availableDate;
             const timeUnit = action.payload.timeUnit;
             const defaultPeriod = action.payload.defaultPeriod;
-            const actionsUpdateParams = updateLayersParams(layers, defaultPeriod, toData, timeUnit, isMapfilenameNotChange);
+            const isCheckPrefixes = appState.fixedrangepicker.checkPrefixes;
+            const actionsUpdateParams = updateLayersParams(layers, defaultPeriod, toData, timeUnit, isMapfilenameNotChange, isCheckPrefixes);
             return Observable.of(...actionsUpdateParams);
         });
 

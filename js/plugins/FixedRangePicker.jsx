@@ -46,6 +46,7 @@ Plugin configuration
         "defaultUrlSelectDate": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
         "variabileSelectDate": "prec",
         "isFetchAvailableDates": true,
+        "checkPrefixes": false,
         "periodTypes": [
             { "key": 7, "label": "7 giorni", "max": 6 },
             { "key": 10, "label": "10 giorni", "max": 9, "isDefault": true  },
@@ -132,6 +133,7 @@ class FixedRangePicker extends React.Component {
         fromDataLayer: PropTypes.instanceOf(Date),
         isCollapsedPlugin: PropTypes.bool,
         isFetchAvailableDates: PropTypes.bool, // If true, fetch the first and last available dates calling fetchSelectDate action
+        checkPrefixes: PropTypes.bool,
         isInteractionDisabled: PropTypes.bool,
         isLayerLoading: PropTypes.bool,
         isPluginLoaded: PropTypes.bool,
@@ -193,6 +195,7 @@ class FixedRangePicker extends React.Component {
             "spei": [ "spei1", "spei3", "spei6", "spei12"]
         },
         defaultUrlSelectDate: "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
+        checkPrefixes: false,
         variabileSelectDate: "prec",
         className: "mapstore-fixederange",
         style: {
@@ -223,7 +226,7 @@ class FixedRangePicker extends React.Component {
         const defaultPeriod = DateAPI.getDefaultPeriod(this.props.periodTypes);
         this.props.onChangePeriod(defaultPeriod);
         this.props.onToggleFixedRangePicker();
-        this.props.onMarkPluginAsLoaded(this.props.showOneDatePicker);
+        this.props.onMarkPluginAsLoaded(this.props.showOneDatePicker, this.props.checkPrefixes);
         if ( this.props.isFetchAvailableDates && this.props.defaultUrlSelectDate && this.props.variabileSelectDate) {
             this.props.onFetchAvailableDates(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, this.props.timeUnit, defaultPeriod);
         }
@@ -377,23 +380,45 @@ class FixedRangePicker extends React.Component {
     }
     updateParams = (datesParam, onUpdateNode = true) => {
         this.props.layers.map((layer) => {
-            if (onUpdateNode && isVariabiliMeteoLayer(layer.name, this.props.variabiliMeteo)) {
-                const mapFile = !this.props.showOneDatePicker ?
-                    DateAPI.getMapfilenameFromSuffix(layer.params.map, datesParam.mapNameSuffix)
-                    : layer.params.map;
-                const newParams = {
-                    params: {
-                        map: mapFile,
-                        fromData: moment(datesParam.fromData).format(this.props.timeUnit),
-                        toData: moment(datesParam.toData).format(this.props.timeUnit)
-                    }
-                };
-                this.props.onUpdateSettings(newParams);
-                this.props.onUpdateNode(
-                    layer.id,
-                    "layers",
-                    assign({}, this.props.settings.props, newParams)
-                );
+            if (onUpdateNode && isVariabiliMeteoLayer(layer.name, this.props.variabiliMeteo, this.props.checkPrefixes)) {
+                const name = layer?.name || "";
+
+                // === 1. Caso: layer con nome che inizia con uno dei prefissi ===
+                if (this.props.checkPrefixes) {
+                    const year = moment(moment(datesParam.toData).format(this.props.timeUnit)).format("YYYY");
+                    const nameBase = name.replace(/_\d{4}-\d{2}-\d{2}$/, "");
+                    const updatedName = `${nameBase}_${moment(datesParam.toData).format(this.props.timeUnit)}`;
+                    const updatedTitle = `${layer.title?.split("–")[0].trim()} – ${moment(datesParam.toData).format(this.props.timeUnit)}`;
+
+                    this.props.onUpdateNode(layer.id, "layer", {
+                        title: updatedTitle,
+                        name: updatedName,
+                        description: updatedTitle,
+                        params: {
+                            LAYERS: `${updatedName}`,
+                            map: `wms_${year}/ris_prev_incendio_wms_${moment(datesParam.toData).format(this.props.timeUnit)}.map`
+                        }
+                    });
+
+                } else {
+                    // === 2. Caso: layer con params.map (logica originale)
+                    const mapFile = !this.props.showOneDatePicker ?
+                        DateAPI.getMapfilenameFromSuffix(layer.params.map, datesParam.mapNameSuffix)
+                        : layer.params.map;
+                    const newParams = {
+                        params: {
+                            map: mapFile,
+                            fromData: moment(datesParam.fromData).format(this.props.timeUnit),
+                            toData: moment(datesParam.toData).format(this.props.timeUnit)
+                        }
+                    };
+                    this.props.onUpdateSettings(newParams);
+                    this.props.onUpdateNode(
+                        layer.id,
+                        "layers",
+                        assign({}, this.props.settings.props, newParams)
+                    );
+                }
             }
         });
     }
