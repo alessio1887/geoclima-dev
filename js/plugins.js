@@ -10,6 +10,7 @@ import FixedRangePickerPlugin from '@js/plugins/FixedRangePicker';
 import InfoChartPlugin from './plugins/InfoChart';
 import DateRangeLabelPlugin from './plugins/DateRangeLabel';
 import ExportImagePlugin from './plugins/ExportImage';
+import UpdateLayerPlugin from './plugins/UpdateLayerPlugin';
 import productPlugins from '@mapstore/product/plugins.js';
 
 export default {
@@ -22,6 +23,7 @@ export default {
         FixedRangePickerPlugin,
         DateRangeLabelPlugin,
         InfoChartPlugin,
-        ExportImagePlugin
+        ExportImagePlugin,
+        UpdateLayerPlugin
     }
 };
