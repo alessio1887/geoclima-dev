@@ -85,7 +85,8 @@ function fixedrangepicker(state = defaultState, action) {
             ...state,
             isPluginLoaded: true,
             showOneDatePicker: action.showOneDatePicker,
-            checkPrefixes: action.checkPrefixes
+            checkPrefixes: action.checkPrefixes,
+            variabiliMeteo: action.variabiliMeteo
         };
     case PLUGIN_NOT_LOADED:
         return {
