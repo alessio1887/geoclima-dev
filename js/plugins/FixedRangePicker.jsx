@@ -226,7 +226,7 @@ class FixedRangePicker extends React.Component {
         const defaultPeriod = DateAPI.getDefaultPeriod(this.props.periodTypes);
         this.props.onChangePeriod(defaultPeriod);
         this.props.onToggleFixedRangePicker();
-        this.props.onMarkPluginAsLoaded(this.props.showOneDatePicker, this.props.checkPrefixes);
+        this.props.onMarkPluginAsLoaded(this.props.showOneDatePicker, this.props.checkPrefixes, this.props.variabiliMeteo);
         if ( this.props.isFetchAvailableDates && this.props.defaultUrlSelectDate && this.props.variabileSelectDate) {
             this.props.onFetchAvailableDates(this.props.variabileSelectDate, this.props.defaultUrlSelectDate, this.props.timeUnit, defaultPeriod);
         }
