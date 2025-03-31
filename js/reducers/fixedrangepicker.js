@@ -84,7 +84,8 @@ function fixedrangepicker(state = defaultState, action) {
         return {
             ...state,
             isPluginLoaded: true,
-            showOneDatePicker: action.showOneDatePicker
+            showOneDatePicker: action.showOneDatePicker,
+            checkPrefixes: action.checkPrefixes
         };
     case PLUGIN_NOT_LOADED:
         return {

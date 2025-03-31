@@ -642,6 +642,7 @@
         "defaultUrlSelectDate": "geoportale.lamma.rete.toscana.it/cgi-bin/geoclima_app/selectDate.py",
         "variabileSelectDate": "prec",
         "isFetchAvailableDates": true,
+        "checkPrefixes": false,
         "periodTypes": [
             { "key": 7, "label": "7 giorni", "max": 6 },
             { "key": 10, "label": "10 giorni", "max": 9, "isDefault": true  },
@@ -917,7 +918,7 @@
         "SidebarMenu"
       ]
     }, {
-      "name": "UpdateLayerPlugin"
+      "name": "UpdateLayer"
     }
   ]
 }
