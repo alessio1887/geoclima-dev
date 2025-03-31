@@ -187,8 +187,8 @@ class InfoChart extends React.Component {
 
     state = {
         // Default date values to use in case of invalid or missing date input
-        fromDataSelected: this.props.fromData,
-        toDataSelected: this.props.toData,
+        fromDataSelected: moment(this.props.fromData).clone().format(this.props.timeUnit),
+        toDataSelected: moment(this.props.toData).clone().format(this.props.timeUnit),
         periodTypeSelected: this.props.periodType
     }
 
@@ -528,8 +528,8 @@ class InfoChart extends React.Component {
             fromDateToValidate = moment(toDate).clone().subtract(periodApplied.max, 'days').toDate();
             this.setState({ periodTypeSelected: periodApplied });
         }
-        this.setState({ fromDataSelected: fromDateToValidate });
-        this.setState({ toDataSelected: toDate });
+        this.setState({ fromDataSelected: moment(fromDateToValidate).clone().format(this.props.timeUnit) });
+        this.setState({ toDataSelected: moment(toDate).clone().format(this.props.timeUnit)  });
         const validation = DateAPI.validateDateRange(
             fromDateToValidate,
             toDate,
