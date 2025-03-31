@@ -185,6 +185,13 @@ class InfoChart extends React.Component {
         isPluginLoaded: false
     }
 
+    state = {
+        // Default date values to use in case of invalid or missing date input
+        fromDataSelected: this.props.fromData,
+        toDataSelected: this.props.toData,
+        periodTypeSelected: this.props.periodType
+    }
+
     initializeTabs = () => {
         const variableTabs = this.props.tabList.map((tab, index) => ({
             id: tab.id,
@@ -401,8 +408,8 @@ class InfoChart extends React.Component {
                         <div className="alert-date" >
                             <strong><Message msgId="warning"/></strong>
                             <span ><Message msgId={this.props.alertMessage}
-                                msgParams={{toData: moment(this.props.toData).format(this.props.timeUnit),
-                                    fromData: moment(this.props.fromData).format(this.props.timeUnit),
+                                msgParams={{toData: this.state.toDataSelected,
+                                    fromData: this.state.fromDataSelected,
                                     minDate: moment(this.props.firstAvailableDate).format(this.props.timeUnit),
                                     maxDate: moment(this.props.lastAvailableDate).format(this.props.timeUnit)
                                 }}/></span>
@@ -519,7 +526,10 @@ class InfoChart extends React.Component {
         if ( this.props.activeRangeManager === FIXED_RANGE) {
             // fromData = DateAPI.calculateDateFromKeyReal( periodApplied, toData).fromData;
             fromDateToValidate = moment(toDate).clone().subtract(periodApplied.max, 'days').toDate();
+            this.setState({ periodTypeSelected: periodApplied });
         }
+        this.setState({ fromDataSelected: fromDateToValidate });
+        this.setState({ toDataSelected: toDate });
         const validation = DateAPI.validateDateRange(
             fromDateToValidate,
             toDate,

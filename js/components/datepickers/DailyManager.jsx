@@ -38,26 +38,7 @@ const DailyManager = ({
 
     const isIncrementDayDisabled = isInteractionDisabled || moment(toData).isAfter(moment(maxDate).subtract(1, 'day'));
     const isIncremenHourtDisabled = isInteractionDisabled || moment(toData).isSameOrAfter(moment(maxDate));
-    /*
-    // Increment the date by 1 day
-    const incrementDate = () => {
-        const newToData = moment(toData).add(1, 'days').format();
-        onChangePeriodToData(newToData);
-        updateParams({
-            fromData: moment(newToData).clone().subtract(1, 'month').format(format),
-            toData: newToData
-        });
-    };
-    // Decrement the date by 1 day
-    const decrementDate = () => {
-        const newToData = moment(toData).subtract(1, 'days').format();
-        onChangePeriodToData(newToData);
-        updateParams({
-            fromData: moment(newToData).clone().subtract(1, 'month').format(format),
-            toData: newToData
-        });
-    };
-    */
+
     const changeDateTime = (timeUnit, amount) => {
         const newToData = moment(toData).add(amount, timeUnit);
         onChangePeriodToData(newToData.toDate());
