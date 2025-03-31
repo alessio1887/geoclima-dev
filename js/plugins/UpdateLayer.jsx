@@ -4,14 +4,12 @@
  * Utile per eseguire logica automatica (es. aggiornare layer dinamici).
  */
 import { createPlugin } from '@mapstore/utils/PluginsUtils';
-import updateLayerFromRemoteDateEpic from '../epics/updateLayerFromRemoteDateEpic';
+import * as updateLayerFromRemoteDateEpic from '../epics/updateLayerFromRemoteDateEpic';
 
 // Componente fittizio invisibile
-const DummyComponent = () => null;
+const UpdateLayerPlugin = () => null;
 
-export default createPlugin('UpdateLayerPlugin', {
-    component: DummyComponent,
-    epics: {
-        updateLayerFromRemoteDateEpic
-    }
+export default createPlugin('UpdateLayer', {
+    component: UpdateLayerPlugin,
+    epics: updateLayerFromRemoteDateEpic
 });

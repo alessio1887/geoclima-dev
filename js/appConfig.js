@@ -18,7 +18,8 @@ const fixedrangepicker = {
     toData: DEFAULT_DATA_FINE,
     periodType: "1",
     showFixedRangePicker: false,
-    isInteractionDisabled: true
+    isInteractionDisabled: true,
+    checkPrefixes: false
 };
 const freerangepicker = {
     isCollapsedPlugin: false,

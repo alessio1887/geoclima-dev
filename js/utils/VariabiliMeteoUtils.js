@@ -27,20 +27,26 @@ const MIN_Y_INDEX = -3.0;
 const MAX_Y_INDEX = 3.0;
 
 export function isVariabiliMeteoLayer(layerName, variabiliMeteo) {
-    let check = false;
-    // Check undefined\null
-    if (!variabiliMeteo) {
-        return check;
+    if (typeof layerName !== "string" || !variabiliMeteo) {
+        return false;
     }
-    // Iterate through the VARIABILI_METEO object
+
     for (const nomeVariabile in variabiliMeteo) {
-        // VARIABILI_METEO[nomeVariabile] should be an array of meteorological variables
-        if (variabiliMeteo[nomeVariabile].includes(layerName)) {
-            check = true;
-            break;
+        if (Object.prototype.hasOwnProperty.call(variabiliMeteo, nomeVariabile)) {
+            const lista = variabiliMeteo[nomeVariabile];
+
+            const match = Array.isArray(lista) &&
+                lista.find(prefix =>
+                    typeof prefix === "string" && layerName.includes(prefix)
+                );
+
+            if (match) {
+                return true;
+            }
         }
     }
-    return check;
+
+    return false;
 }
 
 export const getVisibleLayers = (layers, idVariabiliLayers) => {
