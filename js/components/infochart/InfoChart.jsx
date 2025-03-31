@@ -401,8 +401,10 @@ class InfoChart extends React.Component {
                         <div className="alert-date" >
                             <strong><Message msgId="warning"/></strong>
                             <span ><Message msgId={this.props.alertMessage}
-                                msgParams={{toData: moment(this.props.lastAvailableDate).format(this.props.timeUnit),
-                                    fromData: moment(this.props.firstAvailableDate).format(this.props.timeUnit)
+                                msgParams={{toData: moment(this.props.toData).format(this.props.timeUnit),
+                                    fromData: moment(this.props.fromData).format(this.props.timeUnit),
+                                    minDate: moment(this.props.firstAvailableDate).format(this.props.timeUnit),
+                                    maxDate: moment(this.props.lastAvailableDate).format(this.props.timeUnit)
                                 }}/></span>
                         </div>
                     )}
