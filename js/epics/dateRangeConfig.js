@@ -21,14 +21,14 @@ momentLocaliser(moment);
 
 const COMBINED_DATE_MAPCONFIG = 'COMBINED_DATE_MAPCONFIG';
 
-const updateLayersParams = (layers, defaultPeriod, toData, timeUnit, isMapfilenameNotChange, isCheckPrefixes) => {
+const updateLayersParams = (layers, defaultPeriod, toData, timeUnit, isMapfilenameNotChange, isCheckPrefixes, variabiliMeteo) => {
     const actionsUpdateParams = [];
     const toDataFormatted = moment(toData).format(timeUnit);
     const fromDataFormatted = moment(toData).clone().subtract(defaultPeriod.max, 'days').format(timeUnit);
     const year = moment(toData).format("YYYY");
 
     for (const layer of layers) {
-        if (layer.params?.map) {
+        if (layer.params?.map && isVariabiliMeteoLayer(layer.name, variabiliMeteo)) {
             const name = layer?.name || "";
 
             // === 1. Caso: layer con nome che inizia con uno dei prefissi ===
@@ -99,7 +99,8 @@ const updateParamsByDateRangeEpic = (action$, store) =>
             const timeUnit = action.payload.timeUnit;
             const defaultPeriod = action.payload.defaultPeriod;
             const isCheckPrefixes = appState.fixedrangepicker.checkPrefixes;
-            const actionsUpdateParams = updateLayersParams(layers, defaultPeriod, toData, timeUnit, isMapfilenameNotChange, isCheckPrefixes);
+            const variabiliMeteo = appState.fixedrangepicker.variabiliMeteo;
+            const actionsUpdateParams = updateLayersParams(layers, defaultPeriod, toData, timeUnit, isMapfilenameNotChange, isCheckPrefixes, variabiliMeteo);
             return Observable.of(...actionsUpdateParams);
         });
 

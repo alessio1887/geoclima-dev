@@ -68,11 +68,12 @@ export function collapsePlugin() {
 }
 
 
-export function markFixedRangeAsLoaded(showOneDatePicker, checkPrefixes) {
+export function markFixedRangeAsLoaded(showOneDatePicker, checkPrefixes, variabiliMeteo) {
     return {
         type: PLUGIN_LOADED,
         showOneDatePicker,
-        checkPrefixes
+        checkPrefixes,
+        variabiliMeteo
     };
 }
 
