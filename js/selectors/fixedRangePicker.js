@@ -57,3 +57,8 @@ export const lastAvailableDateSelector = createSelector(
     [getFixedRangePickerState],
     (fixedrangepicker) => fixedrangepicker?.lastAvailableDate
 );
+
+export const isCollapsedPluginSelector = createSelector(
+    [getFixedRangePickerState],
+    (fixedrangepicker) => fixedrangepicker?.isCollapsedPlugin || false
+);

@@ -64,17 +64,6 @@ function fixedrangepicker(state = defaultState, action) {
             ...state,
             alertMessage: null
         };
-    // case LAYER_LOADING:
-    //     return {
-    //         ...state,
-    //         isInteractionDisabled: true
-    //     };
-    // case LAYER_LOAD:
-    // case LAYER_ERROR:
-    //     return {
-    //         ...state,
-    //         isInteractionDisabled: false
-    //     };
     case COLLAPSE_RANGE_PICKER:
         return {
             ...state,

@@ -14,7 +14,7 @@ import { updateSettings, updateNode } from '@mapstore/actions/layers';
 import { layersSelector } from '@mapstore/selectors/layers';
 import { fromDataFormSelector, fromDataLayerSelector, toDataFormSelector, toDataLayerSelector,
     isPluginLoadedSelector, showFixedRangePickerSelector, periodTypeSelector,
-    firstAvailableDateSelector, lastAvailableDateSelector } from '../selectors/fixedRangePicker';
+    firstAvailableDateSelector, lastAvailableDateSelector, isCollapsedPluginSelector } from '../selectors/fixedRangePicker';
 import { compose } from 'redux';
 import { changePeriodToData, changePeriod, toggleRangePickerPlugin, openAlert,
     closeAlert, collapsePlugin, markFixedRangeAsLoaded, markFixedRangeAsNotLoaded } from '../actions/fixedrangepicker';
@@ -217,9 +217,9 @@ class FixedRangePicker extends React.Component {
     };
 
     state = {
-        // Default date values to use in case of invalid or missing date input
-        defaultFromData: new Date(moment(this.props.lastAvailableDate).clone().subtract(1, 'month')),
-        defaultToData: new Date(this.props.lastAvailableDate)
+        fromDataAlertMessage: moment(this.props.fromDataLayer).clone().format(this.props.timeUnit),
+        toDataAlertMessage: moment(this.props.toDataLayer).clone().format(this.props.timeUnit),
+        defaultPeriodType: this.props.periodType
     }
 
     componentDidMount() {
@@ -277,10 +277,11 @@ class FixedRangePicker extends React.Component {
                             <div className="alert-date" >
                                 <strong><Message msgId="warning"/></strong>
                                 <span ><Message msgId={this.props.alertMessage}
-                                    msgParams={{toData: moment(this.props.lastAvailableDate).format(this.props.timeUnit),
-                                        fromData: moment(this.props.firstAvailableDate).format(this.props.timeUnit)
-                                    }}/>
-                                </span>
+                                    msgParams={{toData: this.state.toDataAlertMessage,
+                                        fromData: this.state.fromDataAlertMessage,
+                                        minDate: moment(this.props.firstAvailableDate).format(this.props.timeUnit),
+                                        maxDate: moment(this.props.lastAvailableDate).format(this.props.timeUnit)
+                                    }}/></span>
                             </div>
                         )}
                     </FormGroup>
@@ -361,7 +362,13 @@ class FixedRangePicker extends React.Component {
             this.props.firstAvailableDate, this.props.lastAvailableDate, this.props.timeUnit
         );
         if (!validation.isValid) {
+            this.setState({
+                fromDataAlertMessage: moment(newFromData).clone().format(this.props.timeUnit),
+                toDataAlertMessage: moment(newToData).clone().format(this.props.timeUnit)
+            });
             this.props.onOpenAlert(validation.errorMessage);
+            this.props.onChangePeriodToData(this.props.toDataLayer);
+            this.props.onChangePeriod(this.state.defaultPeriodType);
             return;
         }
         if (this.props.alertMessage !== null) {
@@ -372,11 +379,7 @@ class FixedRangePicker extends React.Component {
             toData: newToData,
             mapNameSuffix
         });
-        // set default values
-        this.setState({
-            defaultFromData: new Date(newFromData),
-            defaultToData: new Date(newToData)
-        });
+        this.setState({ defaultPeriodType: newPeriodType });
     }
     updateParams = (datesParam, onUpdateNode = true) => {
         this.props.layers.map((layer) => {
@@ -425,7 +428,7 @@ class FixedRangePicker extends React.Component {
 }
 
 const mapStateToProps = createStructuredSelector({
-    isCollapsedPlugin: (state) => state?.fixedrangepicker?.isCollapsedPlugin,
+    isCollapsedPlugin: isCollapsedPluginSelector,
     fromData: fromDataFormSelector,
     fromDataLayer: fromDataLayerSelector,
     periodType: periodTypeSelector,
