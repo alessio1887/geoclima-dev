@@ -188,8 +188,8 @@ class InfoChart extends React.Component {
     state = {
         // Default date values to use in case of invalid or missing date input
         fromDataSelected: moment(this.props.fromData).clone().format(this.props.timeUnit),
-        toDataSelected: moment(this.props.toData).clone().format(this.props.timeUnit),
-        periodTypeSelected: this.props.periodType
+        toDataSelected: moment(this.props.toData).clone().format(this.props.timeUnit)
+        // periodTypeSelected: this.props.periodType
     }
 
     initializeTabs = () => {
@@ -506,7 +506,7 @@ class InfoChart extends React.Component {
     }
     resetChartData = () => {
         if ( this.props.activeRangeManager === FIXED_RANGE) {
-            this.props.onChangePeriod(this.props.periodTypes.find(period => period.key === this.props.infoChartData.periodType.key));
+            // this.props.onChangePeriod(this.state.periodTypeSelected);
             this.props.onChangeFixedRangeTodata(this.props.infoChartData.toData);
         } else {
             this.props.onChangeToData(this.props.infoChartData.toData);
@@ -524,9 +524,8 @@ class InfoChart extends React.Component {
             return false;
         }
         if ( this.props.activeRangeManager === FIXED_RANGE) {
-            // fromData = DateAPI.calculateDateFromKeyReal( periodApplied, toData).fromData;
             fromDateToValidate = moment(toDate).clone().subtract(periodApplied.max, 'days').toDate();
-            this.setState({ periodTypeSelected: periodApplied });
+            // this.setState({ periodTypeSelected: periodApplied });
         }
         this.setState({ fromDataSelected: moment(fromDateToValidate).clone().format(this.props.timeUnit) });
         this.setState({ toDataSelected: moment(toDate).clone().format(this.props.timeUnit)  });
