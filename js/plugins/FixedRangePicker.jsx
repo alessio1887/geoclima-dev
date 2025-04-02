@@ -216,11 +216,11 @@ class FixedRangePicker extends React.Component {
         timeUnit: DATE_FORMAT
     };
 
-    state = {
-        fromDataAlertMessage: moment(this.props.fromDataLayer).clone().format(this.props.timeUnit),
-        toDataAlertMessage: moment(this.props.toDataLayer).clone().format(this.props.timeUnit),
-        defaultPeriodType: this.props.periodType
-    }
+    // state = {
+    //     fromDataAlertMessage: moment(this.props.fromDataLayer).clone().format(this.props.timeUnit),
+    //     toDataAlertMessage: moment(this.props.toDataLayer).clone().format(this.props.timeUnit),
+    //     defaultPeriodType: this.props.periodType
+    // }
 
     componentDidMount() {
         const defaultPeriod = DateAPI.getDefaultPeriod(this.props.periodTypes);
@@ -277,9 +277,7 @@ class FixedRangePicker extends React.Component {
                             <div className="alert-date" >
                                 <strong><Message msgId="warning"/></strong>
                                 <span ><Message msgId={this.props.alertMessage}
-                                    msgParams={{toData: this.state.toDataAlertMessage,
-                                        fromData: this.state.fromDataAlertMessage,
-                                        minDate: moment(this.props.firstAvailableDate).format(this.props.timeUnit),
+                                    msgParams={{minDate: moment(this.props.firstAvailableDate).format(this.props.timeUnit),
                                         maxDate: moment(this.props.lastAvailableDate).format(this.props.timeUnit)
                                     }}/></span>
                             </div>
@@ -352,7 +350,7 @@ class FixedRangePicker extends React.Component {
     }
     handleApplyPeriod = (newPeriodType, newToData) => {
         if (!newPeriodType || !newToData || isNaN(newToData) || !(newToData instanceof Date)) {
-            this.props.onChangePeriodToData(new Date(this.state.defaultToData)); // ripristina i valori di default
+            this.props.onChangePeriodToData(this.props.toDataLayer); // ripristina i valori di default
             return;
         }
         const newFromData = moment(newToData).clone().subtract(Number(newPeriodType.max), 'days').toDate();
@@ -362,13 +360,11 @@ class FixedRangePicker extends React.Component {
             this.props.firstAvailableDate, this.props.lastAvailableDate, this.props.timeUnit
         );
         if (!validation.isValid) {
-            this.setState({
-                fromDataAlertMessage: moment(newFromData).clone().format(this.props.timeUnit),
-                toDataAlertMessage: moment(newToData).clone().format(this.props.timeUnit)
-            });
-            this.props.onOpenAlert(validation.errorMessage);
-            this.props.onChangePeriodToData(this.props.toDataLayer);
-            this.props.onChangePeriod(this.state.defaultPeriodType);
+            // this.setState({
+            //     fromDataAlertMessage: moment(newFromData).clone().format(this.props.timeUnit),
+            //     toDataAlertMessage: moment(newToData).clone().format(this.props.timeUnit)
+            // });
+            this.props.onOpenAlert("gcapp.errorMessages." + validation.errorMessage);
             return;
         }
         if (this.props.alertMessage !== null) {
@@ -379,7 +375,6 @@ class FixedRangePicker extends React.Component {
             toData: newToData,
             mapNameSuffix
         });
-        this.setState({ defaultPeriodType: newPeriodType });
     }
     updateParams = (datesParam, onUpdateNode = true) => {
         this.props.layers.map((layer) => {

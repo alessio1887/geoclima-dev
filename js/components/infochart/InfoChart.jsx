@@ -537,7 +537,7 @@ class InfoChart extends React.Component {
             this.props.timeUnit
         );
         if (!validation.isValid) {
-            this.props.onOpenAlert(validation.errorMessage);
+            this.props.onOpenAlert("gcapp.infochart.errorMessages." + validation.errorMessage);
             this.resetChartData();
             return false;
         }

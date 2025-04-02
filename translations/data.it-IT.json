@@ -27,17 +27,23 @@
               "collapsePlugin": "Seleziona un intervallo di date"
             },
             "errorMessages": {
-              "endDateBefore": "La data fine {toData} non può essere minore della data inizio {fromData}.",
-              "rangeTooLarge": "L'intervallo di date ({fromData} - {toData}) non può superare un anno.",
-              "dateTooEarly": "La data selezionata ({fromData} - {toData}) non può essere precedente al {minDate}",
-              "rangeExceedsBoundary": "La data selezionata ({fromData} - {toData}) non può superare il {maxDate}"
+              "endDateBefore": "La data fine non può essere minore della data inizio.",
+              "rangeTooLarge": "L'intervallo di date non può superare un anno.",
+              "dateTooEarly": "La data selezionata non può essere precedente al {minDate}",
+              "rangeExceedsBoundary": "La data selezionata non può superare il {maxDate}"
             },
             "applyPeriodButton": " Applica periodo",
             "dailyDatePicker": "Seleziona una data",
             "loading": "Aggiornamento immagini...",
             "infochart": {
               "collapse": "Collassa",
-              "expand": "Espandi"
+              "expand": "Espandi",
+              "errorMessages": {
+                "endDateBefore": "La data fine {toData} non può essere minore della data inizio {fromData}.",
+              "rangeTooLarge": "L'intervallo di date ({fromData} - {toData}) non può superare un anno.",
+              "dateTooEarly": "La data selezionata ({fromData} - {toData}) non può essere precedente al {minDate}",
+              "rangeExceedsBoundary": "La data selezionata ({fromData} - {toData}) non può superare il {maxDate}"
+              }
             }
         },
         "infochart": {

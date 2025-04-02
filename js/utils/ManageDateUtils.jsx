@@ -129,17 +129,17 @@ const Api = {
             lastDate = lastDate.startOf('day');
         }
         if (fromDataMoment.isBefore(firstDate) || toDataMoment.isBefore(firstDate)) {
-            return { isValid: false, errorMessage: "gcapp.errorMessages.dateTooEarly" };
+            return { isValid: false, errorMessage: "dateTooEarly" };
         }
         if (fromDataMoment.isAfter(lastDate) || toDataMoment.isAfter(lastDate)) {
-            return { isValid: false, errorMessage: "gcapp.errorMessages.rangeExceedsBoundary"};
+            return { isValid: false, errorMessage: "rangeExceedsBoundary"};
         }
         if (toDataMoment.isBefore(fromDataMoment)) {
-            return { isValid: false, errorMessage: "gcapp.errorMessages.endDateBefore" };
+            return { isValid: false, errorMessage: "endDateBefore" };
         }
         const oneYearFromStart = fromDataMoment.clone().add(1, 'year');
         if (toDataMoment.isAfter(oneYearFromStart)) {
-            return { isValid: false, errorMessage: "gcapp.errorMessages.rangeTooLarge" };
+            return { isValid: false, errorMessage: "rangeTooLarge" };
         }
         // Se tutte le verifiche passano
         return { isValid: true, errorMessage: null };

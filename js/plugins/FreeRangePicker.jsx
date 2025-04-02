@@ -143,12 +143,6 @@ class FreeRangePicker extends React.Component {
         isPluginLoaded: false
     };
 
-    state = {
-        // Default date values to use in case of invalid or missing date input
-        defaultFromData: this.props.lastAvailableDate,
-        defaultToData: moment(this.props.lastAvailableDate).clone().subtract(DateAPI.getDefaultPeriod(this.props.periodTypes).max, 'days').startOf('day').toDate()
-    }
-
     componentDidMount() {
         if (!this.props.isPluginLoaded) {
             this.props.onMarkPluginAsLoaded();
@@ -239,8 +233,8 @@ class FreeRangePicker extends React.Component {
                     <div className="alert-date" >
                         <strong><Message msgId="warning"/></strong>
                         <span ><Message msgId={this.props.alertMessage}
-                            msgParams={{toData: moment(this.props.lastAvailableDate).format(this.props.timeUnit),
-                                fromData: moment(this.props.firstAvailableDate).format(this.props.timeUnit)
+                            msgParams={{minDate: moment(this.props.firstAvailableDate).format(this.props.timeUnit),
+                                maxDate: moment(this.props.lastAvailableDate).format(this.props.timeUnit)
                             }}/>
                         </span>
                     </div>
@@ -252,14 +246,14 @@ class FreeRangePicker extends React.Component {
         const { fromData, toData } = this.props;
         if (!fromData || !toData || isNaN(fromData) || isNaN(toData) || !(toData instanceof Date) || !(fromData instanceof Date)) {
             // restore defult values
-            this.props.onChangeFromData(new Date(this.state.defaultFromData));
-            this.props.onChangeToData(new Date(this.state.defaultToData));
+            this.props.onChangeFromData(this.props.fromDataLayer);
+            this.props.onChangeToData(this.props.toDataLayer);
             return;
         }
         // Verifiche sulle date
         const validation = DateAPI.validateDateRange(fromData, toData, this.props.firstAvailableDate, this.props.lastAvailableDate, this.props.timeUnit);
         if (!validation.isValid) {
-            this.props.onOpenAlert(validation.errorMessage);
+            this.props.onOpenAlert( "gcapp.errorMessages." + validation.errorMessage);
             return;
         }
         if (this.props.alertMessage !== null) {
@@ -269,9 +263,6 @@ class FreeRangePicker extends React.Component {
             fromData: fromData,
             toData: toData
         });
-        // set default values
-        this.setState({ defaultFromData: new Date(fromData)});
-        this.setState({ defaultToData: new Date(toData)});
     }
     updateParams(datesParam, onUpdateNode = true) {
         this.props.layers.map((layer) => {
