@@ -278,6 +278,7 @@ const toggleMapInfoEpic = (action$, store) =>
             const disableInfoChartActions = [setControlProperty("chartinfo", "enabled", false)];
             if (appState.infochart.showInfoChartPanel) {
                 disableInfoChartActions.push(setInfoChartVisibility(false));
+                disableInfoChartActions.push(removeAdditionalLayer({ id: MARKER_ID }));
             }
             return Observable.of(...disableInfoChartActions);
         });
