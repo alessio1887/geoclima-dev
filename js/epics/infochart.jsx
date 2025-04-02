@@ -108,6 +108,21 @@ const updateMarkerPosition = (latlng) => {
     return updateAdditionalLayer(MARKER_ID, newMarkerLayer, "overlay", newMarkerLayer);
 };
 
+const getDisableInfoChartActions = (appState) => {
+    let disableInfoChartActions = [];
+    if (!appState.mapInfo?.enabled) {
+        disableInfoChartActions.push(changeMapInfoState(true));
+    }
+    if (appState.infochart?.showInfoChartPanel) {
+        disableInfoChartActions.push(setInfoChartVisibility(false, []));
+        disableInfoChartActions.push(removeAdditionalLayer({ id: MARKER_ID }));
+    }
+    if (appState.controls?.chartinfo?.enabled) {
+        disableInfoChartActions.push(setControlProperty("chartinfo", "enabled", false));
+    }
+    return disableInfoChartActions;
+};
+
 /**
  * This method returns the first visible layer from an array of layers,
  * considering visibility defined either as an independent layer ID
@@ -230,20 +245,10 @@ const getVariableFromLayer = (appState, idVariabiliLayers) => {
 const closeInfoChartPanel = (action$, store) =>
     action$.ofType(LOADING).switchMap(() => {
         const appState = store.getState();
-        let disableInfoChartActions = [];
-        if (!appState.mapInfo?.enabled) {
-            disableInfoChartActions.push(changeMapInfoState(true));
-        }
+        let disableInfoChartActions = getDisableInfoChartActions(appState);
         if (appState.infochart?.isPluginLoaded) {
             disableInfoChartActions.push(markInfoChartAsNotLoaded());
         }
-        if (appState.infochart?.showInfoChartPanel) {
-            disableInfoChartActions.push(setInfoChartVisibility(false, []));
-        }
-        if (appState.controls?.chartinfo?.enabled) {
-            disableInfoChartActions.push(setControlProperty("chartinfo", "enabled", false));
-        }
-        disableInfoChartActions.push(removeAdditionalLayer({ id: MARKER_ID }));
         return Observable.of(...disableInfoChartActions);
     });
 
@@ -310,18 +315,6 @@ const toggleInfoChartEpic = (action$, store) =>
         return Observable.of(...actions);
     });
 
-// Disable InfoChart (if active) when mapInfo is enabled
-// const changeMapInfoStateEpic = (action$, store) =>
-//     action$.ofType(CHANGE_MAPINFO_STATE).switchMap((action) => {
-//         const appState = store.getState();
-//         const actions = [];
-//         if (action.enabled && appState.controls?.chartinfo?.enabled) {
-//             // actions.push(setInfoChartVisibility(false));
-//             actions.push(setControlProperty("chartinfo", "enabled", false));
-//         }
-//         return Observable.of(...actions);
-//     });
-
 /**
  * Epic that handles toggling controls, excluding specific controls (e.g., toolbar, chartinfo, and burgermenu).
  * If `chartinfo` is active, it disables it, hides the InfoChart, and removes the map marker.
@@ -332,15 +325,10 @@ const toggleControlEpic = (action$, store) => {
 
     return action$
         .ofType(TOGGLE_CONTROL, SET_CONTROL_PROPERTY)
-        .filter(({ control }) => !excludedControls.includes(control))
+        .filter(({ control }) => !excludedControls.includes(control) && store.getState().controls?.chartinfo?.enabled)
         .switchMap(() => {
             const appState = store.getState();
-            const actions = [];
-            // Disable chartinfo if it's enabled
-            if (appState.controls?.chartinfo?.enabled) {
-                actions.push(setInfoChartVisibility(false));
-                actions.push(setControlProperty("chartinfo", "enabled", false));
-            }
+            const actions = getDisableInfoChartActions(appState);
             return Observable.of(...actions);
         });
 };
