@@ -37,7 +37,7 @@ const DailyManager = ({
     const isDecrementHourDisabled = isInteractionDisabled || moment(toData).isSameOrBefore(moment(minDate));
 
     const isIncrementDayDisabled = isInteractionDisabled || moment(toData).isAfter(moment(maxDate).subtract(1, 'day'));
-    const isIncremenHourtDisabled = isInteractionDisabled || moment(toData).isSameOrAfter(moment(maxDate));
+    const isIncremenHourDisabled = isInteractionDisabled || moment(toData).isSameOrAfter(moment(maxDate));
 
     const changeDateTime = (timeUnit, amount) => {
         const newToData = moment(toData).add(amount, timeUnit);
@@ -109,7 +109,7 @@ const DailyManager = ({
                 <Button onClick={handleChangeDay} disabled={isInteractionDisabled}>
                     <Glyphicon glyph="calendar" /><Message msgId="gcapp.applyPeriodButton" />
                 </Button>
-                { format !== DATE_FORMAT && (<Button onClick={() => changeDateTime('hours', +1)} disabled={isIncremenHourtDisabled}
+                { format !== DATE_FORMAT && (<Button onClick={() => changeDateTime('hours', +1)} disabled={isIncremenHourDisabled}
                 >
                     <Glyphicon glyph="glyphicon glyphicon-plus" />
                 </Button>) }
