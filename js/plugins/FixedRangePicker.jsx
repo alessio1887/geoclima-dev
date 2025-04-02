@@ -390,13 +390,18 @@ class FixedRangePicker extends React.Component {
                     const updatedName = `${nameBase}_${moment(datesParam.toData).format(this.props.timeUnit)}`;
                     const updatedTitle = `${layer.title?.split("–")[0].trim()} – ${moment(datesParam.toData).format(this.props.timeUnit)}`;
 
+                    const originalMap = layer.params?.map || "";
+                    const updatedMap = originalMap
+                        .replace(/wms_\d{4}/, `wms_${year}`)
+                        .replace(/\d{4}-\d{2}-\d{2}/, moment(datesParam.toData).format(this.props.timeUnit));
+
                     this.props.onUpdateNode(layer.id, "layer", {
                         title: updatedTitle,
                         name: updatedName,
                         description: updatedTitle,
                         params: {
-                            LAYERS: `${updatedName}`,
-                            map: `wms_${year}/ris_prev_incendio_wms_${moment(datesParam.toData).format(this.props.timeUnit)}.map`
+                            // LAYERS: `${updatedName}`,
+                            map: updatedMap
                         }
                     });
 

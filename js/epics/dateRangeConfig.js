@@ -37,13 +37,18 @@ const updateLayersParams = (layers, defaultPeriod, toData, timeUnit, isMapfilena
                 const updatedName = `${nameBase}_${toDataFormatted}`;
                 const updatedTitle = `${layer.title?.split("–")[0].trim()} – ${toDataFormatted}`;
 
+                const originalMap = layer.params?.map || "";
+                const updatedMap = originalMap
+                    .replace(/wms_\d{4}/, `wms_${year}`)
+                    .replace(/\d{4}-\d{2}-\d{2}/, toDataFormatted);
+
                 actionsUpdateParams.push(updateNode(layer.id, "layer", {
                     title: updatedTitle,
                     name: updatedName,
                     description: updatedTitle,
                     params: {
-                        LAYERS: `${updatedName}`,
-                        map: `wms_${year}/ris_prev_incendio_wms_${toDataFormatted}.map`
+                        // LAYERS: `${updatedName}`,
+                        map: updatedMap
                     }
                 }));
 

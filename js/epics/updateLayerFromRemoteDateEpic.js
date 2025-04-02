@@ -57,13 +57,19 @@ const updateLayerFromRemoteDateEpic = (action$, store) => {
                         const nameBase = layer.name.replace(/_\d{4}-\d{2}-\d{2}$/, "");
                         const updatedName = `${nameBase}_${date}`;
                         const updatedTitle = `${layer.title?.split("–")[0].trim()} – ${date}`;
+
+                        const originalMap = layer.params?.map || "";
+                        const updatedMap = originalMap
+                            .replace(/wms_\d{4}/, `wms_${year}`)
+                            .replace(/\d{4}-\d{2}-\d{2}/, date);
+
                         return [
                             updateNode(layer.id, "layer", {
                                 title: updatedTitle,
                                 name: updatedName,
                                 description: `Pericolosità incendi del ${date}`,
                                 params: {
-                                    map: `wms_${year}/ris_prev_incendio_wms_${date}.map`
+                                    map: updatedMap
                                 }
                             })
                         ];
