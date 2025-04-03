@@ -182,6 +182,19 @@ export function formatDataTemp(values, propVariable) {
             : 0
     }));
 }
+/**
+ * Calculates the horizontal position (xPosition) of the panel based on the screen width,
+ * maintaining a proportion relative to a reference width and rounding up.
+ * @returns {number} The negative X position to correctly position the panel.
+ */
+export function getXPositionPanel()  {
+    const screenWidth = window.innerWidth;
+    const referenceWidth = 2390;
+    const basePercentage = 0.30;
+    let xPositionPercentage = (screenWidth / referenceWidth) * basePercentage;
+    xPositionPercentage = (Math.ceil(xPositionPercentage * 100) / 100) + 0.01;
+    return -(screenWidth * xPositionPercentage);
+}
 
 // Function to calculate the dynamic dtick for the y-axis
 export function  getDtick(maxValue) {
