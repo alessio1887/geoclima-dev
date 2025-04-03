@@ -378,6 +378,7 @@ class InfoChart extends React.Component {
                                 isInteractionDisabled={false}
                                 styleLabels="labels-infochart"
                                 format={this.props.timeUnit}
+                                classAttribute="infochart-fixedrangemanager-action"
                             />
                         ) : (
                             <FreeRangeManager
@@ -390,6 +391,7 @@ class InfoChart extends React.Component {
                                 isInteractionDisabled={false}
                                 styleLabels="labels-infochart"
                                 lablesType="gcapp.freeRangePicker"
+                                classAttribute="infochart-freerangemanager-action"
                                 format={this.props.timeUnit}
                             />
                         )}

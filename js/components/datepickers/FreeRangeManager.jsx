@@ -14,8 +14,6 @@ import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
 
-import './rangemanager.css';
-
 const FreeRangeManager = ({
     fromData,
     toData,
@@ -26,10 +24,11 @@ const FreeRangeManager = ({
     isInteractionDisabled,
     styleLabels,
     format,
-    lablesType
+    lablesType,
+    classAttribute
 }) => {
     return (
-        <div className="ms-freerangemanager-action">
+        <div className={classAttribute}>
             <Label className={styleLabels}>
                 <Message msgId= {lablesType + ".selectFromDate" }/>
             </Label>
