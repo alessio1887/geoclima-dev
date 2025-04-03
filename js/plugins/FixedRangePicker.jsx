@@ -309,6 +309,7 @@ class FixedRangePicker extends React.Component {
                     format={this.props.timeUnit}
                     onChangePeriod={this.handleChangePeriodType}
                     styleLabels="labels-fixedrangepicker"
+                    classAttribute="ms-freerangepicker-action"
                 />
                 <ButtonGroup id="button-rangepicker-container">
                     <Button onClick={() => this.handleApplyPeriod()} disabled={this.props.isInteractionDisabled}>
