@@ -295,9 +295,9 @@ const toggleInfoChartEpic = (action$, store) =>
         const actions = [
             setControlProperty("chartinfo", "enabled", action.enable)
         ];
-        // Se si vuole disabilitare InfoChart, nascondo il grafico se aperto
         if (!action.enable && appState.infochart.showInfoChartPanel) {
             actions.push(setInfoChartVisibility(false));
+            actions.push(removeAdditionalLayer({ id: MARKER_ID }));
         }
         if ( infoChartSize.widthResizable !== 880 || infoChartSize.heightResizable !== 880) {
             actions.push(resizeInfoChart(880, 880));
