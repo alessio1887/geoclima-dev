@@ -14,11 +14,9 @@ import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
 
-import './rangemanager.css';
-
 const FixedRangeManager = (props) => {
     return (
-        <div className="ms-fixedrangemanager-action">
+        <div className={props.classAttribute}>
             <Label className={props.styleLabels}><Message msgId="gcapp.fixedRangePicker.selectCumulativePeriod" /></Label>
             <DropdownList
                 id="period1"
