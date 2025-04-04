@@ -246,7 +246,7 @@ class InfoChart extends React.Component {
     }
     handleRelayout = (eventData) => {
         // Autoscale case: reset zoom data to default values
-        if (eventData['xaxis.autorange'] || eventData['yaxis.autorange']) {
+        if (eventData['xaxis.autorange'] || eventData['yaxis.autorange'] || eventData['yaxis2.autorange']) {
             this.props.onResetChartZoom();
         } else {
             const zoomData = this.props.chartRelayout ? { ...this.props.chartRelayout } : {};

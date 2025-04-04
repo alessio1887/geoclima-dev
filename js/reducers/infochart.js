@@ -40,7 +40,9 @@ const infoChartDefaultState = {
         yaxisEnd: null,
         yaxis2Start: null,
         yaxis2End: null,
-        dragmode: null
+        dragmode: null,
+        // Timestamp used to trigger an update of the InfoChart component
+        lastUpdated: Date.now()
     },
     infoChartSize: {
         widthResizable: 880,
@@ -159,13 +161,17 @@ function infochart(state = infoChartDefaultState, action) {
             ...state,
             chartRelayout: {
                 ...state.chartRelayout,
-                ...action.chartRelayout
+                ...action.chartRelayout,
+                lastUpdated: Date.now()
             }
         };
     case RESET_CHART_RELAYOUT:
         return {
             ...state,
-            chartRelayout: {}
+            chartRelayout: {
+                ...infoChartDefaultState.chartRelayout,
+                lastUpdated: Date.now()
+            }
         };
     case RESIZE_INFOCHART:
         return  {

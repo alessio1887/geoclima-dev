@@ -23,7 +23,7 @@ import {
     changeFixedRangeToData,
     markInfoChartAsNotLoaded,
     changeTab, changeChartVariable,
-    closeAlert,
+    closeAlert, resetChartRelayout,
     resizeInfoChart } from '../actions/infochart';
 import { CLICK_ON_MAP } from '@mapstore/actions/map';
 import { LOADING } from '@mapstore/actions/maps';
@@ -412,6 +412,7 @@ const clickedPointCheckEpic = (action$, store) =>
                 idTab = appState.infochart.infoChartData.idTab;
                 periodType = appState.infochart.periodType;
                 markerAction = updateMarkerPosition(latlng);
+                actions.push(resetChartRelayout());
             }
 
             actions.push(setInfoChartVisibility(true));

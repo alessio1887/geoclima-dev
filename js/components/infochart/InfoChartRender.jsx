@@ -35,17 +35,6 @@ const InfoChartRender = ({
     const [traces, setTraces] = useState([]);
     const [layout, setLayout] = useState({});
 
-    const getModeBarButtonsToRemove = (chartType) => {
-        switch (chartType) {
-        case MULTI_VARIABLE_CHART:
-            return [];
-        case CUMULATA_CHART:
-            return ['autoscale'];
-        default:
-            return ['resetScale2d'];
-        }
-    };
-
     useEffect(() => {
         const dates = dataFetched.map(item => moment(item.data).toDate());
         let newTraces = [];
@@ -101,7 +90,7 @@ const InfoChartRender = ({
             onLegendClick={toggleLegendItem}
             config={{
                 displayModeBar: true,
-                modeBarButtonsToRemove: getModeBarButtonsToRemove(variableChartParams.chartType),
+                modeBarButtonsToRemove: ['resetScale2d'],
                 autosizable: true
             }}
         />
