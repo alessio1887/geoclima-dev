@@ -25,10 +25,13 @@ const FreeRangeManager = ({
     styleLabels,
     format,
     lablesType,
-    classAttribute
+    classAttribute,
+    widthPanel
 }) => {
+    const flexDirection = widthPanel && widthPanel >= 600 ? 'row' : 'column';
     return (
-        <div className={classAttribute}>
+        <div className={classAttribute}
+            style={{ flexDirection }}>
             <Label className={styleLabels}>
                 <Message msgId= {lablesType + ".selectFromDate" }/>
             </Label>

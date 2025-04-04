@@ -71,8 +71,6 @@
   /* overflow: hidden; */
   display: flex;
   left: 4px;
-  /* height: 200px; */
-  flex-direction: row;
   margin: 0;
   border: none;
   top: 4px;
@@ -89,7 +87,6 @@
     position: relative;
 }
 
-.infochart-fixedrangemanager-action label:nth-child(3),
-.infochart-fixedrangemanager-action .react-widgets-datetimepicker {
-  left: 2000px; /* Puoi modificare il valore del margine */
-}
+#infochart-fixedrangemanager-action-dropdownlist{
+    width: 150px;
+  }

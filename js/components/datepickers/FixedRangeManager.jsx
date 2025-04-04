@@ -15,11 +15,14 @@ import momentLocaliser from 'react-widgets/lib/localizers/moment';
 momentLocaliser(moment);
 
 const FixedRangeManager = (props) => {
+    const flexDirection = props.widthPanel && props.widthPanel >= 550 ? 'row' : 'column';
+    const dropDownId = props.classAttribute + "-dropdownlist";
     return (
-        <div className={props.classAttribute}>
+        <div className={props.classAttribute}
+            style={{ flexDirection }}>
             <Label className={props.styleLabels}><Message msgId="gcapp.fixedRangePicker.selectCumulativePeriod" /></Label>
             <DropdownList
-                id="period1"
+                id={dropDownId}
                 key={props.periodType}
                 data={props.periodTypes}
                 valueField="key"
