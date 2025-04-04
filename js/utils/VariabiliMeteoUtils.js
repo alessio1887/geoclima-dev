@@ -25,7 +25,6 @@ const ST_VALUE = "st_value_";
 const colors = ['green', 'black', 'teal', 'gray'];
 const MIN_Y_INDEX = -3.0;
 const MAX_Y_INDEX = 3.0;
-const legendStyle = { orientation: 'h', x: 0.5, y: 1.1 };
 
 export function isVariabiliMeteoLayer(layerName, variabiliMeteo) {
     if (typeof layerName !== "string" || !variabiliMeteo) {
@@ -392,7 +391,7 @@ export const createCumulataBarLayout = (variables, chartTitle, traces, dates, fo
             rangemode: 'tozero'
         },
         hovermode: 'x unified',
-        legend: legendStyle,
+        legend: { orientation: 'h', x: 0.5, y: 1.1 },
         dragmode: chartRelayout?.dragmode,
         margin: { t: 80, r: 40, l: 60, b: (format === DATE_FORMAT ? 40 : 60 )}
     };
@@ -439,7 +438,7 @@ export const createLayout = (chartTitle, yaxisTitle, dates, format, dataTraces, 
         margin: { t: 80, r: 40, l: 60, b: (format === DATE_FORMAT ? 40 : 60 )},
         showlegend: true,
         hovermode: 'x unified',
-        legend: legendStyle,
+        legend: { orientation: 'h', x: 0.5, y: 1.05 },
         dragmode: chartRelayout?.dragmode
     };
 };
