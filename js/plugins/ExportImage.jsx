@@ -22,7 +22,7 @@ import { exportImageEnabledSelector, fileNameSelector, fromDataSelector, toDataS
 import * as exportImageEpics from '../epics/exportImage';
 import exportimage from '../reducers/exportimage';
 import { initializeVariableTabs, setVariabiliMeteo, changeTab, changeImageVariable,
-    exportImage, clearImageUrl } from '../actions/exportimage';
+    exportImage, clearImageUrl, setTimeUnit } from '../actions/exportimage';
 
 import moment from 'moment';
 import momentLocaliser from 'react-widgets/lib/localizers/moment';
@@ -100,6 +100,7 @@ const ExportImage = ({
     onChangeTab,
     onExportImage,
     onInitializeVariableTabs,
+    onSetTimeUnit,
     onSetVariabiliMeteo,
     variabiliMeteo,
     tabList,
@@ -127,6 +128,7 @@ const ExportImage = ({
     useEffect(() => {
         if (!tabVariables) {
             initializeTabs();
+            onSetTimeUnit(timeUnit);
         }
         if (!climateLayers ) {
             onSetVariabiliMeteo(variabiliMeteo);
@@ -234,6 +236,7 @@ const mapDispatchToProps = {
     onClearImageUrl: clearImageUrl,
     onExportImage: exportImage,
     onInitializeVariableTabs: initializeVariableTabs,
+    onSetTimeUnit: setTimeUnit,
     onSetVariabiliMeteo: setVariabiliMeteo,
     onToggleControlExportImage: () => toggleControl('exportImage', 'enabled')
 };

@@ -6,8 +6,9 @@
  * LICENSE file in the root directory of this source tree.
 */
 import { UPDATE_DATES, SET_VARIABILIMETEO, INITIALIZE_TABS, TAB_CHANGED, EXPORTIMAGE_ERROR,
-    IMAGEVARIABLE_CHANGED, EXPORTIMAGE_SUCCESS, CLEAR_IMAGE_URL, EXPORTIMAGE_LOADING } from '../actions/exportimage';
+    IMAGEVARIABLE_CHANGED, EXPORTIMAGE_SUCCESS, CLEAR_IMAGE_URL, EXPORTIMAGE_LOADING, SET_TIME_UNIT } from '../actions/exportimage';
 import { DEFAULT_FILENAME } from '../utils/VariabiliMeteoUtils';
+import DateAPI from '../utils/ManageDateUtils';
 
 
 const defaultState = {
@@ -22,12 +23,18 @@ function daterangelabel(state = defaultState, action) {
         return {
             ...state,
             fromData: new Date(action.fromData),
-            toData: new Date(action.toData)
+            toData: new Date(action.toData),
+            alertMessage: DateAPI.shouldResetAlertMessage(state, action)
         };
     case SET_VARIABILIMETEO:
         return {
             ...state,
             climateLayers: action.variabiliMeteo
+        };
+    case SET_TIME_UNIT:
+        return {
+            ...state,
+            timeUnit: action.timeUnit
         };
     case INITIALIZE_TABS:
         return {

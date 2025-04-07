@@ -25,58 +25,6 @@ export const DEFAULT_DATA_FINE = yesterday;
 export const DATE_FORMAT = "YYYY-MM-DD";
 
 const Api = {
-    // calculateDateFromKeyReal(key, toData) {
-    //     let date = {};
-
-    //     // The selected DATE from the users
-    //     date.toData = moment(toData).clone();
-    //     // TODO migliora in modo che ci sottragga la key o qualcos'altro
-    //     // const year = moment(toData).clone().format('YYYY-MM-DD');
-    //     if (key === "1") {
-    //         date.fromData = moment(toData).clone().subtract(1, 'month');
-    //     } else if (key === "3") {
-    //         date.fromData = moment(toData).clone().subtract(3, 'month');
-    //     } else if (key === "4") {
-    //         date.fromData = moment(toData).clone().subtract(4, 'month');
-    //     } else if (key === "6") {
-    //         date.fromData = moment(toData).clone().subtract(6, 'month');
-    //     } else if (key === "12") {
-    //         date.fromData = moment(toData).clone().subtract(12, 'month');
-    //     } else {
-    //         // se la data selezionata è minore del 1 ottobre dello stesso anno
-    //         const currentYear = moment(date.toData).format('YYYY');
-    //         const currentToData = moment().clone().format(currentYear + "-10-01");
-    //         if (date.toData.isBefore(currentToData)) {
-    //             if (moment(toData).year() < currentYear) {
-    //                 date.fromData = moment(toData)
-    //                     .endOf('year')
-    //                     .subtract(2, 'month')
-    //                     .startOf('month')
-    //                     .hour(moment(toData).hour())
-    //                     .minute(moment(toData).minute())
-    //                     .second(moment(toData).second());
-    //             } else {
-    //                 date.fromData = moment(toData)
-    //                     .subtract(1, 'year')
-    //                     .endOf('year')
-    //                     .subtract(2, 'month')
-    //                     .startOf('month')
-    //                     .hour(moment(toData).hour())
-    //                     .minute(moment(toData).minute())
-    //                     .second(moment(toData).second());
-    //             }
-    //         } else {
-    //             date.fromData = moment(toData)
-    //                 .endOf('year')
-    //                 .subtract(2, 'month')
-    //                 .startOf('month')
-    //                 .hour(moment(toData).hour())
-    //                 .minute(moment(toData).minute())
-    //                 .second(moment(toData).second());
-    //         }
-    //     }
-    //     return date;
-    // },
     getDefaultPeriod(periodTypes) {
         return periodTypes.find(t => t.isDefault) || periodTypes[0];
     },
@@ -162,6 +110,15 @@ const Api = {
         }
         // Se tutte le verifiche passano
         return { isValid: true, errorMessage: null };
+    },
+    shouldResetAlertMessage(state, action) {
+        const activeTab = state.tabVariables.find(tab => tab.active);
+        const formattedOldFromData = moment(state.fromData).format(state.timeUnit);
+        const formattedOldToData =  moment(state.toData).format(state.timeUnit);
+        if (activeTab && activeTab.showOneDatePicker) {
+            return formattedOldToData !== action.toData  ? null : state.alertMessage;
+        }
+        return formattedOldFromData !== action.fromData || formattedOldToData !== action.toData ? null : state.alertMessage;
     }
 };
 

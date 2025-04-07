@@ -18,14 +18,7 @@ export const EXPORTIMAGE_ERROR = 'EXPORTIMAGE:EXPORTIMAGE_ERROR';
 export const EXPORTIMAGE_SUCCESS = 'EXPORTIMAGE:EXPORTIMAGE_SUCCESS';
 export const EXPORTIMAGE_LOADING = 'EXPORTIMAGE:EXPORT_IMAGE_LOADING';
 export const CLEAR_IMAGE_URL = 'EXPORTIMAGE:CLEAR_IMAGE_URL';
-// export const TOGGLE_PLUGIN = 'EXPORTIMAGE:TOGGLE_PLUGIN';
-
-// export function togglePlugin(isOpen) {
-//     return {
-//         type: TOGGLE_PLUGIN,
-//         payload: isOpen
-//     };
-// }
+export const SET_TIME_UNIT = 'EXPORTIMAGE:SET_TIME_UNIT';
 
 export function updateExportImageDates(fromData, toData, layerId) {
     return {
@@ -35,6 +28,14 @@ export function updateExportImageDates(fromData, toData, layerId) {
         toData
     };
 }
+
+export function setTimeUnit(timeUnit) {
+    return {
+        type: SET_TIME_UNIT,
+        timeUnit
+    };
+}
+
 export function errorLayerDateMissing(layerId,  fromData, toData) {
     return {
         type: LAYER_DATE_MISSING,
@@ -99,31 +100,6 @@ export function clearImageUrl() {
         type: CLEAR_IMAGE_URL
     };
 }
-
-
-// export function exportImage(layerName, fromData, toData, defaultUrlExportImage) {
-//     return (dispatch) => {
-//         GeoClimaAPI.exportImage(layerName, fromData, toData, defaultUrlExportImage)
-//             .then(response => {
-//                 const blob = new Blob([response.data], { type: 'image/png' });
-//                 const url = window.URL.createObjectURL(blob);
-
-//                 const contentDisposition = response.headers['content-disposition'];
-//                 let fileName = 'exported_image.png'; // Nome di default
-//                 if (contentDisposition) {
-//                     const match = contentDisposition.match(/filename="?([^"]+)"?/);
-//                     if (match && match[1]) {
-//                         fileName = match[1];
-//                     }
-//                 }
-
-//                 dispatch(exportImageSuccess(url, fileName));
-//             })
-//             .catch(error => {
-//                 dispatch(apiError(error));
-//             });
-//     };
-// }
 
 export function exportImage(layerName, fromData, toData, defaultUrlExportImage) {
     return {
