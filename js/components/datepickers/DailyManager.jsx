@@ -17,6 +17,7 @@ momentLocaliser(moment);
 
 import './dailydatepicker.css';
 
+// This component is activated, instead of the FixedRangePicker, when the showOneDatePicker prop in pluginsConfig is set to true
 const DailyManager = ({
     minDate,
     maxDate,
