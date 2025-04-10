@@ -7,9 +7,9 @@
 */
 import { Observable } from 'rxjs';
 import { LAYER_LOAD } from '@mapstore/actions/layers';
-import { EXPORTIMAGE_LOADING, updateExportImageDates, apiError,
+import { EXPORTIMAGE_LOADING, updateExportImageDates, apiError, resetTabVariables,
     errorLayerNotFound, errorLayerDateMissing, exportImageSuccess } from '../actions/exportimage';
-import { exportImageEnabledSelector } from '../selectors/exportImage';
+import { exportImageEnabledSelector, tabVariablesSelector } from '../selectors/exportImage';
 import { isVariabiliMeteoLayer } from '../utils/VariabiliMeteoUtils';
 import { toggleControl } from '@mapstore/actions/controls';
 import { CLICK_ON_MAP } from '@mapstore/actions/map';
@@ -89,6 +89,14 @@ const closeExportImagePanel = (action$, store) =>
         .map(() => toggleControl('exportImage', 'enabled')
         );
 
+// Epic that resets the tabVariables state when the LOADING action is dispatched (i.e. when the user returns to the homepage)
+const resetTabVariablesEpic = (action$, store) =>
+    action$.ofType(LOADING)
+        .filter(() => {
+            const tabVariables = tabVariablesSelector(store.getState());
+            return Array.isArray(tabVariables) && tabVariables.length > 0;
+        }).map(() => resetTabVariables()
+        );
 
 /**
  * Epic that ensures the correct map layout when the plugin is open.
@@ -138,7 +146,7 @@ export { exportImageEpic,
     updateDatesExportImageEpic,
     updateToolbarLayoutEpic,
     disablePluginWhenLoadFeatureInfo,
-    // disablePluginWhenFetchInfoChartData,
+    resetTabVariablesEpic,
     closeExportImagePanel
 };
 

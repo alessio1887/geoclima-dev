@@ -5,7 +5,7 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
 */
-import { UPDATE_DATES, SET_VARIABILIMETEO, INITIALIZE_TABS, TAB_CHANGED, EXPORTIMAGE_ERROR,
+import { UPDATE_DATES, SET_VARIABILIMETEO, INITIALIZE_TABS, TAB_CHANGED, EXPORTIMAGE_ERROR, RESET_TABS,
     IMAGEVARIABLE_CHANGED, EXPORTIMAGE_SUCCESS, CLEAR_IMAGE_URL, EXPORTIMAGE_LOADING, SET_TIME_UNIT } from '../actions/exportimage';
 import { DEFAULT_FILENAME } from '../utils/VariabiliMeteoUtils';
 import DateAPI from '../utils/ManageDateUtils';
@@ -14,7 +14,8 @@ import DateAPI from '../utils/ManageDateUtils';
 const defaultState = {
     fromData: new Date(),
     toData: new Date(),
-    fileName: DEFAULT_FILENAME
+    fileName: DEFAULT_FILENAME,
+    tabVariables: []
 };
 
 function daterangelabel(state = defaultState, action) {
@@ -40,6 +41,11 @@ function daterangelabel(state = defaultState, action) {
         return {
             ...state,
             tabVariables: action.tabVariables
+        };
+    case RESET_TABS:
+        return {
+            ...state,
+            tabVariables: defaultState.tabVariables
         };
     case TAB_CHANGED:
         return {
