@@ -126,7 +126,7 @@ const ExportImage = ({
     }, [tabList, onInitializeVariableTabs]);
 
     useEffect(() => {
-        if (!tabVariables) {
+        if (tabVariables.length <= 0) {
             initializeTabs();
             onSetTimeUnit(timeUnit);
         }

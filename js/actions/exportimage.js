@@ -19,6 +19,7 @@ export const EXPORTIMAGE_SUCCESS = 'EXPORTIMAGE:EXPORTIMAGE_SUCCESS';
 export const EXPORTIMAGE_LOADING = 'EXPORTIMAGE:EXPORT_IMAGE_LOADING';
 export const CLEAR_IMAGE_URL = 'EXPORTIMAGE:CLEAR_IMAGE_URL';
 export const SET_TIME_UNIT = 'EXPORTIMAGE:SET_TIME_UNIT';
+export const RESET_TABS = 'EXPORTIMAGE:RESET_TABS';
 
 export function updateExportImageDates(fromData, toData, layerId) {
     return {
@@ -105,5 +106,11 @@ export function exportImage(layerName, fromData, toData, defaultUrlExportImage) 
     return {
         type: EXPORTIMAGE_LOADING,
         layerName, fromData, toData, defaultUrlExportImage
+    };
+}
+
+export function resetTabVariables() {
+    return {
+        type: RESET_TABS
     };
 }
